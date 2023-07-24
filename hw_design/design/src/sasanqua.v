@@ -7,6 +7,6 @@ module sasanqua (
     output  wire [31:0] STAT
 );
 
-    assign STAT = 32'b0;
+    assign STAT = 32'd1204;
 
 endmodule
