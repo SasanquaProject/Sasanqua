@@ -1,6 +1,6 @@
 `timescale 1ns/1ps
 
-module sasanqua_sim;
+module sasanqua_tb;
 
 /* ----- 各種定数 ----- */
 localparam integer C_AXI_DATA_WIDTH = 32;
