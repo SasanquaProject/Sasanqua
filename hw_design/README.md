@@ -4,14 +4,14 @@ HW記述
 
 ## ディレクトリ構成
 
-### src/
+### design/
 
 Sasanqua-CPU 本体
 
-### sim/
+### sim_prj/
 
 シミュレーション用プロジェクト
 
-### test/
+### test_proj/
 
 実機テスト用プロジェクト
