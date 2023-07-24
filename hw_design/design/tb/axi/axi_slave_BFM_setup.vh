@@ -181,3 +181,19 @@ axi_slave_bfm # (
     .S_AXI_RVALID   (M_AXI_RVALID),
     .S_AXI_RREADY   (M_AXI_RREADY)
 );
+
+task write_inst;
+reg [8:0] c;
+integer fd, i, num;
+begin
+    i = 0;
+    fd = $fopen("../../../../../../design/tb/test.bin", "rb");
+    while ($feof(fd) == 0) begin
+        c = $fgetc(fd); axi_slave_bfm_inst.ram_array[i][7:0]    = c[7:0];
+        c = $fgetc(fd); axi_slave_bfm_inst.ram_array[i][15:8]   = c[7:0];
+        c = $fgetc(fd); axi_slave_bfm_inst.ram_array[i][23:16]  = c[7:0];
+        c = $fgetc(fd); axi_slave_bfm_inst.ram_array[i][31:24]  = c[7:0];
+        i = i + 1;
+    end
+end
+endtask
