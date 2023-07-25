@@ -68,26 +68,9 @@ module sasanqua
     assign STAT = 32'd1204;
 
     /* ----- MMU ----- */
-    reg         inst_rden, data_rden;
-    reg  [31:0] inst_raddr, data_raddr;
-    wire        mem_wait, inst_rvalid, data_rvalid;
-    wire [31:0] inst_rdata, data_rdata;
-
-    always @ (posedge CLK) begin
-        if (RST) begin
-            inst_rden <= 1'b0;
-            inst_raddr <= 32'hffff_fffc;
-        end
-        else if (!mem_wait) begin
-            inst_rden <= 1'b1;
-            inst_raddr <= inst_raddr + 32'd4;
-        end
-    end
-
-    always @ (posedge CLK) begin
-        data_rden <= 1'b0;
-        data_raddr <= 32'b0;
-    end
+    wire        mem_wait;
+    wire        inst_rden, inst_rvalid, data_rden, data_rvalid;
+    wire [31:0] inst_raddr, inst_rdata, data_raddr, data_rdata;
 
     mmu_axi mmu (
         // 制御
@@ -150,6 +133,24 @@ module sasanqua
         .M_AXI_RUSER    (M_AXI_RUSER),
         .M_AXI_RVALID   (M_AXI_RVALID),
         .M_AXI_RREADY   (M_AXI_RREADY)
+    );
+
+    /* ----- Core ----- */
+    core core (
+        // 制御
+        .CLK            (CLK),
+        .RST            (RST),
+
+        // メモリアクセス
+        .INST_RDEN      (inst_rden),
+        .INST_RADDR     (inst_raddr),
+        .INST_RVALID    (inst_rvalid),
+        .INST_RDATA     (inst_rdata),
+        .DATA_RDEN      (data_rden),
+        .DATA_RADDR     (data_raddr),
+        .DATA_RVALID    (data_rvalid),
+        .DATA_RDATA     (data_rdata),
+        .MEM_WAIT       (mem_wait)
     );
 
 endmodule
