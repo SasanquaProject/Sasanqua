@@ -1,6 +1,9 @@
 # compile verilog/system verilog design source files
 verilog xil_defaultlib  --include "../../../../../../design/tb/axi" \
 "../../../../../../design/tb/axi/axi_slave_BFM.v" \
+"../../../../../../design/src/mmu/axi/cache.v" \
+"../../../../../../design/src/core/core.v" \
+"../../../../../../design/src/mmu/axi/mmu.v" \
 "../../../../../../design/src/sasanqua.v" \
 "../../../../../../design/tb/axi/sync_fifo.v" \
 "../../../../../../design/tb/tb.v" \
