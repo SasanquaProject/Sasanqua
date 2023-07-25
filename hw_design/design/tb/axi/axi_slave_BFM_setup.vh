@@ -1,5 +1,5 @@
 /* ----- バス用リセット信号 ----- */
-wire                            RSTN = 1'b1; // ~AXI_RST;
+wire                            RSTN = ~RST;
 
 /* ----- AXIバス接続用 ----- */
 // AWチャネル
@@ -55,65 +55,57 @@ wire                            M_AXI_RVALID;
 wire                            M_AXI_RREADY;
 
 /* ----- sasanqua.v 接続 ----- */
-sasanqua # (
-    .C_M_AXI_DATA_WIDTH (C_AXI_DATA_WIDTH)
-) sasanqua (
+sasanqua sasanqua (
     // 制御
     .CLK            (CLK),
-    .RST            (CST),
-    .STAT           (STAT)
+    .RST            (RST),
+    .STAT           (STAT),
 
-    // // AWチャネル
-    // .M_AXI_AWID     (M_AXI_AWID),
-    // .M_AXI_AWADDR   (M_AXI_AWADDR),
-    // .M_AXI_AWLEN    (M_AXI_AWLEN),
-    // .M_AXI_AWSIZE   (M_AXI_AWSIZE),
-    // .M_AXI_AWBURST  (M_AXI_AWBURST),
-    // .M_AXI_AWLOCK   (M_AXI_AWLOCK),
-    // .M_AXI_AWCACHE  (M_AXI_AWCACHE),
-    // .M_AXI_AWPROT   (M_AXI_AWPROT),
-    // .M_AXI_AWQOS    (M_AXI_AWQOS),
-    // .M_AXI_AWUSER   (M_AXI_AWUSER),
-    // .M_AXI_AWVALID  (M_AXI_AWVALID),
-    // .M_AXI_AWREADY  (M_AXI_AWREADY),
-
-    // // Wチャネル
-    // .M_AXI_WDATA    (M_AXI_WDATA),
-    // .M_AXI_WSTRB    (M_AXI_WSTRB),
-    // .M_AXI_WLAST    (M_AXI_WLAST),
-    // .M_AXI_WUSER    (M_AXI_WUSER),
-    // .M_AXI_WVALID   (M_AXI_WVALID),
-    // .M_AXI_WREADY   (M_AXI_WREADY),
-
-    // // Bチャネル
-    // .M_AXI_BID      (M_AXI_BID),
-    // .M_AXI_BRESP    (M_AXI_BRESP),
-    // .M_AXI_BUSER    (M_AXI_BUSER),
-    // .M_AXI_BVALID   (M_AXI_BVALID),
-    // .M_AXI_BREADY   (M_AXI_BREADY),
-
-    // // ARチャネル
-    // .M_AXI_ARID     (M_AXI_ARID),
-    // .M_AXI_ARADDR   (M_AXI_ARADDR),
-    // .M_AXI_ARLEN    (M_AXI_ARLEN),
-    // .M_AXI_ARSIZE   (M_AXI_ARSIZE),
-    // .M_AXI_ARBURST  (M_AXI_ARBURST),
-    // .M_AXI_ARLOCK   (M_AXI_ARLOCK),
-    // .M_AXI_ARCACHE  (M_AXI_ARCACHE),
-    // .M_AXI_ARPROT   (M_AXI_ARPROT),
-    // .M_AXI_ARQOS    (M_AXI_ARQOS),
-    // .M_AXI_ARUSER   (M_AXI_ARUSER),
-    // .M_AXI_ARVALID  (M_AXI_ARVALID),
-    // .M_AXI_ARREADY  (M_AXI_ARREADY),
-
-    // // Rチャネル
-    // .M_AXI_RID      (M_AXI_RID),
-    // .M_AXI_RDATA    (M_AXI_RDATA),
-    // .M_AXI_RRESP    (M_AXI_RRESP),
-    // .M_AXI_RLAST    (M_AXI_RLAST),
-    // .M_AXI_RUSER    (M_AXI_RUSER),
-    // .M_AXI_RVALID   (M_AXI_RVALID),
-    // .M_AXI_RREADY   (M_AXI_RREADY)
+    // AXIバス
+    .M_AXI_CLK      (CLK),
+    .M_AXI_RSTN     (RSTN),
+    .M_AXI_AWID     (M_AXI_AWID),
+    .M_AXI_AWADDR   (M_AXI_AWADDR),
+    .M_AXI_AWLEN    (M_AXI_AWLEN),
+    .M_AXI_AWSIZE   (M_AXI_AWSIZE),
+    .M_AXI_AWBURST  (M_AXI_AWBURST),
+    .M_AXI_AWLOCK   (M_AXI_AWLOCK),
+    .M_AXI_AWCACHE  (M_AXI_AWCACHE),
+    .M_AXI_AWPROT   (M_AXI_AWPROT),
+    .M_AXI_AWQOS    (M_AXI_AWQOS),
+    .M_AXI_AWUSER   (M_AXI_AWUSER),
+    .M_AXI_AWVALID  (M_AXI_AWVALID),
+    .M_AXI_AWREADY  (M_AXI_AWREADY),
+    .M_AXI_WDATA    (M_AXI_WDATA),
+    .M_AXI_WSTRB    (M_AXI_WSTRB),
+    .M_AXI_WLAST    (M_AXI_WLAST),
+    .M_AXI_WUSER    (M_AXI_WUSER),
+    .M_AXI_WVALID   (M_AXI_WVALID),
+    .M_AXI_WREADY   (M_AXI_WREADY),
+    .M_AXI_BID      (M_AXI_BID),
+    .M_AXI_BRESP    (M_AXI_BRESP),
+    .M_AXI_BUSER    (M_AXI_BUSER),
+    .M_AXI_BVALID   (M_AXI_BVALID),
+    .M_AXI_BREADY   (M_AXI_BREADY),
+    .M_AXI_ARID     (M_AXI_ARID),
+    .M_AXI_ARADDR   (M_AXI_ARADDR),
+    .M_AXI_ARLEN    (M_AXI_ARLEN),
+    .M_AXI_ARSIZE   (M_AXI_ARSIZE),
+    .M_AXI_ARBURST  (M_AXI_ARBURST),
+    .M_AXI_ARLOCK   (M_AXI_ARLOCK),
+    .M_AXI_ARCACHE  (M_AXI_ARCACHE),
+    .M_AXI_ARPROT   (M_AXI_ARPROT),
+    .M_AXI_ARQOS    (M_AXI_ARQOS),
+    .M_AXI_ARUSER   (M_AXI_ARUSER),
+    .M_AXI_ARVALID  (M_AXI_ARVALID),
+    .M_AXI_ARREADY  (M_AXI_ARREADY),
+    .M_AXI_RID      (M_AXI_RID),
+    .M_AXI_RDATA    (M_AXI_RDATA),
+    .M_AXI_RRESP    (M_AXI_RRESP),
+    .M_AXI_RLAST    (M_AXI_RLAST),
+    .M_AXI_RUSER    (M_AXI_RUSER),
+    .M_AXI_RVALID   (M_AXI_RVALID),
+    .M_AXI_RREADY   (M_AXI_RREADY)
 );
 
 
@@ -124,9 +116,9 @@ axi_slave_bfm # (
     .READ_DATA_IS_INCREMENT (0),
     .C_OFFSET_WIDTH         (C_OFFSET_WIDTH),
     .ARREADY_IS_USUALLY_HIGH(0)
-) axi_slave_bfm_inst (
+) axi_slave_bfm (
     // クロック
-    .ACLK           (AXI_CLK),
+    .ACLK           (CLK),
     .ARESETN        (RSTN),
 
     // AWチャネル
@@ -189,11 +181,20 @@ begin
     i = 0;
     fd = $fopen("../../../../../../design/tb/test.bin", "rb");
     while ($feof(fd) == 0) begin
-        c = $fgetc(fd); axi_slave_bfm_inst.ram_array[i][7:0]    = c[7:0];
-        c = $fgetc(fd); axi_slave_bfm_inst.ram_array[i][15:8]   = c[7:0];
-        c = $fgetc(fd); axi_slave_bfm_inst.ram_array[i][23:16]  = c[7:0];
-        c = $fgetc(fd); axi_slave_bfm_inst.ram_array[i][31:24]  = c[7:0];
+        c = $fgetc(fd); axi_slave_bfm.ram_array[i][7:0]    = c[7:0];
+        c = $fgetc(fd); axi_slave_bfm.ram_array[i][15:8]   = c[7:0];
+        c = $fgetc(fd); axi_slave_bfm.ram_array[i][23:16]  = c[7:0];
+        c = $fgetc(fd); axi_slave_bfm.ram_array[i][31:24]  = c[7:0];
         i = i + 1;
+    end
+end
+endtask
+
+task write_dummy_inst;
+integer i;
+begin
+    for ( i = 0; i < 4096; i = i + 1) begin
+        axi_slave_bfm.ram_array[i] = i;
     end
 end
 endtask
