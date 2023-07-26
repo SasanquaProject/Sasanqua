@@ -79,11 +79,11 @@ module core
         .DECODE1_IMM_J  (decode1_imm_j)
     );
 
-    /* ----- 3-1. 命令デコード2 ----- */
+    /* ----- 3. 命令デコード2 ----- */
     wire        decode2_valid;
     wire [31:0] decode2_pc, decode2_imm;
     wire [6:0]  decode2_opcode, decode2_funct7;
-    wire [4:0]  decode2_rd;
+    wire [4:0]  decode2_rd, decode2_rs1, decode2_rs2;
     wire [2:0]  decode2_funct3;
 
     decode_2 decode_2 (
@@ -96,6 +96,8 @@ module core
         .DECODE1_PC     (decode1_pc),
         .DECODE1_OPCODE (decode1_opcode),
         .DECODE1_RD     (decode1_rd),
+        .DECODE1_RS1    (decode1_rs1),
+        .DECODE1_RS2    (decode1_rs2),
         .DECODE1_FUNCT3 (decode1_funct3),
         .DECODE1_FUNCT7 (decode1_funct7),
         .DECODE1_IMM_I  (decode1_imm_i),
@@ -108,25 +110,27 @@ module core
         .DECODE2_PC     (decode2_pc),
         .DECODE2_OPCODE (decode2_opcode),
         .DECODE2_RD     (decode2_rd),
+        .DECODE2_RS1    (decode2_rs1),
+        .DECODE2_RS2    (decode2_rs2),
         .DECODE2_FUNCT3 (decode2_funct3),
         .DECODE2_FUNCT7 (decode2_funct7),
         .DECODE2_IMM    (decode2_imm)
     );
 
-    /* ----- 3-2. レジスタアクセス ----- */
-    wire [31:0] reg_rs1_v, reg_rs2_v;
+    // /* ----- 3-2. レジスタアクセス ----- */
+    // wire [31:0] reg_rs1_v, reg_rs2_v;
 
-    register register (
-        // 制御
-        .CLK        (CLK),
-        .RST        (RST),
+    // register register (
+    //     // 制御
+    //     .CLK        (CLK),
+    //     .RST        (RST),
 
-        // レジスタアクセス(rv32i)
-        .REG_IR_A   (decode1_rs1),
-        .REG_IR_B   (decode1_rs2),
-        .REG_IR_AV  (reg_rs1_v),
-        .REG_IR_BV  (reg_rs2_v)
-    );
+    //     // レジスタアクセス(rv32i)
+    //     .REG_IR_A   (decode1_rs1),
+    //     .REG_IR_B   (decode1_rs2),
+    //     .REG_IR_AV  (reg_rs1_v),
+    //     .REG_IR_BV  (reg_rs2_v)
+    // );
 
     /* ----- 4. 実行 ----- */
     exec exec (

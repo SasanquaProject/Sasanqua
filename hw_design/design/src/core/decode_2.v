@@ -9,6 +9,8 @@ module decode_2
         input wire [31:0]   DECODE1_PC,
         input wire [6:0]    DECODE1_OPCODE,
         input wire [4:0]    DECODE1_RD,
+        input wire [4:0]    DECODE1_RS1,
+        input wire [4:0]    DECODE1_RS2,
         input wire [2:0]    DECODE1_FUNCT3,
         input wire [6:0]    DECODE1_FUNCT7,
         input wire [31:0]   DECODE1_IMM_I,
@@ -22,6 +24,8 @@ module decode_2
         output wire [31:0]  DECODE2_PC,
         output wire [6:0]   DECODE2_OPCODE,
         output wire [4:0]   DECODE2_RD,
+        output wire [4:0]   DECODE2_RS1,
+        output wire [4:0]   DECODE2_RS2,
         output wire [2:0]   DECODE2_FUNCT3,
         output wire [6:0]   DECODE2_FUNCT7,
         output reg [31:0]   DECODE2_IMM
@@ -31,7 +35,7 @@ module decode_2
     reg         decode1_valid;
     reg  [31:0] decode1_pc, decode1_imm_i, decode1_imm_s, decode1_imm_b, decode1_imm_u, decode1_imm_j;
     reg  [6:0]  decode1_opcode, decode1_funct7;
-    reg  [4:0]  decode1_rd;
+    reg  [4:0]  decode1_rd, decode1_rs1, decode1_rs2;
     reg  [2:0]  decode1_funct3;
 
     always @ (posedge CLK) begin
@@ -39,6 +43,8 @@ module decode_2
         decode1_pc <= DECODE1_PC;
         decode1_opcode <= DECODE1_OPCODE;
         decode1_rd <= DECODE1_RD;
+        decode1_rs1 <= DECODE1_RS1;
+        decode1_rs2 <= DECODE1_RS2;
         decode1_funct3 <= DECODE1_FUNCT3;
         decode1_funct7 <= DECODE1_FUNCT7;
         decode1_imm_i <= DECODE1_IMM_I;
@@ -52,6 +58,8 @@ module decode_2
     assign DECODE2_PC       = decode1_pc;
     assign DECODE2_OPCODE   = decode1_opcode;
     assign DECODE2_RD       = decode1_rd;
+    assign DECODE2_RS1      = decode1_rs1;
+    assign DECODE2_RS2      = decode1_rs2;
     assign DECODE2_FUNCT3   = decode1_funct3;
     assign DECODE2_FUNCT7   = decode1_funct7;
 
