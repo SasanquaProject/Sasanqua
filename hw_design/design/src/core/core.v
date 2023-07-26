@@ -46,4 +46,28 @@ module core
         end
     end
 
+    /* ----- 命令デコード1 ----- */
+    decode_1 decode_1 (
+        // 制御
+        .CLK    (CLK),
+        .RST    (RST)
+    );
+
+    /* ----- 命令デコード2 ----- */
+    decode_2 decode_2 (
+        // 制御
+        .CLK    (CLK),
+        .RST    (RST)
+    );
+
+    /* ----- 実行 ----- */
+    exec exec (
+        // 制御
+        .CLK    (CLK),
+        .RST    (RST)
+    );
+
+    /* ----- メモリアクセス ----- */
+
+
 endmodule
