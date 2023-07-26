@@ -39,6 +39,20 @@ wire        INST_VALID          = sasanqua.core.inst_valid;
 wire [31:0] INST_ADDR           = sasanqua.core.inst_addr;
 wire [31:0] INST_DATA           = sasanqua.core.inst_data;
 
+wire        DECODE1_VALID       = sasanqua.core.decode1_valid;
+wire [31:0] DECODE1_PC          = sasanqua.core.decode1_pc;
+wire [6:0]  DECODE1_OPCODE      = sasanqua.core.decode1_opcode;
+wire [4:0]  DECODE1_RD          = sasanqua.core.decode1_rd;
+wire [4:0]  DECODE1_RS1         = sasanqua.core.decode1_rs1;
+wire [4:0]  DECODE1_RS2         = sasanqua.core.decode1_rs2;
+wire [2:0]  DECODE1_FUNCT3      = sasanqua.core.decode1_funct3;
+wire [6:0]  DECODE1_FUNCT7      = sasanqua.core.decode1_funct7;
+wire [31:0] DECODE1_IMM_I       = sasanqua.core.decode1_imm_i;
+wire [31:0] DECODE1_IMM_S       = sasanqua.core.decode1_imm_s;
+wire [31:0] DECODE1_IMM_B       = sasanqua.core.decode1_imm_b;
+wire [31:0] DECODE1_IMM_U       = sasanqua.core.decode1_imm_u;
+wire [31:0] DECODE1_IMM_J       = sasanqua.core.decode1_imm_j;
+
 /* ----- テストベンチ本体 ----- */
 initial begin
     RST = 0;

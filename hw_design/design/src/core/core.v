@@ -47,10 +47,36 @@ module core
     end
 
     /* ----- 命令デコード1 ----- */
+    wire        decode1_valid;
+    wire [31:0] decode1_pc, decode1_imm_i, decode1_imm_s, decode1_imm_b, decode1_imm_u, decode1_imm_j;
+    wire [6:0]  decode1_opcode, decode1_funct7;
+    wire [4:0]  decode1_rd, decode1_rs1, decode1_rs2;
+    wire [2:0]  decode1_funct3;
+
     decode_1 decode_1 (
         // 制御
-        .CLK    (CLK),
-        .RST    (RST)
+        .CLK            (CLK),
+        .RST            (RST),
+
+        // フェッチ部との接続
+        .INST_VALID     (inst_valid),
+        .INST_PC        (inst_addr),
+        .INST_DATA      (inst_data),
+
+        // デコード部2との接続
+        .DECODE1_VALID  (decode1_valid),
+        .DECODE1_PC     (decode1_pc),
+        .DECODE1_OPCODE (decode1_opcode),
+        .DECODE1_RD     (decode1_rd),
+        .DECODE1_RS1    (decode1_rs1),
+        .DECODE1_RS2    (decode1_rs2),
+        .DECODE1_FUNCT3 (decode1_funct3),
+        .DECODE1_FUNCT7 (decode1_funct7),
+        .DECODE1_IMM_I  (decode1_imm_i),
+        .DECODE1_IMM_S  (decode1_imm_s),
+        .DECODE1_IMM_B  (decode1_imm_b),
+        .DECODE1_IMM_U  (decode1_imm_u),
+        .DECODE1_IMM_J  (decode1_imm_j)
     );
 
     /* ----- 命令デコード2 ----- */
