@@ -143,6 +143,8 @@ module mmu_axi
         .RDATA              (INST_RDATA),
 
         // AXIバス
+        .M_AXI_CLK          (M_AXI_CLK),
+        .M_AXI_RSTN         (M_AXI_RSTN),
         .M_AXI_AWADDR       (m_axi_inst_awaddr),
         .M_AXI_AWLEN        (m_axi_inst_awlen),
         .M_AXI_AWSIZE       (m_axi_inst_awsize),
@@ -187,14 +189,16 @@ module mmu_axi
         .RST                (RST),
 
         // メモリアクセス
-        .HIT_CHECK          (data_RADDR),
+        .HIT_CHECK          (DATA_RADDR),
         .HIT_CHECK_RESULT   (exists_data_cache),
-        .RDEN               (data_RDEN),
-        .RADDR              (data_RADDR),
-        .RVALID             (data_RVALID),
-        .RDATA              (data_RDATA),
+        .RDEN               (DATA_RDEN),
+        .RADDR              (DATA_RADDR),
+        .RVALID             (DATA_RVALID),
+        .RDATA              (DATA_RDATA),
 
         // AXIバス
+        .M_AXI_CLK          (M_AXI_CLK),
+        .M_AXI_RSTN         (M_AXI_RSTN),
         .M_AXI_AWADDR       (m_axi_data_awaddr),
         .M_AXI_AWLEN        (m_axi_data_awlen),
         .M_AXI_AWSIZE       (m_axi_data_awsize),
