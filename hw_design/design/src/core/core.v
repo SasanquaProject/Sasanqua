@@ -106,6 +106,7 @@ module core
         .DECODE_1ST_IMM_U  (decode_1st_imm_u),
         .DECODE_1ST_IMM_J  (decode_1st_imm_j),
 
+        // スケジューラ1との接続
         .DECODE_2ND_VALID  (decode_2nd_valid),
         .DECODE_2ND_PC     (decode_2nd_pc),
         .DECODE_2ND_OPCODE (decode_2nd_opcode),
@@ -117,29 +118,60 @@ module core
         .DECODE_2ND_IMM    (decode_2nd_imm)
     );
 
-    // /* ----- 3-2. レジスタアクセス ----- */
-    // wire [31:0] reg_rs1_v, reg_rs2_v;
+    /* ----- 4-1. スケジューリング1 ----- */
+    wire        schedule_1st_valid;
+    wire [31:0] schedule_1st_pc, schedule_1st_imm;
+    wire [6:0]  schedule_1st_opcode, schedule_1st_funct7;
+    wire [4:0]  schedule_1st_rd, schedule_1st_rs1, schedule_1st_rs2;
+    wire [2:0]  schedule_1st_funct3;
 
-    // register register (
-    //     // 制御
-    //     .CLK        (CLK),
-    //     .RST        (RST),
+    schedule_1st schedule_1st (
+        // 制御
+        .CLK            (CLK),
+        .RST            (RST),
 
-    //     // レジスタアクセス(rv32i)
-    //     .REG_IR_A   (decode1_rs1),
-    //     .REG_IR_B   (decode1_rs2),
-    //     .REG_IR_AV  (reg_rs1_v),
-    //     .REG_IR_BV  (reg_rs2_v)
-    // );
+        // デコード部2との接続
+        .DECODE_2ND_VALID  (decode_2nd_valid),
+        .DECODE_2ND_PC     (decode_2nd_pc),
+        .DECODE_2ND_OPCODE (decode_2nd_opcode),
+        .DECODE_2ND_RD     (decode_2nd_rd),
+        .DECODE_2ND_FUNCT3 (decode_2nd_funct3),
+        .DECODE_2ND_FUNCT7 (decode_2nd_funct7),
+        .DECODE_2ND_IMM    (decode_2nd_imm),
 
-    /* ----- 4. 実行 ----- */
+        // 実行部との接続
+        .SCHEDULE_1ST_VALID  (schedule_1st_valid),
+        .SCHEDULE_1ST_PC     (schedule_1st_pc),
+        .SCHEDULE_1ST_OPCODE (schedule_1st_opcode),
+        .SCHEDULE_1ST_RD     (schedule_1st_rd),
+        .SCHEDULE_1ST_FUNCT3 (schedule_1st_funct3),
+        .SCHEDULE_1ST_FUNCT7 (schedule_1st_funct7),
+        .SCHEDULE_1ST_IMM    (schedule_1st_imm)
+    );
+
+    /* ----- 4-2. レジスタアクセス ----- */
+    wire [31:0] reg_rs1_v, reg_rs2_v;
+
+    register register (
+        // 制御
+        .CLK        (CLK),
+        .RST        (RST),
+
+        // レジスタアクセス(rv32i)
+        .REG_IR_A   (decode_2nd_rs1),
+        .REG_IR_B   (decode_2nd_rs2),
+        .REG_IR_AV  (reg_rs1_v),
+        .REG_IR_BV  (reg_rs2_v)
+    );
+
+    /* ----- 5. 実行 ----- */
     exec exec (
         // 制御
         .CLK    (CLK),
         .RST    (RST)
     );
 
-    /* ----- 5. メモリアクセス ----- */
+    /* ----- 6. メモリアクセス ----- */
 
 
 endmodule

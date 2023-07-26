@@ -63,6 +63,16 @@ wire [2:0]  DECODE_2ND_FUNCT3      = sasanqua.core.decode_2nd_funct3;
 wire [6:0]  DECODE_2ND_FUNCT7      = sasanqua.core.decode_2nd_funct7;
 wire [31:0] DECODE_2ND_IMM         = sasanqua.core.decode_2nd_imm;
 
+wire        SCHEDULE_1ST_VALID       = sasanqua.core.schedule_1st_valid;
+wire [31:0] SCHEDULE_1ST_PC          = sasanqua.core.schedule_1st_pc;
+wire [6:0]  SCHEDULE_1ST_OPCODE      = sasanqua.core.schedule_1st_opcode;
+wire [4:0]  SCHEDULE_1ST_RD          = sasanqua.core.schedule_1st_rd;
+wire [4:0]  SCHEDULE_1ST_RS1         = sasanqua.core.reg_rs1_v;
+wire [4:0]  SCHEDULE_1ST_RS2         = sasanqua.core.reg_rs2_v;
+wire [2:0]  SCHEDULE_1ST_FUNCT3      = sasanqua.core.schedule_1st_funct3;
+wire [6:0]  SCHEDULE_1ST_FUNCT7      = sasanqua.core.schedule_1st_funct7;
+wire [31:0] SCHEDULE_1ST_IMM         = sasanqua.core.schedule_1st_imm;
+
 /* ----- テストベンチ本体 ----- */
 initial begin
     RST = 0;

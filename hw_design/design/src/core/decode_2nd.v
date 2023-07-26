@@ -19,7 +19,7 @@ module decode_2nd
         input wire [31:0]   DECODE_1ST_IMM_U,
         input wire [31:0]   DECODE_1ST_IMM_J,
 
-        /* ----- 実行部との接続 ----- */
+        /* ----- スケジューラ1との接続 ----- */
         output reg          DECODE_2ND_VALID,
         output wire [31:0]  DECODE_2ND_PC,
         output wire [6:0]   DECODE_2ND_OPCODE,
@@ -28,7 +28,7 @@ module decode_2nd
         output wire [4:0]   DECODE_2ND_RS2,
         output wire [2:0]   DECODE_2ND_FUNCT3,
         output wire [6:0]   DECODE_2ND_FUNCT7,
-        output reg [31:0]   DECODE_2ND_IMM
+        output reg  [31:0]  DECODE_2ND_IMM
     );
 
     /* ----- 入力取り込み ----- */
