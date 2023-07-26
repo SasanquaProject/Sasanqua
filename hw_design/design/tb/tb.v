@@ -39,29 +39,29 @@ wire        INST_VALID          = sasanqua.core.inst_valid;
 wire [31:0] INST_ADDR           = sasanqua.core.inst_addr;
 wire [31:0] INST_DATA           = sasanqua.core.inst_data;
 
-wire        DECODE1_VALID       = sasanqua.core.decode1_valid;
-wire [31:0] DECODE1_PC          = sasanqua.core.decode1_pc;
-wire [6:0]  DECODE1_OPCODE      = sasanqua.core.decode1_opcode;
-wire [4:0]  DECODE1_RD          = sasanqua.core.decode1_rd;
-wire [4:0]  DECODE1_RS1         = sasanqua.core.decode1_rs1;
-wire [4:0]  DECODE1_RS2         = sasanqua.core.decode1_rs2;
-wire [2:0]  DECODE1_FUNCT3      = sasanqua.core.decode1_funct3;
-wire [6:0]  DECODE1_FUNCT7      = sasanqua.core.decode1_funct7;
-wire [31:0] DECODE1_IMM_I       = sasanqua.core.decode1_imm_i;
-wire [31:0] DECODE1_IMM_S       = sasanqua.core.decode1_imm_s;
-wire [31:0] DECODE1_IMM_B       = sasanqua.core.decode1_imm_b;
-wire [31:0] DECODE1_IMM_U       = sasanqua.core.decode1_imm_u;
-wire [31:0] DECODE1_IMM_J       = sasanqua.core.decode1_imm_j;
+wire        DECODE_1ST_VALID       = sasanqua.core.decode_1st_valid;
+wire [31:0] DECODE_1ST_PC          = sasanqua.core.decode_1st_pc;
+wire [6:0]  DECODE_1ST_OPCODE      = sasanqua.core.decode_1st_opcode;
+wire [4:0]  DECODE_1ST_RD          = sasanqua.core.decode_1st_rd;
+wire [4:0]  DECODE_1ST_RS1         = sasanqua.core.decode_1st_rs1;
+wire [4:0]  DECODE_1ST_RS2         = sasanqua.core.decode_1st_rs2;
+wire [2:0]  DECODE_1ST_FUNCT3      = sasanqua.core.decode_1st_funct3;
+wire [6:0]  DECODE_1ST_FUNCT7      = sasanqua.core.decode_1st_funct7;
+wire [31:0] DECODE_1ST_IMM_I       = sasanqua.core.decode_1st_imm_i;
+wire [31:0] DECODE_1ST_IMM_S       = sasanqua.core.decode_1st_imm_s;
+wire [31:0] DECODE_1ST_IMM_B       = sasanqua.core.decode_1st_imm_b;
+wire [31:0] DECODE_1ST_IMM_U       = sasanqua.core.decode_1st_imm_u;
+wire [31:0] DECODE_1ST_IMM_J       = sasanqua.core.decode_1st_imm_j;
 
-wire        DECODE2_VALID       = sasanqua.core.decode2_valid;
-wire [31:0] DECODE2_PC          = sasanqua.core.decode2_pc;
-wire [6:0]  DECODE2_OPCODE      = sasanqua.core.decode2_opcode;
-wire [4:0]  DECODE2_RD          = sasanqua.core.decode2_rd;
-wire [4:0]  DECODE2_RS1         = sasanqua.core.decode2_rs1;
-wire [4:0]  DECODE2_RS2         = sasanqua.core.decode2_rs2;
-wire [2:0]  DECODE2_FUNCT3      = sasanqua.core.decode2_funct3;
-wire [6:0]  DECODE2_FUNCT7      = sasanqua.core.decode2_funct7;
-wire [31:0] DECODE2_IMM         = sasanqua.core.decode2_imm;
+wire        DECODE_2ND_VALID       = sasanqua.core.decode_2nd_valid;
+wire [31:0] DECODE_2ND_PC          = sasanqua.core.decode_2nd_pc;
+wire [6:0]  DECODE_2ND_OPCODE      = sasanqua.core.decode_2nd_opcode;
+wire [4:0]  DECODE_2ND_RD          = sasanqua.core.decode_2nd_rd;
+wire [4:0]  DECODE_2ND_RS1         = sasanqua.core.decode_2nd_rs1;
+wire [4:0]  DECODE_2ND_RS2         = sasanqua.core.decode_2nd_rs2;
+wire [2:0]  DECODE_2ND_FUNCT3      = sasanqua.core.decode_2nd_funct3;
+wire [6:0]  DECODE_2ND_FUNCT7      = sasanqua.core.decode_2nd_funct7;
+wire [31:0] DECODE_2ND_IMM         = sasanqua.core.decode_2nd_imm;
 
 /* ----- テストベンチ本体 ----- */
 initial begin

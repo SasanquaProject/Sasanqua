@@ -47,13 +47,13 @@ module core
     end
 
     /* ----- 2. 命令デコード1 ----- */
-    wire        decode1_valid;
-    wire [31:0] decode1_pc, decode1_imm_i, decode1_imm_s, decode1_imm_b, decode1_imm_u, decode1_imm_j;
-    wire [6:0]  decode1_opcode, decode1_funct7;
-    wire [4:0]  decode1_rd, decode1_rs1, decode1_rs2;
-    wire [2:0]  decode1_funct3;
+    wire        decode_1st_valid;
+    wire [31:0] decode_1st_pc, decode_1st_imm_i, decode_1st_imm_s, decode_1st_imm_b, decode_1st_imm_u, decode_1st_imm_j;
+    wire [6:0]  decode_1st_opcode, decode_1st_funct7;
+    wire [4:0]  decode_1st_rd, decode_1st_rs1, decode_1st_rs2;
+    wire [2:0]  decode_1st_funct3;
 
-    decode_1 decode_1 (
+    decode_1st decode_1st (
         // 制御
         .CLK            (CLK),
         .RST            (RST),
@@ -64,57 +64,57 @@ module core
         .INST_DATA      (inst_data),
 
         // デコード部2との接続
-        .DECODE1_VALID  (decode1_valid),
-        .DECODE1_PC     (decode1_pc),
-        .DECODE1_OPCODE (decode1_opcode),
-        .DECODE1_RD     (decode1_rd),
-        .DECODE1_RS1    (decode1_rs1),
-        .DECODE1_RS2    (decode1_rs2),
-        .DECODE1_FUNCT3 (decode1_funct3),
-        .DECODE1_FUNCT7 (decode1_funct7),
-        .DECODE1_IMM_I  (decode1_imm_i),
-        .DECODE1_IMM_S  (decode1_imm_s),
-        .DECODE1_IMM_B  (decode1_imm_b),
-        .DECODE1_IMM_U  (decode1_imm_u),
-        .DECODE1_IMM_J  (decode1_imm_j)
+        .DECODE_1ST_VALID  (decode_1st_valid),
+        .DECODE_1ST_PC     (decode_1st_pc),
+        .DECODE_1ST_OPCODE (decode_1st_opcode),
+        .DECODE_1ST_RD     (decode_1st_rd),
+        .DECODE_1ST_RS1    (decode_1st_rs1),
+        .DECODE_1ST_RS2    (decode_1st_rs2),
+        .DECODE_1ST_FUNCT3 (decode_1st_funct3),
+        .DECODE_1ST_FUNCT7 (decode_1st_funct7),
+        .DECODE_1ST_IMM_I  (decode_1st_imm_i),
+        .DECODE_1ST_IMM_S  (decode_1st_imm_s),
+        .DECODE_1ST_IMM_B  (decode_1st_imm_b),
+        .DECODE_1ST_IMM_U  (decode_1st_imm_u),
+        .DECODE_1ST_IMM_J  (decode_1st_imm_j)
     );
 
     /* ----- 3. 命令デコード2 ----- */
-    wire        decode2_valid;
-    wire [31:0] decode2_pc, decode2_imm;
-    wire [6:0]  decode2_opcode, decode2_funct7;
-    wire [4:0]  decode2_rd, decode2_rs1, decode2_rs2;
-    wire [2:0]  decode2_funct3;
+    wire        decode_2nd_valid;
+    wire [31:0] decode_2nd_pc, decode_2nd_imm;
+    wire [6:0]  decode_2nd_opcode, decode_2nd_funct7;
+    wire [4:0]  decode_2nd_rd, decode_2nd_rs1, decode_2nd_rs2;
+    wire [2:0]  decode_2nd_funct3;
 
-    decode_2 decode_2 (
+    decode_2nd decode_2nd (
         // 制御
         .CLK            (CLK),
         .RST            (RST),
 
         // デコード部1との接続
-        .DECODE1_VALID  (decode1_valid),
-        .DECODE1_PC     (decode1_pc),
-        .DECODE1_OPCODE (decode1_opcode),
-        .DECODE1_RD     (decode1_rd),
-        .DECODE1_RS1    (decode1_rs1),
-        .DECODE1_RS2    (decode1_rs2),
-        .DECODE1_FUNCT3 (decode1_funct3),
-        .DECODE1_FUNCT7 (decode1_funct7),
-        .DECODE1_IMM_I  (decode1_imm_i),
-        .DECODE1_IMM_S  (decode1_imm_s),
-        .DECODE1_IMM_B  (decode1_imm_b),
-        .DECODE1_IMM_U  (decode1_imm_u),
-        .DECODE1_IMM_J  (decode1_imm_j),
+        .DECODE_1ST_VALID  (decode_1st_valid),
+        .DECODE_1ST_PC     (decode_1st_pc),
+        .DECODE_1ST_OPCODE (decode_1st_opcode),
+        .DECODE_1ST_RD     (decode_1st_rd),
+        .DECODE_1ST_RS1    (decode_1st_rs1),
+        .DECODE_1ST_RS2    (decode_1st_rs2),
+        .DECODE_1ST_FUNCT3 (decode_1st_funct3),
+        .DECODE_1ST_FUNCT7 (decode_1st_funct7),
+        .DECODE_1ST_IMM_I  (decode_1st_imm_i),
+        .DECODE_1ST_IMM_S  (decode_1st_imm_s),
+        .DECODE_1ST_IMM_B  (decode_1st_imm_b),
+        .DECODE_1ST_IMM_U  (decode_1st_imm_u),
+        .DECODE_1ST_IMM_J  (decode_1st_imm_j),
 
-        .DECODE2_VALID  (decode2_valid),
-        .DECODE2_PC     (decode2_pc),
-        .DECODE2_OPCODE (decode2_opcode),
-        .DECODE2_RD     (decode2_rd),
-        .DECODE2_RS1    (decode2_rs1),
-        .DECODE2_RS2    (decode2_rs2),
-        .DECODE2_FUNCT3 (decode2_funct3),
-        .DECODE2_FUNCT7 (decode2_funct7),
-        .DECODE2_IMM    (decode2_imm)
+        .DECODE_2ND_VALID  (decode_2nd_valid),
+        .DECODE_2ND_PC     (decode_2nd_pc),
+        .DECODE_2ND_OPCODE (decode_2nd_opcode),
+        .DECODE_2ND_RD     (decode_2nd_rd),
+        .DECODE_2ND_RS1    (decode_2nd_rs1),
+        .DECODE_2ND_RS2    (decode_2nd_rs2),
+        .DECODE_2ND_FUNCT3 (decode_2nd_funct3),
+        .DECODE_2ND_FUNCT7 (decode_2nd_funct7),
+        .DECODE_2ND_IMM    (decode_2nd_imm)
     );
 
     // /* ----- 3-2. レジスタアクセス ----- */
