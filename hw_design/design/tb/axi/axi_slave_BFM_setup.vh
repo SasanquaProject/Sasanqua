@@ -190,11 +190,43 @@ begin
 end
 endtask
 
-task write_dummy_inst;
+task write_rv32i_test_inst;
 integer i;
 begin
-    for ( i = 0; i < 4096; i = i + 1) begin
-        axi_slave_bfm.ram_array[i] = i;
+    axi_slave_bfm.ram_array[ 0] = 32'h00a00093;  // addi x1, x0, 10
+    axi_slave_bfm.ram_array[ 1] = 32'h01400113;  // addi x2, x0, 20
+    axi_slave_bfm.ram_array[ 2] = 32'h01e00193;  // addi x3, x0, 30
+
+    axi_slave_bfm.ram_array[ 3] = 32'h00000083;  // lb x1, 0(x0)
+    axi_slave_bfm.ram_array[ 4] = 32'h00004083;  // lbu x1, 0(x0)
+    axi_slave_bfm.ram_array[ 5] = 32'h00001083;  // lh x1, 0(x0)
+    axi_slave_bfm.ram_array[ 6] = 32'h00005083;  // lhu x1, 0(x0)
+    axi_slave_bfm.ram_array[ 7] = 32'h00002083;  // lw x1, 0(x0)
+
+    axi_slave_bfm.ram_array[ 8] = 32'h00000083;  // lb x1, 0(x0)
+    axi_slave_bfm.ram_array[ 9] = 32'h00100083;  // lb x1, 1(x0)
+    axi_slave_bfm.ram_array[10] = 32'h00200083;  // lb x1, 2(x0)
+    axi_slave_bfm.ram_array[11] = 32'h00300083;  // lb x1, 3(x0)
+
+    axi_slave_bfm.ram_array[12] = 32'h00001083;  // lh x1, 0(x0)
+    axi_slave_bfm.ram_array[13] = 32'h00101083;  // lh x1, 1(x0)
+    axi_slave_bfm.ram_array[14] = 32'h00201083;  // lh x1, 2(x0)
+
+    axi_slave_bfm.ram_array[15] = 32'h00100023;  // sb x1, 0(x0)
+    axi_slave_bfm.ram_array[16] = 32'h00101023;  // sh x1, 0(x0)
+    axi_slave_bfm.ram_array[17] = 32'h00102023;  // sw x1, 0(x0)
+
+    axi_slave_bfm.ram_array[18] = 32'h00100023;  // sb x1, 0(x0)
+    axi_slave_bfm.ram_array[19] = 32'h001000a3;  // sb x1, 1(x0)
+    axi_slave_bfm.ram_array[20] = 32'h00100123;  // sb x1, 2(x0)
+    axi_slave_bfm.ram_array[21] = 32'h001001a3;  // sb x1, 3(x0)
+
+    axi_slave_bfm.ram_array[22] = 32'h00101023;  // sh x1, 0(x0)
+    axi_slave_bfm.ram_array[23] = 32'h001010a3;  // sh x1, 1(x0)
+    axi_slave_bfm.ram_array[24] = 32'h00101123;  // sh x1, 2(x0)
+
+    for (i = 25; i < 4096; i = i + 1) begin
+        axi_slave_bfm.ram_array[i] = 32'b0;
     end
 end
 endtask
