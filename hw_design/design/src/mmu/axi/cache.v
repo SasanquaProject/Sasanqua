@@ -75,11 +75,11 @@ module cache_axi
     reg [19:0]  cached_addr;
     reg [31:0]  cache [0:1024];
 
-    assign HIT_CHECK_RESULT = HIT_CHECK[31:12] == cached_addr;
+    assign HIT_CHECK_RESULT = !RDEN || HIT_CHECK[31:12] == cached_addr;
 
     always @ (RADDR, cached_addr) begin
-        RVALID <= RADDR[31:12] == cached_addr;
-        RDATA <= cache[RADDR[11:2]];
+        RVALID <= RDEN && RADDR[31:12] == cached_addr;
+        RDATA <= RVALID ? cache[RADDR[11:2]] : 32'b0;
     end
 
     /* ----- RAMアクセス ------ */
