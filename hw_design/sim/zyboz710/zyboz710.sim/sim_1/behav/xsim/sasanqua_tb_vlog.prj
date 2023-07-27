@@ -3,6 +3,7 @@ verilog xil_defaultlib  --include "../../../../../../design/tb/axi" \
 "../../../../../../design/tb/axi/axi_slave_BFM.v" \
 "../../../../../../design/src/mmu/axi/cache.v" \
 "../../../../../../design/src/core/core.v" \
+"../../../../../../design/src/core/cushion.v" \
 "../../../../../../design/src/core/decode_1st.v" \
 "../../../../../../design/src/core/decode_2nd.v" \
 "../../../../../../design/src/core/exec.v" \

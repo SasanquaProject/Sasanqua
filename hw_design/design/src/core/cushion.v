@@ -1,0 +1,81 @@
+module cushion
+    (
+        /* ----- 制御 ----- */
+        input wire          CLK,
+        input wire          RST,
+
+        /* ----- 実行部との接続 ----- */
+        // レジスタ(W)
+        input wire          EXEC_REG_W_VALID,
+        input wire  [4:0]   EXEC_REG_W_RD,
+        input wire  [31:0]  EXEC_REG_W_DATA,
+
+        // メモリ(R)
+        input wire          EXEC_MEM_R_VALID,
+        input wire  [4:0]   EXEC_MEM_R_RD,
+        input wire  [31:0]  EXEC_MEM_R_ADDR,
+        input wire  [3:0]   EXEC_MEM_R_STRB,
+        input wire          EXEC_MEM_R_SIGNED,
+
+        // メモリ(W)
+        input wire          EXEC_MEM_W_VALID,
+        input wire  [31:0]  EXEC_MEM_W_ADDR,
+        input wire  [3:0]   EXEC_MEM_W_STRB,
+        input wire  [31:0]  EXEC_MEM_W_DATA,
+
+        /* ----- メモリアクセス(r)部との接続 ----- */
+        // レジスタ(W)
+        output wire         CUSHION_REG_W_VALID,
+        output wire [4:0]   CUSHION_REG_W_RD,
+        output wire [31:0]  CUSHION_REG_W_DATA,
+
+        // メモリ(R)
+        output wire         CUSHION_MEM_R_VALID,
+        output wire [4:0]   CUSHION_MEM_R_RD,
+        output wire [31:0]  CUSHION_MEM_R_ADDR,
+        output wire [3:0]   CUSHION_MEM_R_STRB,
+        output wire         CUSHION_MEM_R_SIGNED,
+
+        // メモリ(W)
+        output wire         CUSHION_MEM_W_VALID,
+        output wire [31:0]  CUSHION_MEM_W_ADDR,
+        output wire [3:0]   CUSHION_MEM_W_STRB,
+        output wire [31:0]  CUSHION_MEM_W_DATA
+    );
+
+    /* ----- 入力取り込み ----- */
+    reg         exec_reg_w_valid, exec_mem_r_valid, exec_mem_r_signed, exec_mem_w_valid;
+    reg [31:0]  exec_reg_w_data, exec_mem_r_addr, exec_mem_w_addr, exec_mem_w_data;
+    reg [4:0]   exec_reg_w_rd, exec_mem_r_rd;
+    reg [3:0]   exec_mem_r_strb, exec_mem_w_strb;
+
+    always @ (posedge CLK) begin
+        exec_reg_w_valid <= EXEC_REG_W_VALID;
+        exec_reg_w_rd <= EXEC_REG_W_RD;
+        exec_reg_w_data <= EXEC_REG_W_DATA;
+        exec_mem_r_valid <= EXEC_MEM_R_VALID;
+        exec_mem_r_rd <= EXEC_MEM_R_RD;
+        exec_mem_r_addr <= EXEC_MEM_R_ADDR;
+        exec_mem_r_strb <= EXEC_MEM_R_STRB;
+        exec_mem_r_signed <= EXEC_MEM_R_SIGNED;
+        exec_mem_w_valid <= EXEC_MEM_W_VALID;
+        exec_mem_w_addr <= EXEC_MEM_W_ADDR;
+        exec_mem_w_strb <= EXEC_MEM_W_STRB;
+        exec_mem_w_data <= EXEC_MEM_W_DATA;
+    end
+
+    /* ----- 出力 ----- */
+    assign CUSHION_REG_W_VALID  = exec_reg_w_valid;
+    assign CUSHION_REG_W_RD     = exec_reg_w_rd;
+    assign CUSHION_REG_W_DATA   = exec_reg_w_data;
+    assign CUSHION_MEM_R_VALID  = exec_mem_r_valid;
+    assign CUSHION_MEM_R_RD     = exec_mem_r_rd;
+    assign CUSHION_MEM_R_ADDR   = exec_mem_r_addr;
+    assign CUSHION_MEM_R_STRB   = exec_mem_r_strb;
+    assign CUSHION_MEM_R_SIGNED = exec_mem_r_signed;
+    assign CUSHION_MEM_W_VALID  = exec_mem_w_valid;
+    assign CUSHION_MEM_W_ADDR   = exec_mem_w_addr;
+    assign CUSHION_MEM_W_STRB   = exec_mem_w_strb;
+    assign CUSHION_MEM_W_DATA   = exec_mem_w_data;
+
+endmodule

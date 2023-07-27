@@ -203,7 +203,49 @@ module core
         .JMP_PC         (jmp_pc)
     );
 
-    /* ----- 6. メモリアクセス ----- */
+    /* ----- 6. 実行部待機 ------ */
+    wire        cushion_reg_w_valid, cushion_mem_r_valid, cushion_mem_r_signed, cushion_mem_w_valid, cushion_jmp_do;
+    wire [31:0] cushion_reg_w_data, cushion_mem_r_addr, cushion_mem_w_addr, cushion_mem_w_data, cushion_jmp_pc;
+    wire [4:0]  cushion_reg_w_rd, cushion_mem_r_rd;
+    wire [3:0]  cushion_mem_r_strb, cushion_mem_w_strb;
+
+    cushion cushion (
+        // 制御
+        .CLK                    (CLK),
+        .RST                    (RST),
+
+        // 実行部との接続
+        .EXEC_REG_W_VALID       (reg_w_valid),
+        .EXEC_REG_W_RD          (reg_w_rd),
+        .EXEC_REG_W_DATA        (reg_w_data),
+        .EXEC_MEM_R_VALID       (mem_r_valid),
+        .EXEC_MEM_R_RD          (mem_r_rd),
+        .EXEC_MEM_R_ADDR        (mem_r_addr),
+        .EXEC_MEM_R_STRB        (mem_r_strb),
+        .EXEC_MEM_R_SIGNED      (mem_r_signed),
+        .EXEC_MEM_W_VALID       (mem_w_valid),
+        .EXEC_MEM_W_ADDR        (mem_w_addr),
+        .EXEC_MEM_W_STRB        (mem_w_strb),
+        .EXEC_MEM_W_DATA        (mem_w_data),
+
+        // メモリアクセス部(r)との接続
+        .CUSHION_REG_W_VALID    (cushion_reg_w_valid),
+        .CUSHION_REG_W_RD       (cushion_reg_w_rd),
+        .CUSHION_REG_W_DATA     (cushion_reg_w_data),
+        .CUSHION_MEM_R_VALID    (cushion_mem_r_valid),
+        .CUSHION_MEM_R_RD       (cushion_mem_r_rd),
+        .CUSHION_MEM_R_ADDR     (cushion_mem_r_addr),
+        .CUSHION_MEM_R_STRB     (cushion_mem_r_strb),
+        .CUSHION_MEM_R_SIGNED   (cushion_mem_r_signed),
+        .CUSHION_MEM_W_VALID    (cushion_mem_w_valid),
+        .CUSHION_MEM_W_ADDR     (cushion_mem_w_addr),
+        .CUSHION_MEM_W_STRB     (cushion_mem_w_strb),
+        .CUSHION_MEM_W_DATA     (cushion_mem_w_data)
+    );
+
+    /* ----- 7. メモリアクセス(r) ----- */
+
+    /* ----- 8. メモリアクセス(w) ----- */
 
 
 endmodule
