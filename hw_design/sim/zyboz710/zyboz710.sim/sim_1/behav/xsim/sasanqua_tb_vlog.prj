@@ -8,6 +8,8 @@ verilog xil_defaultlib  --include "../../../../../../design/tb/axi" \
 "../../../../../../design/src/core/decode_2nd.v" \
 "../../../../../../design/src/core/exec.v" \
 "../../../../../../design/src/mmu/axi/mmu.v" \
+"../../../../../../design/src/core/mread.v" \
+"../../../../../../design/src/core/mwrite.v" \
 "../../../../../../design/src/core/register.v" \
 "../../../../../../design/src/sasanqua.v" \
 "../../../../../../design/src/core/schedule_1st.v" \

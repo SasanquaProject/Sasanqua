@@ -104,6 +104,15 @@ wire [31:0] CUSHION_MEM_W_ADDR      = sasanqua.core.cushion_mem_w_addr;
 wire [3:0]  CUSHION_MEM_W_STRB      = sasanqua.core.cushion_mem_w_strb;
 wire [31:0] CUSHION_MEM_W_DATA      = sasanqua.core.cushion_mem_w_data;
 
+// Core: Mem(r)
+wire        MEMR_REG_W_VALID        = sasanqua.core.memr_reg_w_valid;
+wire [4:0]  MEMR_REG_W_RD           = sasanqua.core.memr_reg_w_rd;
+wire [31:0] MEMR_REG_W_DATA         = sasanqua.core.memr_reg_w_data;
+wire        MEMR_MEM_W_VALID        = sasanqua.core.memr_mem_w_valid;
+wire [31:0] MEMR_MEM_W_ADDR         = sasanqua.core.memr_mem_w_addr;
+wire [3:0]  MEMR_MEM_W_STRB         = sasanqua.core.memr_mem_w_strb;
+wire [31:0] MEMR_MEM_W_DATA         = sasanqua.core.memr_mem_w_data;
+
 /* ----- テストベンチ本体 ----- */
 initial begin
     RST = 0;

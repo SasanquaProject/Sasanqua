@@ -204,8 +204,8 @@ module core
     );
 
     /* ----- 6. 実行部待機 ------ */
-    wire        cushion_reg_w_valid, cushion_mem_r_valid, cushion_mem_r_signed, cushion_mem_w_valid, cushion_jmp_do;
-    wire [31:0] cushion_reg_w_data, cushion_mem_r_addr, cushion_mem_w_addr, cushion_mem_w_data, cushion_jmp_pc;
+    wire        cushion_reg_w_valid, cushion_mem_r_valid, cushion_mem_r_signed, cushion_mem_w_valid;
+    wire [31:0] cushion_reg_w_data, cushion_mem_r_addr, cushion_mem_w_addr, cushion_mem_w_data;
     wire [4:0]  cushion_reg_w_rd, cushion_mem_r_rd;
     wire [3:0]  cushion_mem_r_strb, cushion_mem_w_strb;
 
@@ -244,8 +244,51 @@ module core
     );
 
     /* ----- 7. メモリアクセス(r) ----- */
+    wire        memr_reg_w_valid, memr_mem_w_valid;
+    wire [31:0] memr_reg_w_data, memr_mem_w_addr, memr_mem_w_data;
+    wire [4:0]  memr_reg_w_rd;
+    wire [3:0]  memr_mem_w_strb;
+
+    mread mread (
+        // 制御
+        .CLK                    (CLK),
+        .RST                    (RST),
+
+        // 実行待機部との接続
+        .CUSHION_REG_W_VALID    (cushion_reg_w_valid),
+        .CUSHION_REG_W_RD       (cushion_reg_w_rd),
+        .CUSHION_REG_W_DATA     (cushion_reg_w_data),
+        .CUSHION_MEM_R_VALID    (cushion_mem_r_valid),
+        .CUSHION_MEM_R_RD       (cushion_mem_r_rd),
+        .CUSHION_MEM_R_ADDR     (cushion_mem_r_addr),
+        .CUSHION_MEM_R_STRB     (cushion_mem_r_strb),
+        .CUSHION_MEM_R_SIGNED   (cushion_mem_r_signed),
+        .CUSHION_MEM_W_VALID    (cushion_mem_w_valid),
+        .CUSHION_MEM_W_ADDR     (cushion_mem_w_addr),
+        .CUSHION_MEM_W_STRB     (cushion_mem_w_strb),
+        .CUSHION_MEM_W_DATA     (cushion_mem_w_data),
+
+        // メモリアクセス(w)との接続
+        .MEMR_REG_W_VALID       (memr_reg_w_valid),
+        .MEMR_REG_W_RD          (memr_reg_w_rd),
+        .MEMR_REG_W_DATA        (memr_reg_w_data),
+        .MEMR_MEM_W_VALID       (memr_mem_w_valid),
+        .MEMR_MEM_W_ADDR        (memr_mem_w_addr),
+        .MEMR_MEM_W_STRB        (memr_mem_w_strb),
+        .MEMR_MEM_W_DATA        (memr_mem_w_data)
+    );
 
     /* ----- 8. メモリアクセス(w) ----- */
+    mwrite mwrite (
+        // 制御
+        .CLK                    (CLK),
+        .RST                    (RST),
 
+        // メモリアクセス(w)との接続
+        .MEMR_MEM_W_VALID       (memr_mem_w_valid),
+        .MEMR_MEM_W_ADDR        (memr_mem_w_addr),
+        .MEMR_MEM_W_STRB        (memr_mem_w_strb),
+        .MEMR_MEM_W_DATA        (memr_mem_w_data)
+    );
 
 endmodule
