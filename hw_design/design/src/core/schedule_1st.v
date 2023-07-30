@@ -1,8 +1,9 @@
 module schedule_1st
     (
         /* ----- 制御 ----- */
-        input               CLK,
-        input               RST,
+        input wire          CLK,
+        input wire          RST,
+        input wire          STALL,
 
         /* ----- デコード部2との接続 ----- */
         input wire          DECODE_2ND_VALID,
@@ -31,13 +32,27 @@ module schedule_1st
     reg  [2:0]  decode_2nd_funct3;
 
     always @ (posedge CLK) begin
-        decode_2nd_valid <= DECODE_2ND_VALID;
-        decode_2nd_pc <= DECODE_2ND_PC;
-        decode_2nd_opcode <= DECODE_2ND_OPCODE;
-        decode_2nd_rd <= DECODE_2ND_RD;
-        decode_2nd_funct3 <= DECODE_2ND_FUNCT3;
-        decode_2nd_funct7 <= DECODE_2ND_FUNCT7;
-        decode_2nd_imm <= DECODE_2ND_IMM;
+        if (RST) begin
+            decode_2nd_valid <= 1'b0;
+            decode_2nd_pc <= 32'b0;
+            decode_2nd_opcode <= 7'b0;
+            decode_2nd_rd <= 5'b0;
+            decode_2nd_funct3 <= 3'b0;
+            decode_2nd_funct7 <= 7'b0;
+            decode_2nd_imm <= 32'b0;
+        end
+        else if (STALL) begin
+            // do nothing
+        end
+        else begin
+            decode_2nd_valid <= DECODE_2ND_VALID;
+            decode_2nd_pc <= DECODE_2ND_PC;
+            decode_2nd_opcode <= DECODE_2ND_OPCODE;
+            decode_2nd_rd <= DECODE_2ND_RD;
+            decode_2nd_funct3 <= DECODE_2ND_FUNCT3;
+            decode_2nd_funct7 <= DECODE_2ND_FUNCT7;
+            decode_2nd_imm <= DECODE_2ND_IMM;
+        end
     end
 
     /* ----- 出力(仮) ----- */

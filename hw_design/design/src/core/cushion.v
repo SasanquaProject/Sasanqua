@@ -3,6 +3,7 @@ module cushion
         /* ----- 制御 ----- */
         input wire          CLK,
         input wire          RST,
+        input wire          STALL,
 
         /* ----- 実行部との接続 ----- */
         // レジスタ(W)
@@ -48,17 +49,35 @@ module cushion
     reg [3:0]   exec_mem_r_strb, exec_mem_w_strb;
 
     always @ (posedge CLK) begin
-        exec_reg_w_rd <= EXEC_REG_W_RD;
-        exec_reg_w_data <= EXEC_REG_W_DATA;
-        exec_mem_r_valid <= EXEC_MEM_R_VALID;
-        exec_mem_r_rd <= EXEC_MEM_R_RD;
-        exec_mem_r_addr <= EXEC_MEM_R_ADDR;
-        exec_mem_r_strb <= EXEC_MEM_R_STRB;
-        exec_mem_r_signed <= EXEC_MEM_R_SIGNED;
-        exec_mem_w_valid <= EXEC_MEM_W_VALID;
-        exec_mem_w_addr <= EXEC_MEM_W_ADDR;
-        exec_mem_w_strb <= EXEC_MEM_W_STRB;
-        exec_mem_w_data <= EXEC_MEM_W_DATA;
+        if (RST) begin
+            exec_reg_w_rd <= 5'b0;
+            exec_reg_w_data <= 32'b0;
+            exec_mem_r_valid <= 1'b0;
+            exec_mem_r_rd <= 5'b0;
+            exec_mem_r_addr <= 32'b0;
+            exec_mem_r_strb <= 4'b0;
+            exec_mem_r_signed <= 1'b0;
+            exec_mem_w_valid <= 1'b0;
+            exec_mem_w_addr <= 32'b0;
+            exec_mem_w_strb <= 4'b0;
+            exec_mem_w_data <= 32'b0;
+        end
+        else if (STALL) begin
+            // do nothing
+        end
+        else begin
+            exec_reg_w_rd <= EXEC_REG_W_RD;
+            exec_reg_w_data <= EXEC_REG_W_DATA;
+            exec_mem_r_valid <= EXEC_MEM_R_VALID;
+            exec_mem_r_rd <= EXEC_MEM_R_RD;
+            exec_mem_r_addr <= EXEC_MEM_R_ADDR;
+            exec_mem_r_strb <= EXEC_MEM_R_STRB;
+            exec_mem_r_signed <= EXEC_MEM_R_SIGNED;
+            exec_mem_w_valid <= EXEC_MEM_W_VALID;
+            exec_mem_w_addr <= EXEC_MEM_W_ADDR;
+            exec_mem_w_strb <= EXEC_MEM_W_STRB;
+            exec_mem_w_data <= EXEC_MEM_W_DATA;
+        end
     end
 
     /* ----- 出力 ----- */

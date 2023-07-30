@@ -3,6 +3,7 @@ module decode_2nd
         /* ----- 制御 ----- */
         input wire          CLK,
         input wire          RST,
+        input wire          STALL,
 
         /* ----- デコード部2との接続 ----- */
         input wire          DECODE_1ST_VALID,
@@ -39,19 +40,39 @@ module decode_2nd
     reg  [2:0]  decode_1st_funct3;
 
     always @ (posedge CLK) begin
-        decode_1st_valid <= DECODE_1ST_VALID;
-        decode_1st_pc <= DECODE_1ST_PC;
-        decode_1st_opcode <= DECODE_1ST_OPCODE;
-        decode_1st_rd <= DECODE_1ST_RD;
-        decode_1st_rs1 <= DECODE_1ST_RS1;
-        decode_1st_rs2 <= DECODE_1ST_RS2;
-        decode_1st_funct3 <= DECODE_1ST_FUNCT3;
-        decode_1st_funct7 <= DECODE_1ST_FUNCT7;
-        decode_1st_imm_i <= DECODE_1ST_IMM_I;
-        decode_1st_imm_s <= DECODE_1ST_IMM_S;
-        decode_1st_imm_b <= DECODE_1ST_IMM_B;
-        decode_1st_imm_u <= DECODE_1ST_IMM_U;
-        decode_1st_imm_j <= DECODE_1ST_IMM_J;
+        if (RST) begin
+            decode_1st_valid <= 1'b0;
+            decode_1st_pc <= 32'b0;
+            decode_1st_opcode <= 7'b0;
+            decode_1st_rd <= 5'b0;
+            decode_1st_rs1 <= 5'b0;
+            decode_1st_rs2 <= 5'b0;
+            decode_1st_funct3 <= 3'b0;
+            decode_1st_funct7 <= 7'b0;
+            decode_1st_imm_i <= 32'b0;
+            decode_1st_imm_s <= 32'b0;
+            decode_1st_imm_b <= 32'b0;
+            decode_1st_imm_u <= 32'b0;
+            decode_1st_imm_j <= 32'b0;
+        end
+        else if (STALL) begin
+            // do nothing
+        end
+        else begin
+            decode_1st_valid <= DECODE_1ST_VALID;
+            decode_1st_pc <= DECODE_1ST_PC;
+            decode_1st_opcode <= DECODE_1ST_OPCODE;
+            decode_1st_rd <= DECODE_1ST_RD;
+            decode_1st_rs1 <= DECODE_1ST_RS1;
+            decode_1st_rs2 <= DECODE_1ST_RS2;
+            decode_1st_funct3 <= DECODE_1ST_FUNCT3;
+            decode_1st_funct7 <= DECODE_1ST_FUNCT7;
+            decode_1st_imm_i <= DECODE_1ST_IMM_I;
+            decode_1st_imm_s <= DECODE_1ST_IMM_S;
+            decode_1st_imm_b <= DECODE_1ST_IMM_B;
+            decode_1st_imm_u <= DECODE_1ST_IMM_U;
+            decode_1st_imm_j <= DECODE_1ST_IMM_J;
+        end
     end
 
     /* ----- デコード ----- */

@@ -36,6 +36,9 @@ wire [31:0] DATA_ROADDR             = sasanqua.mmu.DATA_ROADDR;
 wire        DATA_RVALID             = sasanqua.mmu.DATA_RVALID;
 wire [31:0] DATA_RDATA              = sasanqua.mmu.DATA_RDATA;
 
+// Core: Pipeline
+wire        STALL                   = sasanqua.core.stall;
+
 // Core: Fetch
 wire        INST_VALID              = sasanqua.core.inst_valid;
 wire [31:0] INST_PC                 = sasanqua.core.inst_pc;

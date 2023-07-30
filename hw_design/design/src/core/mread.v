@@ -3,6 +3,7 @@ module mread
         /* ----- 制御 ----- */
         input wire          CLK,
         input wire          RST,
+        input wire          STALL,
 
         /* ----- 待機部との接続 ----- */
         // レジスタ(W)
@@ -41,17 +42,35 @@ module mread
     reg [3:0]   cushion_mem_r_strb, cushion_mem_w_strb;
 
     always @ (posedge CLK) begin
-        cushion_reg_w_rd <= CUSHION_REG_W_RD;
-        cushion_reg_w_data <= CUSHION_REG_W_DATA;
-        cushion_mem_r_valid <= CUSHION_MEM_R_VALID;
-        cushion_mem_r_rd <= CUSHION_MEM_R_RD;
-        cushion_mem_r_addr <= CUSHION_MEM_R_ADDR;
-        cushion_mem_r_strb <= CUSHION_MEM_R_STRB;
-        cushion_mem_r_signed <= CUSHION_MEM_R_SIGNED;
-        cushion_mem_w_valid <= CUSHION_MEM_W_VALID;
-        cushion_mem_w_addr <= CUSHION_MEM_W_ADDR;
-        cushion_mem_w_strb <= CUSHION_MEM_W_STRB;
-        cushion_mem_w_data <= CUSHION_MEM_W_DATA;
+        if (RST) begin
+            cushion_reg_w_rd <= 5'b0;
+            cushion_reg_w_data <= 32'b0;
+            cushion_mem_r_valid <= 1'b0;
+            cushion_mem_r_rd <= 5'b0;
+            cushion_mem_r_addr <= 32'b0;
+            cushion_mem_r_strb <= 4'b0;
+            cushion_mem_r_signed <= 1'b0;
+            cushion_mem_w_valid <= 1'b0;
+            cushion_mem_w_addr <= 32'b0;
+            cushion_mem_w_strb <= 4'b0;
+            cushion_mem_w_data <= 32'b0;
+        end
+        else if (STALL) begin
+            // do nothing
+        end
+        else begin
+            cushion_reg_w_rd <= CUSHION_REG_W_RD;
+            cushion_reg_w_data <= CUSHION_REG_W_DATA;
+            cushion_mem_r_valid <= CUSHION_MEM_R_VALID;
+            cushion_mem_r_rd <= CUSHION_MEM_R_RD;
+            cushion_mem_r_addr <= CUSHION_MEM_R_ADDR;
+            cushion_mem_r_strb <= CUSHION_MEM_R_STRB;
+            cushion_mem_r_signed <= CUSHION_MEM_R_SIGNED;
+            cushion_mem_w_valid <= CUSHION_MEM_W_VALID;
+            cushion_mem_w_addr <= CUSHION_MEM_W_ADDR;
+            cushion_mem_w_strb <= CUSHION_MEM_W_STRB;
+            cushion_mem_w_data <= CUSHION_MEM_W_DATA;
+        end
     end
 
     /* ----- 出力 ----- */

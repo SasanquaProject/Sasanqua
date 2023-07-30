@@ -29,6 +29,9 @@ module core
     assign DATA_RDEN    = 1'b0;
     assign DATA_RIADDR  = 32'b0;
 
+    /* ----- パイプライン制御 ----- */
+    wire stall = MEM_WAIT;
+
     /* ----- 1. 命令フェッチ ----- */
     wire        inst_valid;
     wire [31:0] inst_pc, inst_data;
@@ -41,9 +44,9 @@ module core
         // 制御
         .CLK        (CLK),
         .RST        (RST),
+        .STALL      (stall),
 
         // メモリアクセス
-        .MEM_WAIT   (MEM_WAIT),
         .INST_RDEN  (INST_RDEN),
         .INST_RIADDR(INST_RIADDR)
     );
@@ -59,6 +62,7 @@ module core
         // 制御
         .CLK                (CLK),
         .RST                (RST),
+        .STALL              (stall),
 
         // フェッチ部との接続
         .INST_VALID         (inst_valid),
@@ -92,6 +96,7 @@ module core
         // 制御
         .CLK                (CLK),
         .RST                (RST),
+        .STALL              (stall),
 
         // デコード部1との接続
         .DECODE_1ST_VALID   (decode_1st_valid),
@@ -131,6 +136,7 @@ module core
         // 制御
         .CLK                (CLK),
         .RST                (RST),
+        .STALL              (stall),
 
         // デコード部2との接続
         .DECODE_2ND_VALID   (decode_2nd_valid),
@@ -159,6 +165,7 @@ module core
         // 制御
         .CLK            (CLK),
         .RST            (RST),
+        .STALL          (stall),
 
         // レジスタアクセス(rv32i)
         .REG_IR_I_A     (decode_2nd_rs1),
@@ -181,6 +188,7 @@ module core
         // 制御
         .CLK            (CLK),
         .RST            (RST),
+        .STALL          (stall),
 
         // データフォワーディング
         .REG_FWD_A      (cushion_reg_w_rd),
@@ -229,6 +237,7 @@ module core
         // 制御
         .CLK                    (CLK),
         .RST                    (RST),
+        .STALL                  (stall),
 
         // 実行部との接続
         .EXEC_REG_W_RD          (reg_w_rd),
@@ -267,6 +276,7 @@ module core
         // 制御
         .CLK                    (CLK),
         .RST                    (RST),
+        .STALL                  (stall),
 
         // 実行待機部との接続
         .CUSHION_REG_W_RD       (cushion_reg_w_rd),
@@ -291,24 +301,26 @@ module core
     );
 
     /* ----- 8. メモリアクセス(w) ----- */
-    reg  [4:0]  memw_reg_w_rd;
-    reg  [31:0] memw_reg_w_data;
-
-    always @ (posedge CLK) begin
-        memw_reg_w_rd <= memr_reg_w_rd;
-        memw_reg_w_data <= memr_reg_w_data;
-    end
+    wire [4:0]  memw_reg_w_rd;
+    wire [31:0] memw_reg_w_data;
 
     mwrite mwrite (
         // 制御
         .CLK                    (CLK),
         .RST                    (RST),
+        .STALL                  (stall),
 
-        // メモリアクセス(w)との接続
+        // メモリアクセス(r)との接続
+        .MEMR_REG_W_RD          (memr_reg_w_rd),
+        .MEMR_REG_W_DATA        (memr_reg_w_data),
         .MEMR_MEM_W_VALID       (memr_mem_w_valid),
         .MEMR_MEM_W_ADDR        (memr_mem_w_addr),
         .MEMR_MEM_W_STRB        (memr_mem_w_strb),
-        .MEMR_MEM_W_DATA        (memr_mem_w_data)
+        .MEMR_MEM_W_DATA        (memr_mem_w_data),
+
+        // データフォワーディング用
+        .MEMW_REG_W_RD          (memw_reg_w_rd),
+        .MEMW_REG_W_DATA        (memw_reg_w_data)
     );
 
 endmodule

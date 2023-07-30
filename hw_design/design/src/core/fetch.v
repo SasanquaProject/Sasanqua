@@ -2,11 +2,11 @@ module fetch
     (
         /* ----- 制御 ----- */
         // クロック・リセット
-        input               CLK,
-        input               RST,
+        input wire          CLK,
+        input wire          RST,
+        input wire          STALL,
 
         /* ----- メモリアクセス ----- */
-        input wire          MEM_WAIT,
         output reg          INST_RDEN,
         output reg  [31:0]  INST_RIADDR
     );
@@ -16,7 +16,10 @@ module fetch
             INST_RDEN <= 1'b0;
             INST_RIADDR <= 32'hffff_fffc;
         end
-        else if (!MEM_WAIT) begin
+        else if (STALL) begin
+            // do nothing
+        end
+        else begin
             INST_RDEN <= 1'b1;
             INST_RIADDR <= INST_RIADDR + 32'd4;
         end
