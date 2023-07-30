@@ -5,10 +5,16 @@ module register
         input wire          RST,
 
         /* ----- レジスタアクセス(rv32i) ----- */
+        // 読み
         input wire  [4:0]   REG_IR_A,
         input wire  [4:0]   REG_IR_B,
         output wire [31:0]  REG_IR_AV,
-        output wire [31:0]  REG_IR_BV
+        output wire [31:0]  REG_IR_BV,
+
+        // 書き
+        input wire          REG_IW_VALID,
+        input wire  [4:0]   REG_IW_A,
+        input wire  [31:0]  REG_IW_AV
     );
 
     /* ----- 入力取り込み ----- */
@@ -60,6 +66,8 @@ module register
             register[30] <= 32'b0;
             register[31] <= 32'b0;
         end
+        else if (REG_IW_VALID && REG_IW_A != 5'b0)
+            register[REG_IW_A] <= REG_IW_AV;
     end
 
 endmodule

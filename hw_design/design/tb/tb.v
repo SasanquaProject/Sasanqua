@@ -115,6 +115,40 @@ wire [31:0] MEMR_MEM_W_ADDR         = sasanqua.core.memr_mem_w_addr;
 wire [3:0]  MEMR_MEM_W_STRB         = sasanqua.core.memr_mem_w_strb;
 wire [31:0] MEMR_MEM_W_DATA         = sasanqua.core.memr_mem_w_data;
 
+// Register: rv32i
+wire [31:0] I_REG_0                 = sasanqua.core.register.register[0];
+wire [31:0] I_REG_1                 = sasanqua.core.register.register[1];
+wire [31:0] I_REG_2                 = sasanqua.core.register.register[2];
+wire [31:0] I_REG_3                 = sasanqua.core.register.register[3];
+wire [31:0] I_REG_4                 = sasanqua.core.register.register[4];
+wire [31:0] I_REG_5                 = sasanqua.core.register.register[5];
+wire [31:0] I_REG_6                 = sasanqua.core.register.register[6];
+wire [31:0] I_REG_7                 = sasanqua.core.register.register[7];
+wire [31:0] I_REG_8                 = sasanqua.core.register.register[8];
+wire [31:0] I_REG_9                 = sasanqua.core.register.register[9];
+wire [31:0] I_REG_10                = sasanqua.core.register.register[10];
+wire [31:0] I_REG_11                = sasanqua.core.register.register[11];
+wire [31:0] I_REG_12                = sasanqua.core.register.register[12];
+wire [31:0] I_REG_13                = sasanqua.core.register.register[13];
+wire [31:0] I_REG_14                = sasanqua.core.register.register[14];
+wire [31:0] I_REG_15                = sasanqua.core.register.register[15];
+wire [31:0] I_REG_16                = sasanqua.core.register.register[16];
+wire [31:0] I_REG_17                = sasanqua.core.register.register[17];
+wire [31:0] I_REG_18                = sasanqua.core.register.register[18];
+wire [31:0] I_REG_19                = sasanqua.core.register.register[19];
+wire [32:0] I_REG_20                = sasanqua.core.register.register[20];
+wire [32:0] I_REG_21                = sasanqua.core.register.register[21];
+wire [32:0] I_REG_22                = sasanqua.core.register.register[22];
+wire [32:0] I_REG_23                = sasanqua.core.register.register[23];
+wire [32:0] I_REG_24                = sasanqua.core.register.register[24];
+wire [32:0] I_REG_25                = sasanqua.core.register.register[25];
+wire [32:0] I_REG_26                = sasanqua.core.register.register[26];
+wire [32:0] I_REG_27                = sasanqua.core.register.register[27];
+wire [32:0] I_REG_28                = sasanqua.core.register.register[28];
+wire [32:0] I_REG_29                = sasanqua.core.register.register[29];
+wire [32:0] I_REG_30                = sasanqua.core.register.register[30];
+wire [32:0] I_REG_31                = sasanqua.core.register.register[31];
+
 /* ----- テストベンチ本体 ----- */
 initial begin
     RST = 0;

@@ -156,14 +156,17 @@ module core
 
     register register (
         // 制御
-        .CLK        (CLK),
-        .RST        (RST),
+        .CLK            (CLK),
+        .RST            (RST),
 
         // レジスタアクセス(rv32i)
-        .REG_IR_A   (decode_2nd_rs1),
-        .REG_IR_B   (decode_2nd_rs2),
-        .REG_IR_AV  (reg_rs1_v),
-        .REG_IR_BV  (reg_rs2_v)
+        .REG_IR_A       (decode_2nd_rs1),
+        .REG_IR_B       (decode_2nd_rs2),
+        .REG_IR_AV      (reg_rs1_v),
+        .REG_IR_BV      (reg_rs2_v),
+        .REG_IW_VALID   (memr_reg_w_valid),
+        .REG_IW_A       (memr_reg_w_rd),
+        .REG_IW_AV      (memr_reg_w_data)
     );
 
     /* ----- 5. 実行 ----- */

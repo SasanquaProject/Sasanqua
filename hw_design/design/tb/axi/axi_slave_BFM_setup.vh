@@ -194,8 +194,8 @@ task write_rv32i_test_inst;
 integer i;
 begin
     axi_slave_bfm.ram_array[ 0] = 32'h00a00093;  // addi x1, x0, 10
-    axi_slave_bfm.ram_array[ 1] = 32'h01400113;  // addi x2, x0, 20
-    axi_slave_bfm.ram_array[ 2] = 32'h01e00193;  // addi x3, x0, 30
+    axi_slave_bfm.ram_array[ 1] = 32'h01408113;  // addi x2, x1, 20
+    axi_slave_bfm.ram_array[ 2] = 32'h01e10193;  // addi x3, x2, 30
 
     axi_slave_bfm.ram_array[ 3] = 32'h00000083;  // lb x1, 0(x0)
     axi_slave_bfm.ram_array[ 4] = 32'h00004083;  // lbu x1, 0(x0)
