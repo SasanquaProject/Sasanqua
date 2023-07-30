@@ -77,7 +77,7 @@ module cache_axi
 
     assign HIT_CHECK_RESULT = !RDEN || HIT_CHECK[31:12] == cached_addr;
 
-    always @ (RADDR, cached_addr) begin
+    always @* begin
         RVALID <= RDEN && RADDR[31:12] == cached_addr;
         RDATA <= RVALID ? cache[RADDR[11:2]] : 32'b0;
     end
