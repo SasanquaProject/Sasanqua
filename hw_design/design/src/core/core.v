@@ -4,10 +4,10 @@ module core
         input wire          CLK,
         input wire          RST,
 
-        /* ----- メモリアクセス信号 ----- */
+        /* ----- MMU接続 ----- */
         // 命令
-        output reg          INST_RDEN,
-        output reg  [31:0]  INST_RIADDR,
+        output wire         INST_RDEN,
+        output wire [31:0]  INST_RIADDR,
         input wire  [31:0]  INST_ROADDR,
         input wire          INST_RVALID,
         input wire  [31:0]  INST_RDATA,
@@ -31,22 +31,22 @@ module core
 
     /* ----- 1. 命令フェッチ ----- */
     wire        inst_valid;
-    wire [31:0] inst_addr, inst_data;
+    wire [31:0] inst_pc, inst_data;
 
     assign inst_valid   = INST_RVALID;
-    assign inst_addr    = INST_ROADDR;
+    assign inst_pc      = INST_ROADDR;
     assign inst_data    = INST_RDATA;
 
-    always @ (posedge CLK) begin
-        if (RST) begin
-            INST_RDEN <= 1'b0;
-            INST_RIADDR <= 32'hffff_fffc;
-        end
-        else if (!MEM_WAIT) begin
-            INST_RDEN <= 1'b1;
-            INST_RIADDR <= INST_RIADDR + 32'd4;
-        end
-    end
+    fetch fetch (
+        // 制御
+        .CLK        (CLK),
+        .RST        (RST),
+
+        // メモリアクセス
+        .MEM_WAIT   (MEM_WAIT),
+        .INST_RDEN  (INST_RDEN),
+        .INST_RIADDR(INST_RIADDR)
+    );
 
     /* ----- 2. 命令デコード1 ----- */
     wire        decode_1st_valid;
@@ -62,7 +62,7 @@ module core
 
         // フェッチ部との接続
         .INST_VALID         (inst_valid),
-        .INST_PC            (inst_addr),
+        .INST_PC            (inst_pc),
         .INST_DATA          (inst_data),
 
         // デコード部2との接続

@@ -7,6 +7,7 @@ verilog xil_defaultlib  --include "../../../../../../design/tb/axi" \
 "../../../../../../design/src/core/decode_1st.v" \
 "../../../../../../design/src/core/decode_2nd.v" \
 "../../../../../../design/src/core/exec.v" \
+"../../../../../../design/src/core/fetch.v" \
 "../../../../../../design/src/mmu/axi/mmu.v" \
 "../../../../../../design/src/core/mread.v" \
 "../../../../../../design/src/core/mwrite.v" \

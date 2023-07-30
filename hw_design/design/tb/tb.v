@@ -38,7 +38,7 @@ wire [31:0] DATA_RDATA              = sasanqua.mmu.DATA_RDATA;
 
 // Core: Fetch
 wire        INST_VALID              = sasanqua.core.inst_valid;
-wire [31:0] INST_ADDR               = sasanqua.core.inst_addr;
+wire [31:0] INST_PC                 = sasanqua.core.inst_pc;
 wire [31:0] INST_DATA               = sasanqua.core.inst_data;
 
 // Core: Decode 1st
