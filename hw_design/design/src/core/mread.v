@@ -6,7 +6,6 @@ module mread
 
         /* ----- 待機部との接続 ----- */
         // レジスタ(W)
-        input wire          CUSHION_REG_W_VALID,
         input wire  [4:0]   CUSHION_REG_W_RD,
         input wire  [31:0]  CUSHION_REG_W_DATA,
 
@@ -25,7 +24,6 @@ module mread
 
         /* ----- メモリアクセス(w)部との接続 ----- */
         // レジスタ(W)
-        output wire         MEMR_REG_W_VALID,
         output wire [4:0]   MEMR_REG_W_RD,
         output wire [31:0]  MEMR_REG_W_DATA,
 
@@ -37,13 +35,12 @@ module mread
     );
 
     /* ----- 入力取り込み ----- */
-    reg         cushion_reg_w_valid, cushion_mem_r_valid, cushion_mem_r_signed, cushion_mem_w_valid;
+    reg         cushion_mem_r_valid, cushion_mem_r_signed, cushion_mem_w_valid;
     reg [31:0]  cushion_reg_w_data, cushion_mem_r_addr, cushion_mem_w_addr, cushion_mem_w_data;
     reg [4:0]   cushion_reg_w_rd, cushion_mem_r_rd;
     reg [3:0]   cushion_mem_r_strb, cushion_mem_w_strb;
 
     always @ (posedge CLK) begin
-        cushion_reg_w_valid <= CUSHION_REG_W_VALID;
         cushion_reg_w_rd <= CUSHION_REG_W_RD;
         cushion_reg_w_data <= CUSHION_REG_W_DATA;
         cushion_mem_r_valid <= CUSHION_MEM_R_VALID;
@@ -58,7 +55,6 @@ module mread
     end
 
     /* ----- 出力 ----- */
-    assign MEMR_REG_W_VALID  = cushion_reg_w_valid;
     assign MEMR_REG_W_RD     = cushion_reg_w_rd;
     assign MEMR_REG_W_DATA   = cushion_reg_w_data;
     assign MEMR_MEM_W_VALID  = cushion_mem_w_valid;

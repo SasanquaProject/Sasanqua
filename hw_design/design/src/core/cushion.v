@@ -6,7 +6,6 @@ module cushion
 
         /* ----- 実行部との接続 ----- */
         // レジスタ(W)
-        input wire          EXEC_REG_W_VALID,
         input wire  [4:0]   EXEC_REG_W_RD,
         input wire  [31:0]  EXEC_REG_W_DATA,
 
@@ -25,7 +24,6 @@ module cushion
 
         /* ----- メモリアクセス(r)部との接続 ----- */
         // レジスタ(W)
-        output wire         CUSHION_REG_W_VALID,
         output wire [4:0]   CUSHION_REG_W_RD,
         output wire [31:0]  CUSHION_REG_W_DATA,
 
@@ -44,13 +42,12 @@ module cushion
     );
 
     /* ----- 入力取り込み ----- */
-    reg         exec_reg_w_valid, exec_mem_r_valid, exec_mem_r_signed, exec_mem_w_valid;
+    reg         exec_mem_r_valid, exec_mem_r_signed, exec_mem_w_valid;
     reg [31:0]  exec_reg_w_data, exec_mem_r_addr, exec_mem_w_addr, exec_mem_w_data;
     reg [4:0]   exec_reg_w_rd, exec_mem_r_rd;
     reg [3:0]   exec_mem_r_strb, exec_mem_w_strb;
 
     always @ (posedge CLK) begin
-        exec_reg_w_valid <= EXEC_REG_W_VALID;
         exec_reg_w_rd <= EXEC_REG_W_RD;
         exec_reg_w_data <= EXEC_REG_W_DATA;
         exec_mem_r_valid <= EXEC_MEM_R_VALID;
@@ -65,7 +62,6 @@ module cushion
     end
 
     /* ----- 出力 ----- */
-    assign CUSHION_REG_W_VALID  = exec_reg_w_valid;
     assign CUSHION_REG_W_RD     = exec_reg_w_rd;
     assign CUSHION_REG_W_DATA   = exec_reg_w_data;
     assign CUSHION_MEM_R_VALID  = exec_mem_r_valid;

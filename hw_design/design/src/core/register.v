@@ -6,30 +6,33 @@ module register
 
         /* ----- レジスタアクセス(rv32i) ----- */
         // 読み
-        input wire  [4:0]   REG_IR_A,
-        input wire  [4:0]   REG_IR_B,
-        output wire [31:0]  REG_IR_AV,
-        output wire [31:0]  REG_IR_BV,
+        input wire  [4:0]   REG_IR_I_A,
+        input wire  [4:0]   REG_IR_I_B,
+        output wire [4:0]   REG_IR_O_A,
+        output wire [31:0]  REG_IR_O_AV,
+        output wire [4:0]   REG_IR_O_B,
+        output wire [31:0]  REG_IR_O_BV,
 
         // 書き
-        input wire          REG_IW_VALID,
-        input wire  [4:0]   REG_IW_A,
-        input wire  [31:0]  REG_IW_AV
+        input wire  [4:0]   REG_IW_I_A,
+        input wire  [31:0]  REG_IW_I_AV
     );
 
     /* ----- 入力取り込み ----- */
-    reg  [4:0]  reg_ir_a, reg_ir_b;
+    reg  [4:0]  reg_ir_i_a, reg_ir_i_b;
 
     always @ (posedge CLK) begin
-        reg_ir_a <= REG_IR_A;
-        reg_ir_b <= REG_IR_B;
+        reg_ir_i_a <= REG_IR_I_A;
+        reg_ir_i_b <= REG_IR_I_B;
     end
 
     /* ----- レジスタアクセス(rv32i) ----- */
     reg [31:0]  register [0:31];
 
-    assign REG_IR_AV = register[reg_ir_a];
-    assign REG_IR_BV = register[reg_ir_b];
+    assign REG_IR_O_A   = reg_ir_i_a;
+    assign REG_IR_O_AV  = register[reg_ir_i_a];
+    assign REG_IR_O_B   = reg_ir_i_b;
+    assign REG_IR_O_BV  = register[reg_ir_i_b];
 
     always @ (posedge CLK) begin
         if (RST) begin
@@ -66,8 +69,8 @@ module register
             register[30] <= 32'b0;
             register[31] <= 32'b0;
         end
-        else if (REG_IW_VALID && REG_IW_A != 5'b0)
-            register[REG_IW_A] <= REG_IW_AV;
+        else if (REG_IW_I_A != 5'b0)
+            register[REG_IW_I_A] <= REG_IW_I_AV;
     end
 
 endmodule

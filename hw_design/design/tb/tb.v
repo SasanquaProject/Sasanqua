@@ -72,14 +72,15 @@ wire        SCHEDULE_1ST_VALID      = sasanqua.core.schedule_1st_valid;
 wire [31:0] SCHEDULE_1ST_PC         = sasanqua.core.schedule_1st_pc;
 wire [6:0]  SCHEDULE_1ST_OPCODE     = sasanqua.core.schedule_1st_opcode;
 wire [4:0]  SCHEDULE_1ST_RD         = sasanqua.core.schedule_1st_rd;
-wire [4:0]  SCHEDULE_1ST_RS1        = sasanqua.core.reg_rs1_v;
-wire [4:0]  SCHEDULE_1ST_RS2        = sasanqua.core.reg_rs2_v;
+wire [4:0]  SCHEDULE_1ST_RS1        = sasanqua.core.reg_rs1;
+wire [31:0] SCHEDULE_1ST_RS1_V      = sasanqua.core.reg_rs1_v;
+wire [4:0]  SCHEDULE_1ST_RS2        = sasanqua.core.reg_rs2;
+wire [31:0] SCHEDULE_1ST_RS2_V      = sasanqua.core.reg_rs2_v;
 wire [2:0]  SCHEDULE_1ST_FUNCT3     = sasanqua.core.schedule_1st_funct3;
 wire [6:0]  SCHEDULE_1ST_FUNCT7     = sasanqua.core.schedule_1st_funct7;
 wire [31:0] SCHEDULE_1ST_IMM        = sasanqua.core.schedule_1st_imm;
 
 // Core: Exec
-wire        EXEC_REG_W_VALID        = sasanqua.core.reg_w_valid;
 wire [4:0]  EXEC_REG_W_RD           = sasanqua.core.reg_w_rd;
 wire [31:0] EXEC_REG_W_DATA         = sasanqua.core.reg_w_data;
 wire        EXEC_MEM_R_VALID        = sasanqua.core.mem_r_valid;
@@ -93,7 +94,6 @@ wire [3:0]  EXEC_MEM_W_STRB         = sasanqua.core.mem_w_strb;
 wire [31:0] EXEC_MEM_W_DATA         = sasanqua.core.mem_w_data;
 
 // Core: Cushion
-wire        CUSHION_REG_W_VALID     = sasanqua.core.cushion_reg_w_valid;
 wire [4:0]  CUSHION_REG_W_RD        = sasanqua.core.cushion_reg_w_rd;
 wire [31:0] CUSHION_REG_W_DATA      = sasanqua.core.cushion_reg_w_data;
 wire        CUSHION_MEM_R_VALID     = sasanqua.core.cushion_mem_r_valid;
@@ -107,7 +107,6 @@ wire [3:0]  CUSHION_MEM_W_STRB      = sasanqua.core.cushion_mem_w_strb;
 wire [31:0] CUSHION_MEM_W_DATA      = sasanqua.core.cushion_mem_w_data;
 
 // Core: Mem(r)
-wire        MEMR_REG_W_VALID        = sasanqua.core.memr_reg_w_valid;
 wire [4:0]  MEMR_REG_W_RD           = sasanqua.core.memr_reg_w_rd;
 wire [31:0] MEMR_REG_W_DATA         = sasanqua.core.memr_reg_w_data;
 wire        MEMR_MEM_W_VALID        = sasanqua.core.memr_mem_w_valid;

@@ -153,6 +153,7 @@ module core
 
     /* ----- 4-2. レジスタアクセス ----- */
     wire [31:0] reg_rs1_v, reg_rs2_v;
+    wire [4:0]  reg_rs1, reg_rs2;
 
     register register (
         // 制御
@@ -160,17 +161,18 @@ module core
         .RST            (RST),
 
         // レジスタアクセス(rv32i)
-        .REG_IR_A       (decode_2nd_rs1),
-        .REG_IR_B       (decode_2nd_rs2),
-        .REG_IR_AV      (reg_rs1_v),
-        .REG_IR_BV      (reg_rs2_v),
-        .REG_IW_VALID   (memr_reg_w_valid),
-        .REG_IW_A       (memr_reg_w_rd),
-        .REG_IW_AV      (memr_reg_w_data)
+        .REG_IR_I_A     (decode_2nd_rs1),
+        .REG_IR_I_B     (decode_2nd_rs2),
+        .REG_IR_O_A     (reg_rs1),
+        .REG_IR_O_AV    (reg_rs1_v),
+        .REG_IR_O_B     (reg_rs2),
+        .REG_IR_O_BV    (reg_rs2_v),
+        .REG_IW_I_A     (memr_reg_w_rd),
+        .REG_IW_I_AV    (memr_reg_w_data)
     );
 
     /* ----- 5. 実行 ----- */
-    wire        reg_w_valid, mem_r_valid, mem_r_signed, mem_w_valid, jmp_do;
+    wire        mem_r_valid, mem_r_signed, mem_w_valid, jmp_do;
     wire [31:0] reg_w_data, mem_r_addr, mem_w_addr, mem_w_data, jmp_pc;
     wire [4:0]  reg_w_rd, mem_r_rd;
     wire [3:0]  mem_r_strb, mem_w_strb;
@@ -180,19 +182,28 @@ module core
         .CLK            (CLK),
         .RST            (RST),
 
+        // データフォワーディング
+        .REG_FWD_A      (cushion_reg_w_rd),
+        .REG_FWD_AV     (cushion_reg_w_data),
+        .REG_FWD_B      (memr_reg_w_rd),
+        .REG_FWD_BV     (memr_reg_w_data),
+        .REG_FWD_C      (memw_reg_w_rd),
+        .REG_FWD_CV     (memw_reg_w_data),
+
         // 前段との接続
         .VALID          (schedule_1st_valid),
         .PC             (schedule_1st_pc),
         .OPCODE         (schedule_1st_opcode),
         .RD             (schedule_1st_rd),
+        .RS1            (reg_rs1),
         .RS1_V          (reg_rs1_v),
+        .RS2            (reg_rs2),
         .RS2_V          (reg_rs2_v),
         .FUNCT3         (schedule_1st_funct3),
         .FUNCT7         (schedule_1st_funct7),
         .IMM            (schedule_1st_imm),
 
         // 後段との接続
-        .REG_W_VALID    (reg_w_valid),
         .REG_W_RD       (reg_w_rd),
         .REG_W_DATA     (reg_w_data),
         .MEM_R_VALID    (mem_r_valid),
@@ -209,7 +220,7 @@ module core
     );
 
     /* ----- 6. 実行部待機 ------ */
-    wire        cushion_reg_w_valid, cushion_mem_r_valid, cushion_mem_r_signed, cushion_mem_w_valid;
+    wire        cushion_mem_r_valid, cushion_mem_r_signed, cushion_mem_w_valid;
     wire [31:0] cushion_reg_w_data, cushion_mem_r_addr, cushion_mem_w_addr, cushion_mem_w_data;
     wire [4:0]  cushion_reg_w_rd, cushion_mem_r_rd;
     wire [3:0]  cushion_mem_r_strb, cushion_mem_w_strb;
@@ -220,7 +231,6 @@ module core
         .RST                    (RST),
 
         // 実行部との接続
-        .EXEC_REG_W_VALID       (reg_w_valid),
         .EXEC_REG_W_RD          (reg_w_rd),
         .EXEC_REG_W_DATA        (reg_w_data),
         .EXEC_MEM_R_VALID       (mem_r_valid),
@@ -234,7 +244,6 @@ module core
         .EXEC_MEM_W_DATA        (mem_w_data),
 
         // メモリアクセス部(r)との接続
-        .CUSHION_REG_W_VALID    (cushion_reg_w_valid),
         .CUSHION_REG_W_RD       (cushion_reg_w_rd),
         .CUSHION_REG_W_DATA     (cushion_reg_w_data),
         .CUSHION_MEM_R_VALID    (cushion_mem_r_valid),
@@ -249,7 +258,7 @@ module core
     );
 
     /* ----- 7. メモリアクセス(r) ----- */
-    wire        memr_reg_w_valid, memr_mem_w_valid;
+    wire        memr_mem_w_valid;
     wire [31:0] memr_reg_w_data, memr_mem_w_addr, memr_mem_w_data;
     wire [4:0]  memr_reg_w_rd;
     wire [3:0]  memr_mem_w_strb;
@@ -260,7 +269,6 @@ module core
         .RST                    (RST),
 
         // 実行待機部との接続
-        .CUSHION_REG_W_VALID    (cushion_reg_w_valid),
         .CUSHION_REG_W_RD       (cushion_reg_w_rd),
         .CUSHION_REG_W_DATA     (cushion_reg_w_data),
         .CUSHION_MEM_R_VALID    (cushion_mem_r_valid),
@@ -274,7 +282,6 @@ module core
         .CUSHION_MEM_W_DATA     (cushion_mem_w_data),
 
         // メモリアクセス(w)との接続
-        .MEMR_REG_W_VALID       (memr_reg_w_valid),
         .MEMR_REG_W_RD          (memr_reg_w_rd),
         .MEMR_REG_W_DATA        (memr_reg_w_data),
         .MEMR_MEM_W_VALID       (memr_mem_w_valid),
@@ -284,6 +291,14 @@ module core
     );
 
     /* ----- 8. メモリアクセス(w) ----- */
+    reg  [4:0]  memw_reg_w_rd;
+    reg  [31:0] memw_reg_w_data;
+
+    always @ (posedge CLK) begin
+        memw_reg_w_rd <= memr_reg_w_rd;
+        memw_reg_w_data <= memr_reg_w_data;
+    end
+
     mwrite mwrite (
         // 制御
         .CLK                    (CLK),
