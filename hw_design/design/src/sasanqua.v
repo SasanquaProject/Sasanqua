@@ -70,7 +70,7 @@ module sasanqua
     /* ----- MMU ----- */
     wire        mem_wait;
     wire        inst_rden, inst_rvalid, data_rden, data_rvalid;
-    wire [31:0] inst_raddr, inst_rdata, data_raddr, data_rdata;
+    wire [31:0] inst_riaddr, inst_roaddr, inst_rdata, data_riaddr, data_roaddr, data_rdata;
 
     mmu_axi mmu (
         // 制御
@@ -80,11 +80,13 @@ module sasanqua
 
         // メモリアクセス
         .INST_RDEN      (inst_rden),
-        .INST_RADDR     (inst_raddr),
+        .INST_RIADDR    (inst_riaddr),
+        .INST_ROADDR    (inst_roaddr),
         .INST_RVALID    (inst_rvalid),
         .INST_RDATA     (inst_rdata),
         .DATA_RDEN      (data_rden),
-        .DATA_RADDR     (data_raddr),
+        .DATA_RIADDR    (data_riaddr),
+        .DATA_ROADDR    (data_roaddr),
         .DATA_RVALID    (data_rvalid),
         .DATA_RDATA     (data_rdata),
 
@@ -143,11 +145,13 @@ module sasanqua
 
         // メモリアクセス
         .INST_RDEN      (inst_rden),
-        .INST_RADDR     (inst_raddr),
+        .INST_RIADDR    (inst_riaddr),
+        .INST_ROADDR    (inst_roaddr),
         .INST_RVALID    (inst_rvalid),
         .INST_RDATA     (inst_rdata),
         .DATA_RDEN      (data_rden),
-        .DATA_RADDR     (data_raddr),
+        .DATA_RIADDR    (data_riaddr),
+        .DATA_ROADDR    (data_roaddr),
         .DATA_RVALID    (data_rvalid),
         .DATA_RDATA     (data_rdata),
         .MEM_WAIT       (mem_wait)

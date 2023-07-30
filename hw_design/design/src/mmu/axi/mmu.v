@@ -11,7 +11,8 @@ module mmu_axi
         /* ----- メモリアクセス信号 ----- */
         // 命令 (優先度 高)
         input wire          INST_RDEN,
-        input wire  [31:0]  INST_RADDR,
+        input wire  [31:0]  INST_RIADDR,
+        output wire [31:0]  INST_ROADDR,
         output wire         INST_RVALID,
         output wire [31:0]  INST_RDATA,
 
@@ -20,7 +21,8 @@ module mmu_axi
         // input wire [31:0]   DATA_WRADDR,
         // input wire [31:0]   DATA_WRDATA,
         input wire          DATA_RDEN,
-        input wire  [31:0]  DATA_RADDR,
+        input wire  [31:0]  DATA_RIADDR,
+        output wire [31:0]  DATA_ROADDR,
         output wire         DATA_RVALID,
         output wire [31:0]  DATA_RDATA,
 
@@ -135,10 +137,11 @@ module mmu_axi
         .RST                (RST),
 
         // メモリアクセス
-        .HIT_CHECK          (INST_RADDR),
+        .HIT_CHECK          (INST_RIADDR),
         .HIT_CHECK_RESULT   (exists_inst_cache),
         .RDEN               (INST_RDEN),
-        .RADDR              (INST_RADDR),
+        .RIADDR             (INST_RIADDR),
+        .ROADDR             (INST_ROADDR),
         .RVALID             (INST_RVALID),
         .RDATA              (INST_RDATA),
 
@@ -189,10 +192,11 @@ module mmu_axi
         .RST                (RST),
 
         // メモリアクセス
-        .HIT_CHECK          (DATA_RADDR),
+        .HIT_CHECK          (DATA_RIADDR),
         .HIT_CHECK_RESULT   (exists_data_cache),
         .RDEN               (DATA_RDEN),
-        .RADDR              (DATA_RADDR),
+        .RIADDR             (DATA_RIADDR),
+        .ROADDR             (DATA_ROADDR),
         .RVALID             (DATA_RVALID),
         .RDATA              (DATA_RDATA),
 

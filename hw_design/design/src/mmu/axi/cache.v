@@ -12,9 +12,10 @@ module cache_axi
 
         // 読み
         input wire          RDEN,
-        input wire  [31:0]  RADDR,
+        input wire  [31:0]  RIADDR,
+        output reg  [31:0]  ROADDR,
         output reg          RVALID,
-        output reg [31:0]   RDATA,
+        output reg  [31:0]  RDATA,
 
         /* ----- AXIバス ----- */
         // クロック・リセット
@@ -77,9 +78,10 @@ module cache_axi
 
     assign HIT_CHECK_RESULT = !RDEN || HIT_CHECK[31:12] == cached_addr;
 
-    always @* begin
-        RVALID <= RDEN && RADDR[31:12] == cached_addr;
-        RDATA <= RVALID ? cache[RADDR[11:2]] : 32'b0;
+    always @ (posedge CLK) begin
+        ROADDR <= RIADDR;
+        RVALID <= RDEN && RIADDR[31:12] == cached_addr;
+        RDATA <= RDEN && RIADDR[31:12] == cached_addr ? cache[RIADDR[11:2]] : 32'b0;
     end
 
     /* ----- RAMアクセス ------ */
@@ -100,7 +102,7 @@ module cache_axi
     always @* begin
         case (ar_state)
             S_AR_IDLE:
-                if (RDEN && RADDR[31:12] != cached_addr)
+                if (RDEN && RIADDR[31:12] != cached_addr)
                     ar_next_state <= S_AR_ADDR;
                 else
                     ar_next_state <= S_AR_IDLE;
@@ -132,7 +134,7 @@ module cache_axi
             M_AXI_ARVALID <= 1'b0;
         end
         else if (ar_state == S_AR_IDLE && ar_next_state == S_AR_ADDR)
-            M_AXI_ARADDR <= { RADDR[31:12], 12'b0 };
+            M_AXI_ARADDR <= { RIADDR[31:12], 12'b0 };
         else if (ar_next_state == S_AR_ADDR)
             M_AXI_ARVALID <= 1'b1;
         else if (ar_state == S_AR_ADDR && M_AXI_ARREADY) begin
@@ -149,7 +151,7 @@ module cache_axi
         if (RST)
             cached_addr <= 20'hf_ffff;
         else if (ar_state == S_AR_WAIT && ar_next_state == S_AR_IDLE) begin
-            cached_addr <= RADDR[31:12];
+            cached_addr <= RIADDR[31:12];
         end
     end
 

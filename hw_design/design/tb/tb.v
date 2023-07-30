@@ -26,11 +26,13 @@ wire [31:0] STAT;
 // MMU
 wire        MEM_WAIT                = sasanqua.mmu.MEM_WAIT;
 wire        INST_RDEN               = sasanqua.mmu.INST_RDEN;
-wire [31:0] INST_RADDR              = sasanqua.mmu.INST_RADDR;
+wire [31:0] INST_RIADDR             = sasanqua.mmu.INST_RIADDR;
+wire [31:0] INST_ROADDR             = sasanqua.mmu.INST_ROADDR;
 wire        INST_RVALID             = sasanqua.mmu.INST_RVALID;
 wire [31:0] INST_RDATA              = sasanqua.mmu.INST_RDATA;
 wire        DATA_RDEN               = sasanqua.mmu.DATA_RDEN;
-wire [31:0] DATA_RADDR              = sasanqua.mmu.DATA_RADDR;
+wire [31:0] DATA_RIADDR             = sasanqua.mmu.DATA_RIADDR;
+wire [31:0] DATA_ROADDR             = sasanqua.mmu.DATA_ROADDR;
 wire        DATA_RVALID             = sasanqua.mmu.DATA_RVALID;
 wire [31:0] DATA_RDATA              = sasanqua.mmu.DATA_RDATA;
 

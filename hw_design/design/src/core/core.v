@@ -7,7 +7,8 @@ module core
         /* ----- メモリアクセス信号 ----- */
         // 命令
         output reg          INST_RDEN,
-        output reg  [31:0]  INST_RADDR,
+        output reg  [31:0]  INST_RIADDR,
+        input wire  [31:0]  INST_ROADDR,
         input wire          INST_RVALID,
         input wire  [31:0]  INST_RDATA,
 
@@ -16,7 +17,8 @@ module core
         // input wire [31:0]   DATA_WRADDR,
         // input wire [31:0]   DATA_WRDATA,
         output wire         DATA_RDEN,
-        output wire [31:0]  DATA_RADDR,
+        output wire [31:0]  DATA_RIADDR,
+        input wire  [31:0]  DATA_ROADDR,
         input wire          DATA_RVALID,
         input wire  [31:0]  DATA_RDATA,
 
@@ -25,24 +27,24 @@ module core
     );
 
     assign DATA_RDEN    = 1'b0;
-    assign DATA_RADDR   = 32'b0;
+    assign DATA_RIADDR  = 32'b0;
 
     /* ----- 1. 命令フェッチ ----- */
     wire        inst_valid;
     wire [31:0] inst_addr, inst_data;
 
     assign inst_valid   = INST_RVALID;
-    assign inst_addr    = INST_RADDR;
+    assign inst_addr    = INST_ROADDR;
     assign inst_data    = INST_RDATA;
 
     always @ (posedge CLK) begin
         if (RST) begin
             INST_RDEN <= 1'b0;
-            INST_RADDR <= 32'hffff_fffc;
+            INST_RIADDR <= 32'hffff_fffc;
         end
         else if (!MEM_WAIT) begin
             INST_RDEN <= 1'b1;
-            INST_RADDR <= INST_RADDR + 32'd4;
+            INST_RIADDR <= INST_RIADDR + 32'd4;
         end
     end
 
