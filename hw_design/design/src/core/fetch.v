@@ -19,8 +19,8 @@ module fetch
 
     always @ (posedge CLK) begin
         if (RST) begin
-            rden <= 1'b0;
-            pc <= 32'hffff_fffc;
+            rden <= 1'b1;
+            pc <= 32'h0000_0000;
         end
         else if (FLUSH) begin
             rden <= 1'b1;

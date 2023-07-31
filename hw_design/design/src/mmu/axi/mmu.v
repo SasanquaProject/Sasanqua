@@ -84,9 +84,10 @@ module mmu_axi
         output wire         M_AXI_RREADY
     );
 
-    assign MEM_WAIT = !exists_inst_cache;
+    assign MEM_WAIT = !exists_inst_cache || !exists_data_cache;
 
     /* ----- AXIバス設定 ----- */
+    // 定数
     assign M_AXI_AWID       = 'b0;
     assign M_AXI_AWLOCK     = 2'b00;
     assign M_AXI_AWCACHE    = 4'b0011;
@@ -103,8 +104,7 @@ module mmu_axi
     assign M_AXI_ARUSER     = 'b0;
     assign M_AXI_RREADY     = 1'b1;
 
-    /* ----- キャッシュメモリ ----- */
-    // AXIバス配線
+    // 2入力合成
     assign M_AXI_AWADDR     = m_axi_inst_awaddr | m_axi_data_awaddr;
     assign M_AXI_AWLEN      = m_axi_inst_awlen | m_axi_data_awlen;
     assign M_AXI_AWSIZE     = m_axi_inst_awsize | m_axi_data_awsize;
@@ -120,9 +120,58 @@ module mmu_axi
     assign M_AXI_ARBURST    = m_axi_inst_arburst | m_axi_data_arburst;
     assign M_AXI_ARVALID    = m_axi_inst_arvalid | m_axi_data_arvalid;
 
-    // 命令キャッシュ
-    wire        exists_inst_cache;
+    /* ----- キャッシュメモリ ----- */
+    // アクセス制御
+    parameter AC_IDLE = 2'b00;
+    parameter AC_INST = 2'b01;
+    parameter AC_DATA = 2'b10;
 
+    reg  [1:0]  ac_state, ac_next_state;
+
+    wire        allow_inst_r, allow_data_r;
+
+    assign allow_inst_r = ac_next_state == AC_IDLE || ac_next_state == AC_INST;
+    assign allow_data_r = ac_next_state == AC_IDLE || ac_next_state == AC_DATA;
+
+    always @ (posedge CLK) begin
+        if (RST)
+            ac_state <= AC_IDLE;
+        else
+            ac_state <= ac_next_state;
+    end
+
+    always @* begin
+        case (ac_state)
+            AC_IDLE:
+                if (!exists_inst_cache)
+                    ac_next_state <= AC_INST;
+                else if (!exists_data_cache)
+                    ac_next_state <= AC_DATA;
+                else
+                    ac_next_state <= AC_IDLE;
+
+            AC_INST:
+                if (exists_inst_cache) begin
+                    if (!exists_data_cache)
+                        ac_next_state <= AC_DATA;
+                    else
+                        ac_next_state <= AC_IDLE;
+                end
+                else
+                    ac_next_state <= AC_INST;
+
+            AC_DATA:
+                if (exists_data_cache)
+                    ac_next_state <= AC_IDLE;
+                else
+                    ac_next_state <= AC_DATA;
+
+            default:
+                ac_next_state <= AC_IDLE;
+        endcase
+    end
+
+    // 命令キャッシュ
     wire [31:0] m_axi_inst_awaddr, m_axi_inst_wdata, m_axi_inst_araddr;
     wire [7:0]  m_axi_inst_awlen, m_axi_inst_arlen;
     wire [3:0]  m_axi_inst_wstrb;
@@ -130,6 +179,11 @@ module mmu_axi
     wire [1:0]  m_axi_inst_awburst, m_axi_inst_arburst;
     wire        m_axi_inst_awvalid, m_axi_inst_wlast, m_axi_inst_wvalid;
     wire        m_axi_inst_arvalid;
+
+    wire        exists_inst_cache;
+    wire        inst_rden;
+
+    assign inst_rden = allow_inst_r ? INST_RDEN : 1'b0;
 
     cache_axi inst_cache (
         // 制御
@@ -139,7 +193,7 @@ module mmu_axi
         // メモリアクセス
         .HIT_CHECK          (INST_RIADDR),
         .HIT_CHECK_RESULT   (exists_inst_cache),
-        .RDEN               (INST_RDEN),
+        .RDEN               (inst_rden),
         .RIADDR             (INST_RIADDR),
         .ROADDR             (INST_ROADDR),
         .RVALID             (INST_RVALID),
@@ -176,8 +230,6 @@ module mmu_axi
     );
 
     // データキャッシュ
-    wire exists_data_cache;
-
     wire [31:0] m_axi_data_awaddr, m_axi_data_wdata, m_axi_data_araddr;
     wire [7:0]  m_axi_data_awlen, m_axi_data_arlen;
     wire [3:0]  m_axi_data_wstrb;
@@ -185,6 +237,11 @@ module mmu_axi
     wire [1:0]  m_axi_data_awburst, m_axi_data_arburst;
     wire        m_axi_data_awvalid, m_axi_data_wlast, m_axi_data_wvalid;
     wire        m_axi_data_arvalid;
+
+    wire        exists_data_cache;
+    wire        data_rden;
+
+    assign data_rden = allow_data_r ? DATA_RDEN : 1'b0;
 
     cache_axi data_cache (
         // 制御
@@ -194,7 +251,7 @@ module mmu_axi
         // メモリアクセス
         .HIT_CHECK          (DATA_RIADDR),
         .HIT_CHECK_RESULT   (exists_data_cache),
-        .RDEN               (DATA_RDEN),
+        .RDEN               (data_rden),
         .RIADDR             (DATA_RIADDR),
         .ROADDR             (DATA_ROADDR),
         .RVALID             (DATA_RVALID),

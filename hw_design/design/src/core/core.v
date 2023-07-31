@@ -26,7 +26,7 @@ module core
         input wire          MEM_WAIT
     );
 
-    assign DATA_RDEN    = 1'b0;
+    assign DATA_RDEN    = 1'b1;
     assign DATA_RIADDR  = 32'b0;
 
     /* ----- パイプライン制御 ----- */
