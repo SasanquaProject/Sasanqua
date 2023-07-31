@@ -189,6 +189,7 @@ module mmu_axi
         // 制御
         .CLK                (CLK),
         .RST                (RST),
+        .STALL              (MEM_WAIT),
 
         // メモリアクセス
         .HIT_CHECK          (INST_RIADDR),
@@ -247,6 +248,7 @@ module mmu_axi
         // 制御
         .CLK                (CLK),
         .RST                (RST),
+        .STALL              (MEM_WAIT),
 
         // メモリアクセス
         .HIT_CHECK          (DATA_RIADDR),

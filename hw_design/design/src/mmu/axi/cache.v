@@ -4,6 +4,7 @@ module cache_axi
         // クロック, リセット
         input wire          CLK,
         input wire          RST,
+        input wire          STALL,
 
         /* ----- メモリアクセス ----- */
         // ヒットチェック
@@ -79,9 +80,19 @@ module cache_axi
     assign HIT_CHECK_RESULT = !RDEN || HIT_CHECK[31:12] == cached_addr;
 
     always @ (posedge CLK) begin
-        ROADDR <= RIADDR;
-        RVALID <= RDEN && RIADDR[31:12] == cached_addr;
-        RDATA <= RDEN && RIADDR[31:12] == cached_addr ? cache[RIADDR[11:2]] : 32'b0;
+        if (RST) begin
+            ROADDR <= 32'b0;
+            RVALID <= 1'b0;
+            RDATA <= 32'b0;
+        end
+        else if (STALL) begin
+            // do nothing
+        end
+        else begin
+            ROADDR <= RIADDR;
+            RVALID <= RDEN && RIADDR[31:12] == cached_addr;
+            RDATA <= RDEN && RIADDR[31:12] == cached_addr ? cache[RIADDR[11:2]] : 32'b0;
+        end
     end
 
     /* ----- RAMアクセス ------ */
