@@ -26,9 +26,6 @@ module core
         input wire          MEM_WAIT
     );
 
-    assign DATA_RDEN    = 1'b1;
-    assign DATA_RIADDR  = 32'b0;
-
     /* ----- パイプライン制御 ----- */
     wire flush  = memr_jmp_do;
     wire stall  = MEM_WAIT;
@@ -49,7 +46,7 @@ module core
         .NEW_PC     (memr_jmp_pc),
         .STALL      (stall),
 
-        // メモリアクセス
+        // MMUとの接続
         .INST_RDEN  (INST_RDEN),
         .INST_RIADDR(INST_RIADDR)
     );
@@ -291,6 +288,13 @@ module core
         .RST                    (RST),
         .FLUSH                  (flush),
         .STALL                  (stall),
+
+        // MMUとの接続
+        .DATA_RDEN              (DATA_RDEN),
+        .DATA_RIADDR            (DATA_RIADDR),
+        .DATA_ROADDR            (DATA_ROADDR),
+        .DATA_RVALID            (DATA_RVALID),
+        .DATA_RDATA             (DATA_RDATA),
 
         // 実行待機部との接続
         .CUSHION_REG_W_RD       (cushion_reg_w_rd),

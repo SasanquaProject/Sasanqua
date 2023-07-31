@@ -8,7 +8,7 @@ module fetch
         input wire  [31:0]  NEW_PC,
         input wire          STALL,
 
-        /* ----- メモリアクセス ----- */
+        /* ----- MMUとの接続 ----- */
         output wire         INST_RDEN,
         output wire [31:0]  INST_RIADDR
     );

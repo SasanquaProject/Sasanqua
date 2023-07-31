@@ -232,28 +232,28 @@ module exec
             17'b0000011_100_zzzzzzz: begin  // lbu
                 MEM_R_VALID <= valid;
                 MEM_R_RD <= rd;
-                MEM_R_ADDR <= rs1_v + { { 20{ imm[11] } }, imm[11:0], 2'b0 };
+                MEM_R_ADDR <= rs1_v + { { 20{ imm[11] } }, imm[11:2], 2'b0 };
                 MEM_R_STRB <= 4'b0001 << (imm[1:0]);
                 MEM_R_SIGNED <= 1'b0;
             end
             17'b0000011_001_zzzzzzz: begin  // lh
                 MEM_R_VALID <= valid;
                 MEM_R_RD <= rd;
-                MEM_R_ADDR <= rs1_v + { { 20{ imm[11] } }, imm[11:0], 2'b0 };
+                MEM_R_ADDR <= rs1_v + { { 20{ imm[11] } }, imm[11:2], 2'b0 };
                 MEM_R_STRB <= 4'b0011 << (imm[1:0]);
                 MEM_R_SIGNED <= 1'b1;
             end
             17'b0000011_101_zzzzzzz: begin  // lhu
                 MEM_R_VALID <= valid;
                 MEM_R_RD <= rd;
-                MEM_R_ADDR <= rs1_v + { { 20{ imm[11] } }, imm[11:0], 2'b0 };
+                MEM_R_ADDR <= rs1_v + { { 20{ imm[11] } }, imm[11:2], 2'b0 };
                 MEM_R_STRB <= 4'b0011 << (imm[1:0]);
                 MEM_R_SIGNED <= 1'b0;
             end
             17'b0000011_010_zzzzzzz: begin  // lw
                 MEM_R_VALID <= valid;
                 MEM_R_RD <= rd;
-                MEM_R_ADDR <= rs1_v + { { 20{ imm[11] } }, imm[11:0], 2'b0 };
+                MEM_R_ADDR <= rs1_v + { { 20{ imm[11] } }, imm[11:2], 2'b0 };
                 MEM_R_STRB <= 4'b1111;
                 MEM_R_SIGNED <= 1'b0;
             end

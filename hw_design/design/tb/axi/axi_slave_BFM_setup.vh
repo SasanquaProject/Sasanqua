@@ -197,6 +197,10 @@ begin
         axi_slave_bfm.ram_array[i] = 32'b0;
     end
 
+    // データ用
+    axi_slave_bfm.ram_array[512] = 32'h78563412;
+
+    // 命令用
     axi_slave_bfm.ram_array[ 0] = 32'h00a00093;  // addi x1, x0, 10
     axi_slave_bfm.ram_array[ 1] = 32'h00100133;  // add x2, x0, x1
     axi_slave_bfm.ram_array[ 2] = 32'h00000013;  // nop
@@ -209,20 +213,22 @@ begin
     axi_slave_bfm.ram_array[ 9] = 32'h00000013;  // nop
     axi_slave_bfm.ram_array[10] = 32'h001002b3;  // add x5, x0, x1
 
-    axi_slave_bfm.ram_array[15] = 32'h00000083;  // lb x1, 0(x0)
-    axi_slave_bfm.ram_array[16] = 32'h00004083;  // lbu x1, 0(x0)
-    axi_slave_bfm.ram_array[17] = 32'h00001083;  // lh x1, 0(x0)
-    axi_slave_bfm.ram_array[18] = 32'h00005083;  // lhu x1, 0(x0)
-    axi_slave_bfm.ram_array[19] = 32'h00002083;  // lw x1, 0(x0)
+    axi_slave_bfm.ram_array[20] = 32'h00100093;  // addi x1, 1
+    axi_slave_bfm.ram_array[21] = 32'h00b09093;  // slli x1, 11  : x1 = 2048
+    axi_slave_bfm.ram_array[22] = 32'h00008103;  // lb x2, 0(x1)
+    axi_slave_bfm.ram_array[23] = 32'h0000c103;  // lbu x2, 0(x1)
+    axi_slave_bfm.ram_array[24] = 32'h00009103;  // lh x2, 0(x1)
+    axi_slave_bfm.ram_array[25] = 32'h0000d103;  // lhu x2, 0(x1)
+    axi_slave_bfm.ram_array[26] = 32'h0000a103;  // lw x2, 0(x1)
 
-    axi_slave_bfm.ram_array[20] = 32'h00000083;  // lb x1, 0(x0)
-    axi_slave_bfm.ram_array[21] = 32'h00100083;  // lb x1, 1(x0)
-    axi_slave_bfm.ram_array[22] = 32'h00200083;  // lb x1, 2(x0)
-    axi_slave_bfm.ram_array[23] = 32'h00300083;  // lb x1, 3(x0)
+    axi_slave_bfm.ram_array[27] = 32'h0000c103;  // lbu x2, 0(x1)
+    axi_slave_bfm.ram_array[28] = 32'h0010c103;  // lbu x2, 1(x1)
+    axi_slave_bfm.ram_array[29] = 32'h0020c103;  // lbu x2, 2(x1)
+    axi_slave_bfm.ram_array[30] = 32'h0030c103;  // lbu x2, 3(x1)
 
-    axi_slave_bfm.ram_array[31] = 32'h00001083;  // lh x1, 0(x0)
-    axi_slave_bfm.ram_array[32] = 32'h00101083;  // lh x1, 1(x0)
-    axi_slave_bfm.ram_array[33] = 32'h00201083;  // lh x1, 2(x0)
+    axi_slave_bfm.ram_array[31] = 32'h00009103;  // lh x2, 0(x1)
+    axi_slave_bfm.ram_array[32] = 32'h00109103;  // lh x2, 1(x1)
+    axi_slave_bfm.ram_array[33] = 32'h00209103;  // lh x2, 2(x1)
 
     axi_slave_bfm.ram_array[40] = 32'h00100023;  // sb x1, 0(x0)
     axi_slave_bfm.ram_array[41] = 32'h00101023;  // sh x1, 0(x0)
