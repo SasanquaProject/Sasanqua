@@ -35,6 +35,10 @@ wire [31:0] DATA_RIADDR             = sasanqua.mmu.DATA_RIADDR;
 wire [31:0] DATA_ROADDR             = sasanqua.mmu.DATA_ROADDR;
 wire        DATA_RVALID             = sasanqua.mmu.DATA_RVALID;
 wire [31:0] DATA_RDATA              = sasanqua.mmu.DATA_RDATA;
+wire        DATA_WREN               = sasanqua.mmu.DATA_WREN;
+wire [31:0] DATA_WADDR              = sasanqua.mmu.DATA_WADDR;
+wire [3:0]  DATA_WSTRB              = sasanqua.mmu.DATA_WSTRB;
+wire [31:0] DATA_WDATA              = sasanqua.mmu.DATA_WDATA;
 
 // Core: Pipeline
 wire        FLUSH                   = sasanqua.core.flush;

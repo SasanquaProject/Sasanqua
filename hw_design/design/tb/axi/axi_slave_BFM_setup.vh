@@ -221,32 +221,39 @@ begin
     axi_slave_bfm.ram_array[25] = 32'h0000d103;  // lhu x2, 0(x1)
     axi_slave_bfm.ram_array[26] = 32'h0000a103;  // lw x2, 0(x1)
 
-    axi_slave_bfm.ram_array[27] = 32'h0000c103;  // lbu x2, 0(x1)
-    axi_slave_bfm.ram_array[28] = 32'h0010c103;  // lbu x2, 1(x1)
-    axi_slave_bfm.ram_array[29] = 32'h0020c103;  // lbu x2, 2(x1)
-    axi_slave_bfm.ram_array[30] = 32'h0030c103;  // lbu x2, 3(x1)
+    axi_slave_bfm.ram_array[30] = 32'h0000c103;  // lbu x2, 0(x1)
+    axi_slave_bfm.ram_array[31] = 32'h0010c103;  // lbu x2, 1(x1)
+    axi_slave_bfm.ram_array[32] = 32'h0020c103;  // lbu x2, 2(x1)
+    axi_slave_bfm.ram_array[33] = 32'h0030c103;  // lbu x2, 3(x1)
 
-    axi_slave_bfm.ram_array[31] = 32'h00009103;  // lh x2, 0(x1)
-    axi_slave_bfm.ram_array[32] = 32'h00109103;  // lh x2, 1(x1)
-    axi_slave_bfm.ram_array[33] = 32'h00209103;  // lh x2, 2(x1)
+    axi_slave_bfm.ram_array[40] = 32'h00009103;  // lh x2, 0(x1)
+    axi_slave_bfm.ram_array[41] = 32'h00109103;  // lh x2, 1(x1)
+    axi_slave_bfm.ram_array[42] = 32'h00209103;  // lh x2, 2(x1)
 
-    axi_slave_bfm.ram_array[40] = 32'h00100023;  // sb x1, 0(x0)
-    axi_slave_bfm.ram_array[41] = 32'h00101023;  // sh x1, 0(x0)
-    axi_slave_bfm.ram_array[42] = 32'h00102023;  // sw x1, 0(x0)
+    axi_slave_bfm.ram_array[50] = 32'h01200113;  // addi x2, x0, 0x12
+    axi_slave_bfm.ram_array[51] = 32'h00208023;  // sb x2, 0(x1)
+    axi_slave_bfm.ram_array[52] = 32'h002080a3;  // sb x2, 1(x1)
+    axi_slave_bfm.ram_array[53] = 32'h00208123;  // sb x2, 2(x1)
+    axi_slave_bfm.ram_array[54] = 32'h002081a3;  // sb x2, 3(x1)
+    axi_slave_bfm.ram_array[55] = 32'h0000a183;  // lw x3, 0(x1)
 
-    axi_slave_bfm.ram_array[50] = 32'h00100023;  // sb x1, 0(x0)
-    axi_slave_bfm.ram_array[51] = 32'h001000a3;  // sb x1, 1(x0)
-    axi_slave_bfm.ram_array[52] = 32'h00100123;  // sb x1, 2(x0)
-    axi_slave_bfm.ram_array[53] = 32'h001001a3;  // sb x1, 3(x0)
+    axi_slave_bfm.ram_array[60] = 32'h12300113;  // addi x2, x0, 0x123
+    axi_slave_bfm.ram_array[61] = 32'h00209023;  // sh x2, 0(x1)
+    axi_slave_bfm.ram_array[62] = 32'h0000a183;  // lw x3, 0(x1)
+    axi_slave_bfm.ram_array[63] = 32'h002090a3;  // sh x2, 1(x1)
+    axi_slave_bfm.ram_array[64] = 32'h0000a183;  // lw x3, 0(x1)
+    axi_slave_bfm.ram_array[65] = 32'h00209123;  // sh x2, 2(x1)
+    axi_slave_bfm.ram_array[66] = 32'h0000a183;  // lw x3, 0(x1)
 
-    axi_slave_bfm.ram_array[60] = 32'h00101023;  // sh x1, 0(x0)
-    axi_slave_bfm.ram_array[61] = 32'h001010a3;  // sh x1, 1(x0)
-    axi_slave_bfm.ram_array[62] = 32'h00101123;  // sh x1, 2(x0)
+    axi_slave_bfm.ram_array[70] = 32'h12121137;  // lui x2, 0x12121
+    axi_slave_bfm.ram_array[71] = 32'h21210113;  // addi x2, x2, 0x212
+    axi_slave_bfm.ram_array[72] = 32'h0020a023;  // sw x2, 0(x1)
+    axi_slave_bfm.ram_array[73] = 32'h0000a183;  // lw x3, 0(x1)
 
-    axi_slave_bfm.ram_array[70] = 32'h00a00093;  // addi x1, x0, 10
-    axi_slave_bfm.ram_array[71] = 32'h00a00113;  // addi x2, x0, 10
-    axi_slave_bfm.ram_array[72] = 32'h00208463;  // beq x1, x2, 8
-    axi_slave_bfm.ram_array[73] = 32'h00e00193;  // addi x3, x0, 14
-    axi_slave_bfm.ram_array[74] = 32'h00f00193;  // addi x3, x0, 15
+    axi_slave_bfm.ram_array[80] = 32'h00a00093;  // addi x1, x0, 10
+    axi_slave_bfm.ram_array[81] = 32'h00a00113;  // addi x2, x0, 10
+    axi_slave_bfm.ram_array[82] = 32'h00208463;  // beq x1, x2, 8
+    axi_slave_bfm.ram_array[83] = 32'h00e00193;  // addi x3, x0, 14
+    axi_slave_bfm.ram_array[84] = 32'h00f00193;  // addi x3, x0, 15
 end
 endtask

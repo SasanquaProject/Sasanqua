@@ -17,14 +17,15 @@ module mmu_axi
         output wire [31:0]  INST_RDATA,
 
         // データ (優先度 低)
-        // input wire          DATA_WREN,
-        // input wire [31:0]   DATA_WRADDR,
-        // input wire [31:0]   DATA_WRDATA,
         input wire          DATA_RDEN,
         input wire  [31:0]  DATA_RIADDR,
         output wire [31:0]  DATA_ROADDR,
         output wire         DATA_RVALID,
         output wire [31:0]  DATA_RDATA,
+        input wire          DATA_WREN,
+        input wire [31:0]   DATA_WADDR,
+        input wire [3:0]    DATA_WSTRB,
+        input wire [31:0]   DATA_WDATA,
 
         /* ----- AXIバス ----- */
         // クロック・リセット
@@ -180,10 +181,15 @@ module mmu_axi
     wire        m_axi_inst_awvalid, m_axi_inst_wlast, m_axi_inst_wvalid;
     wire        m_axi_inst_arvalid;
 
-    wire        exists_inst_cache;
-    wire        inst_rden;
+    wire        exists_inst_cache, inst_rden, dummy_wren;
+    wire [31:0] dummy_waddr, dummy_wdata;
+    wire [3:0]  dummy_wstrb;
 
-    assign inst_rden = allow_inst_r ? INST_RDEN : 1'b0;
+    assign inst_rden    = allow_inst_r ? INST_RDEN : 1'b0;
+    assign dummy_wren   = 1'b0;
+    assign dummy_waddr  = 32'b0;
+    assign dummy_wstrb  = 4'b0;
+    assign dummy_wdata  = 32'b0;
 
     cache_axi inst_cache (
         // 制御
@@ -199,6 +205,10 @@ module mmu_axi
         .ROADDR             (INST_ROADDR),
         .RVALID             (INST_RVALID),
         .RDATA              (INST_RDATA),
+        .WREN               (dummy_wren),
+        .WADDR              (dummy_waddr),
+        .WSTRB              (dummy_wstrb),
+        .WDATA              (dummy_wdata),
 
         // AXIバス
         .M_AXI_CLK          (M_AXI_CLK),
@@ -258,6 +268,10 @@ module mmu_axi
         .ROADDR             (DATA_ROADDR),
         .RVALID             (DATA_RVALID),
         .RDATA              (DATA_RDATA),
+        .WREN               (DATA_WREN),
+        .WADDR              (DATA_WADDR),
+        .WSTRB              (DATA_WSTRB),
+        .WDATA              (DATA_WDATA),
 
         // AXIバス
         .M_AXI_CLK          (M_AXI_CLK),

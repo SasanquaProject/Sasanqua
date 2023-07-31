@@ -18,6 +18,12 @@ module cache_axi
         output reg          RVALID,
         output reg  [31:0]  RDATA,
 
+        // 書き
+        input wire          WREN,
+        input wire  [31:0]  WADDR,
+        input wire  [3:0]   WSTRB,
+        input wire  [31:0]  WDATA,
+
         /* ----- AXIバス ----- */
         // クロック・リセット
         input wire          M_AXI_CLK,
@@ -73,10 +79,11 @@ module cache_axi
     assign M_AXI_ARSIZE     = 3'b010;
     assign M_AXI_ARBURST    = 2'b01;
 
-    /* ----- キャッシュメモリ ----- */
+    /* ----- キャッシュ ----- */
     reg [19:0]  cached_addr;
     reg [31:0]  cache [0:1023];
 
+    // アクセス(r)
     assign HIT_CHECK_RESULT = !RDEN || HIT_CHECK[31:12] == cached_addr;
 
     always @ (posedge CLK) begin
@@ -91,9 +98,54 @@ module cache_axi
         else begin
             ROADDR <= RIADDR;
             RVALID <= RDEN && RIADDR[31:12] == cached_addr;
-            RDATA <= RDEN && RIADDR[31:12] == cached_addr ? cache[RIADDR[11:2]] : 32'b0;
+            RDATA <= RDEN && RIADDR[31:12] == cached_addr ? (
+                        WREN && RIADDR[11:2] == WADDR[11:2] ?
+                            gen_wrdata(WSTRB, cache[WADDR[11:2]], WDATA) :
+                            cache[RIADDR[11:2]]
+                    ) : 32'b0;
         end
     end
+
+    // アクセス(w)
+    reg  [9:0]  wrcnt;
+
+    always @ (posedge CLK) begin
+        if (RST)
+            wrcnt <= 10'b0;
+        else if (WREN)
+            cache[WADDR[11:2]] <= gen_wrdata(WSTRB, cache[WADDR[11:2]], WDATA);
+        else if (ar_state == S_AR_IDLE)
+            wrcnt <= 10'b0;
+        else if (r_state == S_R_READ && M_AXI_RVALID) begin
+            wrcnt <= wrcnt + 10'b1;
+            cache[wrcnt] <= M_AXI_RDATA;
+        end
+    end
+
+    always @ (posedge CLK) begin
+        if (RST)
+            cached_addr <= 20'hf_ffff;
+        else if (ar_state == S_AR_WAIT && ar_next_state == S_AR_IDLE) begin
+            cached_addr <= RIADDR[31:12];
+        end
+    end
+
+    function [31:0] gen_wrdata;
+        input [3:0]     STRB;
+        input [31:0]    A;
+        input [31:0]    B;
+
+        case (STRB)
+            4'b0001: gen_wrdata = (A & 32'hffff_ff00) | (B & 32'h0000_00ff);
+            4'b0010: gen_wrdata = (A & 32'hffff_00ff) | (B & 32'h0000_ff00);
+            4'b0100: gen_wrdata = (A & 32'hff00_ffff) | (B & 32'h00ff_0000);
+            4'b1000: gen_wrdata = (A & 32'h00ff_ffff) | (B & 32'hff00_0000);
+            4'b0011: gen_wrdata = (A & 32'hffff_0000) | (B & 32'h0000_ffff);
+            4'b0110: gen_wrdata = (A & 32'hff00_00ff) | (B & 32'h00ff_ff00);
+            4'b1100: gen_wrdata = (A & 32'h0000_ffff) | (B & 32'hffff_0000);
+            default: gen_wrdata = B;
+        endcase
+    endfunction
 
     /* ----- RAMアクセス ------ */
     // ARチャネル用ステートマシン
@@ -158,20 +210,11 @@ module cache_axi
         end
     end
 
-    always @ (posedge CLK) begin
-        if (RST)
-            cached_addr <= 20'hf_ffff;
-        else if (ar_state == S_AR_WAIT && ar_next_state == S_AR_IDLE) begin
-            cached_addr <= RIADDR[31:12];
-        end
-    end
-
     // Rチャネル用ステートマシン
     parameter S_R_IDLE = 2'b00;
     parameter S_R_READ = 2'b01;
 
     reg [1:0]   r_state, r_next_state;
-    reg [31:0]  r_rdcnt;
 
     always @ (posedge CLK) begin
         if (RST)
@@ -197,15 +240,6 @@ module cache_axi
             default:
                 r_next_state <= S_R_IDLE;
         endcase
-    end
-
-    always @ (posedge CLK) begin
-        if (RST || ar_state == S_AR_IDLE)
-            r_rdcnt <= 32'b0;
-        else if (r_state == S_R_READ && M_AXI_RVALID) begin
-            r_rdcnt <= r_rdcnt + 32'b1;
-            cache[r_rdcnt] <= M_AXI_RDATA;
-        end
     end
 
 endmodule
