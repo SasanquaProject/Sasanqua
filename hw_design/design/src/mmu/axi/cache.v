@@ -75,7 +75,7 @@ module cache_axi
 
     /* ----- キャッシュメモリ ----- */
     reg [19:0]  cached_addr;
-    reg [31:0]  cache [0:1024];
+    reg [31:0]  cache [0:1023];
 
     assign HIT_CHECK_RESULT = !RDEN || HIT_CHECK[31:12] == cached_addr;
 
