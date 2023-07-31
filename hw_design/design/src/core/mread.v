@@ -3,6 +3,7 @@ module mread
         /* ----- 制御 ----- */
         input wire          CLK,
         input wire          RST,
+        input wire          FLUSH,
         input wire          STALL,
 
         /* ----- 待機部との接続 ----- */
@@ -23,6 +24,10 @@ module mread
         input wire  [3:0]   CUSHION_MEM_W_STRB,
         input wire  [31:0]  CUSHION_MEM_W_DATA,
 
+        // PC更新
+        input wire          CUSHION_JMP_DO,
+        input wire  [31:0]  CUSHION_JMP_PC,
+
         /* ----- メモリアクセス(w)部との接続 ----- */
         // レジスタ(W)
         output wire [4:0]   MEMR_REG_W_RD,
@@ -32,17 +37,21 @@ module mread
         output wire         MEMR_MEM_W_VALID,
         output wire [31:0]  MEMR_MEM_W_ADDR,
         output wire [3:0]   MEMR_MEM_W_STRB,
-        output wire [31:0]  MEMR_MEM_W_DATA
+        output wire [31:0]  MEMR_MEM_W_DATA,
+
+        // PC更新
+        output wire         MEMR_JMP_DO,
+        output wire [31:0]  MEMR_JMP_PC
     );
 
     /* ----- 入力取り込み ----- */
-    reg         cushion_mem_r_valid, cushion_mem_r_signed, cushion_mem_w_valid;
-    reg [31:0]  cushion_reg_w_data, cushion_mem_r_addr, cushion_mem_w_addr, cushion_mem_w_data;
+    reg         cushion_mem_r_valid, cushion_mem_r_signed, cushion_mem_w_valid, cushion_jmp_do;
+    reg [31:0]  cushion_reg_w_data, cushion_mem_r_addr, cushion_mem_w_addr, cushion_mem_w_data, cushion_jmp_pc;
     reg [4:0]   cushion_reg_w_rd, cushion_mem_r_rd;
     reg [3:0]   cushion_mem_r_strb, cushion_mem_w_strb;
 
     always @ (posedge CLK) begin
-        if (RST) begin
+        if (RST || FLUSH) begin
             cushion_reg_w_rd <= 5'b0;
             cushion_reg_w_data <= 32'b0;
             cushion_mem_r_valid <= 1'b0;
@@ -54,6 +63,8 @@ module mread
             cushion_mem_w_addr <= 32'b0;
             cushion_mem_w_strb <= 4'b0;
             cushion_mem_w_data <= 32'b0;
+            cushion_jmp_do <= 1'b0;
+            cushion_jmp_pc <= 32'b0;
         end
         else if (STALL) begin
             // do nothing
@@ -70,6 +81,8 @@ module mread
             cushion_mem_w_addr <= CUSHION_MEM_W_ADDR;
             cushion_mem_w_strb <= CUSHION_MEM_W_STRB;
             cushion_mem_w_data <= CUSHION_MEM_W_DATA;
+            cushion_jmp_do <= CUSHION_JMP_DO;
+            cushion_jmp_pc <= CUSHION_JMP_PC;
         end
     end
 
@@ -80,5 +93,7 @@ module mread
     assign MEMR_MEM_W_ADDR   = cushion_mem_w_addr;
     assign MEMR_MEM_W_STRB   = cushion_mem_w_strb;
     assign MEMR_MEM_W_DATA   = cushion_mem_w_data;
+    assign MEMR_JMP_DO       = cushion_jmp_do;
+    assign MEMR_JMP_PC       = cushion_jmp_pc;
 
 endmodule

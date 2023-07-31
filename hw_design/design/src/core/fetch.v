@@ -4,25 +4,39 @@ module fetch
         // クロック・リセット
         input wire          CLK,
         input wire          RST,
+        input wire          FLUSH,
+        input wire  [31:0]  NEW_PC,
         input wire          STALL,
 
         /* ----- メモリアクセス ----- */
-        output reg          INST_RDEN,
-        output reg  [31:0]  INST_RIADDR
+        output wire         INST_RDEN,
+        output wire [31:0]  INST_RIADDR
     );
+
+    /* ----- PC ----- */
+    reg         rden;
+    reg  [31:0] pc;
 
     always @ (posedge CLK) begin
         if (RST) begin
-            INST_RDEN <= 1'b0;
-            INST_RIADDR <= 32'hffff_fffc;
+            rden <= 1'b0;
+            pc <= 32'hffff_fffc;
+        end
+        else if (FLUSH) begin
+            rden <= 1'b1;
+            pc <= NEW_PC;
         end
         else if (STALL) begin
             // do nothing
         end
         else begin
-            INST_RDEN <= 1'b1;
-            INST_RIADDR <= INST_RIADDR + 32'd4;
+            rden <= 1'b1;
+            pc <= pc + 32'd4;
         end
     end
+
+    /* ----- 出力 ----- */
+    assign INST_RDEN    = FLUSH ? 1'b0 : rden;
+    assign INST_RIADDR  = FLUSH ? 32'b0 : pc;
 
 endmodule

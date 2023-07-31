@@ -3,6 +3,7 @@ module register
         /* ----- 制御 ----- */
         input wire          CLK,
         input wire          RST,
+        input wire          FLUSH,
         input wire          STALL,
 
         /* ----- レジスタアクセス(rv32i) ----- */
@@ -23,7 +24,7 @@ module register
     reg  [4:0]  reg_ir_i_a, reg_ir_i_b;
 
     always @ (posedge CLK) begin
-        if (RST) begin
+        if (RST || FLUSH) begin
             reg_ir_i_a <= 5'b0;
             reg_ir_i_b <= 5'b0;
         end

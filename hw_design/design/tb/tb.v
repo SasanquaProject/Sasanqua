@@ -37,6 +37,8 @@ wire        DATA_RVALID             = sasanqua.mmu.DATA_RVALID;
 wire [31:0] DATA_RDATA              = sasanqua.mmu.DATA_RDATA;
 
 // Core: Pipeline
+wire        FLUSH                   = sasanqua.core.flush;
+wire [31:0] NEW_PC                  = sasanqua.core.fetch.NEW_PC;
 wire        STALL                   = sasanqua.core.stall;
 
 // Core: Fetch
@@ -95,6 +97,8 @@ wire        EXEC_MEM_W_VALID        = sasanqua.core.mem_w_valid;
 wire [31:0] EXEC_MEM_W_ADDR         = sasanqua.core.mem_w_addr;
 wire [3:0]  EXEC_MEM_W_STRB         = sasanqua.core.mem_w_strb;
 wire [31:0] EXEC_MEM_W_DATA         = sasanqua.core.mem_w_data;
+wire        EXEC_JMP_DO             = sasanqua.core.jmp_do;
+wire [31:0] EXEC_JMP_PC             = sasanqua.core.jmp_pc;
 
 // Core: Cushion
 wire [4:0]  CUSHION_REG_W_RD        = sasanqua.core.cushion_reg_w_rd;
@@ -108,6 +112,8 @@ wire        CUSHION_MEM_W_VALID     = sasanqua.core.cushion_mem_w_valid;
 wire [31:0] CUSHION_MEM_W_ADDR      = sasanqua.core.cushion_mem_w_addr;
 wire [3:0]  CUSHION_MEM_W_STRB      = sasanqua.core.cushion_mem_w_strb;
 wire [31:0] CUSHION_MEM_W_DATA      = sasanqua.core.cushion_mem_w_data;
+wire        CUSHION_JMP_DO          = sasanqua.core.cushion_jmp_do;
+wire [31:0] CUSHION_JMP_PC          = sasanqua.core.cushion_jmp_pc;
 
 // Core: Mem(r)
 wire [4:0]  MEMR_REG_W_RD           = sasanqua.core.memr_reg_w_rd;
@@ -116,6 +122,8 @@ wire        MEMR_MEM_W_VALID        = sasanqua.core.memr_mem_w_valid;
 wire [31:0] MEMR_MEM_W_ADDR         = sasanqua.core.memr_mem_w_addr;
 wire [3:0]  MEMR_MEM_W_STRB         = sasanqua.core.memr_mem_w_strb;
 wire [31:0] MEMR_MEM_W_DATA         = sasanqua.core.memr_mem_w_data;
+wire        MEMR_JMP_DO             = sasanqua.core.memr_jmp_do;
+wire [31:0] MEMR_JMP_PC             = sasanqua.core.memr_jmp_pc;
 
 // Register: rv32i
 wire [31:0] I_REG_0                 = sasanqua.core.register.register[0];

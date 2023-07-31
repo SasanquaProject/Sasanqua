@@ -3,6 +3,7 @@ module decode_1st
         /* ----- 制御 ----- */
         input wire          CLK,
         input wire          RST,
+        input wire          FLUSH,
         input wire          STALL,
 
         /* ----- フェッチ部との接続 ----- */
@@ -31,7 +32,7 @@ module decode_1st
     reg [31:0]  inst_pc, inst_data;
 
     always @ (posedge CLK) begin
-        if (RST) begin
+        if (RST || FLUSH) begin
             inst_pc <= 32'b0;
             inst_valid <= 1'b0;
             inst_data <= 32'b0;

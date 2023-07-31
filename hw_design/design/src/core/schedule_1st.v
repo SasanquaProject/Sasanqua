@@ -3,6 +3,7 @@ module schedule_1st
         /* ----- 制御 ----- */
         input wire          CLK,
         input wire          RST,
+        input wire          FLUSH,
         input wire          STALL,
 
         /* ----- デコード部2との接続 ----- */
@@ -32,7 +33,7 @@ module schedule_1st
     reg  [2:0]  decode_2nd_funct3;
 
     always @ (posedge CLK) begin
-        if (RST) begin
+        if (RST || FLUSH) begin
             decode_2nd_valid <= 1'b0;
             decode_2nd_pc <= 32'b0;
             decode_2nd_opcode <= 7'b0;

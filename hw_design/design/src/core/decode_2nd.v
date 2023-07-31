@@ -3,6 +3,7 @@ module decode_2nd
         /* ----- 制御 ----- */
         input wire          CLK,
         input wire          RST,
+        input wire          FLUSH,
         input wire          STALL,
 
         /* ----- デコード部2との接続 ----- */
@@ -40,7 +41,7 @@ module decode_2nd
     reg  [2:0]  decode_1st_funct3;
 
     always @ (posedge CLK) begin
-        if (RST) begin
+        if (RST || FLUSH) begin
             decode_1st_valid <= 1'b0;
             decode_1st_pc <= 32'b0;
             decode_1st_opcode <= 7'b0;

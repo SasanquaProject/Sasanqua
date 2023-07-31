@@ -3,6 +3,7 @@ module exec
         /* ----- 制御 ----- */
         input wire          CLK,
         input wire          RST,
+        input wire          FLUSH,
         input wire          STALL,
 
         /* ----- データフォワーディング ----- */
@@ -57,7 +58,7 @@ module exec
     reg         [2:0]   funct3;
 
     always @ (posedge CLK) begin
-        if (RST) begin
+        if (RST || FLUSH) begin
             valid <= 1'b0;
             pc <= 32'b0;
             opcode <= 7'b0;

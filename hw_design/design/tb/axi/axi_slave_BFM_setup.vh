@@ -236,5 +236,11 @@ begin
     axi_slave_bfm.ram_array[60] = 32'h00101023;  // sh x1, 0(x0)
     axi_slave_bfm.ram_array[61] = 32'h001010a3;  // sh x1, 1(x0)
     axi_slave_bfm.ram_array[62] = 32'h00101123;  // sh x1, 2(x0)
+
+    axi_slave_bfm.ram_array[70] = 32'h00a00093;  // addi x1, x0, 10
+    axi_slave_bfm.ram_array[71] = 32'h00a00113;  // addi x2, x0, 10
+    axi_slave_bfm.ram_array[72] = 32'h00208463;  // beq x1, x2, 8
+    axi_slave_bfm.ram_array[73] = 32'h00e00193;  // addi x3, x0, 14
+    axi_slave_bfm.ram_array[74] = 32'h00f00193;  // addi x3, x0, 15
 end
 endtask
