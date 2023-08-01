@@ -230,6 +230,12 @@ module core
         .REG_FWD_BV     (memr_reg_w_data),
         .REG_FWD_C      (memw_reg_w_rd),
         .REG_FWD_CV     (memw_reg_w_data),
+        .CSR_FWD_A      (cushion_csr_w_addr),
+        .CSR_FWD_AV     (cushion_csr_w_data),
+        .CSR_FWD_B      (memr_csr_w_addr),
+        .CSR_FWD_BV     (memr_csr_w_data),
+        .CSR_FWD_C      (memw_csr_w_addr),
+        .CSR_FWD_CV     (memw_csr_w_data),
 
         // 前段との接続
         .VALID          (schedule_1st_valid),
@@ -368,7 +374,8 @@ module core
 
     /* ----- 8. メモリアクセス(w) ----- */
     wire [4:0]  memw_reg_w_rd;
-    wire [31:0] memw_reg_w_data;
+    wire [11:0] memw_csr_w_addr;
+    wire [31:0] memw_reg_w_data, memw_csr_w_data;
 
     mwrite mwrite (
         // 制御
@@ -387,6 +394,8 @@ module core
         .MEMR_MEM_R_DATA        (memr_mem_r_data),
         .MEMR_REG_W_RD          (memr_reg_w_rd),
         .MEMR_REG_W_DATA        (memr_reg_w_data),
+        .MEMR_CSR_W_ADDR        (memr_csr_w_addr),
+        .MEMR_CSR_W_DATA        (memr_csr_w_data),
         .MEMR_MEM_W_VALID       (memr_mem_w_valid),
         .MEMR_MEM_W_ADDR        (memr_mem_w_addr),
         .MEMR_MEM_W_STRB        (memr_mem_w_strb),
@@ -394,7 +403,9 @@ module core
 
         // データフォワーディング用
         .MEMW_REG_W_RD          (memw_reg_w_rd),
-        .MEMW_REG_W_DATA        (memw_reg_w_data)
+        .MEMW_REG_W_DATA        (memw_reg_w_data),
+        .MEMW_CSR_W_ADDR        (memw_csr_w_addr),
+        .MEMW_CSR_W_DATA        (memw_csr_w_data)
     );
 
 endmodule

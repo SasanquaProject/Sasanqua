@@ -7,12 +7,21 @@ module exec
         input wire          STALL,
 
         /* ----- データフォワーディング ----- */
+        // RV32i
         input wire  [4:0]   REG_FWD_A,
         input wire  [31:0]  REG_FWD_AV,
         input wire  [4:0]   REG_FWD_B,
         input wire  [31:0]  REG_FWD_BV,
         input wire  [4:0]   REG_FWD_C,
         input wire  [31:0]  REG_FWD_CV,
+
+        // CSRs
+        input wire  [11:0]  CSR_FWD_A,
+        input wire  [31:0]  CSR_FWD_AV,
+        input wire  [11:0]  CSR_FWD_B,
+        input wire  [31:0]  CSR_FWD_BV,
+        input wire  [11:0]  CSR_FWD_C,
+        input wire  [31:0]  CSR_FWD_CV,
 
         /* ----- 前段との接続 ----- */
         input wire          VALID,
@@ -56,11 +65,11 @@ module exec
     );
 
     /* ----- 入力取り込み ----- */
-    reg                 valid;
-    reg         [31:0]  pc, imm, rs1_v_nf, rs2_v_nf, csr_v;
-    reg         [6:0]   opcode, funct7;
-    reg         [4:0]   rd, rs1, rs2;
-    reg         [2:0]   funct3;
+    reg         valid;
+    reg [31:0]  pc, imm, rs1_v_nf, rs2_v_nf, csr_v_nf;
+    reg [6:0]   opcode, funct7;
+    reg [4:0]   rd, rs1, rs2;
+    reg [2:0]   funct3;
 
     always @ (posedge CLK) begin
         if (RST || FLUSH) begin
@@ -72,7 +81,7 @@ module exec
             rs1_v_nf <= 32'b0;
             rs2 <= 5'b0;
             rs2_v_nf <= 32'b0;
-            csr_v <= 32'b0;
+            csr_v_nf <= 32'b0;
             funct3 <= 3'b0;
             funct7 <= 7'b0;
             imm <= 32'b0;
@@ -89,7 +98,7 @@ module exec
             rs1_v_nf <= RS1_V;
             rs2 <= RS2;
             rs2_v_nf <= RS2_V;
-            csr_v <= CSR_V;
+            csr_v_nf <= CSR_V;
             funct3 <= FUNCT3;
             funct7 <= FUNCT7;
             imm <= IMM;
@@ -97,15 +106,16 @@ module exec
     end
 
     /* ----- データフォワーディング ----- */
+    // RV32i
     wire        [31:0]  rs1_v, rs2_v;
     wire signed [31:0]  rs1_v_s, rs2_v_s;
 
-    assign      rs1_v   = forwarding(rs1, rs1_v_nf, REG_FWD_A, REG_FWD_AV, REG_FWD_B, REG_FWD_BV, REG_FWD_C, REG_FWD_CV);
-    assign      rs2_v   = forwarding(rs2, rs2_v_nf, REG_FWD_A, REG_FWD_AV, REG_FWD_B, REG_FWD_BV, REG_FWD_C, REG_FWD_CV);
+    assign      rs1_v   = forwarding_rv32i(rs1, rs1_v_nf, REG_FWD_A, REG_FWD_AV, REG_FWD_B, REG_FWD_BV, REG_FWD_C, REG_FWD_CV);
+    assign      rs2_v   = forwarding_rv32i(rs2, rs2_v_nf, REG_FWD_A, REG_FWD_AV, REG_FWD_B, REG_FWD_BV, REG_FWD_C, REG_FWD_CV);
     assign      rs1_v_s = rs1_v;
     assign      rs2_v_s = rs2_v;
 
-    function [31:0] forwarding;
+    function [31:0] forwarding_rv32i;
         input [4:0]     target;
         input [31:0]    target_v;
         input [4:0]     reg_a;
@@ -116,10 +126,33 @@ module exec
         input [31:0]    reg_c_v;
 
         case (target)
-            reg_a:   forwarding = reg_a_v;
-            reg_b:   forwarding = reg_b_v;
-            reg_c:   forwarding = reg_c_v;
-            default: forwarding = target_v;
+            reg_a:   forwarding_rv32i = reg_a_v;
+            reg_b:   forwarding_rv32i = reg_b_v;
+            reg_c:   forwarding_rv32i = reg_c_v;
+            default: forwarding_rv32i = target_v;
+        endcase
+    endfunction
+
+    // CSRs
+    wire [31:0] csr_v;
+
+    assign csr_v = forwarding_csr(imm[11:0], csr_v_nf, CSR_FWD_A, CSR_FWD_AV, CSR_FWD_B, CSR_FWD_BV, CSR_FWD_C, CSR_FWD_CV);
+
+    function [31:0] forwarding_csr;
+        input [11:0]    target;
+        input [31:0]    target_v;
+        input [11:0]    csr_a;
+        input [31:0]    csr_a_v;
+        input [11:0]    csr_b;
+        input [31:0]    csr_b_v;
+        input [11:0]    csr_c;
+        input [31:0]    csr_c_v;
+
+        case (target)
+            csr_a:   forwarding_csr = csr_a_v;
+            csr_b:   forwarding_csr = csr_b_v;
+            csr_c:   forwarding_csr = csr_c_v;
+            default: forwarding_csr = target_v;
         endcase
     endfunction
 
@@ -391,7 +424,7 @@ module exec
     end
 
     // CSRs
-    always @ (posedge CLK) begin
+    always @* begin
         casez ({opcode, funct3})
             10'b1110011_011: begin // csrrc
                 CSR_W_ADDR <= imm[11:0];
@@ -415,7 +448,7 @@ module exec
             end
             10'b1110011_101: begin // csrrwi
                 CSR_W_ADDR <= imm[11:0];
-                CSR_W_DATA <= { 27'b0, rs1 };
+                CSR_W_DATA <= csr_v | { 27'b0, rs1 };
             end
             default: begin
                 CSR_W_ADDR <= 12'b0;

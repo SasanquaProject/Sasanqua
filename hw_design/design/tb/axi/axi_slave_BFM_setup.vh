@@ -259,7 +259,7 @@ begin
     axi_slave_bfm.ram_array[90] = 32'h12300093;  // addi x1, x0, 0x123
     axi_slave_bfm.ram_array[91] = 32'h30009173;  // csrrw x2, 0x300, x1
     axi_slave_bfm.ram_array[92] = 32'h30095173;  // csrrwi x2, 0x300, 0x12
-    axi_slave_bfm.ram_array[93] = 32'hff000093;  // addi x1, x0, 0xf0f
+    axi_slave_bfm.ram_array[93] = 32'hff000093;  // addi x1, x0, 0xff0
     axi_slave_bfm.ram_array[94] = 32'h3000b173;  // csrrc x2, 0x300, x1
     axi_slave_bfm.ram_array[95] = 32'h3007f173;  // csrrci x2, 0x300, 0xf
     axi_slave_bfm.ram_array[96] = 32'h3000a173;  // csrrs x2, 0x300, x1

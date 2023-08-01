@@ -93,6 +93,7 @@ wire [4:0]  SCHEDULE_1ST_RS1        = sasanqua.core.reg_rs1;
 wire [31:0] SCHEDULE_1ST_RS1_V      = sasanqua.core.reg_rs1_v;
 wire [4:0]  SCHEDULE_1ST_RS2        = sasanqua.core.reg_rs2;
 wire [31:0] SCHEDULE_1ST_RS2_V      = sasanqua.core.reg_rs2_v;
+wire [31:0] SCHEDULE_1ST_CSR_V      = sasanqua.core.reg_csr_v;
 wire [2:0]  SCHEDULE_1ST_FUNCT3     = sasanqua.core.schedule_1st_funct3;
 wire [6:0]  SCHEDULE_1ST_FUNCT7     = sasanqua.core.schedule_1st_funct7;
 wire [31:0] SCHEDULE_1ST_IMM        = sasanqua.core.schedule_1st_imm;
