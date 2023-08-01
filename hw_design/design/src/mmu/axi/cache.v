@@ -21,7 +21,6 @@ module cache_axi
         // 書き
         input wire          WREN,
         input wire  [31:0]  WADDR,
-        input wire  [3:0]   WSTRB,
         input wire  [31:0]  WDATA,
 
         /* ----- AXIバス ----- */
@@ -99,9 +98,7 @@ module cache_axi
             ROADDR <= RIADDR;
             RVALID <= RDEN && RIADDR[31:12] == cached_addr;
             RDATA <= RDEN && RIADDR[31:12] == cached_addr ? (
-                        WREN && RIADDR[11:2] == WADDR[11:2] ?
-                            gen_wrdata(WSTRB, cache[WADDR[11:2]], WDATA) :
-                            cache[RIADDR[11:2]]
+                        WREN && RIADDR[11:2] == WADDR[11:2] ? WDATA : cache[RIADDR[11:2]]
                     ) : 32'b0;
         end
     end
@@ -113,7 +110,7 @@ module cache_axi
         if (RST)
             wrcnt <= 10'b0;
         else if (WREN)
-            cache[WADDR[11:2]] <= gen_wrdata(WSTRB, cache[WADDR[11:2]], WDATA);
+            cache[WADDR[11:2]] <= WDATA;
         else if (ar_state == S_AR_IDLE)
             wrcnt <= 10'b0;
         else if (r_state == S_R_READ && M_AXI_RVALID) begin
@@ -129,23 +126,6 @@ module cache_axi
             cached_addr <= RIADDR[31:12];
         end
     end
-
-    function [31:0] gen_wrdata;
-        input [3:0]     STRB;
-        input [31:0]    A;
-        input [31:0]    B;
-
-        case (STRB)
-            4'b0001: gen_wrdata = (A & 32'hffff_ff00) | (B & 32'h0000_00ff);
-            4'b0010: gen_wrdata = (A & 32'hffff_00ff) | (B & 32'h0000_ff00);
-            4'b0100: gen_wrdata = (A & 32'hff00_ffff) | (B & 32'h00ff_0000);
-            4'b1000: gen_wrdata = (A & 32'h00ff_ffff) | (B & 32'hff00_0000);
-            4'b0011: gen_wrdata = (A & 32'hffff_0000) | (B & 32'h0000_ffff);
-            4'b0110: gen_wrdata = (A & 32'hff00_00ff) | (B & 32'h00ff_ff00);
-            4'b1100: gen_wrdata = (A & 32'h0000_ffff) | (B & 32'hffff_0000);
-            default: gen_wrdata = B;
-        endcase
-    endfunction
 
     /* ----- RAMアクセス ------ */
     // ARチャネル用ステートマシン

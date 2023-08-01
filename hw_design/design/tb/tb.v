@@ -37,7 +37,6 @@ wire        DATA_RVALID             = sasanqua.mmu.DATA_RVALID;
 wire [31:0] DATA_RDATA              = sasanqua.mmu.DATA_RDATA;
 wire        DATA_WREN               = sasanqua.mmu.DATA_WREN;
 wire [31:0] DATA_WADDR              = sasanqua.mmu.DATA_WADDR;
-wire [3:0]  DATA_WSTRB              = sasanqua.mmu.DATA_WSTRB;
 wire [31:0] DATA_WDATA              = sasanqua.mmu.DATA_WDATA;
 
 // CSRs
@@ -133,6 +132,9 @@ wire        CUSHION_JMP_DO          = sasanqua.core.cushion_jmp_do;
 wire [31:0] CUSHION_JMP_PC          = sasanqua.core.cushion_jmp_pc;
 
 // Core: Mem(r)
+wire        MEMR_MEM_R_VALID        = sasanqua.core.memr_mem_r_valid;
+wire [4:0]  MEMR_MEM_R_RD           = sasanqua.core.memr_mem_r_rd;
+wire [31:0] MEMR_MEM_R_DATA         = sasanqua.core.memr_mem_r_data;
 wire [4:0]  MEMR_REG_W_RD           = sasanqua.core.memr_reg_w_rd;
 wire [31:0] MEMR_REG_W_DATA         = sasanqua.core.memr_reg_w_data;
 wire [11:0] MEMR_CSR_W_ADDR         = sasanqua.core.memr_csr_w_addr;

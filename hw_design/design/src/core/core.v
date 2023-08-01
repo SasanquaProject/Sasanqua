@@ -29,7 +29,6 @@ module core
         input wire  [31:0]  DATA_RDATA,
         output wire         DATA_WREN,
         output wire [31:0]  DATA_WADDR,
-        output wire [3:0]   DATA_WSTRB,
         output wire [31:0]  DATA_WDATA,
 
         // ハザード
@@ -171,8 +170,11 @@ module core
     );
 
     /* ----- 4-2. レジスタアクセス ----- */
-    wire [31:0] reg_rs1_v, reg_rs2_v, reg_csr_v;
-    wire [4:0]  reg_rs1, reg_rs2;
+    wire [31:0] reg_rs1_v, reg_rs2_v, reg_csr_v, wb_reg_v;
+    wire [4:0]  reg_rs1, reg_rs2, wb_reg;
+
+    assign wb_reg   = memr_mem_r_valid ? memr_mem_r_rd : memr_reg_w_rd;
+    assign wb_reg_v = memr_mem_r_valid ? memr_mem_r_data : memr_reg_w_data;
 
     register register (
         // 制御
@@ -197,8 +199,8 @@ module core
         .REG_IR_O_AV    (reg_rs1_v),
         .REG_IR_O_B     (reg_rs2),
         .REG_IR_O_BV    (reg_rs2_v),
-        .REG_IW_I_A     (memr_reg_w_rd),
-        .REG_IW_I_AV    (memr_reg_w_data),
+        .REG_IW_I_A     (wb_reg),
+        .REG_IW_I_AV    (wb_reg_v),
 
         // レジスタアクセス(CSRs) : { _ => addr, V => value }
         .REG_CR_I_A     (decode_2nd_imm[11:0]),
@@ -311,10 +313,10 @@ module core
     );
 
     /* ----- 7. メモリアクセス(r) ----- */
-    wire        memr_mem_w_valid, memr_jmp_do;
-    wire [31:0] memr_reg_w_data, memr_csr_w_data, memr_mem_w_addr, memr_mem_w_data, memr_jmp_pc;
+    wire        memr_mem_r_valid, memr_mem_w_valid, memr_jmp_do;
+    wire [31:0] memr_mem_r_data, memr_reg_w_data, memr_csr_w_data, memr_mem_w_addr, memr_mem_w_data, memr_jmp_pc;
     wire [11:0] memr_csr_w_addr;
-    wire [4:0]  memr_reg_w_rd;
+    wire [4:0]  memr_mem_r_rd, memr_reg_w_rd;
     wire [3:0]  memr_mem_w_strb;
 
     mread mread (
@@ -349,6 +351,9 @@ module core
         .CUSHION_JMP_PC         (cushion_jmp_pc),
 
         // メモリアクセス(w)との接続
+        .MEMR_MEM_R_VALID       (memr_mem_r_valid),
+        .MEMR_MEM_R_RD          (memr_mem_r_rd),
+        .MEMR_MEM_R_DATA        (memr_mem_r_data),
         .MEMR_REG_W_RD          (memr_reg_w_rd),
         .MEMR_REG_W_DATA        (memr_reg_w_data),
         .MEMR_CSR_W_ADDR        (memr_csr_w_addr),
@@ -374,10 +379,12 @@ module core
         // MMUとの接続
         .DATA_WREN              (DATA_WREN),
         .DATA_WADDR             (DATA_WADDR),
-        .DATA_WSTRB             (DATA_WSTRB),
         .DATA_WDATA             (DATA_WDATA),
 
         // メモリアクセス(r)との接続
+        .MEMR_MEM_R_VALID       (memr_mem_r_valid),
+        .MEMR_MEM_R_RD          (memr_mem_r_rd),
+        .MEMR_MEM_R_DATA        (memr_mem_r_data),
         .MEMR_REG_W_RD          (memr_reg_w_rd),
         .MEMR_REG_W_DATA        (memr_reg_w_data),
         .MEMR_MEM_W_VALID       (memr_mem_w_valid),

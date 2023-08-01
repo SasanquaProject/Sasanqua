@@ -288,6 +288,27 @@ module exec
                 MEM_R_STRB <= 4'b1111;
                 MEM_R_SIGNED <= 1'b0;
             end
+            17'b0100011_000_zzzzzzz: begin  // sb
+                MEM_R_VALID <= valid;
+                MEM_R_RD <= 5'b0;
+                MEM_R_ADDR <= rs1_v + { { 20{ imm[11] } }, imm[11:2], 2'b0 };
+                MEM_R_STRB <= 4'b1111;
+                MEM_R_SIGNED <= 1'b0;
+            end
+            17'b0100011_001_zzzzzzz: begin  // sh
+                MEM_R_VALID <= valid;
+                MEM_R_RD <= 5'b0;
+                MEM_R_ADDR <= rs1_v + { { 20{ imm[11] } }, imm[11:2], 2'b0 };
+                MEM_R_STRB <= 4'b1111;
+                MEM_R_SIGNED <= 1'b0;
+            end
+            17'b0100011_010_zzzzzzz: begin  // sw
+                MEM_R_VALID <= valid;
+                MEM_R_RD <= 5'b0;
+                MEM_R_ADDR <= rs1_v + { { 20{ imm[11] } }, imm[11:2], 2'b0 };
+                MEM_R_STRB <= 4'b1111;
+                MEM_R_SIGNED <= 1'b0;
+            end
             default: begin
                 MEM_R_VALID <= 1'b0;
                 MEM_R_RD <= 5'b0;

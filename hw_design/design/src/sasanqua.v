@@ -71,7 +71,6 @@ module sasanqua
     wire        mem_wait;
     wire        inst_rden, inst_rvalid, data_rden, data_rvalid, data_wren;
     wire [31:0] inst_riaddr, inst_roaddr, inst_rdata, data_riaddr, data_roaddr, data_rdata, data_waddr, data_wdata;
-    wire [3:0]  data_wstrb;
 
     mmu_axi mmu (
         // 制御
@@ -92,7 +91,6 @@ module sasanqua
         .DATA_RDATA     (data_rdata),
         .DATA_WREN      (data_wren),
         .DATA_WADDR     (data_waddr),
-        .DATA_WSTRB     (data_wstrb),
         .DATA_WDATA     (data_wdata),
 
         // AXIバス
@@ -190,7 +188,6 @@ module sasanqua
         .DATA_RDATA     (data_rdata),
         .DATA_WREN      (data_wren),
         .DATA_WADDR     (data_waddr),
-        .DATA_WSTRB     (data_wstrb),
         .DATA_WDATA     (data_wdata),
         .MEM_WAIT       (mem_wait)
     );

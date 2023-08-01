@@ -24,7 +24,6 @@ module mmu_axi
         output wire [31:0]  DATA_RDATA,
         input wire          DATA_WREN,
         input wire [31:0]   DATA_WADDR,
-        input wire [3:0]    DATA_WSTRB,
         input wire [31:0]   DATA_WDATA,
 
         /* ----- AXIバス ----- */
@@ -175,7 +174,6 @@ module mmu_axi
     // 命令キャッシュ
     wire [31:0] m_axi_inst_awaddr, m_axi_inst_wdata, m_axi_inst_araddr;
     wire [7:0]  m_axi_inst_awlen, m_axi_inst_arlen;
-    wire [3:0]  m_axi_inst_wstrb;
     wire [2:0]  m_axi_inst_awsize, m_axi_inst_arsize;
     wire [1:0]  m_axi_inst_awburst, m_axi_inst_arburst;
     wire        m_axi_inst_awvalid, m_axi_inst_wlast, m_axi_inst_wvalid;
@@ -183,12 +181,10 @@ module mmu_axi
 
     wire        exists_inst_cache, inst_rden, dummy_wren;
     wire [31:0] dummy_waddr, dummy_wdata;
-    wire [3:0]  dummy_wstrb;
 
     assign inst_rden    = allow_inst_r ? INST_RDEN : 1'b0;
     assign dummy_wren   = 1'b0;
     assign dummy_waddr  = 32'b0;
-    assign dummy_wstrb  = 4'b0;
     assign dummy_wdata  = 32'b0;
 
     cache_axi inst_cache (
@@ -207,7 +203,6 @@ module mmu_axi
         .RDATA              (INST_RDATA),
         .WREN               (dummy_wren),
         .WADDR              (dummy_waddr),
-        .WSTRB              (dummy_wstrb),
         .WDATA              (dummy_wdata),
 
         // AXIバス
@@ -243,7 +238,6 @@ module mmu_axi
     // データキャッシュ
     wire [31:0] m_axi_data_awaddr, m_axi_data_wdata, m_axi_data_araddr;
     wire [7:0]  m_axi_data_awlen, m_axi_data_arlen;
-    wire [3:0]  m_axi_data_wstrb;
     wire [2:0]  m_axi_data_awsize, m_axi_data_arsize;
     wire [1:0]  m_axi_data_awburst, m_axi_data_arburst;
     wire        m_axi_data_awvalid, m_axi_data_wlast, m_axi_data_wvalid;
@@ -270,7 +264,6 @@ module mmu_axi
         .RDATA              (DATA_RDATA),
         .WREN               (DATA_WREN),
         .WADDR              (DATA_WADDR),
-        .WSTRB              (DATA_WSTRB),
         .WDATA              (DATA_WDATA),
 
         // AXIバス

@@ -40,6 +40,11 @@ module mread
         input wire  [31:0]  CUSHION_JMP_PC,
 
         /* ----- メモリアクセス(w)部との接続 ----- */
+        // メモリ読み込み結果
+        output wire         MEMR_MEM_R_VALID,
+        output wire [4:0]   MEMR_MEM_R_RD,
+        output wire [31:0]  MEMR_MEM_R_DATA,
+
         // レジスタ(rv32i:W)
         output wire [4:0]   MEMR_REG_W_RD,
         output wire [31:0]  MEMR_REG_W_DATA,
@@ -108,12 +113,11 @@ module mread
     end
 
     /* ----- 出力 ----- */
-    assign MEMR_REG_W_RD     = cushion_mem_r_valid ?
-                                cushion_mem_r_rd :
-                                cushion_reg_w_rd;
-    assign MEMR_REG_W_DATA   = cushion_mem_r_valid ?
-                                data_setup(DATA_RDATA, cushion_mem_r_strb, cushion_mem_r_signed) :
-                                cushion_reg_w_data;
+    assign MEMR_MEM_R_VALID  = cushion_mem_r_valid;
+    assign MEMR_MEM_R_RD     = cushion_mem_r_rd;
+    assign MEMR_MEM_R_DATA   = data_setup(DATA_RDATA, cushion_mem_r_strb, cushion_mem_r_signed);
+    assign MEMR_REG_W_RD     = cushion_reg_w_rd;
+    assign MEMR_REG_W_DATA   = cushion_reg_w_data;
     assign MEMR_CSR_W_ADDR   = cushion_csr_w_addr;
     assign MEMR_CSR_W_DATA   = cushion_csr_w_data;
     assign MEMR_MEM_W_VALID  = cushion_mem_w_valid;
