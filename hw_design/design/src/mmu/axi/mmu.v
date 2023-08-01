@@ -174,6 +174,7 @@ module mmu_axi
     // 命令キャッシュ
     wire [31:0] m_axi_inst_awaddr, m_axi_inst_wdata, m_axi_inst_araddr;
     wire [7:0]  m_axi_inst_awlen, m_axi_inst_arlen;
+    wire [3:0]  m_axi_inst_wstrb;
     wire [2:0]  m_axi_inst_awsize, m_axi_inst_arsize;
     wire [1:0]  m_axi_inst_awburst, m_axi_inst_arburst;
     wire        m_axi_inst_awvalid, m_axi_inst_wlast, m_axi_inst_wvalid;
@@ -238,6 +239,7 @@ module mmu_axi
     // データキャッシュ
     wire [31:0] m_axi_data_awaddr, m_axi_data_wdata, m_axi_data_araddr;
     wire [7:0]  m_axi_data_awlen, m_axi_data_arlen;
+    wire [3:0]  m_axi_data_wstrb;
     wire [2:0]  m_axi_data_awsize, m_axi_data_arsize;
     wire [1:0]  m_axi_data_awburst, m_axi_data_arburst;
     wire        m_axi_data_awvalid, m_axi_data_wlast, m_axi_data_wvalid;
