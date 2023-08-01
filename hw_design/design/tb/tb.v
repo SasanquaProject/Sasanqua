@@ -40,6 +40,15 @@ wire [31:0] DATA_WADDR              = sasanqua.mmu.DATA_WADDR;
 wire [3:0]  DATA_WSTRB              = sasanqua.mmu.DATA_WSTRB;
 wire [31:0] DATA_WDATA              = sasanqua.mmu.DATA_WDATA;
 
+// CSRs
+wire        CSRS_RDEN               = sasanqua.csrs.RDEN;
+wire [11:0] CSRS_RADDR              = sasanqua.csrs.RADDR;
+wire        CSRS_RVALID             = sasanqua.csrs.RVALID;
+wire [31:0] CSRS_RDATA              = sasanqua.csrs.RDATA;
+wire        CSRS_WREN               = sasanqua.csrs.WREN;
+wire [11:0] CSRS_WADDR              = sasanqua.csrs.WADDR;
+wire [31:0] CSRS_WDATA              = sasanqua.csrs.WDATA;
+
 // Core: Pipeline
 wire        FLUSH                   = sasanqua.core.flush;
 wire [31:0] NEW_PC                  = sasanqua.core.fetch.NEW_PC;
@@ -92,6 +101,8 @@ wire [31:0] SCHEDULE_1ST_IMM        = sasanqua.core.schedule_1st_imm;
 // Core: Exec
 wire [4:0]  EXEC_REG_W_RD           = sasanqua.core.reg_w_rd;
 wire [31:0] EXEC_REG_W_DATA         = sasanqua.core.reg_w_data;
+wire [11:0] EXEC_CSR_W_ADDR         = sasanqua.core.csr_w_addr;
+wire [31:0] EXEC_CSR_W_DATA         = sasanqua.core.csr_w_data;
 wire        EXEC_MEM_R_VALID        = sasanqua.core.mem_r_valid;
 wire [4:0]  EXEC_MEM_R_RD           = sasanqua.core.mem_r_rd;
 wire [31:0] EXEC_MEM_R_ADDR         = sasanqua.core.mem_r_addr;
@@ -107,6 +118,8 @@ wire [31:0] EXEC_JMP_PC             = sasanqua.core.jmp_pc;
 // Core: Cushion
 wire [4:0]  CUSHION_REG_W_RD        = sasanqua.core.cushion_reg_w_rd;
 wire [31:0] CUSHION_REG_W_DATA      = sasanqua.core.cushion_reg_w_data;
+wire [11:0] CUSHION_CSR_W_ADDR      = sasanqua.core.cushion_csr_w_addr;
+wire [31:0] CUSHION_CSR_W_DATA      = sasanqua.core.cushion_csr_w_data;
 wire        CUSHION_MEM_R_VALID     = sasanqua.core.cushion_mem_r_valid;
 wire [4:0]  CUSHION_MEM_R_RD        = sasanqua.core.cushion_mem_r_rd;
 wire [31:0] CUSHION_MEM_R_ADDR      = sasanqua.core.cushion_mem_r_addr;
@@ -122,6 +135,8 @@ wire [31:0] CUSHION_JMP_PC          = sasanqua.core.cushion_jmp_pc;
 // Core: Mem(r)
 wire [4:0]  MEMR_REG_W_RD           = sasanqua.core.memr_reg_w_rd;
 wire [31:0] MEMR_REG_W_DATA         = sasanqua.core.memr_reg_w_data;
+wire [11:0] MEMR_CSR_W_ADDR         = sasanqua.core.memr_csr_w_addr;
+wire [31:0] MEMR_CSR_W_DATA         = sasanqua.core.memr_csr_w_data;
 wire        MEMR_MEM_W_VALID        = sasanqua.core.memr_mem_w_valid;
 wire [31:0] MEMR_MEM_W_ADDR         = sasanqua.core.memr_mem_w_addr;
 wire [3:0]  MEMR_MEM_W_STRB         = sasanqua.core.memr_mem_w_strb;

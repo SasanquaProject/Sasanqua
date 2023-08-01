@@ -7,9 +7,13 @@ module cushion
         input wire          STALL,
 
         /* ----- 実行部との接続 ----- */
-        // レジスタ(W)
+        // レジスタ(rv32i:W)
         input wire  [4:0]   EXEC_REG_W_RD,
         input wire  [31:0]  EXEC_REG_W_DATA,
+
+        // レジスタ(csrs:W)
+        input wire  [11:0]  EXEC_CSR_W_ADDR,
+        input wire  [31:0]  EXEC_CSR_W_DATA,
 
         // メモリ(R)
         input wire          EXEC_MEM_R_VALID,
@@ -29,9 +33,13 @@ module cushion
         input wire  [31:0]  EXEC_JMP_PC,
 
         /* ----- メモリアクセス(r)部との接続 ----- */
-        // レジスタ(W)
+        // レジスタ(rv32i:W)
         output wire [4:0]   CUSHION_REG_W_RD,
         output wire [31:0]  CUSHION_REG_W_DATA,
+
+        // レジスタ(csrs:W)
+        output wire [11:0]  CUSHION_CSR_W_ADDR,
+        output wire [31:0]  CUSHION_CSR_W_DATA,
 
         // メモリ(R)
         output wire         CUSHION_MEM_R_VALID,
@@ -53,7 +61,8 @@ module cushion
 
     /* ----- 入力取り込み ----- */
     reg         exec_mem_r_valid, exec_mem_r_signed, exec_mem_w_valid, exec_jmp_do;
-    reg [31:0]  exec_reg_w_data, exec_mem_r_addr, exec_mem_w_addr, exec_mem_w_data, exec_jmp_pc;
+    reg [31:0]  exec_reg_w_data, exec_csr_w_data, exec_mem_r_addr, exec_mem_w_addr, exec_mem_w_data, exec_jmp_pc;
+    reg [11:0]  exec_csr_w_addr;
     reg [4:0]   exec_reg_w_rd, exec_mem_r_rd;
     reg [3:0]   exec_mem_r_strb, exec_mem_w_strb;
 
@@ -61,6 +70,8 @@ module cushion
         if (RST || FLUSH) begin
             exec_reg_w_rd <= 5'b0;
             exec_reg_w_data <= 32'b0;
+            exec_csr_w_addr <= 12'b0;
+            exec_csr_w_data <= 32'b0;
             exec_mem_r_valid <= 1'b0;
             exec_mem_r_rd <= 5'b0;
             exec_mem_r_addr <= 32'b0;
@@ -79,6 +90,8 @@ module cushion
         else begin
             exec_reg_w_rd <= EXEC_REG_W_RD;
             exec_reg_w_data <= EXEC_REG_W_DATA;
+            exec_csr_w_addr <= EXEC_CSR_W_ADDR;
+            exec_csr_w_data <= EXEC_CSR_W_DATA;
             exec_mem_r_valid <= EXEC_MEM_R_VALID;
             exec_mem_r_rd <= EXEC_MEM_R_RD;
             exec_mem_r_addr <= EXEC_MEM_R_ADDR;
@@ -96,6 +109,8 @@ module cushion
     /* ----- 出力 ----- */
     assign CUSHION_REG_W_RD     = exec_reg_w_rd;
     assign CUSHION_REG_W_DATA   = exec_reg_w_data;
+    assign CUSHION_CSR_W_ADDR   = exec_csr_w_addr;
+    assign CUSHION_CSR_W_DATA   = exec_csr_w_data;
     assign CUSHION_MEM_R_VALID  = exec_mem_r_valid;
     assign CUSHION_MEM_R_RD     = exec_mem_r_rd;
     assign CUSHION_MEM_R_ADDR   = exec_mem_r_addr;

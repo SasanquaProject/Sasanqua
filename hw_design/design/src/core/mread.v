@@ -14,9 +14,13 @@ module mread
         input wire  [31:0]  DATA_RDATA,
 
         /* ----- 待機部との接続 ----- */
-        // レジスタ(W)
+        // レジスタ(rv32i:W)
         input wire  [4:0]   CUSHION_REG_W_RD,
         input wire  [31:0]  CUSHION_REG_W_DATA,
+
+        // レジスタ(csrs:W)
+        input wire  [11:0]  CUSHION_CSR_W_ADDR,
+        input wire  [31:0]  CUSHION_CSR_W_DATA,
 
         // メモリ(R)
         input wire          CUSHION_MEM_R_VALID,
@@ -36,9 +40,13 @@ module mread
         input wire  [31:0]  CUSHION_JMP_PC,
 
         /* ----- メモリアクセス(w)部との接続 ----- */
-        // レジスタ(W)
+        // レジスタ(rv32i:W)
         output wire [4:0]   MEMR_REG_W_RD,
         output wire [31:0]  MEMR_REG_W_DATA,
+
+        // レジスタ(csrs:W)
+        output wire [11:0]  MEMR_CSR_W_ADDR,
+        output wire [31:0]  MEMR_CSR_W_DATA,
 
         // メモリ(W)
         output wire         MEMR_MEM_W_VALID,
@@ -53,7 +61,8 @@ module mread
 
     /* ----- 入力取り込み ----- */
     reg         cushion_mem_r_valid, cushion_mem_r_signed, cushion_mem_w_valid, cushion_jmp_do;
-    reg [31:0]  cushion_reg_w_data, cushion_mem_w_addr, cushion_mem_w_data, cushion_jmp_pc;
+    reg [31:0]  cushion_reg_w_data, cushion_csr_w_data, cushion_mem_w_addr, cushion_mem_w_data, cushion_jmp_pc;
+    reg [11:0]  cushion_csr_w_addr;
     reg [4:0]   cushion_reg_w_rd, cushion_mem_r_rd;
     reg [3:0]   cushion_mem_r_strb, cushion_mem_w_strb;
 
@@ -64,6 +73,8 @@ module mread
         if (RST || FLUSH) begin
             cushion_reg_w_rd <= 5'b0;
             cushion_reg_w_data <= 32'b0;
+            cushion_csr_w_addr <= 12'b0;
+            cushion_csr_w_data <= 32'b0;
             cushion_mem_r_valid <= 1'b0;
             cushion_mem_r_rd <= 5'b0;
             cushion_mem_r_strb <= 4'b0;
@@ -81,6 +92,8 @@ module mread
         else begin
             cushion_reg_w_rd <= CUSHION_REG_W_RD;
             cushion_reg_w_data <= CUSHION_REG_W_DATA;
+            cushion_csr_w_addr <= CUSHION_CSR_W_ADDR;
+            cushion_csr_w_data <= CUSHION_CSR_W_DATA;
             cushion_mem_r_valid <= CUSHION_MEM_R_VALID;
             cushion_mem_r_rd <= CUSHION_MEM_R_RD;
             cushion_mem_r_strb <= CUSHION_MEM_R_STRB;
@@ -101,6 +114,8 @@ module mread
     assign MEMR_REG_W_DATA   = cushion_mem_r_valid ?
                                 data_setup(DATA_RDATA, cushion_mem_r_strb, cushion_mem_r_signed) :
                                 cushion_reg_w_data;
+    assign MEMR_CSR_W_ADDR   = cushion_csr_w_addr;
+    assign MEMR_CSR_W_DATA   = cushion_csr_w_data;
     assign MEMR_MEM_W_VALID  = cushion_mem_w_valid;
     assign MEMR_MEM_W_ADDR   = cushion_mem_w_addr;
     assign MEMR_MEM_W_STRB   = cushion_mem_w_strb;

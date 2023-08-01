@@ -23,14 +23,19 @@ module exec
         input wire  [31:0]  RS1_V,
         input wire  [4:0]   RS2,
         input wire  [31:0]  RS2_V,
+        input wire  [31:0]  CSR_V,
         input wire  [2:0]   FUNCT3,
         input wire  [6:0]   FUNCT7,
         input wire  [31:0]  IMM,
 
         /* ----- 後段との接続 ----- */
-        // レジスタ(W)
+        // レジスタ(rv32i:W)
         output reg  [4:0]   REG_W_RD,
         output reg  [31:0]  REG_W_DATA,
+
+        // レジスタ(csrs:W)
+        output reg  [11:0]  CSR_W_ADDR,
+        output reg  [31:0]  CSR_W_DATA,
 
         // メモリ(R)
         output reg          MEM_R_VALID,
@@ -52,7 +57,7 @@ module exec
 
     /* ----- 入力取り込み ----- */
     reg                 valid;
-    reg         [31:0]  pc, imm, rs1_v_nf, rs2_v_nf;
+    reg         [31:0]  pc, imm, rs1_v_nf, rs2_v_nf, csr_v;
     reg         [6:0]   opcode, funct7;
     reg         [4:0]   rd, rs1, rs2;
     reg         [2:0]   funct3;
@@ -67,6 +72,7 @@ module exec
             rs1_v_nf <= 32'b0;
             rs2 <= 5'b0;
             rs2_v_nf <= 32'b0;
+            csr_v <= 32'b0;
             funct3 <= 3'b0;
             funct7 <= 7'b0;
             imm <= 32'b0;
@@ -83,6 +89,7 @@ module exec
             rs1_v_nf <= RS1_V;
             rs2 <= RS2;
             rs2_v_nf <= RS2_V;
+            csr_v <= CSR_V;
             funct3 <= FUNCT3;
             funct7 <= FUNCT7;
             imm <= IMM;
@@ -212,6 +219,30 @@ module exec
                 REG_W_RD <= rd;
                 REG_W_DATA <= pc + 32'd4;
             end
+            17'b1110011_011_zzzzzzz: begin // csrrc
+                REG_W_RD <= rd;
+                REG_W_DATA <= csr_v;
+            end
+            17'b1110011_111_zzzzzzz: begin // csrrci
+                REG_W_RD <= rd;
+                REG_W_DATA <= csr_v;
+            end
+            17'b1110011_010_zzzzzzz: begin // csrrs
+                REG_W_RD <= rd;
+                REG_W_DATA <= csr_v;
+            end
+            17'b1110011_110_zzzzzzz: begin // csrrsi
+                REG_W_RD <= rd;
+                REG_W_DATA <= csr_v;
+            end
+            17'b1110011_001_zzzzzzz: begin // csrrw
+                REG_W_RD <= rd;
+                REG_W_DATA <= csr_v;
+            end
+            17'b1110011_101_zzzzzzz: begin // csrrwi
+                REG_W_RD <= rd;
+                REG_W_DATA <= csr_v;
+            end
             default: begin
                 REG_W_RD <= 5'b0;
                 REG_W_DATA <= 32'b0;
@@ -338,18 +369,46 @@ module exec
         endcase
     end
 
+    // CSRs
+    always @ (posedge CLK) begin
+        casez ({opcode, funct3})
+            10'b1110011_011: begin // csrrc
+                CSR_W_ADDR <= imm[11:0];
+                CSR_W_DATA <= csr_v & (~rs1_v);
+            end
+            10'b1110011_111: begin // csrrci
+                CSR_W_ADDR <= imm[11:0];
+                CSR_W_DATA <= csr_v & { 27'h1ff_ffff, (~rs1) };
+            end
+            10'b1110011_010: begin // csrrs
+                CSR_W_ADDR <= imm[11:0];
+                CSR_W_DATA <= csr_v | rs1_v;
+            end
+            10'b1110011_110: begin // csrrsi
+                CSR_W_ADDR <= imm[11:0];
+                CSR_W_DATA <= csr_v | { 27'b0, rs1 };
+            end
+            10'b1110011_001: begin // csrrw
+                CSR_W_ADDR <= imm[11:0];
+                CSR_W_DATA <= rs1_v;
+            end
+            10'b1110011_101: begin // csrrwi
+                CSR_W_ADDR <= imm[11:0];
+                CSR_W_DATA <= { 27'b0, rs1 };
+            end
+            default: begin
+                CSR_W_ADDR <= 12'b0;
+                CSR_W_DATA <= 32'b0;
+            end
+        endcase
+    end
+
     // その他
     always @* begin
         // fence
         // fence.i
         // ebreak
         // ecall
-        // csrrc
-        // csrrci
-        // csrrs
-        // csrrsi
-        // csrrw
-        // csrrwi
     end
 
 endmodule

@@ -6,6 +6,15 @@ module register
         input wire          FLUSH,
         input wire          STALL,
 
+        /* ----- CSRs接続 ----- */
+        output wire         CSRS_RDEN,
+        output wire [11:0]  CSRS_RADDR,
+        input wire          CSRS_RVALID,
+        input wire  [31:0]  CSRS_RDATA,
+        output wire         CSRS_WREN,
+        output wire [11:0]  CSRS_WADDR,
+        output wire [31:0]  CSRS_WDATA,
+
         /* ----- レジスタアクセス(rv32i) ----- */
         // 読み
         input wire  [4:0]   REG_IR_I_A,
@@ -17,7 +26,16 @@ module register
 
         // 書き
         input wire  [4:0]   REG_IW_I_A,
-        input wire  [31:0]  REG_IW_I_AV
+        input wire  [31:0]  REG_IW_I_AV,
+
+        /* ----- レジスタアクセス(CSRs) ----- */
+        // 読み
+        input wire  [11:0]  REG_CR_I_A,
+        output wire [31:0]  REG_CR_O_AV,
+
+        // 書き
+        input wire  [11:0]  REG_CW_I_A,
+        input wire  [11:0]  REG_CW_I_AV
     );
 
     /* ----- 入力取り込み ----- */
@@ -83,5 +101,13 @@ module register
         else if (REG_IW_I_A != 5'b0)
             register[REG_IW_I_A] <= REG_IW_I_AV;
     end
+
+    /* ----- レジスタアクセス(CSRs) ----- */
+    assign CSRS_RDEN    = 1'b1;
+    assign CSRS_RADDR   = REG_CR_I_A;
+    assign CSRS_WREN    = 1'b1;
+    assign CSRS_WADDR   = REG_CW_I_A;
+    assign CSRS_WDATA   = REG_CW_I_AV;
+    assign REG_CR_O_AV  = CSRS_RDATA;
 
 endmodule
