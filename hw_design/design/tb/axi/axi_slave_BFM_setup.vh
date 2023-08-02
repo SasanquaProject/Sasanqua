@@ -111,11 +111,13 @@ sasanqua sasanqua (
 
 /* ----- BFM接続 ----- */
 axi_slave_bfm # (
-    .READ_RANDOM_WAIT       (1),
     .C_S_AXI_DATA_WIDTH     (C_AXI_DATA_WIDTH),
-    .READ_DATA_IS_INCREMENT (0),
     .C_OFFSET_WIDTH         (C_OFFSET_WIDTH),
-    .ARREADY_IS_USUALLY_HIGH(0)
+    .WRITE_RANDOM_WAIT      (1),
+    .READ_RANDOM_WAIT       (1),
+    .READ_DATA_IS_INCREMENT (0),
+    .ARREADY_IS_USUALLY_HIGH(0),
+    .AWREADY_IS_USUALLY_HIGH(0)
 ) axi_slave_bfm (
     // クロック
     .ACLK           (CLK),
@@ -190,11 +192,90 @@ begin
 end
 endtask
 
-task write_dummy_inst;
+task write_rv32i_test_inst;
 integer i;
 begin
-    for ( i = 0; i < 4096; i = i + 1) begin
-        axi_slave_bfm.ram_array[i] = i;
+    for (i = 0; i < 4096; i = i + 1) begin
+        axi_slave_bfm.ram_array[i] = 32'b0;
     end
+
+    // データ用
+    axi_slave_bfm.ram_array[512] = 32'h78563412;
+
+    // 命令用
+    axi_slave_bfm.ram_array[  0] = 32'h00a00093;  // addi x1, x0, 10
+    axi_slave_bfm.ram_array[  1] = 32'h00100133;  // add x2, x0, x1
+    axi_slave_bfm.ram_array[  2] = 32'h00000013;  // nop
+    axi_slave_bfm.ram_array[  3] = 32'h001001b3;  // add x3, x0, x1
+    axi_slave_bfm.ram_array[  4] = 32'h00000013;  // nop
+    axi_slave_bfm.ram_array[  5] = 32'h00000013;  // nop
+    axi_slave_bfm.ram_array[  6] = 32'h00100233;  // add x4, x0, x1
+    axi_slave_bfm.ram_array[  7] = 32'h00000013;  // nop
+    axi_slave_bfm.ram_array[  8] = 32'h00000013;  // nop
+    axi_slave_bfm.ram_array[  9] = 32'h00000013;  // nop
+    axi_slave_bfm.ram_array[ 10] = 32'h001002b3;  // add x5, x0, x1
+
+    axi_slave_bfm.ram_array[ 20] = 32'h00100093;  // addi x1, 1
+    axi_slave_bfm.ram_array[ 21] = 32'h00b09093;  // slli x1, 11  : x1 = 2048
+    axi_slave_bfm.ram_array[ 22] = 32'h00008103;  // lb x2, 0(x1)
+    axi_slave_bfm.ram_array[ 23] = 32'h0000c103;  // lbu x2, 0(x1)
+    axi_slave_bfm.ram_array[ 24] = 32'h00009103;  // lh x2, 0(x1)
+    axi_slave_bfm.ram_array[ 25] = 32'h0000d103;  // lhu x2, 0(x1)
+    axi_slave_bfm.ram_array[ 26] = 32'h0000a103;  // lw x2, 0(x1)
+
+    axi_slave_bfm.ram_array[ 30] = 32'h0000c103;  // lbu x2, 0(x1)
+    axi_slave_bfm.ram_array[ 31] = 32'h0010c103;  // lbu x2, 1(x1)
+    axi_slave_bfm.ram_array[ 32] = 32'h0020c103;  // lbu x2, 2(x1)
+    axi_slave_bfm.ram_array[ 33] = 32'h0030c103;  // lbu x2, 3(x1)
+
+    axi_slave_bfm.ram_array[ 40] = 32'h00009103;  // lh x2, 0(x1)
+    axi_slave_bfm.ram_array[ 41] = 32'h00109103;  // lh x2, 1(x1)
+    axi_slave_bfm.ram_array[ 42] = 32'h00209103;  // lh x2, 2(x1)
+
+    axi_slave_bfm.ram_array[ 50] = 32'h01200113;  // addi x2, x0, 0x12
+    axi_slave_bfm.ram_array[ 51] = 32'h00208023;  // sb x2, 0(x1)
+    axi_slave_bfm.ram_array[ 52] = 32'h002080a3;  // sb x2, 1(x1)
+    axi_slave_bfm.ram_array[ 53] = 32'h00208123;  // sb x2, 2(x1)
+    axi_slave_bfm.ram_array[ 54] = 32'h002081a3;  // sb x2, 3(x1)
+    axi_slave_bfm.ram_array[ 55] = 32'h0000a183;  // lw x3, 0(x1)
+
+    axi_slave_bfm.ram_array[ 60] = 32'h12300113;  // addi x2, x0, 0x123
+    axi_slave_bfm.ram_array[ 61] = 32'h00209023;  // sh x2, 0(x1)
+    axi_slave_bfm.ram_array[ 62] = 32'h0000a183;  // lw x3, 0(x1)
+    axi_slave_bfm.ram_array[ 63] = 32'h002090a3;  // sh x2, 1(x1)
+    axi_slave_bfm.ram_array[ 64] = 32'h0000a183;  // lw x3, 0(x1)
+    axi_slave_bfm.ram_array[ 65] = 32'h00209123;  // sh x2, 2(x1)
+    axi_slave_bfm.ram_array[ 66] = 32'h0000a183;  // lw x3, 0(x1)
+
+    axi_slave_bfm.ram_array[ 70] = 32'h12121137;  // lui x2, 0x12121
+    axi_slave_bfm.ram_array[ 71] = 32'h21210113;  // addi x2, x2, 0x212
+    axi_slave_bfm.ram_array[ 72] = 32'h0020a023;  // sw x2, 0(x1)
+    axi_slave_bfm.ram_array[ 73] = 32'h0000a183;  // lw x3, 0(x1)
+
+    axi_slave_bfm.ram_array[ 80] = 32'h00a00093;  // addi x1, x0, 10
+    axi_slave_bfm.ram_array[ 81] = 32'h00a00113;  // addi x2, x0, 10
+    axi_slave_bfm.ram_array[ 82] = 32'h00208463;  // beq x1, x2, 8
+    axi_slave_bfm.ram_array[ 83] = 32'h00e00193;  // addi x3, x0, 14
+    axi_slave_bfm.ram_array[ 84] = 32'h00f00193;  // addi x3, x0, 15
+
+    axi_slave_bfm.ram_array[ 90] = 32'h12300093;  // addi x1, x0, 0x123
+    axi_slave_bfm.ram_array[ 91] = 32'h30009173;  // csrrw x2, 0x300, x1
+    axi_slave_bfm.ram_array[ 92] = 32'h30095173;  // csrrwi x2, 0x300, 0x12
+    axi_slave_bfm.ram_array[ 93] = 32'hff000093;  // addi x1, x0, 0xff0
+    axi_slave_bfm.ram_array[ 94] = 32'h3000b173;  // csrrc x2, 0x300, x1
+    axi_slave_bfm.ram_array[ 95] = 32'h3007f173;  // csrrci x2, 0x300, 0xf
+    axi_slave_bfm.ram_array[ 96] = 32'h3000a173;  // csrrs x2, 0x300, x1
+    axi_slave_bfm.ram_array[ 97] = 32'h300ee173;  // csrrsi x2, 0x300, 0x1d
+
+    axi_slave_bfm.ram_array[100] = 32'h00000093;  // addi x1, x0, 0
+    axi_slave_bfm.ram_array[101] = 32'h000010b7;  // lui x1, 0x1  : x1 = 4096 (at 1024)
+    axi_slave_bfm.ram_array[102] = 32'h12300113;  // addi x2, x0, 0x123
+    axi_slave_bfm.ram_array[103] = 32'h0020a023;  // sw x2, 0(x1)
+    axi_slave_bfm.ram_array[104] = 32'h00100093;  // addi x1, 1
+    axi_slave_bfm.ram_array[105] = 32'h00b09093;  // slli x1, 11  : x1 = 2048 (at 512)
+    axi_slave_bfm.ram_array[106] = 32'h0000a103;  // lw x2, 0(x1)
+    axi_slave_bfm.ram_array[107] = 32'h00000093;  // addi x1, x0, 0
+    axi_slave_bfm.ram_array[108] = 32'h000010b7;  // lui x1, 0x1  : x1 = 4096 (at 1024)
+    axi_slave_bfm.ram_array[109] = 32'h0000a103;  // lw x2, 0(x1)
 end
 endtask

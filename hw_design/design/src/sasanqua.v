@@ -69,8 +69,8 @@ module sasanqua
 
     /* ----- MMU ----- */
     wire        mem_wait;
-    wire        inst_rden, inst_rvalid, data_rden, data_rvalid;
-    wire [31:0] inst_raddr, inst_rdata, data_raddr, data_rdata;
+    wire        inst_rden, inst_rvalid, data_rden, data_rvalid, data_wren;
+    wire [31:0] inst_riaddr, inst_roaddr, inst_rdata, data_riaddr, data_roaddr, data_rdata, data_waddr, data_wdata;
 
     mmu_axi mmu (
         // 制御
@@ -80,13 +80,18 @@ module sasanqua
 
         // メモリアクセス
         .INST_RDEN      (inst_rden),
-        .INST_RADDR     (inst_raddr),
+        .INST_RIADDR    (inst_riaddr),
+        .INST_ROADDR    (inst_roaddr),
         .INST_RVALID    (inst_rvalid),
         .INST_RDATA     (inst_rdata),
         .DATA_RDEN      (data_rden),
-        .DATA_RADDR     (data_raddr),
+        .DATA_RIADDR    (data_riaddr),
+        .DATA_ROADDR    (data_roaddr),
         .DATA_RVALID    (data_rvalid),
         .DATA_RDATA     (data_rdata),
+        .DATA_WREN      (data_wren),
+        .DATA_WADDR     (data_waddr),
+        .DATA_WDATA     (data_wdata),
 
         // AXIバス
         .M_AXI_CLK      (M_AXI_CLK),
@@ -135,21 +140,55 @@ module sasanqua
         .M_AXI_RREADY   (M_AXI_RREADY)
     );
 
+    /* ---- CRSs ----- */
+    wire        csrs_rden, csrs_rvalid, csrs_wren;
+    wire [31:0] csrs_rdata, csrs_wdata;
+    wire [11:0] csrs_raddr, csrs_waddr;
+
+    csrs csrs (
+        // 制御
+        .CLK        (CLK),
+        .RST        (RST),
+
+        // アクセス
+        .RDEN       (csrs_rden),
+        .RADDR      (csrs_raddr),
+        .RVALID     (csrs_rvalid),
+        .RDATA      (csrs_rdata),
+        .WREN       (csrs_wren),
+        .WADDR      (csrs_waddr),
+        .WDATA      (csrs_wdata)
+    );
+
     /* ----- Core ----- */
     core core (
         // 制御
         .CLK            (CLK),
         .RST            (RST),
 
-        // メモリアクセス
+        // CSRs接続
+        .CSRS_RDEN      (csrs_rden),
+        .CSRS_RADDR     (csrs_raddr),
+        .CSRS_RVALID    (csrs_rvalid),
+        .CSRS_RDATA     (csrs_rdata),
+        .CSRS_WREN      (csrs_wren),
+        .CSRS_WADDR     (csrs_waddr),
+        .CSRS_WDATA     (csrs_wdata),
+
+        // MMU接続
         .INST_RDEN      (inst_rden),
-        .INST_RADDR     (inst_raddr),
+        .INST_RIADDR    (inst_riaddr),
+        .INST_ROADDR    (inst_roaddr),
         .INST_RVALID    (inst_rvalid),
         .INST_RDATA     (inst_rdata),
         .DATA_RDEN      (data_rden),
-        .DATA_RADDR     (data_raddr),
+        .DATA_RIADDR    (data_riaddr),
+        .DATA_ROADDR    (data_roaddr),
         .DATA_RVALID    (data_rvalid),
         .DATA_RDATA     (data_rdata),
+        .DATA_WREN      (data_wren),
+        .DATA_WADDR     (data_waddr),
+        .DATA_WDATA     (data_wdata),
         .MEM_WAIT       (mem_wait)
     );
 
