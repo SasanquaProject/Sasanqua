@@ -234,7 +234,7 @@ module exec
             end
             17'b0010011_010_zzzzzzz: begin  // slti
                 REG_W_RD <= rd;
-                REG_W_DATA <= rs1_v_s < { { 20{ imm[11] } }, imm[11:0] } ? 32'b1 : 32'b0;
+                REG_W_DATA <= rs1_v_s < $signed({ { 20{ imm[11] } }, imm[11:0] }) ? 32'b1 : 32'b0;
             end
             17'b0010011_011_zzzzzzz: begin  // sltiu
                 REG_W_RD <= rd;
