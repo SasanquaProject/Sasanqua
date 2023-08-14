@@ -190,7 +190,7 @@ begin
     if (I_REG_3 == 32'b1)
         $display("%d: Success", id);
     else
-        $display("%d: Failed", id);
+        $display("%d: Failed (at %d)", id, I_REG_3 >> 1);
 end
 endtask
 
