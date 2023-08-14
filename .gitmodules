@@ -1,0 +1,3 @@
+[submodule "hw_design/design/tb/resources/riscv-tests/riscv-tests"]
+	path = hw_design/design/tb/resources/riscv-tests/riscv-tests
+	url = https://github.com/riscv-software-src/riscv-tests.git
