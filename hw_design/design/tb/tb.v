@@ -51,12 +51,10 @@ wire [31:0] NEW_PC                  = sasanqua.core.fetch.NEW_PC;
 wire        STALL                   = sasanqua.core.stall;
 
 // Core: Fetch
-wire        INST_VALID              = sasanqua.core.inst_valid;
 wire [31:0] INST_PC                 = sasanqua.core.inst_pc;
 wire [31:0] INST_DATA               = sasanqua.core.inst_data;
 
 // Core: Decode 1st
-wire        DECODE_1ST_VALID        = sasanqua.core.decode_1st_valid;
 wire [31:0] DECODE_1ST_PC           = sasanqua.core.decode_1st_pc;
 wire [6:0]  DECODE_1ST_OPCODE       = sasanqua.core.decode_1st_opcode;
 wire [4:0]  DECODE_1ST_RD           = sasanqua.core.decode_1st_rd;
@@ -71,7 +69,6 @@ wire [31:0] DECODE_1ST_IMM_U        = sasanqua.core.decode_1st_imm_u;
 wire [31:0] DECODE_1ST_IMM_J        = sasanqua.core.decode_1st_imm_j;
 
 // Core: Decode 2nd
-wire        DECODE_2ND_VALID        = sasanqua.core.decode_2nd_valid;
 wire [31:0] DECODE_2ND_PC           = sasanqua.core.decode_2nd_pc;
 wire [6:0]  DECODE_2ND_OPCODE       = sasanqua.core.decode_2nd_opcode;
 wire [4:0]  DECODE_2ND_RD           = sasanqua.core.decode_2nd_rd;
@@ -82,7 +79,6 @@ wire [6:0]  DECODE_2ND_FUNCT7       = sasanqua.core.decode_2nd_funct7;
 wire [31:0] DECODE_2ND_IMM          = sasanqua.core.decode_2nd_imm;
 
 // Core: Schedule 1st, Register(r)
-wire        SCHEDULE_1ST_VALID      = sasanqua.core.schedule_1st_valid;
 wire [31:0] SCHEDULE_1ST_PC         = sasanqua.core.schedule_1st_pc;
 wire [6:0]  SCHEDULE_1ST_OPCODE     = sasanqua.core.schedule_1st_opcode;
 wire [4:0]  SCHEDULE_1ST_RD         = sasanqua.core.schedule_1st_rd;

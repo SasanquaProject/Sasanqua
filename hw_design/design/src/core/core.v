@@ -40,12 +40,10 @@ module core
     wire stall  = MEM_WAIT;
 
     /* ----- 1. 命令フェッチ ----- */
-    wire        inst_valid;
     wire [31:0] inst_pc, inst_data;
 
-    assign inst_valid   = INST_RVALID;
-    assign inst_pc      = INST_ROADDR;
-    assign inst_data    = INST_RDATA;
+    assign inst_pc      = INST_RVALID ? INST_ROADDR : 32'b0;
+    assign inst_data    = INST_RVALID ? INST_RDATA : 32'h0000_0013;
 
     fetch fetch (
         // 制御
@@ -61,7 +59,6 @@ module core
     );
 
     /* ----- 2. 命令デコード1 ----- */
-    wire        decode_1st_valid;
     wire [31:0] decode_1st_pc, decode_1st_imm_i, decode_1st_imm_s, decode_1st_imm_b, decode_1st_imm_u, decode_1st_imm_j;
     wire [6:0]  decode_1st_opcode, decode_1st_funct7;
     wire [4:0]  decode_1st_rd, decode_1st_rs1, decode_1st_rs2;
@@ -75,12 +72,10 @@ module core
         .STALL              (stall),
 
         // フェッチ部との接続
-        .INST_VALID         (inst_valid),
         .INST_PC            (inst_pc),
         .INST_DATA          (inst_data),
 
         // デコード部2との接続
-        .DECODE_1ST_VALID   (decode_1st_valid),
         .DECODE_1ST_PC      (decode_1st_pc),
         .DECODE_1ST_OPCODE  (decode_1st_opcode),
         .DECODE_1ST_RD      (decode_1st_rd),
@@ -96,7 +91,6 @@ module core
     );
 
     /* ----- 3. 命令デコード2 ----- */
-    wire        decode_2nd_valid;
     wire [31:0] decode_2nd_pc, decode_2nd_imm;
     wire [6:0]  decode_2nd_opcode, decode_2nd_funct7;
     wire [4:0]  decode_2nd_rd, decode_2nd_rs1, decode_2nd_rs2;
@@ -110,7 +104,6 @@ module core
         .STALL              (stall),
 
         // デコード部1との接続
-        .DECODE_1ST_VALID   (decode_1st_valid),
         .DECODE_1ST_PC      (decode_1st_pc),
         .DECODE_1ST_OPCODE  (decode_1st_opcode),
         .DECODE_1ST_RD      (decode_1st_rd),
@@ -125,7 +118,6 @@ module core
         .DECODE_1ST_IMM_J   (decode_1st_imm_j),
 
         // スケジューラ1との接続
-        .DECODE_2ND_VALID   (decode_2nd_valid),
         .DECODE_2ND_PC      (decode_2nd_pc),
         .DECODE_2ND_OPCODE  (decode_2nd_opcode),
         .DECODE_2ND_RD      (decode_2nd_rd),
@@ -137,7 +129,6 @@ module core
     );
 
     /* ----- 4-1. スケジューリング1 ----- */
-    wire        schedule_1st_valid;
     wire [31:0] schedule_1st_pc, schedule_1st_imm;
     wire [6:0]  schedule_1st_opcode, schedule_1st_funct7;
     wire [4:0]  schedule_1st_rd, schedule_1st_rs1, schedule_1st_rs2;
@@ -151,7 +142,6 @@ module core
         .STALL              (stall),
 
         // デコード部2との接続
-        .DECODE_2ND_VALID   (decode_2nd_valid),
         .DECODE_2ND_PC      (decode_2nd_pc),
         .DECODE_2ND_OPCODE  (decode_2nd_opcode),
         .DECODE_2ND_RD      (decode_2nd_rd),
@@ -160,7 +150,6 @@ module core
         .DECODE_2ND_IMM     (decode_2nd_imm),
 
         // 実行部との接続
-        .SCHEDULE_1ST_VALID (schedule_1st_valid),
         .SCHEDULE_1ST_PC    (schedule_1st_pc),
         .SCHEDULE_1ST_OPCODE(schedule_1st_opcode),
         .SCHEDULE_1ST_RD    (schedule_1st_rd),
@@ -238,7 +227,6 @@ module core
         .CSR_FWD_CV     (memw_csr_w_data),
 
         // 前段との接続
-        .VALID          (schedule_1st_valid),
         .PC             (schedule_1st_pc),
         .OPCODE         (schedule_1st_opcode),
         .RD             (schedule_1st_rd),

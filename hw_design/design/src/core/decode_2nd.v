@@ -7,7 +7,6 @@ module decode_2nd
         input wire          STALL,
 
         /* ----- デコード部2との接続 ----- */
-        input wire          DECODE_1ST_VALID,
         input wire [31:0]   DECODE_1ST_PC,
         input wire [6:0]    DECODE_1ST_OPCODE,
         input wire [4:0]    DECODE_1ST_RD,
@@ -22,7 +21,6 @@ module decode_2nd
         input wire [31:0]   DECODE_1ST_IMM_J,
 
         /* ----- スケジューラ1との接続 ----- */
-        output reg          DECODE_2ND_VALID,
         output wire [31:0]  DECODE_2ND_PC,
         output wire [6:0]   DECODE_2ND_OPCODE,
         output wire [4:0]   DECODE_2ND_RD,
@@ -34,7 +32,6 @@ module decode_2nd
     );
 
     /* ----- 入力取り込み ----- */
-    reg         decode_1st_valid;
     reg  [31:0] decode_1st_pc, decode_1st_imm_i, decode_1st_imm_s, decode_1st_imm_b, decode_1st_imm_u, decode_1st_imm_j;
     reg  [6:0]  decode_1st_opcode, decode_1st_funct7;
     reg  [4:0]  decode_1st_rd, decode_1st_rs1, decode_1st_rs2;
@@ -42,7 +39,6 @@ module decode_2nd
 
     always @ (posedge CLK) begin
         if (RST || FLUSH) begin
-            decode_1st_valid <= 1'b0;
             decode_1st_pc <= 32'b0;
             decode_1st_opcode <= 7'b0;
             decode_1st_rd <= 5'b0;
@@ -60,7 +56,6 @@ module decode_2nd
             // do nothing
         end
         else begin
-            decode_1st_valid <= DECODE_1ST_VALID;
             decode_1st_pc <= DECODE_1ST_PC;
             decode_1st_opcode <= DECODE_1ST_OPCODE;
             decode_1st_rd <= DECODE_1ST_RD;
@@ -89,61 +84,47 @@ module decode_2nd
         // R形式
         if (
             decode_1st_opcode == 7'b0110011
-        ) begin
-            DECODE_2ND_VALID <= decode_1st_valid;
+        )
             DECODE_2ND_IMM <= 32'b0;
-        end
 
         // I形式
-        if (
+        else if (
             decode_1st_opcode == 7'b1100111 ||
             decode_1st_opcode == 7'b0000011 ||
             decode_1st_opcode == 7'b0010011 ||
             decode_1st_opcode == 7'b0001111 ||
             decode_1st_opcode == 7'b1110011
-        ) begin
-            DECODE_2ND_VALID <= decode_1st_valid;
+        )
             DECODE_2ND_IMM <= decode_1st_imm_i;
-        end
 
         // S形式
         else if (
             decode_1st_opcode == 7'b0100011
-        ) begin
-            DECODE_2ND_VALID <= decode_1st_valid;
+        )
             DECODE_2ND_IMM <= decode_1st_imm_s;
-        end
 
         // B形式
         else if (
             decode_1st_opcode == 7'b1100011
-        ) begin
-            DECODE_2ND_VALID <= decode_1st_valid;
+        )
             DECODE_2ND_IMM <= decode_1st_imm_b;
-        end
 
         // U形式
         else if (
             decode_1st_opcode == 7'b0110111 ||
             decode_1st_opcode == 7'b0010111
-        ) begin
-            DECODE_2ND_VALID <= decode_1st_valid;
+        )
             DECODE_2ND_IMM <= decode_1st_imm_u;
-        end
 
         // J形式
         else if (
             decode_1st_opcode == 7'b1101111
-        ) begin
-            DECODE_2ND_VALID <= decode_1st_valid;
+        )
             DECODE_2ND_IMM <= decode_1st_imm_j;
-        end
 
         // 未対応命令
-        else begin
-            DECODE_2ND_VALID <= 1'b0;
+        else
             DECODE_2ND_IMM <= 32'b0;
-        end
     end
 
 endmodule
