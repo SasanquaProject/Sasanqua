@@ -20,7 +20,7 @@ end
 wire [31:0] STAT;
 
 /* ----- BFM との接続 ----- */
-`include "./axi/axi_slave_BFM_setup.vh"
+`include "./axi/setup.vh"
 
 /* ----- 監視対象信号 ----- */
 // MMU
