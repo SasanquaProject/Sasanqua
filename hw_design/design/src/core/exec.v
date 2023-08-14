@@ -285,56 +285,56 @@ module exec
             17'b0000011_000_zzzzzzz: begin  // lb
                 MEM_R_VALID <= 1'b1;
                 MEM_R_RD <= rd;
-                MEM_R_ADDR <= rs1_v + { { 20{ imm[11] } }, imm[11:2], 2'b0 };
-                MEM_R_STRB <= 4'b0001 << (imm[1:0]);
+                MEM_R_ADDR <= rs1_v_s + $signed({ { 20{ imm[11] } }, imm[11:0] });
+                MEM_R_STRB <= 4'b0001;
                 MEM_R_SIGNED <= 1'b1;
             end
             17'b0000011_100_zzzzzzz: begin  // lbu
                 MEM_R_VALID <= 1'b1;
                 MEM_R_RD <= rd;
-                MEM_R_ADDR <= rs1_v + { { 20{ imm[11] } }, imm[11:2], 2'b0 };
-                MEM_R_STRB <= 4'b0001 << (imm[1:0]);
+                MEM_R_ADDR <= rs1_v_s + $signed({ { 20{ imm[11] } }, imm[11:0] });
+                MEM_R_STRB <= 4'b0001;
                 MEM_R_SIGNED <= 1'b0;
             end
             17'b0000011_001_zzzzzzz: begin  // lh
                 MEM_R_VALID <= 1'b1;
                 MEM_R_RD <= rd;
-                MEM_R_ADDR <= rs1_v + { { 20{ imm[11] } }, imm[11:2], 2'b0 };
-                MEM_R_STRB <= 4'b0011 << (imm[1:0]);
+                MEM_R_ADDR <= rs1_v_s + $signed({ { 20{ imm[11] } }, imm[11:0] });
+                MEM_R_STRB <= 4'b0011;
                 MEM_R_SIGNED <= 1'b1;
             end
             17'b0000011_101_zzzzzzz: begin  // lhu
                 MEM_R_VALID <= 1'b1;
                 MEM_R_RD <= rd;
-                MEM_R_ADDR <= rs1_v + { { 20{ imm[11] } }, imm[11:2], 2'b0 };
-                MEM_R_STRB <= 4'b0011 << (imm[1:0]);
+                MEM_R_ADDR <= rs1_v_s + $signed({ { 20{ imm[11] } }, imm[11:0] });
+                MEM_R_STRB <= 4'b0011;
                 MEM_R_SIGNED <= 1'b0;
             end
             17'b0000011_010_zzzzzzz: begin  // lw
                 MEM_R_VALID <= 1'b1;
                 MEM_R_RD <= rd;
-                MEM_R_ADDR <= rs1_v + { { 20{ imm[11] } }, imm[11:2], 2'b0 };
+                MEM_R_ADDR <= rs1_v_s + $signed({ { 20{ imm[11] } }, imm[11:0] });
                 MEM_R_STRB <= 4'b1111;
                 MEM_R_SIGNED <= 1'b0;
             end
             17'b0100011_000_zzzzzzz: begin  // sb
                 MEM_R_VALID <= 1'b1;
                 MEM_R_RD <= 5'b0;
-                MEM_R_ADDR <= rs1_v + { { 20{ imm[11] } }, imm[11:2], 2'b0 };
-                MEM_R_STRB <= 4'b1111;
+                MEM_R_ADDR <= rs1_v_s + $signed({ { 20{ imm[11] } }, imm[11:0] });
+                MEM_R_STRB <= 4'b0001;
                 MEM_R_SIGNED <= 1'b0;
             end
             17'b0100011_001_zzzzzzz: begin  // sh
                 MEM_R_VALID <= 1'b1;
                 MEM_R_RD <= 5'b0;
-                MEM_R_ADDR <= rs1_v + { { 20{ imm[11] } }, imm[11:2], 2'b0 };
-                MEM_R_STRB <= 4'b1111;
+                MEM_R_ADDR <= rs1_v_s + $signed({ { 20{ imm[11] } }, imm[11:0] });
+                MEM_R_STRB <= 4'b0011;
                 MEM_R_SIGNED <= 1'b0;
             end
             17'b0100011_010_zzzzzzz: begin  // sw
                 MEM_R_VALID <= 1'b1;
                 MEM_R_RD <= 5'b0;
-                MEM_R_ADDR <= rs1_v + { { 20{ imm[11] } }, imm[11:2], 2'b0 };
+                MEM_R_ADDR <= rs1_v_s + $signed({ { 20{ imm[11] } }, imm[11:0] });
                 MEM_R_STRB <= 4'b1111;
                 MEM_R_SIGNED <= 1'b0;
             end
@@ -352,19 +352,19 @@ module exec
         casez ({opcode, funct3, funct7})
             17'b0100011_000_zzzzzzz: begin  // sb
                 MEM_W_VALID <= 1'b1;
-                MEM_W_ADDR <= rs1_v + { { 20{ imm[11] } }, imm[11:2], 2'b0 };
-                MEM_W_STRB <= 4'b0001 << (imm[1:0]);
+                MEM_W_ADDR <= rs1_v_s + $signed({ { 20{ imm[11] } }, imm[11:0] });
+                MEM_W_STRB <= 4'b0001;
                 MEM_W_DATA <= rs2_v << ({ imm[1:0], 3'b0 });
             end
             17'b0100011_001_zzzzzzz: begin  // sh
                 MEM_W_VALID <= 1'b1;
-                MEM_W_ADDR <= rs1_v + { { 20{ imm[11] } }, imm[11:2], 2'b0 };
-                MEM_W_STRB <= 4'b0011 << (imm[1:0]);
+                MEM_W_ADDR <= rs1_v_s + $signed({ { 20{ imm[11] } }, imm[11:0] });
+                MEM_W_STRB <= 4'b0011;
                 MEM_W_DATA <= rs2_v << ({ imm[1:0], 3'b0 });
             end
             17'b0100011_010_zzzzzzz: begin  // sw
                 MEM_W_VALID <= 1'b1;
-                MEM_W_ADDR <= rs1_v + { { 20{ imm[11] } }, imm[11:2], 2'b0 };
+                MEM_W_ADDR <= rs1_v_s + $signed({ { 20{ imm[11] } }, imm[11:0] });
                 MEM_W_STRB <= 4'b1111;
                 MEM_W_DATA <= rs2_v;
             end

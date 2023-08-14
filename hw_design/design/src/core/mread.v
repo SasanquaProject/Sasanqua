@@ -40,11 +40,6 @@ module mread
         input wire  [31:0]  CUSHION_JMP_PC,
 
         /* ----- メモリアクセス(w)部との接続 ----- */
-        // メモリ読み込み結果
-        output wire         MEMR_MEM_R_VALID,
-        output wire [4:0]   MEMR_MEM_R_RD,
-        output wire [31:0]  MEMR_MEM_R_DATA,
-
         // レジスタ(rv32i:W)
         output wire [4:0]   MEMR_REG_W_RD,
         output wire [31:0]  MEMR_REG_W_DATA,
@@ -64,15 +59,16 @@ module mread
         output wire [31:0]  MEMR_JMP_PC
     );
 
+    /* ----- MMUとの接続 ----- */
+    assign DATA_RDEN    = CUSHION_MEM_R_VALID;
+    assign DATA_RIADDR  = CUSHION_MEM_R_ADDR;
+
     /* ----- 入力取り込み ----- */
     reg         cushion_mem_r_valid, cushion_mem_r_signed, cushion_mem_w_valid, cushion_jmp_do;
-    reg [31:0]  cushion_reg_w_data, cushion_csr_w_data, cushion_mem_w_addr, cushion_mem_w_data, cushion_jmp_pc;
+    reg [31:0]  cushion_reg_w_data, cushion_csr_w_data, cushion_mem_r_addr, cushion_mem_w_addr, cushion_mem_w_data, cushion_jmp_pc;
     reg [11:0]  cushion_csr_w_addr;
     reg [4:0]   cushion_reg_w_rd, cushion_mem_r_rd;
     reg [3:0]   cushion_mem_r_strb, cushion_mem_w_strb;
-
-    assign DATA_RDEN    = CUSHION_MEM_R_VALID;
-    assign DATA_RIADDR  = CUSHION_MEM_R_ADDR;
 
     always @ (posedge CLK) begin
         if (RST || FLUSH) begin
@@ -82,6 +78,7 @@ module mread
             cushion_csr_w_data <= 32'b0;
             cushion_mem_r_valid <= 1'b0;
             cushion_mem_r_rd <= 5'b0;
+            cushion_mem_r_addr <= 32'b0;
             cushion_mem_r_strb <= 4'b0;
             cushion_mem_r_signed <= 1'b0;
             cushion_mem_w_valid <= 1'b0;
@@ -101,6 +98,7 @@ module mread
             cushion_csr_w_data <= CUSHION_CSR_W_DATA;
             cushion_mem_r_valid <= CUSHION_MEM_R_VALID;
             cushion_mem_r_rd <= CUSHION_MEM_R_RD;
+            cushion_mem_r_addr <= CUSHION_MEM_R_ADDR;
             cushion_mem_r_strb <= CUSHION_MEM_R_STRB;
             cushion_mem_r_signed <= CUSHION_MEM_R_SIGNED;
             cushion_mem_w_valid <= CUSHION_MEM_W_VALID;
@@ -113,34 +111,55 @@ module mread
     end
 
     /* ----- 出力 ----- */
-    assign MEMR_MEM_R_VALID  = cushion_mem_r_valid;
-    assign MEMR_MEM_R_RD     = cushion_mem_r_rd;
-    assign MEMR_MEM_R_DATA   = data_setup(DATA_RDATA, cushion_mem_r_strb, cushion_mem_r_signed);
-    assign MEMR_REG_W_RD     = cushion_reg_w_rd;
-    assign MEMR_REG_W_DATA   = cushion_reg_w_data;
+    wire [31:0] rddata, wrdata;
+
+    assign rddata            = gen_rddata(DATA_RDATA, cushion_mem_r_addr, cushion_mem_r_strb, cushion_mem_r_signed);
+    assign wrdata            = gen_wrdata(cushion_mem_w_addr, cushion_mem_w_strb, DATA_RDATA, cushion_mem_w_data);
+
+    assign MEMR_REG_W_RD     = cushion_mem_r_valid ? cushion_mem_r_rd : cushion_reg_w_rd;
+    assign MEMR_REG_W_DATA   = cushion_mem_r_valid ? rddata : cushion_reg_w_data;
     assign MEMR_CSR_W_ADDR   = cushion_csr_w_addr;
     assign MEMR_CSR_W_DATA   = cushion_csr_w_data;
     assign MEMR_MEM_W_VALID  = cushion_mem_w_valid;
     assign MEMR_MEM_W_ADDR   = cushion_mem_w_addr;
     assign MEMR_MEM_W_STRB   = cushion_mem_w_strb;
-    assign MEMR_MEM_W_DATA   = cushion_mem_w_data;
+    assign MEMR_MEM_W_DATA   = wrdata;
     assign MEMR_JMP_DO       = cushion_jmp_do;
     assign MEMR_JMP_PC       = cushion_jmp_pc;
 
-    function [31:0] data_setup;
+    function [31:0] gen_rddata;
         input [31:0]    DATA;
+        input [31:0]    ADDR;
         input [3:0]     STRB;
         input           SIGNED;
 
-        case (STRB)
-            4'b0001: data_setup = SIGNED ? { { 24{ DATA[ 7] } }, DATA[ 7: 0] } : { 24'b0, DATA[ 7: 0] };
-            4'b0010: data_setup = SIGNED ? { { 24{ DATA[15] } }, DATA[15: 8] } : { 24'b0, DATA[15: 8] };
-            4'b0100: data_setup = SIGNED ? { { 24{ DATA[23] } }, DATA[23:16] } : { 24'b0, DATA[23:16] };
-            4'b1000: data_setup = SIGNED ? { { 24{ DATA[31] } }, DATA[31:24] } : { 24'b0, DATA[31:24] };
-            4'b0011: data_setup = SIGNED ? { { 16{ DATA[15] } }, DATA[15: 0] } : { 15'b0, DATA[15: 0] };
-            4'b0110: data_setup = SIGNED ? { { 16{ DATA[23] } }, DATA[23: 8] } : { 15'b0, DATA[23: 8] };
-            4'b1100: data_setup = SIGNED ? { { 16{ DATA[31] } }, DATA[31:16] } : { 15'b0, DATA[31:16] };
-            default: data_setup = DATA;
+        case ((STRB << ADDR[1:0]))
+            4'b0001: gen_rddata = SIGNED ? { { 24{ DATA[ 7] } }, DATA[ 7: 0] } : { 24'b0, DATA[ 7: 0] };
+            4'b0010: gen_rddata = SIGNED ? { { 24{ DATA[15] } }, DATA[15: 8] } : { 24'b0, DATA[15: 8] };
+            4'b0100: gen_rddata = SIGNED ? { { 24{ DATA[23] } }, DATA[23:16] } : { 24'b0, DATA[23:16] };
+            4'b1000: gen_rddata = SIGNED ? { { 24{ DATA[31] } }, DATA[31:24] } : { 24'b0, DATA[31:24] };
+            4'b0011: gen_rddata = SIGNED ? { { 16{ DATA[15] } }, DATA[15: 0] } : { 15'b0, DATA[15: 0] };
+            4'b0110: gen_rddata = SIGNED ? { { 16{ DATA[23] } }, DATA[23: 8] } : { 15'b0, DATA[23: 8] };
+            4'b1100: gen_rddata = SIGNED ? { { 16{ DATA[31] } }, DATA[31:16] } : { 15'b0, DATA[31:16] };
+            default: gen_rddata = DATA;
+        endcase
+    endfunction
+
+    function [31:0] gen_wrdata;
+        input [31:0]    ADDR;
+        input [3:0]     STRB;
+        input [31:0]    DST;
+        input [31:0]    SRC;
+
+        case ((STRB << ADDR[1:0]))
+            4'b0001: gen_wrdata = (DST & 32'hffff_ff00) | (SRC & 32'h0000_00ff);
+            4'b0010: gen_wrdata = (DST & 32'hffff_00ff) | (SRC & 32'h0000_ff00);
+            4'b0100: gen_wrdata = (DST & 32'hff00_ffff) | (SRC & 32'h00ff_0000);
+            4'b1000: gen_wrdata = (DST & 32'h00ff_ffff) | (SRC & 32'hff00_0000);
+            4'b0011: gen_wrdata = (DST & 32'hffff_0000) | (SRC & 32'h0000_ffff);
+            4'b0110: gen_wrdata = (DST & 32'hff00_00ff) | (SRC & 32'h00ff_ff00);
+            4'b1100: gen_wrdata = (DST & 32'h0000_ffff) | (SRC & 32'hffff_0000);
+            default: gen_wrdata = SRC;
         endcase
     endfunction
 
