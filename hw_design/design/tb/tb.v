@@ -184,7 +184,7 @@ begin
     #(STEP*10)
     RST = 0;
 
-    @(posedge MEMR_JMP_PC == 32'h0000_0048);
+    @(posedge MEMR_JMP_PC == 32'h0000_003C);
     #(STEP*10)
 
     if (I_REG_3 == 32'b1)

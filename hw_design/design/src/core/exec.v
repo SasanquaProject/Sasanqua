@@ -412,6 +412,10 @@ module exec
                 JMP_DO <= 1'b1;
                 JMP_PC <= (rs1_v + { { 20{ imm[11] } }, imm[11:0] }) & (~32'b1);
             end
+            17'b1110011_000_0000000: begin // ecall
+                JMP_DO <= 1'b1;
+                JMP_PC <= 32'h0000_0004;
+            end
             default: begin
                 JMP_DO <= 1'b0;
                 JMP_PC <= 32'b0;
