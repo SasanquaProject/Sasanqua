@@ -5,14 +5,13 @@ module decode_1st
         input wire          RST,
         input wire          FLUSH,
         input wire          STALL,
+        input wire          MEM_WAIT,
 
         /* ----- フェッチ部との接続 ----- */
-        input wire          INST_VALID,
         input wire  [31:0]  INST_PC,
         input wire  [31:0]  INST_DATA,
 
         /* ----- デコード部2との接続 ----- */
-        output wire         DECODE_1ST_VALID,
         output wire [31:0]  DECODE_1ST_PC,
         output wire [6:0]   DECODE_1ST_OPCODE,
         output wire [4:0]   DECODE_1ST_RD,
@@ -28,27 +27,23 @@ module decode_1st
     );
 
     /* ----- 入力取り込み ----- */
-    reg         inst_valid;
     reg [31:0]  inst_pc, inst_data;
 
     always @ (posedge CLK) begin
         if (RST || FLUSH) begin
             inst_pc <= 32'b0;
-            inst_valid <= 1'b0;
             inst_data <= 32'b0;
         end
-        else if (STALL) begin
+        else if (STALL || MEM_WAIT) begin
             // do nothing
         end
         else begin
             inst_pc <= INST_PC;
-            inst_valid <= INST_VALID;
             inst_data <= INST_DATA;
         end
     end
 
     /* ---- デコード ----- */
-    assign DECODE_1ST_VALID    = inst_valid;
     assign DECODE_1ST_PC       = inst_pc;
     assign DECODE_1ST_OPCODE   = inst_data[6:0];
     assign DECODE_1ST_RD       = inst_data[11:7];

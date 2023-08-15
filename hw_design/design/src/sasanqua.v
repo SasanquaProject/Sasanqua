@@ -140,40 +140,11 @@ module sasanqua
         .M_AXI_RREADY   (M_AXI_RREADY)
     );
 
-    /* ---- CRSs ----- */
-    wire        csrs_rden, csrs_rvalid, csrs_wren;
-    wire [31:0] csrs_rdata, csrs_wdata;
-    wire [11:0] csrs_raddr, csrs_waddr;
-
-    csrs csrs (
-        // 制御
-        .CLK        (CLK),
-        .RST        (RST),
-
-        // アクセス
-        .RDEN       (csrs_rden),
-        .RADDR      (csrs_raddr),
-        .RVALID     (csrs_rvalid),
-        .RDATA      (csrs_rdata),
-        .WREN       (csrs_wren),
-        .WADDR      (csrs_waddr),
-        .WDATA      (csrs_wdata)
-    );
-
     /* ----- Core ----- */
     core core (
         // 制御
         .CLK            (CLK),
         .RST            (RST),
-
-        // CSRs接続
-        .CSRS_RDEN      (csrs_rden),
-        .CSRS_RADDR     (csrs_raddr),
-        .CSRS_RVALID    (csrs_rvalid),
-        .CSRS_RDATA     (csrs_rdata),
-        .CSRS_WREN      (csrs_wren),
-        .CSRS_WADDR     (csrs_waddr),
-        .CSRS_WDATA     (csrs_wdata),
 
         // MMU接続
         .INST_RDEN      (inst_rden),

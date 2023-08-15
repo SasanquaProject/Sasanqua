@@ -177,11 +177,11 @@ axi_slave_bfm # (
 );
 
 task write_inst;
+input integer fd;
 reg [8:0] c;
-integer fd, i, num;
+integer i, num;
 begin
     i = 0;
-    fd = $fopen("../../../../../../design/tb/test.bin", "rb");
     while ($feof(fd) == 0) begin
         c = $fgetc(fd); axi_slave_bfm.ram_array[i][7:0]    = c[7:0];
         c = $fgetc(fd); axi_slave_bfm.ram_array[i][15:8]   = c[7:0];
