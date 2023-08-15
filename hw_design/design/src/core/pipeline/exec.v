@@ -43,6 +43,7 @@ module exec
         output reg  [31:0]  REG_W_DATA,
 
         // レジスタ(csrs:W)
+        output reg          CSR_W_VALID,
         output reg  [11:0]  CSR_W_ADDR,
         output reg  [31:0]  CSR_W_DATA,
 
@@ -414,30 +415,37 @@ module exec
     always @* begin
         casez ({opcode, funct3})
             10'b1110011_011: begin // csrrc
+                CSR_W_VALID <= 1'b1;
                 CSR_W_ADDR <= imm[11:0];
                 CSR_W_DATA <= csr_data & (~rs1_data);
             end
             10'b1110011_111: begin // csrrci
+                CSR_W_VALID <= 1'b1;
                 CSR_W_ADDR <= imm[11:0];
                 CSR_W_DATA <= csr_data & { 27'h1ff_ffff, (~rs1_addr) };
             end
             10'b1110011_010: begin // csrrs
+                CSR_W_VALID <= 1'b1;
                 CSR_W_ADDR <= imm[11:0];
                 CSR_W_DATA <= csr_data | rs1_data;
             end
             10'b1110011_110: begin // csrrsi
+                CSR_W_VALID <= 1'b1;
                 CSR_W_ADDR <= imm[11:0];
                 CSR_W_DATA <= csr_data | { 27'b0, rs1_addr };
             end
             10'b1110011_001: begin // csrrw
+                CSR_W_VALID <= 1'b1;
                 CSR_W_ADDR <= imm[11:0];
                 CSR_W_DATA <= rs1_data;
             end
             10'b1110011_101: begin // csrrwi
+                CSR_W_VALID <= 1'b1;
                 CSR_W_ADDR <= imm[11:0];
                 CSR_W_DATA <= csr_data | { 27'b0, rs1_addr };
             end
             default: begin
+                CSR_W_VALID <= 1'b0;
                 CSR_W_ADDR <= 12'b0;
                 CSR_W_DATA <= 32'b0;
             end

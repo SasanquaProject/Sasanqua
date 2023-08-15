@@ -3,23 +3,18 @@ verilog xil_defaultlib  --include "../../../../../../design/tb/axi" \
 "../../../../../../design/tb/axi/axi_slave_BFM.v" \
 "../../../../../../design/src/mmu/axi/cache.v" \
 "../../../../../../design/src/core/core.v" \
-"../../../../../../design/src/csrs/csrs.v" \
+"../../../../../../design/src/core/register/csr.v" \
 "../../../../../../design/src/core/pipeline/cushion.v" \
 "../../../../../../design/src/core/pipeline/decode_1st.v" \
 "../../../../../../design/src/core/pipeline/decode_2nd.v" \
 "../../../../../../design/src/core/pipeline/exec.v" \
 "../../../../../../design/src/core/pipeline/fetch.v" \
-"../../../../../../design/src/csrs/hypervisor.v" \
-"../../../../../../design/src/csrs/machine.v" \
 "../../../../../../design/src/mmu/axi/mmu.v" \
 "../../../../../../design/src/core/pipeline/mread.v" \
-"../../../../../../design/src/core/register.v" \
 "../../../../../../design/src/core/register/rv32i_reg.v" \
 "../../../../../../design/src/sasanqua.v" \
 "../../../../../../design/src/core/pipeline/schedule_1st.v" \
-"../../../../../../design/src/csrs/supervisor.v" \
 "../../../../../../design/tb/axi/sync_fifo.v" \
-"../../../../../../design/src/csrs/user.v" \
 "../../../../../../design/tb/tb.v" \
 
 # compile glbl module

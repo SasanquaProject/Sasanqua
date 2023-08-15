@@ -36,15 +36,6 @@ wire        DATA_WREN               = sasanqua.mmu.DATA_WREN;
 wire [31:0] DATA_WADDR              = sasanqua.mmu.DATA_WADDR;
 wire [31:0] DATA_WDATA              = sasanqua.mmu.DATA_WDATA;
 
-// CSRs
-wire        CSRS_RDEN               = sasanqua.csrs.RDEN;
-wire [11:0] CSRS_RADDR              = sasanqua.csrs.RADDR;
-wire        CSRS_RVALID             = sasanqua.csrs.RVALID;
-wire [31:0] CSRS_RDATA              = sasanqua.csrs.RDATA;
-wire        CSRS_WREN               = sasanqua.csrs.WREN;
-wire [11:0] CSRS_WADDR              = sasanqua.csrs.WADDR;
-wire [31:0] CSRS_WDATA              = sasanqua.csrs.WDATA;
-
 // Core: Pipeline
 wire        FLUSH                   = sasanqua.core.flush;
 wire [31:0] NEW_PC                  = sasanqua.core.fetch.NEW_PC;
@@ -88,6 +79,7 @@ wire [31:0] SCHEDULE_1ST_RS1_DATA   = sasanqua.core.reg_rs1_data;
 wire        SCHEDULE_1ST_RS2_VALID  = sasanqua.core.reg_rs2_valid;
 wire [4:0]  SCHEDULE_1ST_RS2_ADDR   = sasanqua.core.reg_rs2_addr;
 wire [31:0] SCHEDULE_1ST_RS2_DATA   = sasanqua.core.reg_rs2_data;
+wire        SCHEDULE_1ST_CSR_VALID  = sasanqua.core.reg_csr_valid;
 wire [31:0] SCHEDULE_1ST_CSR_DATA   = sasanqua.core.reg_csr_data;
 wire [2:0]  SCHEDULE_1ST_FUNCT3     = sasanqua.core.schedule_1st_funct3;
 wire [6:0]  SCHEDULE_1ST_FUNCT7     = sasanqua.core.schedule_1st_funct7;
