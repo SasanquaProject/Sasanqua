@@ -342,7 +342,6 @@ module core
     wire [31:0] memr_reg_w_data, memr_csr_w_data, memr_mem_w_addr, memr_mem_w_data, memr_jmp_pc;
     wire [11:0] memr_csr_w_addr;
     wire [4:0]  memr_reg_w_rd;
-    wire [3:0]  memr_mem_w_strb;
 
     mread mread (
         // 制御
@@ -382,43 +381,14 @@ module core
         .MEMR_CSR_W_DATA        (memr_csr_w_data),
         .MEMR_MEM_W_VALID       (memr_mem_w_valid),
         .MEMR_MEM_W_ADDR        (memr_mem_w_addr),
-        .MEMR_MEM_W_STRB        (memr_mem_w_strb),
         .MEMR_MEM_W_DATA        (memr_mem_w_data),
         .MEMR_JMP_DO            (memr_jmp_do),
         .MEMR_JMP_PC            (memr_jmp_pc)
     );
 
     /* ----- 8. メモリアクセス(w) ----- */
-    wire [4:0]  memw_reg_w_rd;
-    wire [11:0] memw_csr_w_addr;
-    wire [31:0] memw_reg_w_data, memw_csr_w_data;
-
-    mwrite mwrite (
-        // 制御
-        .CLK                    (CLK),
-        .RST                    (RST),
-        .MEM_WAIT               (MEM_WAIT),
-
-        // MMUとの接続
-        .DATA_WREN              (DATA_WREN),
-        .DATA_WADDR             (DATA_WADDR),
-        .DATA_WDATA             (DATA_WDATA),
-
-        // メモリアクセス(r)との接続
-        .MEMR_REG_W_RD          (memr_reg_w_rd),
-        .MEMR_REG_W_DATA        (memr_reg_w_data),
-        .MEMR_CSR_W_ADDR        (memr_csr_w_addr),
-        .MEMR_CSR_W_DATA        (memr_csr_w_data),
-        .MEMR_MEM_W_VALID       (memr_mem_w_valid),
-        .MEMR_MEM_W_ADDR        (memr_mem_w_addr),
-        .MEMR_MEM_W_STRB        (memr_mem_w_strb),
-        .MEMR_MEM_W_DATA        (memr_mem_w_data),
-
-        // データフォワーディング用
-        .MEMW_REG_W_RD          (memw_reg_w_rd),
-        .MEMW_REG_W_DATA        (memw_reg_w_data),
-        .MEMW_CSR_W_ADDR        (memw_csr_w_addr),
-        .MEMW_CSR_W_DATA        (memw_csr_w_data)
-    );
+    assign DATA_WREN    = memr_mem_w_valid;
+    assign DATA_WADDR   = memr_mem_w_addr;
+    assign DATA_WDATA   = memr_mem_w_data;
 
 endmodule

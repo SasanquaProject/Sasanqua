@@ -51,7 +51,6 @@ module mread
         // メモリ(W)
         output wire         MEMR_MEM_W_VALID,
         output wire [31:0]  MEMR_MEM_W_ADDR,
-        output wire [3:0]   MEMR_MEM_W_STRB,
         output wire [31:0]  MEMR_MEM_W_DATA,
 
         // PC更新
@@ -122,7 +121,6 @@ module mread
     assign MEMR_CSR_W_DATA   = cushion_csr_w_data;
     assign MEMR_MEM_W_VALID  = cushion_mem_w_valid;
     assign MEMR_MEM_W_ADDR   = cushion_mem_w_addr;
-    assign MEMR_MEM_W_STRB   = cushion_mem_w_strb;
     assign MEMR_MEM_W_DATA   = wrdata;
     assign MEMR_JMP_DO       = cushion_jmp_do;
     assign MEMR_JMP_PC       = cushion_jmp_pc;

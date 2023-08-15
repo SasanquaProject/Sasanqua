@@ -136,7 +136,6 @@ wire [11:0] MEMR_CSR_W_ADDR         = sasanqua.core.memr_csr_w_addr;
 wire [31:0] MEMR_CSR_W_DATA         = sasanqua.core.memr_csr_w_data;
 wire        MEMR_MEM_W_VALID        = sasanqua.core.memr_mem_w_valid;
 wire [31:0] MEMR_MEM_W_ADDR         = sasanqua.core.memr_mem_w_addr;
-wire [3:0]  MEMR_MEM_W_STRB         = sasanqua.core.memr_mem_w_strb;
 wire [31:0] MEMR_MEM_W_DATA         = sasanqua.core.memr_mem_w_data;
 wire        MEMR_JMP_DO             = sasanqua.core.memr_jmp_do;
 wire [31:0] MEMR_JMP_PC             = sasanqua.core.memr_jmp_pc;
