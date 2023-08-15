@@ -341,13 +341,13 @@ module exec
                 MEM_W_VALID <= 1'b1;
                 MEM_W_ADDR <= rs1_data_s + $signed({ { 20{ imm[11] } }, imm[11:0] });
                 MEM_W_STRB <= 4'b0001;
-                MEM_W_DATA <= rs2_data << ({ imm[1:0], 3'b0 });
+                MEM_W_DATA <= rs2_data;
             end
             17'b0100011_001_zzzzzzz: begin  // sh
                 MEM_W_VALID <= 1'b1;
                 MEM_W_ADDR <= rs1_data_s + $signed({ { 20{ imm[11] } }, imm[11:0] });
                 MEM_W_STRB <= 4'b0011;
-                MEM_W_DATA <= rs2_data << ({ imm[1:0], 3'b0 });
+                MEM_W_DATA <= rs2_data;
             end
             17'b0100011_010_zzzzzzz: begin  // sw
                 MEM_W_VALID <= 1'b1;

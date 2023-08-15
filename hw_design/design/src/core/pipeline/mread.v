@@ -152,13 +152,13 @@ module mread
         input [31:0]    SRC;
 
         case ((STRB << ADDR[1:0]))
-            4'b0001: gen_wrdata = (DST & 32'hffff_ff00) | (SRC & 32'h0000_00ff);
-            4'b0010: gen_wrdata = (DST & 32'hffff_00ff) | (SRC & 32'h0000_ff00);
-            4'b0100: gen_wrdata = (DST & 32'hff00_ffff) | (SRC & 32'h00ff_0000);
-            4'b1000: gen_wrdata = (DST & 32'h00ff_ffff) | (SRC & 32'hff00_0000);
-            4'b0011: gen_wrdata = (DST & 32'hffff_0000) | (SRC & 32'h0000_ffff);
-            4'b0110: gen_wrdata = (DST & 32'hff00_00ff) | (SRC & 32'h00ff_ff00);
-            4'b1100: gen_wrdata = (DST & 32'h0000_ffff) | (SRC & 32'hffff_0000);
+            4'b0001: gen_wrdata = (DST & 32'hffff_ff00) | { 24'b0, SRC[7:0] };
+            4'b0010: gen_wrdata = (DST & 32'hffff_00ff) | { 16'b0, SRC[7:0], 8'b0 };
+            4'b0100: gen_wrdata = (DST & 32'hff00_ffff) | { 8'b0, SRC[7:0], 16'b0 };
+            4'b1000: gen_wrdata = (DST & 32'h00ff_ffff) | { SRC[7:0], 24'b0 };
+            4'b0011: gen_wrdata = (DST & 32'hffff_0000) | { 16'b0, SRC[15:0] };
+            4'b0110: gen_wrdata = (DST & 32'hff00_00ff) | { 8'b0, SRC[15:0], 8'b0 };
+            4'b1100: gen_wrdata = (DST & 32'h0000_ffff) | { SRC[15:0], 16'b0 };
             default: gen_wrdata = SRC;
         endcase
     endfunction
