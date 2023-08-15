@@ -5,6 +5,7 @@ module decode_2nd
         input wire          RST,
         input wire          FLUSH,
         input wire          STALL,
+        input wire          MEM_WAIT,
 
         /* ----- デコード部2との接続 ----- */
         input wire [31:0]   DECODE_1ST_PC,
@@ -52,7 +53,7 @@ module decode_2nd
             decode_1st_imm_u <= 32'b0;
             decode_1st_imm_j <= 32'b0;
         end
-        else if (STALL) begin
+        else if (STALL || MEM_WAIT) begin
             // do nothing
         end
         else begin

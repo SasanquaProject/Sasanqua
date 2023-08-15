@@ -4,7 +4,7 @@ module mread
         input wire          CLK,
         input wire          RST,
         input wire          FLUSH,
-        input wire          STALL,
+        input wire          MEM_WAIT,
 
         /* ----- MMUとの接続 ----- */
         output wire         DATA_RDEN,
@@ -88,7 +88,7 @@ module mread
             cushion_jmp_do <= 1'b0;
             cushion_jmp_pc <= 32'b0;
         end
-        else if (STALL) begin
+        else if (MEM_WAIT) begin
             // do nothing
         end
         else begin

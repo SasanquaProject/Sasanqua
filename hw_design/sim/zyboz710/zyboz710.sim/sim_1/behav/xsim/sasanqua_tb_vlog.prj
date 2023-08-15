@@ -15,6 +15,7 @@ verilog xil_defaultlib  --include "../../../../../../design/tb/axi" \
 "../../../../../../design/src/core/pipeline/mread.v" \
 "../../../../../../design/src/core/pipeline/mwrite.v" \
 "../../../../../../design/src/core/register.v" \
+"../../../../../../design/src/core/register/rv32i_reg.v" \
 "../../../../../../design/src/sasanqua.v" \
 "../../../../../../design/src/core/pipeline/schedule_1st.v" \
 "../../../../../../design/src/csrs/supervisor.v" \

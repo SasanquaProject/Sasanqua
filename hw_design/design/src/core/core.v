@@ -36,14 +36,11 @@ module core
     );
 
     /* ----- パイプライン制御 ----- */
-    wire flush  = memr_jmp_do;
-    wire stall  = MEM_WAIT;
+    wire flush = memr_jmp_do;
+    wire stall = !reg_rs1_valid || !reg_rs2_valid;
 
     /* ----- 1. 命令フェッチ ----- */
     wire [31:0] inst_pc, inst_data;
-
-    assign inst_pc      = INST_RVALID ? INST_ROADDR : 32'b0;
-    assign inst_data    = INST_RVALID ? INST_RDATA : 32'h0000_0013;
 
     fetch fetch (
         // 制御
@@ -52,10 +49,18 @@ module core
         .FLUSH      (flush),
         .NEW_PC     (memr_jmp_pc),
         .STALL      (stall),
+        .MEM_WAIT   (MEM_WAIT),
 
         // MMUとの接続
         .INST_RDEN  (INST_RDEN),
-        .INST_RIADDR(INST_RIADDR)
+        .INST_RIADDR(INST_RIADDR),
+        .INST_RVALID(INST_RVALID),
+        .INST_ROADDR(INST_ROADDR),
+        .INST_RDATA (INST_RDATA),
+
+        // 後段との接続
+        .INST_PC    (inst_pc),
+        .INST_DATA  (inst_data)
     );
 
     /* ----- 2. 命令デコード1 ----- */
@@ -70,6 +75,7 @@ module core
         .RST                (RST),
         .FLUSH              (flush),
         .STALL              (stall),
+        .MEM_WAIT           (MEM_WAIT),
 
         // フェッチ部との接続
         .INST_PC            (inst_pc),
@@ -102,6 +108,7 @@ module core
         .RST                (RST),
         .FLUSH              (flush),
         .STALL              (stall),
+        .MEM_WAIT           (MEM_WAIT),
 
         // デコード部1との接続
         .DECODE_1ST_PC      (decode_1st_pc),
@@ -140,6 +147,7 @@ module core
         .RST                (RST),
         .FLUSH              (flush),
         .STALL              (stall),
+        .MEM_WAIT           (MEM_WAIT),
 
         // デコード部2との接続
         .DECODE_2ND_PC      (decode_2nd_pc),
@@ -159,7 +167,7 @@ module core
     );
 
     /* ----- 4-2. レジスタアクセス ----- */
-    wire [31:0] reg_rs1_v, reg_rs2_v, reg_csr_v;
+    wire [31:0] reg_csr_data;
     wire [4:0]  reg_rs1, reg_rs2;
 
     register register (
@@ -179,28 +187,65 @@ module core
         .CSRS_WDATA     (CSRS_WDATA),
 
         // レジスタアクセス(rv32i) : { _ => rd, V => value }
-        .REG_IR_I_A     (decode_2nd_rs1),
-        .REG_IR_I_B     (decode_2nd_rs2),
-        .REG_IR_O_A     (reg_rs1),
-        .REG_IR_O_AV    (reg_rs1_v),
-        .REG_IR_O_B     (reg_rs2),
-        .REG_IR_O_BV    (reg_rs2_v),
-        .REG_IW_I_A     (memr_reg_w_rd),
-        .REG_IW_I_AV    (memr_reg_w_data),
+        // .REG_IR_I_A     (decode_2nd_rs1),
+        // .REG_IR_I_B     (decode_2nd_rs2),
+        // .REG_IR_O_A     (reg_rs1),
+        // .REG_IR_O_AV    (reg_rs1_v),
+        // .REG_IR_O_B     (reg_rs2),
+        // .REG_IR_O_BV    (reg_rs2_v),
+        // .REG_IW_I_A     (memr_reg_w_rd),
+        // .REG_IW_I_AV    (memr_reg_w_data),
 
         // レジスタアクセス(CSRs) : { _ => addr, V => value }
         .REG_CR_I_A     (decode_2nd_imm[11:0]),
-        .REG_CR_O_AV    (reg_csr_v),
+        .REG_CR_O_AV    (reg_csr_data),
         .REG_CW_I_A     (memr_csr_w_addr),
         .REG_CW_I_AV    (memr_csr_w_data)
     );
 
+    /* ----- 4-2. レジスタアクセス ----- */
+    wire [31:0] reg_rs1_data, reg_rs2_data;
+    wire [4:0]  reg_rs1_addr, reg_rs2_addr;
+    wire        reg_rs1_valid, reg_rs2_valid;
+
+    rv32i_reg rv32i_reg (
+        // 制御
+        .CLK                (CLK),
+        .RST                (RST),
+        .FLUSH              (flush),
+        .STALL              (stall),
+        .MEM_WAIT           (MEM_WAIT),
+
+        // レジスタアクセス
+        .A_RIADDR           (decode_2nd_rs1),
+        .A_RVALID           (reg_rs1_valid),
+        .A_ROADDR           (reg_rs1_addr),
+        .A_RDATA            (reg_rs1_data),
+        .B_RIADDR           (decode_2nd_rs2),
+        .B_RVALID           (reg_rs2_valid),
+        .B_ROADDR           (reg_rs2_addr),
+        .B_RDATA            (reg_rs2_data),
+        .WADDR              (memr_reg_w_rd),
+        .WDATA              (memr_reg_w_data),
+
+        // フォワーディング
+        .FWD_REG_ADDR       (schedule_1st_rd),
+        .FWD_EXEC_ADDR      (reg_w_rd),
+        .FWD_EXEC_DATA      (reg_w_data),
+        .FWD_EXEC_VALID     (reg_w_valid),
+        .FWD_CUSHION_ADDR   (cushion_reg_w_rd),
+        .FWD_CUSHION_DATA   (cushion_reg_w_data),
+        .FWD_CUSHION_VALID  (cushion_reg_w_valid)
+    );
+
     /* ----- 5. 実行 ----- */
-    wire        mem_r_valid, mem_r_signed, mem_w_valid, jmp_do;
+    wire        mem_r_valid, mem_r_signed, mem_w_valid, jmp_do, reg_w_valid;
     wire [31:0] reg_w_data, csr_w_data, mem_r_addr, mem_w_addr, mem_w_data, jmp_pc;
     wire [11:0] csr_w_addr;
     wire [4:0]  reg_w_rd, mem_r_rd;
     wire [3:0]  mem_r_strb, mem_w_strb;
+
+    assign reg_w_valid = !mem_r_valid;
 
     exec exec (
         // 制御
@@ -208,30 +253,17 @@ module core
         .RST            (RST),
         .FLUSH          (flush),
         .STALL          (stall),
-
-        // データフォワーディング
-        .REG_FWD_A      (cushion_reg_w_rd),
-        .REG_FWD_AV     (cushion_reg_w_data),
-        .REG_FWD_B      (memr_reg_w_rd),
-        .REG_FWD_BV     (memr_reg_w_data),
-        .REG_FWD_C      (memw_reg_w_rd),
-        .REG_FWD_CV     (memw_reg_w_data),
-        .CSR_FWD_A      (cushion_csr_w_addr),
-        .CSR_FWD_AV     (cushion_csr_w_data),
-        .CSR_FWD_B      (memr_csr_w_addr),
-        .CSR_FWD_BV     (memr_csr_w_data),
-        .CSR_FWD_C      (memw_csr_w_addr),
-        .CSR_FWD_CV     (memw_csr_w_data),
+        .MEM_WAIT       (MEM_WAIT),
 
         // 前段との接続
         .PC             (schedule_1st_pc),
         .OPCODE         (schedule_1st_opcode),
-        .RD             (schedule_1st_rd),
-        .RS1            (reg_rs1),
-        .RS1_V          (reg_rs1_v),
-        .RS2            (reg_rs2),
-        .RS2_V          (reg_rs2_v),
-        .CSR_V          (reg_csr_v),
+        .RD_ADDR        (schedule_1st_rd),
+        .RS1_ADDR       (reg_rs1_addr),
+        .RS1_DATA       (reg_rs1_data),
+        .RS2_ADDR       (reg_rs2_addr),
+        .RS2_DATA       (reg_rs2_data),
+        .CSR_DATA       (reg_csr_data),
         .FUNCT3         (schedule_1st_funct3),
         .FUNCT7         (schedule_1st_funct7),
         .IMM            (schedule_1st_imm),
@@ -255,18 +287,20 @@ module core
     );
 
     /* ----- 6. 実行部待機 ------ */
-    wire        cushion_mem_r_valid, cushion_mem_r_signed, cushion_mem_w_valid, cushion_jmp_do;
+    wire        cushion_reg_w_valid, cushion_mem_r_valid, cushion_mem_r_signed, cushion_mem_w_valid, cushion_jmp_do;
     wire [31:0] cushion_reg_w_data, cushion_csr_w_data, cushion_mem_r_addr, cushion_mem_w_addr, cushion_mem_w_data, cushion_jmp_pc;
     wire [11:0] cushion_csr_w_addr;
     wire [4:0]  cushion_reg_w_rd, cushion_mem_r_rd;
     wire [3:0]  cushion_mem_r_strb, cushion_mem_w_strb;
+
+    assign cushion_reg_w_valid = !cushion_mem_r_valid;
 
     cushion cushion (
         // 制御
         .CLK                    (CLK),
         .RST                    (RST),
         .FLUSH                  (flush),
-        .STALL                  (stall),
+        .MEM_WAIT               (MEM_WAIT),
 
         // 実行部との接続
         .EXEC_REG_W_RD          (reg_w_rd),
@@ -315,7 +349,7 @@ module core
         .CLK                    (CLK),
         .RST                    (RST),
         .FLUSH                  (flush),
-        .STALL                  (stall),
+        .MEM_WAIT               (MEM_WAIT),
 
         // MMUとの接続
         .DATA_RDEN              (DATA_RDEN),
@@ -363,7 +397,7 @@ module core
         // 制御
         .CLK                    (CLK),
         .RST                    (RST),
-        .STALL                  (stall),
+        .MEM_WAIT               (MEM_WAIT),
 
         // MMUとの接続
         .DATA_WREN              (DATA_WREN),

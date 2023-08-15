@@ -90,10 +90,13 @@ module cache_axi
         else if (STALL) begin
             // do nothing
         end
-        else begin
+        else if (RDEN) begin
             ROADDR <= RIADDR;
-            RVALID <= RDEN && RIADDR[31:12] == cached_addr;
+            RVALID <= RIADDR[31:12] == cached_addr;
             RDATA <= WREN && RIADDR[11:2] == WADDR[11:2] ? WDATA : cache[RIADDR[11:2]];
+        end
+        else begin
+            RVALID <= 1'b0;
         end
     end
 

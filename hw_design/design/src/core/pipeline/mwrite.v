@@ -3,7 +3,7 @@ module mwrite
         /* ----- 制御 ----- */
         input wire          CLK,
         input wire          RST,
-        input wire          STALL,
+        input wire          MEM_WAIT,
 
         /* ----- MMUとの接続 ----- */
         output wire         DATA_WREN,
@@ -49,7 +49,7 @@ module mwrite
             memr_csr_w_addr <= 12'b0;
             memr_csr_w_data <= 32'b0;
         end
-        else if (STALL) begin
+        else if (MEM_WAIT) begin
             // do nothing
         end
         else begin

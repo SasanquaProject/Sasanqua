@@ -7,36 +7,60 @@ module fetch
         input wire          FLUSH,
         input wire  [31:0]  NEW_PC,
         input wire          STALL,
+        input wire          MEM_WAIT,
 
         /* ----- MMUとの接続 ----- */
         output wire         INST_RDEN,
-        output wire [31:0]  INST_RIADDR
+        output wire [31:0]  INST_RIADDR,
+        input  wire         INST_RVALID,
+        input  wire [31:0]  INST_ROADDR,
+        input  wire [31:0]  INST_RDATA,
+
+        /* ----- 後段との接続 ----- */
+        output wire [31:0]  INST_PC,
+        output wire [31:0]  INST_DATA
     );
 
     /* ----- PC ----- */
     reg         rden;
     reg  [31:0] pc;
 
+    always @* begin
+        if (STALL)
+            rden <= 1'b0;
+        else
+            rden <= 1'b1;
+    end
+
     always @ (posedge CLK) begin
-        if (RST) begin
-            rden <= 1'b1;
-            pc <= 32'h0000_0000;
-        end
-        else if (FLUSH) begin
-            rden <= 1'b1;
+        if (RST)
+            pc <= 32'b0;
+        else if (FLUSH)
             pc <= NEW_PC;
-        end
-        else if (STALL) begin
+        else if (STALL || MEM_WAIT) begin
             // do nothing
         end
-        else begin
-            rden <= 1'b1;
+        else
             pc <= pc + 32'd4;
+    end
+
+    /* ----- MMUとの接続 ----- */
+    reg [31:0] cache_pc, cache_data;
+
+    always @ (posedge CLK) begin
+        if (RST || FLUSH) begin
+            cache_pc <= 32'b0;
+            cache_data <= 32'b0;
+        end
+        else if (INST_RVALID) begin
+            cache_pc <= INST_ROADDR;
+            cache_data <= INST_RDATA;
         end
     end
 
-    /* ----- 出力 ----- */
     assign INST_RDEN    = FLUSH ? 1'b0 : rden;
     assign INST_RIADDR  = FLUSH ? 32'b0 : pc;
+    assign INST_PC      = INST_RVALID ? INST_ROADDR : cache_pc;
+    assign INST_DATA    = INST_RVALID ? INST_RDATA : cache_data;
 
 endmodule

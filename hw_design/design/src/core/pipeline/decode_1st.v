@@ -5,6 +5,7 @@ module decode_1st
         input wire          RST,
         input wire          FLUSH,
         input wire          STALL,
+        input wire          MEM_WAIT,
 
         /* ----- フェッチ部との接続 ----- */
         input wire  [31:0]  INST_PC,
@@ -33,7 +34,7 @@ module decode_1st
             inst_pc <= 32'b0;
             inst_data <= 32'b0;
         end
-        else if (STALL) begin
+        else if (STALL || MEM_WAIT) begin
             // do nothing
         end
         else begin
