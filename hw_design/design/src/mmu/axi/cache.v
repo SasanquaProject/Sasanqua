@@ -78,10 +78,10 @@ module cache_axi
     wire [9:0]  ram_a_raddr, ram_a_waddr, ram_b_raddr, ram_b_waddr;
     wire [31:0] ram_a_rdata, ram_a_wdata, ram_b_rdata, ram_b_wdata;
 
-    ram # (
+    ram_dualport # (
         .WIDTH  (10),
         .SIZE   (1024)
-    ) ram (
+    ) ram_dualport (
         // 制御
         .CLK        (CLK),
         .RST        (RST),
