@@ -171,7 +171,7 @@ module core
         .RADDR      (decode_2nd_imm[11:0]),
         .RVALID     (reg_csr_valid),
         .RDATA      (reg_csr_data),
-        .WREN       (memr_csr_w_valid),
+        .WREN       (memr_csr_w_en),
         .WADDR      (memr_csr_w_addr),
         .WDATA      (memr_csr_w_data)
     );
@@ -203,16 +203,16 @@ module core
 
         // フォワーディング
         .FWD_REG_ADDR       (schedule_1st_rd),
+        .FWD_EXEC_EN        (reg_w_en),
         .FWD_EXEC_ADDR      (reg_w_rd),
         .FWD_EXEC_DATA      (reg_w_data),
-        .FWD_EXEC_VALID     (reg_w_valid),
+        .FWD_CUSHION_EN     (cushion_reg_w_en),
         .FWD_CUSHION_ADDR   (cushion_reg_w_rd),
-        .FWD_CUSHION_DATA   (cushion_reg_w_data),
-        .FWD_CUSHION_VALID  (cushion_reg_w_valid)
+        .FWD_CUSHION_DATA   (cushion_reg_w_data)
     );
 
     /* ----- 5. 実行 ----- */
-    wire        reg_w_valid, mem_r_valid, mem_r_signed, csr_w_valid, mem_w_valid, jmp_do;
+    wire        reg_w_en, mem_r_en, mem_r_signed, csr_w_en, mem_w_en, jmp_do;
     wire [31:0] reg_w_data, csr_w_data, mem_r_addr, mem_w_addr, mem_w_data, jmp_pc;
     wire [11:0] csr_w_addr;
     wire [4:0]  reg_w_rd, mem_r_rd;
@@ -240,18 +240,18 @@ module core
         .IMM            (schedule_1st_imm),
 
         // 後段との接続
-        .REG_W_VALID    (reg_w_valid),
+        .REG_W_EN       (reg_w_en),
         .REG_W_RD       (reg_w_rd),
         .REG_W_DATA     (reg_w_data),
-        .CSR_W_VALID    (csr_w_valid),
+        .CSR_W_EN       (csr_w_en),
         .CSR_W_ADDR     (csr_w_addr),
         .CSR_W_DATA     (csr_w_data),
-        .MEM_R_VALID    (mem_r_valid),
+        .MEM_R_EN       (mem_r_en),
         .MEM_R_RD       (mem_r_rd),
         .MEM_R_ADDR     (mem_r_addr),
         .MEM_R_STRB     (mem_r_strb),
         .MEM_R_SIGNED   (mem_r_signed),
-        .MEM_W_VALID    (mem_w_valid),
+        .MEM_W_EN       (mem_w_en),
         .MEM_W_ADDR     (mem_w_addr),
         .MEM_W_STRB     (mem_w_strb),
         .MEM_W_DATA     (mem_w_data),
@@ -260,7 +260,7 @@ module core
     );
 
     /* ----- 6. 実行部待機 ------ */
-    wire        cushion_reg_w_valid, cushion_mem_r_valid, cushion_mem_r_signed, cushion_csr_w_valid, cushion_mem_w_valid, cushion_jmp_do;
+    wire        cushion_reg_w_en, cushion_mem_r_en, cushion_mem_r_signed, cushion_csr_w_en, cushion_mem_w_en, cushion_jmp_do;
     wire [31:0] cushion_reg_w_data, cushion_csr_w_data, cushion_mem_r_addr, cushion_mem_w_addr, cushion_mem_w_data, cushion_jmp_pc;
     wire [11:0] cushion_csr_w_addr;
     wire [4:0]  cushion_reg_w_rd, cushion_mem_r_rd;
@@ -274,18 +274,18 @@ module core
         .MEM_WAIT               (MEM_WAIT),
 
         // 実行部との接続
-        .EXEC_REG_W_VALID       (reg_w_valid),
+        .EXEC_REG_W_EN          (reg_w_en),
         .EXEC_REG_W_RD          (reg_w_rd),
         .EXEC_REG_W_DATA        (reg_w_data),
-        .EXEC_CSR_W_VALID       (csr_w_valid),
+        .EXEC_CSR_W_EN          (csr_w_en),
         .EXEC_CSR_W_ADDR        (csr_w_addr),
         .EXEC_CSR_W_DATA        (csr_w_data),
-        .EXEC_MEM_R_VALID       (mem_r_valid),
+        .EXEC_MEM_R_EN          (mem_r_en),
         .EXEC_MEM_R_RD          (mem_r_rd),
         .EXEC_MEM_R_ADDR        (mem_r_addr),
         .EXEC_MEM_R_STRB        (mem_r_strb),
         .EXEC_MEM_R_SIGNED      (mem_r_signed),
-        .EXEC_MEM_W_VALID       (mem_w_valid),
+        .EXEC_MEM_W_EN          (mem_w_en),
         .EXEC_MEM_W_ADDR        (mem_w_addr),
         .EXEC_MEM_W_STRB        (mem_w_strb),
         .EXEC_MEM_W_DATA        (mem_w_data),
@@ -293,18 +293,18 @@ module core
         .EXEC_JMP_PC            (jmp_pc),
 
         // メモリアクセス部(r)との接続
-        .CUSHION_REG_W_VALID    (cushion_reg_w_valid),
+        .CUSHION_REG_W_EN       (cushion_reg_w_en),
         .CUSHION_REG_W_RD       (cushion_reg_w_rd),
         .CUSHION_REG_W_DATA     (cushion_reg_w_data),
-        .CUSHION_CSR_W_VALID    (cushion_csr_w_valid),
+        .CUSHION_CSR_W_EN       (cushion_csr_w_en),
         .CUSHION_CSR_W_ADDR     (cushion_csr_w_addr),
         .CUSHION_CSR_W_DATA     (cushion_csr_w_data),
-        .CUSHION_MEM_R_VALID    (cushion_mem_r_valid),
+        .CUSHION_MEM_R_EN       (cushion_mem_r_en),
         .CUSHION_MEM_R_RD       (cushion_mem_r_rd),
         .CUSHION_MEM_R_ADDR     (cushion_mem_r_addr),
         .CUSHION_MEM_R_STRB     (cushion_mem_r_strb),
         .CUSHION_MEM_R_SIGNED   (cushion_mem_r_signed),
-        .CUSHION_MEM_W_VALID    (cushion_mem_w_valid),
+        .CUSHION_MEM_W_EN       (cushion_mem_w_en),
         .CUSHION_MEM_W_ADDR     (cushion_mem_w_addr),
         .CUSHION_MEM_W_STRB     (cushion_mem_w_strb),
         .CUSHION_MEM_W_DATA     (cushion_mem_w_data),
@@ -313,7 +313,7 @@ module core
     );
 
     /* ----- 7. メモリアクセス(r) ----- */
-    wire        memr_csr_w_valid, memr_mem_w_valid, memr_jmp_do;
+    wire        memr_csr_w_en, memr_mem_w_en, memr_jmp_do;
     wire [31:0] memr_reg_w_data, memr_csr_w_data, memr_mem_w_addr, memr_mem_w_data, memr_jmp_pc;
     wire [11:0] memr_csr_w_addr;
     wire [4:0]  memr_reg_w_rd;
@@ -335,15 +335,15 @@ module core
         // 実行待機部との接続
         .CUSHION_REG_W_RD       (cushion_reg_w_rd),
         .CUSHION_REG_W_DATA     (cushion_reg_w_data),
-        .CUSHION_CSR_W_VALID    (cushion_csr_w_valid),
+        .CUSHION_CSR_W_EN       (cushion_csr_w_en),
         .CUSHION_CSR_W_ADDR     (cushion_csr_w_addr),
         .CUSHION_CSR_W_DATA     (cushion_csr_w_data),
-        .CUSHION_MEM_R_VALID    (cushion_mem_r_valid),
+        .CUSHION_MEM_R_EN       (cushion_mem_r_en),
         .CUSHION_MEM_R_RD       (cushion_mem_r_rd),
         .CUSHION_MEM_R_ADDR     (cushion_mem_r_addr),
         .CUSHION_MEM_R_STRB     (cushion_mem_r_strb),
         .CUSHION_MEM_R_SIGNED   (cushion_mem_r_signed),
-        .CUSHION_MEM_W_VALID    (cushion_mem_w_valid),
+        .CUSHION_MEM_W_EN       (cushion_mem_w_en),
         .CUSHION_MEM_W_ADDR     (cushion_mem_w_addr),
         .CUSHION_MEM_W_STRB     (cushion_mem_w_strb),
         .CUSHION_MEM_W_DATA     (cushion_mem_w_data),
@@ -353,10 +353,10 @@ module core
         // メモリアクセス(w)との接続
         .MEMR_REG_W_RD          (memr_reg_w_rd),
         .MEMR_REG_W_DATA        (memr_reg_w_data),
-        .MEMR_CSR_W_VALID       (memr_csr_w_valid),
+        .MEMR_CSR_W_EN          (memr_csr_w_en),
         .MEMR_CSR_W_ADDR        (memr_csr_w_addr),
         .MEMR_CSR_W_DATA        (memr_csr_w_data),
-        .MEMR_MEM_W_VALID       (memr_mem_w_valid),
+        .MEMR_MEM_W_EN          (memr_mem_w_en),
         .MEMR_MEM_W_ADDR        (memr_mem_w_addr),
         .MEMR_MEM_W_DATA        (memr_mem_w_data),
         .MEMR_JMP_DO            (memr_jmp_do),
@@ -364,7 +364,7 @@ module core
     );
 
     /* ----- 8. メモリアクセス(w) ----- */
-    assign DATA_WREN    = memr_mem_w_valid;
+    assign DATA_WREN    = memr_mem_w_en;
     assign DATA_WADDR   = memr_mem_w_addr;
     assign DATA_WDATA   = memr_mem_w_data;
 
