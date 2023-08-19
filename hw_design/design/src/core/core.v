@@ -212,13 +212,11 @@ module core
     );
 
     /* ----- 5. 実行 ----- */
-    wire        mem_r_valid, mem_r_signed, csr_w_valid, mem_w_valid, jmp_do, reg_w_valid;
+    wire        reg_w_valid, mem_r_valid, mem_r_signed, csr_w_valid, mem_w_valid, jmp_do;
     wire [31:0] reg_w_data, csr_w_data, mem_r_addr, mem_w_addr, mem_w_data, jmp_pc;
     wire [11:0] csr_w_addr;
     wire [4:0]  reg_w_rd, mem_r_rd;
     wire [3:0]  mem_r_strb, mem_w_strb;
-
-    assign reg_w_valid = !mem_r_valid;
 
     exec exec (
         // 制御
@@ -242,6 +240,7 @@ module core
         .IMM            (schedule_1st_imm),
 
         // 後段との接続
+        .REG_W_VALID    (reg_w_valid),
         .REG_W_RD       (reg_w_rd),
         .REG_W_DATA     (reg_w_data),
         .CSR_W_VALID    (csr_w_valid),
@@ -267,8 +266,6 @@ module core
     wire [4:0]  cushion_reg_w_rd, cushion_mem_r_rd;
     wire [3:0]  cushion_mem_r_strb, cushion_mem_w_strb;
 
-    assign cushion_reg_w_valid = !cushion_mem_r_valid;
-
     cushion cushion (
         // 制御
         .CLK                    (CLK),
@@ -277,6 +274,7 @@ module core
         .MEM_WAIT               (MEM_WAIT),
 
         // 実行部との接続
+        .EXEC_REG_W_VALID       (reg_w_valid),
         .EXEC_REG_W_RD          (reg_w_rd),
         .EXEC_REG_W_DATA        (reg_w_data),
         .EXEC_CSR_W_VALID       (csr_w_valid),
@@ -295,6 +293,7 @@ module core
         .EXEC_JMP_PC            (jmp_pc),
 
         // メモリアクセス部(r)との接続
+        .CUSHION_REG_W_VALID    (cushion_reg_w_valid),
         .CUSHION_REG_W_RD       (cushion_reg_w_rd),
         .CUSHION_REG_W_DATA     (cushion_reg_w_data),
         .CUSHION_CSR_W_VALID    (cushion_csr_w_valid),

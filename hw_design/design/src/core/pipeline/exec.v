@@ -39,6 +39,7 @@ module exec
 
         /* ----- 後段との接続 ----- */
         // レジスタ(rv32i:W)
+        output reg          REG_W_VALID,
         output reg  [4:0]   REG_W_RD,
         output reg  [31:0]  REG_W_DATA,
 
@@ -113,154 +114,192 @@ module exec
     always @* begin
         casez ({opcode, funct3, funct7})
             17'b0110011_000_0000000: begin  // add
+                REG_W_VALID <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= rs1_data + rs2_data;
             end
             17'b0010011_000_zzzzzzz: begin  // addi
+                REG_W_VALID <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= rs1_data + { { 20{ imm[11] } }, imm[11:0] };
             end
             17'b0110011_000_0100000: begin  // sub
+                REG_W_VALID <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= rs1_data - rs2_data;
             end
             17'b0110011_111_0000000: begin  // and
+                REG_W_VALID <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= rs1_data & rs2_data;
             end
             17'b0010011_111_zzzzzzz: begin  // andi
+                REG_W_VALID <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= rs1_data & { { 20{ imm[11] } }, imm[11:0] };
             end
             17'b0110011_110_0000000: begin  // or
+                REG_W_VALID <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= rs1_data | rs2_data;
             end
             17'b0010011_110_zzzzzzz: begin  // ori
+                REG_W_VALID <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= rs1_data | { { 20{ imm[11] } }, imm[11:0] };
             end
             17'b0110011_100_0000000: begin  // xor
+                REG_W_VALID <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= rs1_data ^ rs2_data;
             end
             17'b0010011_100_zzzzzzz: begin  // xori
+                REG_W_VALID <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= rs1_data ^ { { 20{ imm[11] } }, imm[11:0] };
             end
             17'b0110011_001_0000000: begin  // sll
+                REG_W_VALID <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= rs1_data << (rs2_data[4:0]);
             end
             17'b0010011_001_0000000: begin  // slli
+                REG_W_VALID <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= rs1_data << (imm[4:0]);
             end
             17'b0110011_101_0100000: begin  // sra
+                REG_W_VALID <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= rs1_data_s >>> (rs2_data[4:0]);
             end
             17'b0010011_101_0100000: begin  // srai
+                REG_W_VALID <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= rs1_data_s >>> (imm[4:0]);
             end
             17'b0110011_101_0000000: begin  // srl
+                REG_W_VALID <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= rs1_data >> (rs2_data[4:0]);
             end
             17'b0010011_101_0000000: begin  // srli
+                REG_W_VALID <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= rs1_data >> (imm[4:0]);
             end
             17'b0110111_zzz_zzzzzzz: begin  // lui
+                REG_W_VALID <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= (imm[31:12]) << 12;
             end
             17'b0010111_zzz_zzzzzzz: begin  // auipc
+                REG_W_VALID <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= pc + ((imm[31:12]) << 12);
             end
             17'b0110011_010_0000000: begin  // slt
+                REG_W_VALID <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= rs1_data_s < rs2_data_s ? 32'b1 : 32'b0;
             end
-            17'b0110011_011_0000000: begin  // swltuq
+            17'b0110011_011_0000000: begin  // sltu
+                REG_W_VALID <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= rs1_data < rs2_data ? 32'b1 : 32'b0;
             end
             17'b0010011_010_zzzzzzz: begin  // slti
+                REG_W_VALID <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= rs1_data_s < $signed({ { 20{ imm[11] } }, imm[11:0] }) ? 32'b1 : 32'b0;
             end
             17'b0010011_011_zzzzzzz: begin  // sltiu
+                REG_W_VALID <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= rs1_data < { { 20{ imm[11] } }, imm[11:0] } ? 32'b1 : 32'b0;
             end
             17'b1101111_zzz_zzzzzzz: begin  // jal
+                REG_W_VALID <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= pc + 32'd4;
             end
             17'b1100111_000_zzzzzzz: begin  // jalr
+                REG_W_VALID <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= pc + 32'd4;
             end
             17'b0000011_000_zzzzzzz: begin  // lb
+                REG_W_VALID <= 1'b0;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= 32'hffff_ffff;
             end
-            17'b0000011_100_zzzzzzz: begin  // lbu
+            17'b0000011_100_zzzzzzz: begin  // lbus
+                REG_W_VALID <= 1'b0;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= 32'hffff_ffff;
             end
             17'b0000011_001_zzzzzzz: begin  // lh
+                REG_W_VALID <= 1'b0;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= 32'hffff_fff;
             end
             17'b0000011_101_zzzzzzz: begin  // lhu
+                REG_W_VALID <= 1'b0;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= 32'hffff_ffff;
             end
             17'b0000011_010_zzzzzzz: begin  // lw
+                REG_W_VALID <= 1'b0;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= 32'hffff_ffff;
             end
             17'b0100011_000_zzzzzzz: begin  // sb
+                REG_W_VALID <= 1'b0;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= 32'hffff_ffff;
             end
             17'b0100011_001_zzzzzzz: begin  // sh
+                REG_W_VALID <= 1'b0;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= 32'hffff_ffff;
             end
             17'b0100011_010_zzzzzzz: begin  // sw
+                REG_W_VALID <= 1'b0;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= 32'hffff_ffff;
             end
             17'b1110011_011_zzzzzzz: begin // csrrc
+                REG_W_VALID <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= csr_data;
             end
             17'b1110011_111_zzzzzzz: begin // csrrci
+                REG_W_VALID <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= csr_data;
             end
             17'b1110011_010_zzzzzzz: begin // csrrs
+                REG_W_VALID <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= csr_data;
             end
             17'b1110011_110_zzzzzzz: begin // csrrsi
+                REG_W_VALID <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= csr_data;
             end
             17'b1110011_001_zzzzzzz: begin // csrrw
+                REG_W_VALID <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= csr_data;
             end
             17'b1110011_101_zzzzzzz: begin // csrrwi
+                REG_W_VALID <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= csr_data;
             end
             default: begin
+                REG_W_VALID <= 1'b0;
                 REG_W_RD <= 5'b0;
                 REG_W_DATA <= 32'b0;
             end

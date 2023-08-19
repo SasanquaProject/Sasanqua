@@ -8,6 +8,7 @@ module cushion
 
         /* ----- 実行部との接続 ----- */
         // レジスタ(rv32i:W)
+        input wire          EXEC_REG_W_VALID,
         input wire  [4:0]   EXEC_REG_W_RD,
         input wire  [31:0]  EXEC_REG_W_DATA,
 
@@ -35,6 +36,7 @@ module cushion
 
         /* ----- メモリアクセス(r)部との接続 ----- */
         // レジスタ(rv32i:W)
+        output wire         CUSHION_REG_W_VALID,
         output wire [4:0]   CUSHION_REG_W_RD,
         output wire [31:0]  CUSHION_REG_W_DATA,
 
@@ -62,7 +64,7 @@ module cushion
     );
 
     /* ----- 入力取り込み ----- */
-    reg         exec_csr_w_valid, exec_mem_r_valid, exec_mem_r_signed, exec_mem_w_valid, exec_jmp_do;
+    reg         exec_reg_w_valid, exec_csr_w_valid, exec_mem_r_valid, exec_mem_r_signed, exec_mem_w_valid, exec_jmp_do;
     reg [31:0]  exec_reg_w_data, exec_csr_w_data, exec_mem_r_addr, exec_mem_w_addr, exec_mem_w_data, exec_jmp_pc;
     reg [11:0]  exec_csr_w_addr;
     reg [4:0]   exec_reg_w_rd, exec_mem_r_rd;
@@ -70,6 +72,7 @@ module cushion
 
     always @ (posedge CLK) begin
         if (RST || FLUSH) begin
+            exec_reg_w_valid <= 1'b0;
             exec_reg_w_rd <= 5'b0;
             exec_reg_w_data <= 32'b0;
             exec_csr_w_valid <= 1'b0;
@@ -91,6 +94,7 @@ module cushion
             // do nothing
         end
         else begin
+            exec_reg_w_valid <= EXEC_REG_W_VALID;
             exec_reg_w_rd <= EXEC_REG_W_RD;
             exec_reg_w_data <= EXEC_REG_W_DATA;
             exec_csr_w_valid <= EXEC_CSR_W_VALID;
@@ -111,6 +115,7 @@ module cushion
     end
 
     /* ----- 出力 ----- */
+    assign CUSHION_REG_W_VALID  = exec_reg_w_valid;
     assign CUSHION_REG_W_RD     = exec_reg_w_rd;
     assign CUSHION_REG_W_DATA   = exec_reg_w_data;
     assign CUSHION_CSR_W_VALID  = exec_csr_w_valid;
