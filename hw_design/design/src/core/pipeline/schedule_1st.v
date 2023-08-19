@@ -20,7 +20,7 @@ module schedule_1st
         output wire [31:0]  SCHEDULE_1ST_PC,
         output wire [6:0]   SCHEDULE_1ST_OPCODE,
         output wire [4:0]   SCHEDULE_1ST_RD,
-        output wire [4:0]   SCHEDULE_1ST_CSR,
+        output wire [11:0]  SCHEDULE_1ST_CSR,
         output wire [2:0]   SCHEDULE_1ST_FUNCT3,
         output wire [6:0]   SCHEDULE_1ST_FUNCT7,
         output wire [31:0]  SCHEDULE_1ST_IMM
