@@ -36,13 +36,15 @@ module csr
     assign RDATA   = 32'b0;
 
     /* ----- 入力取り込み ----- */
-    reg  [11:0] riaddr, fwd_csr_addr, fwd_exec_addr, fwd_cushion_addr;
-    reg  [31:0] fwd_exec_data, fwd_cushion_data;
+    reg  [11:0] riaddr, waddr, fwd_csr_addr, fwd_exec_addr, fwd_cushion_addr;
+    reg  [31:0] wdata, fwd_exec_data, fwd_cushion_data;
     reg         fwd_exec_en, fwd_cushion_en;
 
     always @ (posedge CLK) begin
         if (RST || FLUSH) begin
             riaddr <= 12'b0;
+            waddr <= 12'b0;
+            wdata <= 32'b0;
             fwd_csr_addr <= 12'b0;
             fwd_exec_addr <= 12'b0;
             fwd_exec_data <= 32'b0;
@@ -65,6 +67,8 @@ module csr
         end
         else begin
             riaddr <= RIADDR;
+            waddr <= WADDR;
+            wdata <= WDATA;
             fwd_csr_addr <= FWD_CSR_ADDR;
             fwd_exec_addr <= FWD_EXEC_ADDR;
             fwd_exec_data <= FWD_EXEC_DATA;
@@ -82,7 +86,7 @@ module csr
     // 読み
     assign ROADDR = riaddr;
     assign RVALID = forwarding_check(riaddr, fwd_csr_addr, fwd_exec_addr, fwd_exec_en, fwd_cushion_addr, fwd_cushion_en);
-    assign RDATA  = forwarding(riaddr, tmp, fwd_exec_addr, fwd_exec_data, fwd_cushion_addr, fwd_cushion_data, WADDR, WDATA);
+    assign RDATA  = forwarding(riaddr, tmp, fwd_exec_addr, fwd_exec_data, fwd_cushion_addr, fwd_cushion_data, waddr, wdata);
 
     function forwarding_check;
         input [4:0]     target_addr;

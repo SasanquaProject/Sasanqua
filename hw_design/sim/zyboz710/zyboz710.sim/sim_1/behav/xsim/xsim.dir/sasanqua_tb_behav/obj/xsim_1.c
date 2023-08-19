@@ -468,7 +468,7 @@ void wrapper_func_0(char *dp)
 
 void simulate(char *dp)
 {
-iki_register_root_pointers(1, 137120, 2,2, 0, 32) ; 
+iki_register_root_pointers(1, 137856, 2,2, 0, 32) ; 
 		iki_schedule_processes_at_time_zero(dp, "xsim.dir/sasanqua_tb_behav/xsim.reloc");
 	wrapper_func_0(dp);
 
