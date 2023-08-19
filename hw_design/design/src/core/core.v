@@ -130,6 +130,7 @@ module core
 
     /* ----- 4-1. スケジューリング1 ----- */
     wire [31:0] schedule_1st_pc, schedule_1st_imm;
+    wire [11:0] schedule_1st_csr;
     wire [6:0]  schedule_1st_opcode, schedule_1st_funct7;
     wire [4:0]  schedule_1st_rd, schedule_1st_rs1, schedule_1st_rs2;
     wire [2:0]  schedule_1st_funct3;
@@ -146,6 +147,7 @@ module core
         .DECODE_2ND_PC      (decode_2nd_pc),
         .DECODE_2ND_OPCODE  (decode_2nd_opcode),
         .DECODE_2ND_RD      (decode_2nd_rd),
+        .DECODE_2ND_CSR     (decode_2nd_csr),
         .DECODE_2ND_FUNCT3  (decode_2nd_funct3),
         .DECODE_2ND_FUNCT7  (decode_2nd_funct7),
         .DECODE_2ND_IMM     (decode_2nd_imm),
@@ -154,6 +156,7 @@ module core
         .SCHEDULE_1ST_PC    (schedule_1st_pc),
         .SCHEDULE_1ST_OPCODE(schedule_1st_opcode),
         .SCHEDULE_1ST_RD    (schedule_1st_rd),
+        .SCHEDULE_1ST_CSR   (schedule_1st_csr),
         .SCHEDULE_1ST_FUNCT3(schedule_1st_funct3),
         .SCHEDULE_1ST_FUNCT7(schedule_1st_funct7),
         .SCHEDULE_1ST_IMM   (schedule_1st_imm)
@@ -167,17 +170,29 @@ module core
 
     csr csr (
         // 制御
-        .CLK        (CLK),
-        .RST        (RST),
+        .CLK                (CLK),
+        .RST                (RST),
+        .FLUSH              (flush),
+        .STALL              (stall),
+        .MEM_WAIT           (MEM_WAIT),
 
         // レジスタアクセス
-        .RIADDR     (decode_2nd_csr),
-        .RVALID     (reg_csr_valid),
-        .ROADDR     (reg_csr_addr),
-        .RDATA      (reg_csr_data),
-        .WREN       (memr_csr_w_en),
-        .WADDR      (memr_csr_w_addr),
-        .WDATA      (memr_csr_w_data)
+        .RIADDR             (decode_2nd_csr),
+        .RVALID             (reg_csr_valid),
+        .ROADDR             (reg_csr_addr),
+        .RDATA              (reg_csr_data),
+        .WREN               (memr_csr_w_en),
+        .WADDR              (memr_csr_w_addr),
+        .WDATA              (memr_csr_w_data),
+
+        // フォワーディング
+        .FWD_CSR_ADDR       (schedule_1st_csr),
+        .FWD_EXEC_EN        (csr_w_en),
+        .FWD_EXEC_ADDR      (csr_w_rd),
+        .FWD_EXEC_DATA      (csr_w_data),
+        .FWD_CUSHION_EN     (cushion_csr_w_en),
+        .FWD_CUSHION_ADDR   (cushion_csr_w_rd),
+        .FWD_CUSHION_DATA   (cushion_csr_w_data)
     );
 
     // RV32I
