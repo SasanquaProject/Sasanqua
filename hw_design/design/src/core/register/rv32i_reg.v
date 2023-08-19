@@ -26,19 +26,19 @@ module rv32i_reg
         /* ----- データフォワーディング ----- */
         input wire  [4:0]   FWD_REG_ADDR,
 
+        input wire          FWD_EXEC_EN,
         input wire  [4:0]   FWD_EXEC_ADDR,
         input wire  [31:0]  FWD_EXEC_DATA,
-        input wire          FWD_EXEC_VALID,
 
+        input wire          FWD_CUSHION_EN,
         input wire  [4:0]   FWD_CUSHION_ADDR,
-        input wire  [31:0]  FWD_CUSHION_DATA,
-        input wire          FWD_CUSHION_VALID
+        input wire  [31:0]  FWD_CUSHION_DATA
     );
 
     /* ----- 入力取り込み ----- */
     reg  [4:0]  a_riaddr, b_riaddr, fwd_reg_addr, fwd_exec_addr, fwd_cushion_addr;
     reg  [31:0] fwd_exec_data, fwd_cushion_data;
-    reg         fwd_exec_valid, fwd_cushion_valid;
+    reg         fwd_exec_en, fwd_cushion_en;
 
     always @ (posedge CLK) begin
         if (RST || FLUSH) begin
@@ -47,19 +47,19 @@ module rv32i_reg
             fwd_reg_addr <= 5'b0;
             fwd_exec_addr <= 5'b0;
             fwd_exec_data <= 32'b0;
-            fwd_exec_valid <= 1'b0;
+            fwd_exec_en <= 1'b0;
             fwd_cushion_addr <= 5'b0;
             fwd_cushion_data <= 32'b0;
-            fwd_cushion_valid <= 1'b0;
+            fwd_cushion_en <= 1'b0;
         end
         else if (STALL) begin
             fwd_reg_addr <= 5'b0;
             fwd_exec_addr <= FWD_EXEC_ADDR;
             fwd_exec_data <= FWD_EXEC_DATA;
-            fwd_exec_valid <= FWD_EXEC_VALID;
+            fwd_exec_en <= FWD_EXEC_EN;
             fwd_cushion_addr <= FWD_CUSHION_ADDR;
             fwd_cushion_data <= FWD_CUSHION_DATA;
-            fwd_cushion_valid <= FWD_CUSHION_VALID;
+            fwd_cushion_en <= FWD_CUSHION_EN;
         end
         else if (MEM_WAIT) begin
             // do nothing
@@ -70,10 +70,10 @@ module rv32i_reg
             fwd_reg_addr <= FWD_REG_ADDR;
             fwd_exec_addr <= FWD_EXEC_ADDR;
             fwd_exec_data <= FWD_EXEC_DATA;
-            fwd_exec_valid <= FWD_EXEC_VALID;
+            fwd_exec_en <= FWD_EXEC_EN;
             fwd_cushion_addr <= FWD_CUSHION_ADDR;
             fwd_cushion_data <= FWD_CUSHION_DATA;
-            fwd_cushion_valid <= FWD_CUSHION_VALID;
+            fwd_cushion_en <= FWD_CUSHION_EN;
         end
     end
 
@@ -82,26 +82,26 @@ module rv32i_reg
 
     // 読み
     assign A_ROADDR = a_riaddr;
-    assign A_RVALID = forwarding_check(a_riaddr, fwd_reg_addr, fwd_exec_addr, fwd_exec_valid, fwd_cushion_addr, fwd_cushion_valid);
+    assign A_RVALID = forwarding_check(a_riaddr, fwd_reg_addr, fwd_exec_addr, fwd_exec_en, fwd_cushion_addr, fwd_cushion_en);
     assign A_RDATA  = forwarding(a_riaddr, registers[a_riaddr], fwd_exec_addr, fwd_exec_data, fwd_cushion_addr, fwd_cushion_data, WADDR, WDATA);
 
     assign B_ROADDR = b_riaddr;
-    assign B_RVALID = forwarding_check(b_riaddr, fwd_reg_addr, fwd_exec_addr, fwd_exec_valid, fwd_cushion_addr, fwd_cushion_valid);
+    assign B_RVALID = forwarding_check(b_riaddr, fwd_reg_addr, fwd_exec_addr, fwd_exec_en, fwd_cushion_addr, fwd_cushion_en);
     assign B_RDATA  = forwarding(b_riaddr, registers[b_riaddr], fwd_exec_addr, fwd_exec_data, fwd_cushion_addr, fwd_cushion_data, WADDR, WDATA);
 
     function forwarding_check;
         input [4:0]     target_addr;
         input [4:0]     reg_addr;
         input [4:0]     exec_addr;
-        input           exec_valid;
+        input           exec_en;
         input [4:0]     cushion_addr;
-        input           cushion_valid;
+        input           cushion_en;
 
         case (target_addr)
             5'b0:           forwarding_check = 1'b1;
             reg_addr:       forwarding_check = 1'b0;
-            exec_addr:      forwarding_check = exec_valid;
-            cushion_addr:   forwarding_check = cushion_valid;
+            exec_addr:      forwarding_check = exec_en;
+            cushion_addr:   forwarding_check = cushion_en;
             default:        forwarding_check = 1'b1;
         endcase
     endfunction

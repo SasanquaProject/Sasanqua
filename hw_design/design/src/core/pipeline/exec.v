@@ -39,23 +39,24 @@ module exec
 
         /* ----- 後段との接続 ----- */
         // レジスタ(rv32i:W)
+        output reg          REG_W_EN,
         output reg  [4:0]   REG_W_RD,
         output reg  [31:0]  REG_W_DATA,
 
         // レジスタ(csrs:W)
-        output reg          CSR_W_VALID,
+        output reg          CSR_W_EN,
         output reg  [11:0]  CSR_W_ADDR,
         output reg  [31:0]  CSR_W_DATA,
 
         // メモリ(R)
-        output reg          MEM_R_VALID,
+        output reg          MEM_R_EN,
         output reg  [4:0]   MEM_R_RD,
         output reg  [31:0]  MEM_R_ADDR,
         output reg  [3:0]   MEM_R_STRB,
         output reg          MEM_R_SIGNED,
 
         // メモリ(W)
-        output reg          MEM_W_VALID,
+        output reg          MEM_W_EN,
         output reg  [31:0]  MEM_W_ADDR,
         output reg  [3:0]   MEM_W_STRB,
         output reg  [31:0]  MEM_W_DATA,
@@ -113,154 +114,192 @@ module exec
     always @* begin
         casez ({opcode, funct3, funct7})
             17'b0110011_000_0000000: begin  // add
+                REG_W_EN <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= rs1_data + rs2_data;
             end
             17'b0010011_000_zzzzzzz: begin  // addi
+                REG_W_EN <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= rs1_data + { { 20{ imm[11] } }, imm[11:0] };
             end
             17'b0110011_000_0100000: begin  // sub
+                REG_W_EN <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= rs1_data - rs2_data;
             end
             17'b0110011_111_0000000: begin  // and
+                REG_W_EN <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= rs1_data & rs2_data;
             end
             17'b0010011_111_zzzzzzz: begin  // andi
+                REG_W_EN <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= rs1_data & { { 20{ imm[11] } }, imm[11:0] };
             end
             17'b0110011_110_0000000: begin  // or
+                REG_W_EN <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= rs1_data | rs2_data;
             end
             17'b0010011_110_zzzzzzz: begin  // ori
+                REG_W_EN <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= rs1_data | { { 20{ imm[11] } }, imm[11:0] };
             end
             17'b0110011_100_0000000: begin  // xor
+                REG_W_EN <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= rs1_data ^ rs2_data;
             end
             17'b0010011_100_zzzzzzz: begin  // xori
+                REG_W_EN <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= rs1_data ^ { { 20{ imm[11] } }, imm[11:0] };
             end
             17'b0110011_001_0000000: begin  // sll
+                REG_W_EN <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= rs1_data << (rs2_data[4:0]);
             end
             17'b0010011_001_0000000: begin  // slli
+                REG_W_EN <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= rs1_data << (imm[4:0]);
             end
             17'b0110011_101_0100000: begin  // sra
+                REG_W_EN <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= rs1_data_s >>> (rs2_data[4:0]);
             end
             17'b0010011_101_0100000: begin  // srai
+                REG_W_EN <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= rs1_data_s >>> (imm[4:0]);
             end
             17'b0110011_101_0000000: begin  // srl
+                REG_W_EN <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= rs1_data >> (rs2_data[4:0]);
             end
             17'b0010011_101_0000000: begin  // srli
+                REG_W_EN <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= rs1_data >> (imm[4:0]);
             end
             17'b0110111_zzz_zzzzzzz: begin  // lui
+                REG_W_EN <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= (imm[31:12]) << 12;
             end
             17'b0010111_zzz_zzzzzzz: begin  // auipc
+                REG_W_EN <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= pc + ((imm[31:12]) << 12);
             end
             17'b0110011_010_0000000: begin  // slt
+                REG_W_EN <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= rs1_data_s < rs2_data_s ? 32'b1 : 32'b0;
             end
-            17'b0110011_011_0000000: begin  // swltuq
+            17'b0110011_011_0000000: begin  // sltu
+                REG_W_EN <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= rs1_data < rs2_data ? 32'b1 : 32'b0;
             end
             17'b0010011_010_zzzzzzz: begin  // slti
+                REG_W_EN <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= rs1_data_s < $signed({ { 20{ imm[11] } }, imm[11:0] }) ? 32'b1 : 32'b0;
             end
             17'b0010011_011_zzzzzzz: begin  // sltiu
+                REG_W_EN <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= rs1_data < { { 20{ imm[11] } }, imm[11:0] } ? 32'b1 : 32'b0;
             end
             17'b1101111_zzz_zzzzzzz: begin  // jal
+                REG_W_EN <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= pc + 32'd4;
             end
             17'b1100111_000_zzzzzzz: begin  // jalr
+                REG_W_EN <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= pc + 32'd4;
             end
             17'b0000011_000_zzzzzzz: begin  // lb
+                REG_W_EN <= 1'b0;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= 32'hffff_ffff;
             end
-            17'b0000011_100_zzzzzzz: begin  // lbu
+            17'b0000011_100_zzzzzzz: begin  // lbus
+                REG_W_EN <= 1'b0;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= 32'hffff_ffff;
             end
             17'b0000011_001_zzzzzzz: begin  // lh
+                REG_W_EN <= 1'b0;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= 32'hffff_fff;
             end
             17'b0000011_101_zzzzzzz: begin  // lhu
+                REG_W_EN <= 1'b0;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= 32'hffff_ffff;
             end
             17'b0000011_010_zzzzzzz: begin  // lw
+                REG_W_EN <= 1'b0;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= 32'hffff_ffff;
             end
             17'b0100011_000_zzzzzzz: begin  // sb
+                REG_W_EN <= 1'b0;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= 32'hffff_ffff;
             end
             17'b0100011_001_zzzzzzz: begin  // sh
+                REG_W_EN <= 1'b0;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= 32'hffff_ffff;
             end
             17'b0100011_010_zzzzzzz: begin  // sw
+                REG_W_EN <= 1'b0;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= 32'hffff_ffff;
             end
             17'b1110011_011_zzzzzzz: begin // csrrc
+                REG_W_EN <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= csr_data;
             end
             17'b1110011_111_zzzzzzz: begin // csrrci
+                REG_W_EN <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= csr_data;
             end
             17'b1110011_010_zzzzzzz: begin // csrrs
+                REG_W_EN <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= csr_data;
             end
             17'b1110011_110_zzzzzzz: begin // csrrsi
+                REG_W_EN <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= csr_data;
             end
             17'b1110011_001_zzzzzzz: begin // csrrw
+                REG_W_EN <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= csr_data;
             end
             17'b1110011_101_zzzzzzz: begin // csrrwi
+                REG_W_EN <= 1'b1;
                 REG_W_RD <= rd_addr;
                 REG_W_DATA <= csr_data;
             end
             default: begin
+                REG_W_EN <= 1'b0;
                 REG_W_RD <= 5'b0;
                 REG_W_DATA <= 32'b0;
             end
@@ -271,63 +310,63 @@ module exec
     always @* begin
         casez ({opcode, funct3, funct7})
             17'b0000011_000_zzzzzzz: begin  // lb
-                MEM_R_VALID <= 1'b1;
+                MEM_R_EN <= 1'b1;
                 MEM_R_RD <= rd_addr;
                 MEM_R_ADDR <= rs1_data_s + $signed({ { 20{ imm[11] } }, imm[11:0] });
                 MEM_R_STRB <= 4'b0001;
                 MEM_R_SIGNED <= 1'b1;
             end
             17'b0000011_100_zzzzzzz: begin  // lbu
-                MEM_R_VALID <= 1'b1;
+                MEM_R_EN <= 1'b1;
                 MEM_R_RD <= rd_addr;
                 MEM_R_ADDR <= rs1_data_s + $signed({ { 20{ imm[11] } }, imm[11:0] });
                 MEM_R_STRB <= 4'b0001;
                 MEM_R_SIGNED <= 1'b0;
             end
             17'b0000011_001_zzzzzzz: begin  // lh
-                MEM_R_VALID <= 1'b1;
+                MEM_R_EN <= 1'b1;
                 MEM_R_RD <= rd_addr;
                 MEM_R_ADDR <= rs1_data_s + $signed({ { 20{ imm[11] } }, imm[11:0] });
                 MEM_R_STRB <= 4'b0011;
                 MEM_R_SIGNED <= 1'b1;
             end
             17'b0000011_101_zzzzzzz: begin  // lhu
-                MEM_R_VALID <= 1'b1;
+                MEM_R_EN <= 1'b1;
                 MEM_R_RD <= rd_addr;
                 MEM_R_ADDR <= rs1_data_s + $signed({ { 20{ imm[11] } }, imm[11:0] });
                 MEM_R_STRB <= 4'b0011;
                 MEM_R_SIGNED <= 1'b0;
             end
             17'b0000011_010_zzzzzzz: begin  // lw
-                MEM_R_VALID <= 1'b1;
+                MEM_R_EN <= 1'b1;
                 MEM_R_RD <= rd_addr;
                 MEM_R_ADDR <= rs1_data_s + $signed({ { 20{ imm[11] } }, imm[11:0] });
                 MEM_R_STRB <= 4'b1111;
                 MEM_R_SIGNED <= 1'b0;
             end
             17'b0100011_000_zzzzzzz: begin  // sb
-                MEM_R_VALID <= 1'b1;
+                MEM_R_EN <= 1'b1;
                 MEM_R_RD <= 5'b0;
                 MEM_R_ADDR <= rs1_data_s + $signed({ { 20{ imm[11] } }, imm[11:0] });
                 MEM_R_STRB <= 4'b0001;
                 MEM_R_SIGNED <= 1'b0;
             end
             17'b0100011_001_zzzzzzz: begin  // sh
-                MEM_R_VALID <= 1'b1;
+                MEM_R_EN <= 1'b1;
                 MEM_R_RD <= 5'b0;
                 MEM_R_ADDR <= rs1_data_s + $signed({ { 20{ imm[11] } }, imm[11:0] });
                 MEM_R_STRB <= 4'b0011;
                 MEM_R_SIGNED <= 1'b0;
             end
             17'b0100011_010_zzzzzzz: begin  // sw
-                MEM_R_VALID <= 1'b1;
+                MEM_R_EN <= 1'b1;
                 MEM_R_RD <= 5'b0;
                 MEM_R_ADDR <= rs1_data_s + $signed({ { 20{ imm[11] } }, imm[11:0] });
                 MEM_R_STRB <= 4'b1111;
                 MEM_R_SIGNED <= 1'b0;
             end
             default: begin
-                MEM_R_VALID <= 1'b0;
+                MEM_R_EN <= 1'b0;
                 MEM_R_RD <= 5'b0;
                 MEM_R_ADDR <= 32'b0;
                 MEM_R_STRB <= 4'b0;
@@ -339,25 +378,25 @@ module exec
     always @* begin
         casez ({opcode, funct3, funct7})
             17'b0100011_000_zzzzzzz: begin  // sb
-                MEM_W_VALID <= 1'b1;
+                MEM_W_EN <= 1'b1;
                 MEM_W_ADDR <= rs1_data_s + $signed({ { 20{ imm[11] } }, imm[11:0] });
                 MEM_W_STRB <= 4'b0001;
                 MEM_W_DATA <= rs2_data;
             end
             17'b0100011_001_zzzzzzz: begin  // sh
-                MEM_W_VALID <= 1'b1;
+                MEM_W_EN <= 1'b1;
                 MEM_W_ADDR <= rs1_data_s + $signed({ { 20{ imm[11] } }, imm[11:0] });
                 MEM_W_STRB <= 4'b0011;
                 MEM_W_DATA <= rs2_data;
             end
             17'b0100011_010_zzzzzzz: begin  // sw
-                MEM_W_VALID <= 1'b1;
+                MEM_W_EN <= 1'b1;
                 MEM_W_ADDR <= rs1_data_s + $signed({ { 20{ imm[11] } }, imm[11:0] });
                 MEM_W_STRB <= 4'b1111;
                 MEM_W_DATA <= rs2_data;
             end
             default: begin
-                MEM_W_VALID <= 1'b0;
+                MEM_W_EN <= 1'b0;
                 MEM_W_ADDR <= 32'b0;
                 MEM_W_STRB <= 4'b0;
                 MEM_W_DATA <= 32'b0;
@@ -415,37 +454,37 @@ module exec
     always @* begin
         casez ({opcode, funct3})
             10'b1110011_011: begin // csrrc
-                CSR_W_VALID <= 1'b1;
+                CSR_W_EN <= 1'b1;
                 CSR_W_ADDR <= imm[11:0];
                 CSR_W_DATA <= csr_data & (~rs1_data);
             end
             10'b1110011_111: begin // csrrci
-                CSR_W_VALID <= 1'b1;
+                CSR_W_EN <= 1'b1;
                 CSR_W_ADDR <= imm[11:0];
                 CSR_W_DATA <= csr_data & { 27'h1ff_ffff, (~rs1_addr) };
             end
             10'b1110011_010: begin // csrrs
-                CSR_W_VALID <= 1'b1;
+                CSR_W_EN <= 1'b1;
                 CSR_W_ADDR <= imm[11:0];
                 CSR_W_DATA <= csr_data | rs1_data;
             end
             10'b1110011_110: begin // csrrsi
-                CSR_W_VALID <= 1'b1;
+                CSR_W_EN <= 1'b1;
                 CSR_W_ADDR <= imm[11:0];
                 CSR_W_DATA <= csr_data | { 27'b0, rs1_addr };
             end
             10'b1110011_001: begin // csrrw
-                CSR_W_VALID <= 1'b1;
+                CSR_W_EN <= 1'b1;
                 CSR_W_ADDR <= imm[11:0];
                 CSR_W_DATA <= rs1_data;
             end
             10'b1110011_101: begin // csrrwi
-                CSR_W_VALID <= 1'b1;
+                CSR_W_EN <= 1'b1;
                 CSR_W_ADDR <= imm[11:0];
                 CSR_W_DATA <= csr_data | { 27'b0, rs1_addr };
             end
             default: begin
-                CSR_W_VALID <= 1'b0;
+                CSR_W_EN <= 1'b0;
                 CSR_W_ADDR <= 12'b0;
                 CSR_W_DATA <= 32'b0;
             end
