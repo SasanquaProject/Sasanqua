@@ -165,7 +165,7 @@ module core
     /* ----- 4-2. レジスタアクセス ----- */
     // CSR
     wire [31:0] reg_csr_data;
-    wire [31:0] reg_csr_addr;
+    wire [11:0] reg_csr_addr;
     wire        reg_csr_valid;
 
     csr csr (
@@ -188,10 +188,10 @@ module core
         // フォワーディング
         .FWD_CSR_ADDR       (schedule_1st_csr),
         .FWD_EXEC_EN        (csr_w_en),
-        .FWD_EXEC_ADDR      (csr_w_rd),
+        .FWD_EXEC_ADDR      (csr_w_addr),
         .FWD_EXEC_DATA      (csr_w_data),
         .FWD_CUSHION_EN     (cushion_csr_w_en),
-        .FWD_CUSHION_ADDR   (cushion_csr_w_rd),
+        .FWD_CUSHION_ADDR   (cushion_csr_w_addr),
         .FWD_CUSHION_DATA   (cushion_csr_w_data)
     );
 

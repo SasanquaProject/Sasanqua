@@ -7,23 +7,6 @@ module exec
         input wire          STALL,
         input wire          MEM_WAIT,
 
-        /* ----- データフォワーディング ----- */
-        // RV32i
-        input wire  [4:0]   REG_FWD_A,
-        input wire  [31:0]  REG_FWD_AV,
-        input wire  [4:0]   REG_FWD_B,
-        input wire  [31:0]  REG_FWD_BV,
-        input wire  [4:0]   REG_FWD_C,
-        input wire  [31:0]  REG_FWD_CV,
-
-        // CSRs
-        input wire  [11:0]  CSR_FWD_A,
-        input wire  [31:0]  CSR_FWD_AV,
-        input wire  [11:0]  CSR_FWD_B,
-        input wire  [31:0]  CSR_FWD_BV,
-        input wire  [11:0]  CSR_FWD_C,
-        input wire  [31:0]  CSR_FWD_CV,
-
         /* ----- 前段との接続 ----- */
         input wire  [31:0]  PC,
         input wire  [6:0]   OPCODE,

@@ -31,10 +31,6 @@ module csr
         input wire  [31:0]  FWD_CUSHION_DATA
     );
 
-    assign RVALID  = 1'b1;
-    assign ROADDR  = 12'b0;
-    assign RDATA   = 32'b0;
-
     /* ----- 入力取り込み ----- */
     reg  [11:0] riaddr, waddr, fwd_csr_addr, fwd_exec_addr, fwd_cushion_addr;
     reg  [31:0] wdata, fwd_exec_data, fwd_cushion_data;

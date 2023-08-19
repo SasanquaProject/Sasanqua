@@ -1,6 +1,9 @@
 /* ----- バス用リセット信号 ----- */
 wire                            RSTN = ~RST;
 
+/* ----- Sasanqua ----- */
+wire [31:0]                     STAT;
+
 /* ----- AXIバス接続用 ----- */
 // AWチャネル
 wire                            M_AXI_AWID;
