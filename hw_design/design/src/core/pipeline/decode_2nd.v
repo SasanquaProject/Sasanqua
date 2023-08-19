@@ -27,6 +27,7 @@ module decode_2nd
         output wire [4:0]   DECODE_2ND_RD,
         output wire [4:0]   DECODE_2ND_RS1,
         output wire [4:0]   DECODE_2ND_RS2,
+        output wire [11:0]  DECODE_2ND_CSR,
         output wire [2:0]   DECODE_2ND_FUNCT3,
         output wire [6:0]   DECODE_2ND_FUNCT7,
         output reg  [31:0]  DECODE_2ND_IMM
@@ -78,6 +79,7 @@ module decode_2nd
     assign DECODE_2ND_RD       = decode_1st_rd;
     assign DECODE_2ND_RS1      = decode_1st_rs1;
     assign DECODE_2ND_RS2      = decode_1st_rs2;
+    assign DECODE_2ND_CSR      = decode_1st_imm_i[11:0];
     assign DECODE_2ND_FUNCT3   = decode_1st_funct3;
     assign DECODE_2ND_FUNCT7   = decode_1st_funct7;
 

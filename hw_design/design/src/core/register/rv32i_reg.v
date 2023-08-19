@@ -36,14 +36,16 @@ module rv32i_reg
     );
 
     /* ----- 入力取り込み ----- */
-    reg  [4:0]  a_riaddr, b_riaddr, fwd_reg_addr, fwd_exec_addr, fwd_cushion_addr;
-    reg  [31:0] fwd_exec_data, fwd_cushion_data;
+    reg  [4:0]  a_riaddr, b_riaddr, waddr, fwd_reg_addr, fwd_exec_addr, fwd_cushion_addr;
+    reg  [31:0] wdata, fwd_exec_data, fwd_cushion_data;
     reg         fwd_exec_en, fwd_cushion_en;
 
     always @ (posedge CLK) begin
         if (RST || FLUSH) begin
             a_riaddr <= 5'b0;
             b_riaddr <= 5'b0;
+            waddr <= 5'b0;
+            wdata <= 32'b0;
             fwd_reg_addr <= 5'b0;
             fwd_exec_addr <= 5'b0;
             fwd_exec_data <= 32'b0;
@@ -67,6 +69,8 @@ module rv32i_reg
         else begin
             a_riaddr <= A_RIADDR;
             b_riaddr <= B_RIADDR;
+            waddr <= WADDR;
+            wdata <= WDATA;
             fwd_reg_addr <= FWD_REG_ADDR;
             fwd_exec_addr <= FWD_EXEC_ADDR;
             fwd_exec_data <= FWD_EXEC_DATA;
@@ -83,11 +87,11 @@ module rv32i_reg
     // 読み
     assign A_ROADDR = a_riaddr;
     assign A_RVALID = forwarding_check(a_riaddr, fwd_reg_addr, fwd_exec_addr, fwd_exec_en, fwd_cushion_addr, fwd_cushion_en);
-    assign A_RDATA  = forwarding(a_riaddr, registers[a_riaddr], fwd_exec_addr, fwd_exec_data, fwd_cushion_addr, fwd_cushion_data, WADDR, WDATA);
+    assign A_RDATA  = forwarding(a_riaddr, registers[a_riaddr], fwd_exec_addr, fwd_exec_data, fwd_cushion_addr, fwd_cushion_data, waddr, wdata);
 
     assign B_ROADDR = b_riaddr;
     assign B_RVALID = forwarding_check(b_riaddr, fwd_reg_addr, fwd_exec_addr, fwd_exec_en, fwd_cushion_addr, fwd_cushion_en);
-    assign B_RDATA  = forwarding(b_riaddr, registers[b_riaddr], fwd_exec_addr, fwd_exec_data, fwd_cushion_addr, fwd_cushion_data, WADDR, WDATA);
+    assign B_RDATA  = forwarding(b_riaddr, registers[b_riaddr], fwd_exec_addr, fwd_exec_data, fwd_cushion_addr, fwd_cushion_data, waddr, wdata);
 
     function forwarding_check;
         input [4:0]     target_addr;
