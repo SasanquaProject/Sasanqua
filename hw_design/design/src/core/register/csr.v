@@ -6,8 +6,9 @@ module csr
 
         /* ----- レジスタアクセス ----- */
         // 読み
-        input wire  [11:0]  RADDR,
+        input wire  [11:0]  RIADDR,
         output wire         RVALID,
+        output wire [11:0]  ROADDR,
         output wire [31:0]  RDATA,
 
         // 書き
@@ -16,7 +17,8 @@ module csr
         input wire  [31:0]  WDATA
     );
 
-    assign RVALID = 1'b1;
-    assign RDATA  = 32'b0;
+    assign RVALID  = 1'b1;
+    assign ROADDR  = 12'b0;
+    assign RDATA   = 32'b0;
 
 endmodule

@@ -32,6 +32,7 @@ module exec
         input wire  [31:0]  RS1_DATA,
         input wire  [4:0]   RS2_ADDR,
         input wire  [31:0]  RS2_DATA,
+        input wire  [11:0]  CSR_ADDR,
         input wire  [31:0]  CSR_DATA,
         input wire  [2:0]   FUNCT3,
         input wire  [6:0]   FUNCT7,
@@ -68,6 +69,7 @@ module exec
 
     /* ----- 入力取り込み ----- */
     reg         [31:0] pc, imm, rs1_data, rs2_data, csr_data;
+    reg         [11:0] csr_addr;
     reg         [6:0]  opcode, funct7;
     reg         [4:0]  rd_addr, rs1_addr, rs2_addr;
     reg         [2:0]  funct3;
@@ -86,6 +88,7 @@ module exec
             rs1_data <= 32'b0;
             rs2_addr <= 5'b0;
             rs2_data <= 32'b0;
+            csr_addr <= 12'b0;
             csr_data <= 32'b0;
             funct3 <= 3'b0;
             funct7 <= 7'b0;
@@ -102,6 +105,7 @@ module exec
             rs1_data <= RS1_DATA;
             rs2_addr <= RS2_ADDR;
             rs2_data <= RS2_DATA;
+            csr_addr <= CSR_ADDR;
             csr_data <= CSR_DATA;
             funct3 <= FUNCT3;
             funct7 <= FUNCT7;
@@ -455,32 +459,32 @@ module exec
         casez ({opcode, funct3})
             10'b1110011_011: begin // csrrc
                 CSR_W_EN <= 1'b1;
-                CSR_W_ADDR <= imm[11:0];
+                CSR_W_ADDR <= csr_addr;
                 CSR_W_DATA <= csr_data & (~rs1_data);
             end
             10'b1110011_111: begin // csrrci
                 CSR_W_EN <= 1'b1;
-                CSR_W_ADDR <= imm[11:0];
+                CSR_W_ADDR <= csr_addr;
                 CSR_W_DATA <= csr_data & { 27'h1ff_ffff, (~rs1_addr) };
             end
             10'b1110011_010: begin // csrrs
                 CSR_W_EN <= 1'b1;
-                CSR_W_ADDR <= imm[11:0];
+                CSR_W_ADDR <= csr_addr;
                 CSR_W_DATA <= csr_data | rs1_data;
             end
             10'b1110011_110: begin // csrrsi
                 CSR_W_EN <= 1'b1;
-                CSR_W_ADDR <= imm[11:0];
+                CSR_W_ADDR <= csr_addr;
                 CSR_W_DATA <= csr_data | { 27'b0, rs1_addr };
             end
             10'b1110011_001: begin // csrrw
                 CSR_W_EN <= 1'b1;
-                CSR_W_ADDR <= imm[11:0];
+                CSR_W_ADDR <= csr_addr;
                 CSR_W_DATA <= rs1_data;
             end
             10'b1110011_101: begin // csrrwi
                 CSR_W_EN <= 1'b1;
-                CSR_W_ADDR <= imm[11:0];
+                CSR_W_ADDR <= csr_addr;
                 CSR_W_DATA <= csr_data | { 27'b0, rs1_addr };
             end
             default: begin
