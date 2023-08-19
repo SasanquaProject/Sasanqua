@@ -1,4 +1,4 @@
-module ram
+module ram_dualport
     # (
         parameter WIDTH = 10,
         parameter SIZE  = 1024
