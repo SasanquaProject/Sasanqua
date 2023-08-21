@@ -189,6 +189,21 @@ module mmu_axi
         .S2_AXI_RVALID      (axi_data_rvalid)
     );
 
+    /* ----- アクセス振り分け ----- */
+    wire inst_rden, data_rden, data_wren;
+
+    assign inst_rden = access_direction(INST_RIADDR, INST_RDEN);
+    assign data_rden = access_direction(DATA_RIADDR, DATA_RDEN);
+    assign data_wren = access_direction(DATA_WADDR, DATA_WREN);
+
+    function access_direction;
+        input [31:0] ADDR;
+        input        EN;
+
+        if (ADDR[31:30] == 2'b0) access_direction = EN;   // 0x0000_0000 ~ 0x3fff_ffff : RAM
+        else                     access_direction = 1'b0; // 0x3fff_ffff ~ 0xffff_ffff : (ignore)
+    endfunction
+
     /* ----- キャッシュメモリ ----- */
     // 命令キャッシュ
     wire [31:0] axi_inst_awaddr, axi_inst_wdata, axi_inst_araddr, axi_inst_rdata;
@@ -216,7 +231,7 @@ module mmu_axi
         // メモリアクセス
         .HIT_CHECK          (INST_RIADDR),
         .HIT_CHECK_RESULT   (exists_inst_cache),
-        .RDEN               (INST_RDEN),
+        .RDEN               (inst_rden),
         .RIADDR             (INST_RIADDR),
         .ROADDR             (INST_ROADDR),
         .RVALID             (INST_RVALID),
@@ -274,12 +289,12 @@ module mmu_axi
         // メモリアクセス
         .HIT_CHECK          (DATA_RIADDR),
         .HIT_CHECK_RESULT   (exists_data_cache),
-        .RDEN               (DATA_RDEN),
+        .RDEN               (data_rden),
         .RIADDR             (DATA_RIADDR),
         .ROADDR             (DATA_ROADDR),
         .RVALID             (DATA_RVALID),
         .RDATA              (DATA_RDATA),
-        .WREN               (DATA_WREN),
+        .WREN               (data_wren),
         .WADDR              (DATA_WADDR),
         .WDATA              (DATA_WDATA),
 
