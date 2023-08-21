@@ -1,4 +1,7 @@
 module core
+    # (
+        parameter START_ADDR = 32'h2000_0000
+    )
     (
         /* ----- 制御 ----- */
         input wire          CLK,
@@ -33,7 +36,9 @@ module core
     /* ----- 1. 命令フェッチ ----- */
     wire [31:0] inst_pc, inst_data;
 
-    fetch fetch (
+    fetch # (
+        .START_ADDR (START_ADDR)
+    ) fetch (
         // 制御
         .CLK        (CLK),
         .RST        (RST),

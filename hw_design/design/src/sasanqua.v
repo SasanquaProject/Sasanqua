@@ -1,4 +1,7 @@
 module sasanqua
+    # (
+        parameter START_ADDR = 32'h2000_0000
+    )
     (
         /* ----- 制御 ------ */
         input   wire        CLK,
@@ -141,7 +144,9 @@ module sasanqua
     );
 
     /* ----- Core ----- */
-    core core (
+    core # (
+        .START_ADDR     (START_ADDR)
+    ) core (
         // 制御
         .CLK            (CLK),
         .RST            (RST),

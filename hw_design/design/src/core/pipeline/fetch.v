@@ -1,4 +1,7 @@
 module fetch
+    # (
+        parameter START_ADDR = 32'h2000_0000
+    )
     (
         /* ----- 制御 ----- */
         // クロック・リセット
@@ -34,7 +37,7 @@ module fetch
 
     always @ (posedge CLK) begin
         if (RST)
-            pc <= 32'b0;
+            pc <= START_ADDR;
         else if (FLUSH)
             pc <= NEW_PC;
         else if (STALL || MEM_WAIT) begin

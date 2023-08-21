@@ -58,7 +58,9 @@ wire                            M_AXI_RVALID;
 wire                            M_AXI_RREADY;
 
 /* ----- sasanqua.v 接続 ----- */
-sasanqua sasanqua (
+sasanqua # (
+    .START_ADDR     (0)
+) sasanqua (
     // 制御
     .CLK            (CLK),
     .RST            (RST),
