@@ -57,7 +57,7 @@ module translate_axi
         input  wire         M_AXI_RVALID
     );
 
-    assign LOADING         = (RDEN && sr_next_state != S_SR_IDLE) || (WREN && sw_next_state != S_SW_IDLE);
+    assign LOADING = (RDEN && sr_next_state != S_SR_IDLE) || (WREN && sw_next_state != S_SW_IDLE);
 
     /* ----- AXIバス設定 ----- */
     assign M_AXI_AWSIZE    = 3'b010;
@@ -72,25 +72,25 @@ module translate_axi
             RVALID <= 1'b0;
             RDATA <= 32'b0;
         end
-        else if (STALL) begin
-            // do nothing
-        end
         else if (RDEN && M_AXI_RVALID) begin
             ROADDR <= RIADDR;
             RVALID <= 1'b1;
             RDATA <= M_AXI_RDATA;
         end
-        else if (LOADING) begin
+        else if (STALL) begin
             // do nothing
         end
-        else
+        else begin
             RVALID <= 1'b0;
+            RDATA <= 32'b0;
+        end
     end
 
     /* ----- AR, Rチャネル用ステートマシン ----- */
     parameter S_SR_IDLE   = 2'b00;
     parameter S_SR_ADDR   = 2'b01;
     parameter S_SR_WAIT   = 2'b11;
+    parameter S_SR_FINISH = 2'b10;
 
     reg [1:0]  sr_state, sr_next_state;
 
@@ -117,9 +117,15 @@ module translate_axi
 
             S_SR_WAIT:
                 if (M_AXI_RVALID)
-                    sr_next_state <= S_SR_IDLE;
+                    sr_next_state <= S_SR_FINISH;
                 else
                     sr_next_state <= S_SR_WAIT;
+
+            S_SR_FINISH:
+                if (!WREN || sw_state == S_SW_FINISH)
+                    sr_next_state <= S_SR_IDLE;
+                else
+                    sr_next_state <= S_SR_FINISH;
 
             default:
                 sr_next_state <= S_SR_IDLE;
@@ -148,6 +154,7 @@ module translate_axi
     parameter S_SW_IDLE   = 2'b00;
     parameter S_SW_ADDR   = 2'b01;
     parameter S_SW_WRITE  = 2'b11;
+    parameter S_SW_FINISH = 2'b10;
 
     reg [1:0] sw_state, sw_next_state;
 
@@ -174,9 +181,15 @@ module translate_axi
 
             S_SW_WRITE:
                 if (M_AXI_WREADY)
-                    sw_next_state <= S_SW_IDLE;
+                    sw_next_state <= S_SW_FINISH;
                 else
                     sw_next_state <= S_SW_WRITE;
+
+            S_SW_FINISH:
+                if (!RDEN || sr_state == S_SR_FINISH)
+                    sw_next_state <= S_SW_IDLE;
+                else
+                    sw_next_state <= S_SW_FINISH;
 
             default:
                 sw_next_state <= S_SW_IDLE;

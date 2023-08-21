@@ -84,10 +84,10 @@ module mmu_axi
         output wire         M_AXI_RREADY
     );
 
-    assign MEM_WAIT     = !exists_inst_cache || !exists_data_cache || device_loading;
-    assign DATA_ROADDR  = data_roaddr | device_roaddr;
-    assign DATA_RVALID  = data_rvalid | device_rvalid;
-    assign DATA_RDATA   = data_rdata | device_rdata;
+    assign MEM_WAIT    = !exists_inst_cache || !exists_data_cache || device_loading;
+    assign DATA_ROADDR = data_rvalid ? data_roaddr : device_roaddr;
+    assign DATA_RVALID = data_rvalid ? data_rvalid : device_rvalid;
+    assign DATA_RDATA  = data_rvalid ? data_rdata : device_rdata;
 
     /* ----- AXIバス制御 ----- */
     interconnect_axi interconnect_axi (
@@ -229,8 +229,8 @@ module mmu_axi
         input [31:0] ADDR;
         input        EN;
 
-        if (ADDR[31:30] == 2'b0) access_direction = { 1'b0,   EN }; // 0x0000_0000 ~ 0x3fff_ffff : RAM
-        else                     access_direction = {   EN, 1'b0 }; // 0x3fff_ffff ~ 0xffff_ffff : Other devices
+        if (ADDR[31:30] == 2'b00) access_direction = { 1'b0,   EN }; // 0x0000_0000 ~ 0x3fff_ffff : RAM
+        else                      access_direction = {   EN, 1'b0 }; // 0x3fff_ffff ~ 0xffff_ffff : Other devices
     endfunction
 
     /* ----- キャッシュメモリ ----- */
