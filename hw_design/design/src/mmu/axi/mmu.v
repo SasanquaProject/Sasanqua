@@ -84,7 +84,10 @@ module mmu_axi
         output wire         M_AXI_RREADY
     );
 
-    assign MEM_WAIT = !exists_inst_cache || !exists_data_cache;
+    assign MEM_WAIT     = !exists_inst_cache || !exists_data_cache || device_loading;
+    assign DATA_ROADDR  = data_roaddr | device_roaddr;
+    assign DATA_RVALID  = data_rvalid | device_rvalid;
+    assign DATA_RDATA   = data_rdata | device_rdata;
 
     /* ----- AXIバス制御 ----- */
     interconnect_axi interconnect_axi (
@@ -186,22 +189,48 @@ module mmu_axi
         .S2_AXI_RDATA       (axi_data_rdata),
         .S2_AXI_RRESP       (axi_data_rresp),
         .S2_AXI_RLAST       (axi_data_rlast),
-        .S2_AXI_RVALID      (axi_data_rvalid)
+        .S2_AXI_RVALID      (axi_data_rvalid),
+
+        .S3_AXI_AWADDR      (axi_device_awaddr),
+        .S3_AXI_AWLEN       (axi_device_awlen),
+        .S3_AXI_AWSIZE      (axi_device_awsize),
+        .S3_AXI_AWBURST     (axi_device_awburst),
+        .S3_AXI_AWVALID     (axi_device_awvalid),
+        .S3_AXI_AWREADY     (axi_device_awready),
+        .S3_AXI_WDATA       (axi_device_wdata),
+        .S3_AXI_WSTRB       (axi_device_wstrb),
+        .S3_AXI_WLAST       (axi_device_wlast),
+        .S3_AXI_WVALID      (axi_device_wvalid),
+        .S3_AXI_WREADY      (axi_device_wready),
+        .S3_AXI_BID         (axi_device_bid),
+        .S3_AXI_BRESP       (axi_device_bresp),
+        .S3_AXI_BVALID      (axi_device_bvalid),
+        .S3_AXI_ARADDR      (axi_device_araddr),
+        .S3_AXI_ARLEN       (axi_device_arlen),
+        .S3_AXI_ARSIZE      (axi_device_arsize),
+        .S3_AXI_ARBURST     (axi_device_arburst),
+        .S3_AXI_ARVALID     (axi_device_arvalid),
+        .S3_AXI_ARREADY     (axi_device_arready),
+        .S3_AXI_RID         (axi_device_rid),
+        .S3_AXI_RDATA       (axi_device_rdata),
+        .S3_AXI_RRESP       (axi_device_rresp),
+        .S3_AXI_RLAST       (axi_device_rlast),
+        .S3_AXI_RVALID      (axi_device_rvalid)
     );
 
     /* ----- アクセス振り分け ----- */
-    wire inst_rden, data_rden, data_wren;
+    wire [1:0] inst_rden, data_rden, data_wren;
 
     assign inst_rden = access_direction(INST_RIADDR, INST_RDEN);
     assign data_rden = access_direction(DATA_RIADDR, DATA_RDEN);
     assign data_wren = access_direction(DATA_WADDR, DATA_WREN);
 
-    function access_direction;
+    function [1:0] access_direction;
         input [31:0] ADDR;
         input        EN;
 
-        if (ADDR[31:30] == 2'b0) access_direction = EN;   // 0x0000_0000 ~ 0x3fff_ffff : RAM
-        else                     access_direction = 1'b0; // 0x3fff_ffff ~ 0xffff_ffff : (ignore)
+        if (ADDR[31:30] == 2'b0) access_direction = { 1'b0,   EN }; // 0x0000_0000 ~ 0x3fff_ffff : RAM
+        else                     access_direction = {   EN, 1'b0 }; // 0x3fff_ffff ~ 0xffff_ffff : Other devices
     endfunction
 
     /* ----- キャッシュメモリ ----- */
@@ -231,7 +260,7 @@ module mmu_axi
         // メモリアクセス
         .HIT_CHECK          (INST_RIADDR),
         .HIT_CHECK_RESULT   (exists_inst_cache),
-        .RDEN               (inst_rden),
+        .RDEN               (inst_rden[0]),
         .RIADDR             (INST_RIADDR),
         .ROADDR             (INST_ROADDR),
         .RVALID             (INST_RVALID),
@@ -278,7 +307,8 @@ module mmu_axi
     wire        axi_data_bid, axi_data_bvalid;
     wire        axi_data_arvalid, axi_data_arready, axi_data_rid, axi_data_rlast, axi_data_rvalid;
 
-    wire        exists_data_cache;
+    wire [31:0] data_roaddr, data_rdata;
+    wire        exists_data_cache, data_rvalid;
 
     cache_axi data_cache (
         // 制御
@@ -289,12 +319,12 @@ module mmu_axi
         // メモリアクセス
         .HIT_CHECK          (DATA_RIADDR),
         .HIT_CHECK_RESULT   (exists_data_cache),
-        .RDEN               (data_rden),
+        .RDEN               (data_rden[0]),
         .RIADDR             (DATA_RIADDR),
-        .ROADDR             (DATA_ROADDR),
-        .RVALID             (DATA_RVALID),
-        .RDATA              (DATA_RDATA),
-        .WREN               (data_wren),
+        .ROADDR             (data_roaddr),
+        .RVALID             (data_rvalid),
+        .RDATA              (data_rdata),
+        .WREN               (data_wren[0]),
         .WADDR              (DATA_WADDR),
         .WDATA              (DATA_WDATA),
 
@@ -324,6 +354,64 @@ module mmu_axi
         .M_AXI_RRESP        (axi_data_rresp),
         .M_AXI_RLAST        (axi_data_rlast),
         .M_AXI_RVALID       (axi_data_rvalid)
+    );
+
+    /* ----- 外部デバイス ----- */
+    wire [31:0] axi_device_awaddr, axi_device_wdata, axi_device_araddr, axi_device_rdata;
+    wire [7:0]  axi_device_awlen, axi_device_arlen;
+    wire [3:0]  axi_device_wstrb;
+    wire [2:0]  axi_device_awsize, axi_device_arsize;
+    wire [1:0]  axi_device_awburst, axi_device_bresp, axi_device_arburst, axi_device_rresp;
+    wire        axi_device_awvalid, axi_device_awready, axi_device_wlast, axi_device_wvalid, axi_device_wready;
+    wire        axi_device_bid, axi_device_bvalid;
+    wire        axi_device_arvalid, axi_device_arready, axi_device_rid, axi_device_rlast, axi_device_rvalid;
+
+    wire [31:0] device_roaddr, device_rdata;
+    wire        device_loading, device_rvalid;
+
+    translate_axi translate_axi (
+        // 制御
+        .CLK                (CLK),
+        .RST                (RST),
+        .STALL              (MEM_WAIT),
+        .LOADING            (device_loading),
+
+        // メモリアクセス
+        .RDEN               (data_rden[1]),
+        .RIADDR             (DATA_RIADDR),
+        .ROADDR             (device_roaddr),
+        .RVALID             (device_rvalid),
+        .RDATA              (device_rdata),
+        .WREN               (data_wren[1]),
+        .WADDR              (DATA_WADDR),
+        .WDATA              (DATA_WDATA),
+
+        // AXIバス
+        .M_AXI_AWADDR       (axi_device_awaddr),
+        .M_AXI_AWLEN        (axi_device_awlen),
+        .M_AXI_AWSIZE       (axi_device_awsize),
+        .M_AXI_AWBURST      (axi_device_awburst),
+        .M_AXI_AWVALID      (axi_device_awvalid),
+        .M_AXI_AWREADY      (axi_device_awready),
+        .M_AXI_WDATA        (axi_device_wdata),
+        .M_AXI_WSTRB        (axi_device_wstrb),
+        .M_AXI_WLAST        (axi_device_wlast),
+        .M_AXI_WVALID       (axi_device_wvalid),
+        .M_AXI_WREADY       (axi_device_wready),
+        .M_AXI_BID          (axi_device_bid),
+        .M_AXI_BRESP        (axi_device_bresp),
+        .M_AXI_BVALID       (axi_device_bvalid),
+        .M_AXI_ARADDR       (axi_device_araddr),
+        .M_AXI_ARLEN        (axi_device_arlen),
+        .M_AXI_ARSIZE       (axi_device_arsize),
+        .M_AXI_ARBURST      (axi_device_arburst),
+        .M_AXI_ARVALID      (axi_device_arvalid),
+        .M_AXI_ARREADY      (axi_device_arready),
+        .M_AXI_RID          (axi_device_rid),
+        .M_AXI_RDATA        (axi_device_rdata),
+        .M_AXI_RRESP        (axi_device_rresp),
+        .M_AXI_RLAST        (axi_device_rlast),
+        .M_AXI_RVALID       (axi_device_rvalid)
     );
 
 endmodule

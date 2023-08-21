@@ -102,7 +102,34 @@ module interconnect_axi
         output wire [31:0]  S2_AXI_RDATA,
         output wire [1:0]   S2_AXI_RRESP,
         output wire         S2_AXI_RLAST,
-        output wire         S2_AXI_RVALID
+        output wire         S2_AXI_RVALID,
+
+        // Slave3
+        input  wire [31:0]  S3_AXI_AWADDR,
+        input  wire [7:0]   S3_AXI_AWLEN,
+        input  wire [2:0]   S3_AXI_AWSIZE,
+        input  wire [1:0]   S3_AXI_AWBURST,
+        input  wire         S3_AXI_AWVALID,
+        output wire         S3_AXI_AWREADY,
+        input  wire [31:0]  S3_AXI_WDATA,
+        input  wire [3:0]   S3_AXI_WSTRB,
+        input  wire         S3_AXI_WLAST,
+        input  wire         S3_AXI_WVALID,
+        output wire         S3_AXI_WREADY,
+        output wire         S3_AXI_BID,
+        output wire [1:0]   S3_AXI_BRESP,
+        output wire         S3_AXI_BVALID,
+        input  wire [31:0]  S3_AXI_ARADDR,
+        input  wire [7:0]   S3_AXI_ARLEN,
+        input  wire [2:0]   S3_AXI_ARSIZE,
+        input  wire [1:0]   S3_AXI_ARBURST,
+        input  wire         S3_AXI_ARVALID,
+        output wire         S3_AXI_ARREADY,
+        output wire         S3_AXI_RID,
+        output wire [31:0]  S3_AXI_RDATA,
+        output wire [1:0]   S3_AXI_RRESP,
+        output wire         S3_AXI_RLAST,
+        output wire         S3_AXI_RVALID
     );
 
     /* ----- アクセス制御 ----- */
@@ -110,6 +137,7 @@ module interconnect_axi
     parameter AC_R_IDLE = 2'b00;
     parameter AC_R_S1   = 2'b01;
     parameter AC_R_S2   = 2'b10;
+    parameter AC_R_S3   = 2'b11;
 
     reg [1:0] ac_r_state, ac_r_next_state;
 
@@ -127,6 +155,8 @@ module interconnect_axi
                     ac_r_next_state <= AC_R_S1;
                 else if (S2_AXI_ARVALID)
                     ac_r_next_state <= AC_R_S2;
+                else if (S3_AXI_ARVALID)
+                    ac_r_next_state <= AC_R_S3;
                 else
                     ac_r_next_state <= AC_R_IDLE;
 
@@ -142,6 +172,7 @@ module interconnect_axi
     parameter AC_W_IDLE = 2'b00;
     parameter AC_W_S1   = 2'b01;
     parameter AC_W_S2   = 2'b10;
+    parameter AC_W_S3   = 2'b11;
 
     reg [1:0] ac_w_state, ac_w_next_state;
 
@@ -159,6 +190,8 @@ module interconnect_axi
                     ac_w_next_state <= AC_W_S1;
                 else if (S2_AXI_AWVALID)
                     ac_w_next_state <= AC_W_S2;
+                else if (S3_AXI_AWVALID)
+                    ac_w_next_state <= AC_W_S3;
                 else
                     ac_w_next_state <= AC_W_IDLE;
 
@@ -189,20 +222,48 @@ module interconnect_axi
     assign M_AXI_RREADY     = 1'b1;
 
     // 接続バス選択
-    assign M_AXI_AWADDR     = ac_w_state == AC_W_S1 ? S1_AXI_AWADDR : S2_AXI_AWADDR;
-    assign M_AXI_AWLEN      = ac_w_state == AC_W_S1 ? S1_AXI_AWLEN : S2_AXI_AWLEN;
-    assign M_AXI_AWSIZE     = ac_w_state == AC_W_S1 ? S1_AXI_AWSIZE : S2_AXI_AWSIZE;
-    assign M_AXI_AWBURST    = ac_w_state == AC_W_S1 ? S1_AXI_AWBURST : S2_AXI_AWBURST;
-    assign M_AXI_AWVALID    = ac_w_state == AC_W_S1 ? S1_AXI_AWVALID : S2_AXI_AWVALID;
-    assign M_AXI_WDATA      = ac_w_state == AC_W_S1 ? S1_AXI_WDATA : S2_AXI_WDATA;
-    assign M_AXI_WSTRB      = ac_w_state == AC_W_S1 ? S1_AXI_WSTRB : S2_AXI_WSTRB;
-    assign M_AXI_WLAST      = ac_w_state == AC_W_S1 ? S1_AXI_WLAST : S2_AXI_WLAST;
-    assign M_AXI_WVALID     = ac_w_state == AC_W_S1 ? S1_AXI_WVALID : S2_AXI_WVALID;
-    assign M_AXI_ARADDR     = ac_r_state == AC_R_S1 ? S1_AXI_ARADDR : S2_AXI_ARADDR;
-    assign M_AXI_ARLEN      = ac_r_state == AC_R_S1 ? S1_AXI_ARLEN : S2_AXI_ARLEN;
-    assign M_AXI_ARSIZE     = ac_r_state == AC_R_S1 ? S1_AXI_ARSIZE : S2_AXI_ARSIZE;
-    assign M_AXI_ARBURST    = ac_r_state == AC_R_S1 ? S1_AXI_ARBURST : S2_AXI_ARBURST;
-    assign M_AXI_ARVALID    = ac_r_state == AC_R_S1 ? S1_AXI_ARVALID : S2_AXI_ARVALID;
+    assign M_AXI_AWADDR     = (ac_w_state == AC_W_S1) ? S1_AXI_AWADDR :
+                              (ac_w_state == AC_W_S2) ? S2_AXI_AWADDR :
+                                                        S3_AXI_AWADDR ;
+    assign M_AXI_AWLEN      = (ac_w_state == AC_W_S1) ? S1_AXI_AWLEN :
+                              (ac_w_state == AC_W_S2) ? S2_AXI_AWLEN :
+                                                        S3_AXI_AWLEN ;
+    assign M_AXI_AWSIZE     = (ac_w_state == AC_W_S1) ? S1_AXI_AWSIZE :
+                              (ac_w_state == AC_W_S2) ? S2_AXI_AWSIZE :
+                                                        S3_AXI_AWSIZE ;
+    assign M_AXI_AWBURST    = (ac_w_state == AC_W_S1) ? S1_AXI_AWBURST :
+                              (ac_w_state == AC_W_S2) ? S2_AXI_AWBURST:
+                                                        S3_AXI_AWBURST;
+    assign M_AXI_AWVALID    = (ac_w_state == AC_W_S1) ? S1_AXI_AWVALID :
+                              (ac_w_state == AC_W_S2) ? S2_AXI_AWVALID :
+                                                        S3_AXI_AWVALID ;
+    assign M_AXI_WDATA      = (ac_w_state == AC_W_S1) ? S1_AXI_WDATA :
+                              (ac_w_state == AC_W_S2) ? S2_AXI_WDATA :
+                                                        S3_AXI_WDATA ;
+    assign M_AXI_WSTRB      = (ac_w_state == AC_W_S1) ? S1_AXI_WSTRB :
+                              (ac_w_state == AC_W_S2) ? S2_AXI_WSTRB :
+                                                        S3_AXI_WSTRB ;
+    assign M_AXI_WLAST      = (ac_w_state == AC_W_S1) ? S1_AXI_WLAST :
+                              (ac_w_state == AC_W_S2) ? S2_AXI_WLAST :
+                                                        S3_AXI_WLAST ;
+    assign M_AXI_WVALID     = (ac_w_state == AC_W_S1) ? S1_AXI_WVALID :
+                              (ac_w_state == AC_W_S2) ? S2_AXI_WVALID :
+                                                        S3_AXI_WVALID ;
+    assign M_AXI_ARADDR     = (ac_r_state == AC_R_S1) ? S1_AXI_ARADDR :
+                              (ac_r_state == AC_R_S2) ? S2_AXI_ARADDR :
+                                                        S3_AXI_ARADDR ;
+    assign M_AXI_ARLEN      = (ac_r_state == AC_R_S1) ? S1_AXI_ARLEN :
+                              (ac_r_state == AC_R_S2) ? S2_AXI_ARLEN :
+                                                        S3_AXI_ARLEN ;
+    assign M_AXI_ARSIZE     = (ac_r_state == AC_R_S1) ? S1_AXI_ARSIZE :
+                              (ac_r_state == AC_R_S2) ? S2_AXI_ARSIZE :
+                                                        S3_AXI_ARSIZE ;
+    assign M_AXI_ARBURST    = (ac_r_state == AC_R_S1) ? S1_AXI_ARBURST :
+                              (ac_r_state == AC_R_S2) ? S2_AXI_ARBURST :
+                                                        S3_AXI_ARBURST ;
+    assign M_AXI_ARVALID    = (ac_r_state == AC_R_S1) ? S1_AXI_ARVALID :
+                              (ac_r_state == AC_R_S2) ? S2_AXI_ARVALID :
+                                                        S3_AXI_ARVALID ;
 
     assign S1_AXI_AWREADY   = ac_w_state == AC_W_S1 ? M_AXI_AWREADY : 1'b0;
     assign S1_AXI_WREADY    = ac_w_state == AC_W_S1 ? M_AXI_WREADY : 1'b0;
@@ -227,5 +288,17 @@ module interconnect_axi
     assign S2_AXI_RRESP     = ac_r_state == AC_R_S2 ? M_AXI_RRESP : 2'b0;
     assign S2_AXI_RLAST     = ac_r_state == AC_R_S2 ? M_AXI_RLAST : 2'b0;
     assign S2_AXI_RVALID    = ac_r_state == AC_R_S2 ? M_AXI_RVALID : 1'b0;
+
+    assign S3_AXI_AWREADY   = ac_w_state == AC_W_S3 ? M_AXI_AWREADY : 1'b0;
+    assign S3_AXI_WREADY    = ac_w_state == AC_W_S3 ? M_AXI_WREADY : 1'b0;
+    assign S3_AXI_BID       = ac_w_state == AC_W_S3 ? M_AXI_BID : 1'b0;
+    assign S3_AXI_BRESP     = ac_w_state == AC_W_S3 ? M_AXI_BRESP : 2'b0;
+    assign S3_AXI_BVALID    = ac_w_state == AC_W_S3 ? M_AXI_BVALID : 1'b0;
+    assign S3_AXI_ARREADY   = ac_r_state == AC_R_S3 ? M_AXI_ARREADY : 1'b0;
+    assign S3_AXI_RID       = ac_r_state == AC_R_S3 ? M_AXI_RID : 1'b0;
+    assign S3_AXI_RDATA     = ac_r_state == AC_R_S3 ? M_AXI_RDATA : 32'b0;
+    assign S3_AXI_RRESP     = ac_r_state == AC_R_S3 ? M_AXI_RRESP : 2'b0;
+    assign S3_AXI_RLAST     = ac_r_state == AC_R_S3 ? M_AXI_RLAST : 2'b0;
+    assign S3_AXI_RVALID    = ac_r_state == AC_R_S3 ? M_AXI_RVALID : 1'b0;
 
 endmodule

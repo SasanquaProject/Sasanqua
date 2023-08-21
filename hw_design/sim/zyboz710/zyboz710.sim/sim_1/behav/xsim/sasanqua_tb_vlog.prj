@@ -17,6 +17,7 @@ verilog xil_defaultlib  --include "../../../../../../design/tb/axi" \
 "../../../../../../design/src/sasanqua.v" \
 "../../../../../../design/src/core/pipeline/schedule_1st.v" \
 "../../../../../../design/tb/axi/sync_fifo.v" \
+"../../../../../../design/src/mmu/axi/translate.v" \
 "../../../../../../design/tb/tb.v" \
 
 # compile glbl module
