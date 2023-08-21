@@ -84,106 +84,169 @@ module mmu_axi
         output wire         M_AXI_RREADY
     );
 
-    assign MEM_WAIT = !exists_inst_cache || !exists_data_cache;
+    assign MEM_WAIT    = !exists_inst_cache || !exists_data_cache || device_loading;
+    assign DATA_ROADDR = data_rvalid ? data_roaddr : device_roaddr;
+    assign DATA_RVALID = data_rvalid ? data_rvalid : device_rvalid;
+    assign DATA_RDATA  = data_rvalid ? data_rdata : device_rdata;
 
-    /* ----- AXIバス設定 ----- */
-    // 定数
-    assign M_AXI_AWID       = 'b0;
-    assign M_AXI_AWLOCK     = 2'b00;
-    assign M_AXI_AWCACHE    = 4'b0011;
-    assign M_AXI_AWPROT     = 3'h0;
-    assign M_AXI_AWQOS      = 4'h0;
-    assign M_AXI_AWUSER     = 'b0;
-    assign M_AXI_WUSER      = 'b0;
-    assign M_AXI_BREADY     = 1'b1;
-    assign M_AXI_ARID       = 'b0;
-    assign M_AXI_ARLOCK     = 1'b0;
-    assign M_AXI_ARCACHE    = 4'b0011;
-    assign M_AXI_ARPROT     = 3'h0;
-    assign M_AXI_ARQOS      = 4'h0;
-    assign M_AXI_ARUSER     = 'b0;
-    assign M_AXI_RREADY     = 1'b1;
+    /* ----- AXIバス制御 ----- */
+    interconnect_axi interconnect_axi (
+        // 制御
+        .CLK                (CLK),
+        .RST                (RST),
 
-    // 2入力合成
-    assign M_AXI_AWADDR     = m_axi_inst_awaddr | m_axi_data_awaddr;
-    assign M_AXI_AWLEN      = m_axi_inst_awlen | m_axi_data_awlen;
-    assign M_AXI_AWSIZE     = m_axi_inst_awsize | m_axi_data_awsize;
-    assign M_AXI_AWBURST    = m_axi_inst_awburst | m_axi_data_awburst;
-    assign M_AXI_AWVALID    = m_axi_inst_awvalid | m_axi_data_awvalid;
-    assign M_AXI_WDATA      = m_axi_inst_wdata | m_axi_data_wdata;
-    assign M_AXI_WSTRB      = m_axi_inst_wstrb | m_axi_data_wstrb;
-    assign M_AXI_WLAST      = m_axi_inst_wlast | m_axi_data_wlast;
-    assign M_AXI_WVALID     = m_axi_inst_wvalid | m_axi_data_wvalid;
-    assign M_AXI_ARADDR     = m_axi_inst_araddr | m_axi_data_araddr;
-    assign M_AXI_ARLEN      = m_axi_inst_arlen | m_axi_data_arlen;
-    assign M_AXI_ARSIZE     = m_axi_inst_arsize | m_axi_data_arsize;
-    assign M_AXI_ARBURST    = m_axi_inst_arburst | m_axi_data_arburst;
-    assign M_AXI_ARVALID    = m_axi_inst_arvalid | m_axi_data_arvalid;
+        // AXIバス
+        .M_AXI_AWID         (M_AXI_AWID),
+        .M_AXI_AWADDR       (M_AXI_AWADDR),
+        .M_AXI_AWLEN        (M_AXI_AWLEN),
+        .M_AXI_AWSIZE       (M_AXI_AWSIZE),
+        .M_AXI_AWBURST      (M_AXI_AWBURST),
+        .M_AXI_AWLOCK       (M_AXI_AWLOCK),
+        .M_AXI_AWCACHE      (M_AXI_AWCACHE),
+        .M_AXI_AWPROT       (M_AXI_AWPROT),
+        .M_AXI_AWQOS        (M_AXI_AWQOS),
+        .M_AXI_AWUSER       (M_AXI_AWUSER),
+        .M_AXI_AWVALID      (M_AXI_AWVALID),
+        .M_AXI_AWREADY      (M_AXI_AWREADY),
+        .M_AXI_WDATA        (M_AXI_WDATA),
+        .M_AXI_WSTRB        (M_AXI_WSTRB),
+        .M_AXI_WLAST        (M_AXI_WLAST),
+        .M_AXI_WUSER        (M_AXI_WUSER),
+        .M_AXI_WVALID       (M_AXI_WVALID),
+        .M_AXI_WREADY       (M_AXI_WREADY),
+        .M_AXI_BID          (M_AXI_BID),
+        .M_AXI_BRESP        (M_AXI_BRESP),
+        .M_AXI_BUSER        (M_AXI_BUSER),
+        .M_AXI_BVALID       (M_AXI_BVALID),
+        .M_AXI_BREADY       (M_AXI_BREADY),
+        .M_AXI_ARID         (M_AXI_ARID),
+        .M_AXI_ARADDR       (M_AXI_ARADDR),
+        .M_AXI_ARLEN        (M_AXI_ARLEN),
+        .M_AXI_ARSIZE       (M_AXI_ARSIZE),
+        .M_AXI_ARBURST      (M_AXI_ARBURST),
+        .M_AXI_ARLOCK       (M_AXI_ARLOCK),
+        .M_AXI_ARCACHE      (M_AXI_ARCACHE),
+        .M_AXI_ARPROT       (M_AXI_ARPROT),
+        .M_AXI_ARQOS        (M_AXI_ARQOS),
+        .M_AXI_ARUSER       (M_AXI_ARUSER),
+        .M_AXI_ARVALID      (M_AXI_ARVALID),
+        .M_AXI_ARREADY      (M_AXI_ARREADY),
+        .M_AXI_RID          (M_AXI_RID),
+        .M_AXI_RDATA        (M_AXI_RDATA),
+        .M_AXI_RRESP        (M_AXI_RRESP),
+        .M_AXI_RLAST        (M_AXI_RLAST),
+        .M_AXI_RUSER        (M_AXI_RUSER),
+        .M_AXI_RVALID       (M_AXI_RVALID),
+        .M_AXI_RREADY       (M_AXI_RREADY),
+
+        .S1_AXI_AWADDR      (axi_inst_awaddr),
+        .S1_AXI_AWLEN       (axi_inst_awlen),
+        .S1_AXI_AWSIZE      (axi_inst_awsize),
+        .S1_AXI_AWBURST     (axi_inst_awburst),
+        .S1_AXI_AWVALID     (axi_inst_awvalid),
+        .S1_AXI_AWREADY     (axi_inst_awready),
+        .S1_AXI_WDATA       (axi_inst_wdata),
+        .S1_AXI_WSTRB       (axi_inst_wstrb),
+        .S1_AXI_WLAST       (axi_inst_wlast),
+        .S1_AXI_WVALID      (axi_inst_wvalid),
+        .S1_AXI_WREADY      (axi_inst_wready),
+        .S1_AXI_BID         (axi_inst_bid),
+        .S1_AXI_BRESP       (axi_inst_bresp),
+        .S1_AXI_BVALID      (axi_inst_bvalid),
+        .S1_AXI_ARADDR      (axi_inst_araddr),
+        .S1_AXI_ARLEN       (axi_inst_arlen),
+        .S1_AXI_ARSIZE      (axi_inst_arsize),
+        .S1_AXI_ARBURST     (axi_inst_arburst),
+        .S1_AXI_ARVALID     (axi_inst_arvalid),
+        .S1_AXI_ARREADY     (axi_inst_arready),
+        .S1_AXI_RID         (axi_inst_rid),
+        .S1_AXI_RDATA       (axi_inst_rdata),
+        .S1_AXI_RRESP       (axi_inst_rresp),
+        .S1_AXI_RLAST       (axi_inst_rlast),
+        .S1_AXI_RVALID      (axi_inst_rvalid),
+
+        .S2_AXI_AWADDR      (axi_data_awaddr),
+        .S2_AXI_AWLEN       (axi_data_awlen),
+        .S2_AXI_AWSIZE      (axi_data_awsize),
+        .S2_AXI_AWBURST     (axi_data_awburst),
+        .S2_AXI_AWVALID     (axi_data_awvalid),
+        .S2_AXI_AWREADY     (axi_data_awready),
+        .S2_AXI_WDATA       (axi_data_wdata),
+        .S2_AXI_WSTRB       (axi_data_wstrb),
+        .S2_AXI_WLAST       (axi_data_wlast),
+        .S2_AXI_WVALID      (axi_data_wvalid),
+        .S2_AXI_WREADY      (axi_data_wready),
+        .S2_AXI_BID         (axi_data_bid),
+        .S2_AXI_BRESP       (axi_data_bresp),
+        .S2_AXI_BVALID      (axi_data_bvalid),
+        .S2_AXI_ARADDR      (axi_data_araddr),
+        .S2_AXI_ARLEN       (axi_data_arlen),
+        .S2_AXI_ARSIZE      (axi_data_arsize),
+        .S2_AXI_ARBURST     (axi_data_arburst),
+        .S2_AXI_ARVALID     (axi_data_arvalid),
+        .S2_AXI_ARREADY     (axi_data_arready),
+        .S2_AXI_RID         (axi_data_rid),
+        .S2_AXI_RDATA       (axi_data_rdata),
+        .S2_AXI_RRESP       (axi_data_rresp),
+        .S2_AXI_RLAST       (axi_data_rlast),
+        .S2_AXI_RVALID      (axi_data_rvalid),
+
+        .S3_AXI_AWADDR      (axi_device_awaddr),
+        .S3_AXI_AWLEN       (axi_device_awlen),
+        .S3_AXI_AWSIZE      (axi_device_awsize),
+        .S3_AXI_AWBURST     (axi_device_awburst),
+        .S3_AXI_AWVALID     (axi_device_awvalid),
+        .S3_AXI_AWREADY     (axi_device_awready),
+        .S3_AXI_WDATA       (axi_device_wdata),
+        .S3_AXI_WSTRB       (axi_device_wstrb),
+        .S3_AXI_WLAST       (axi_device_wlast),
+        .S3_AXI_WVALID      (axi_device_wvalid),
+        .S3_AXI_WREADY      (axi_device_wready),
+        .S3_AXI_BID         (axi_device_bid),
+        .S3_AXI_BRESP       (axi_device_bresp),
+        .S3_AXI_BVALID      (axi_device_bvalid),
+        .S3_AXI_ARADDR      (axi_device_araddr),
+        .S3_AXI_ARLEN       (axi_device_arlen),
+        .S3_AXI_ARSIZE      (axi_device_arsize),
+        .S3_AXI_ARBURST     (axi_device_arburst),
+        .S3_AXI_ARVALID     (axi_device_arvalid),
+        .S3_AXI_ARREADY     (axi_device_arready),
+        .S3_AXI_RID         (axi_device_rid),
+        .S3_AXI_RDATA       (axi_device_rdata),
+        .S3_AXI_RRESP       (axi_device_rresp),
+        .S3_AXI_RLAST       (axi_device_rlast),
+        .S3_AXI_RVALID      (axi_device_rvalid)
+    );
+
+    /* ----- アクセス振り分け ----- */
+    wire [1:0] inst_rden, data_rden, data_wren;
+
+    assign inst_rden = access_direction(INST_RIADDR, INST_RDEN);
+    assign data_rden = access_direction(DATA_RIADDR, DATA_RDEN);
+    assign data_wren = access_direction(DATA_WADDR, DATA_WREN);
+
+    function [1:0] access_direction;
+        input [31:0] ADDR;
+        input        EN;
+
+        if (ADDR[31:30] == 2'b00) access_direction = { 1'b0,   EN }; // 0x0000_0000 ~ 0x3fff_ffff : RAM
+        else                      access_direction = {   EN, 1'b0 }; // 0x3fff_ffff ~ 0xffff_ffff : Other devices
+    endfunction
 
     /* ----- キャッシュメモリ ----- */
-    // アクセス制御
-    parameter AC_IDLE = 2'b00;
-    parameter AC_INST = 2'b01;
-    parameter AC_DATA = 2'b10;
-
-    reg  [1:0]  ac_state, ac_next_state;
-
-    wire        allow_inst_r, allow_data_r;
-
-    assign allow_inst_r = ac_next_state == AC_IDLE || ac_next_state == AC_INST;
-    assign allow_data_r = ac_next_state == AC_IDLE || ac_next_state == AC_DATA;
-
-    always @ (posedge CLK) begin
-        if (RST)
-            ac_state <= AC_IDLE;
-        else
-            ac_state <= ac_next_state;
-    end
-
-    always @* begin
-        case (ac_state)
-            AC_IDLE:
-                if (!exists_inst_cache)
-                    ac_next_state <= AC_INST;
-                else if (!exists_data_cache)
-                    ac_next_state <= AC_DATA;
-                else
-                    ac_next_state <= AC_IDLE;
-
-            AC_INST:
-                if (exists_inst_cache) begin
-                    if (!exists_data_cache)
-                        ac_next_state <= AC_DATA;
-                    else
-                        ac_next_state <= AC_IDLE;
-                end
-                else
-                    ac_next_state <= AC_INST;
-
-            AC_DATA:
-                if (exists_data_cache)
-                    ac_next_state <= AC_IDLE;
-                else
-                    ac_next_state <= AC_DATA;
-
-            default:
-                ac_next_state <= AC_IDLE;
-        endcase
-    end
-
     // 命令キャッシュ
-    wire [31:0] m_axi_inst_awaddr, m_axi_inst_wdata, m_axi_inst_araddr;
-    wire [7:0]  m_axi_inst_awlen, m_axi_inst_arlen;
-    wire [3:0]  m_axi_inst_wstrb;
-    wire [2:0]  m_axi_inst_awsize, m_axi_inst_arsize;
-    wire [1:0]  m_axi_inst_awburst, m_axi_inst_arburst;
-    wire        m_axi_inst_awvalid, m_axi_inst_wlast, m_axi_inst_wvalid;
-    wire        m_axi_inst_arvalid;
+    wire [31:0] axi_inst_awaddr, axi_inst_wdata, axi_inst_araddr, axi_inst_rdata;
+    wire [7:0]  axi_inst_awlen, axi_inst_arlen;
+    wire [3:0]  axi_inst_wstrb;
+    wire [2:0]  axi_inst_awsize, axi_inst_arsize;
+    wire [1:0]  axi_inst_awburst, axi_inst_bresp, axi_inst_arburst, axi_inst_rresp;
+    wire        axi_inst_awvalid, axi_inst_awready, axi_inst_wlast, axi_inst_wvalid, axi_inst_wready;
+    wire        axi_inst_bid, axi_inst_bvalid;
+    wire        axi_inst_arvalid, axi_inst_arready, axi_inst_rid, axi_inst_rlast, axi_inst_rvalid;
 
-    wire        exists_inst_cache, inst_rden, dummy_wren;
+    wire        exists_inst_cache, dummy_wren;
     wire [31:0] dummy_waddr, dummy_wdata;
 
-    assign inst_rden    = allow_inst_r ? INST_RDEN : 1'b0;
     assign dummy_wren   = 1'b0;
     assign dummy_waddr  = 32'b0;
     assign dummy_wdata  = 32'b0;
@@ -197,7 +260,7 @@ module mmu_axi
         // メモリアクセス
         .HIT_CHECK          (INST_RIADDR),
         .HIT_CHECK_RESULT   (exists_inst_cache),
-        .RDEN               (inst_rden),
+        .RDEN               (inst_rden[0]),
         .RIADDR             (INST_RIADDR),
         .ROADDR             (INST_ROADDR),
         .RVALID             (INST_RVALID),
@@ -207,48 +270,45 @@ module mmu_axi
         .WDATA              (dummy_wdata),
 
         // AXIバス
-        .M_AXI_CLK          (M_AXI_CLK),
-        .M_AXI_RSTN         (M_AXI_RSTN),
-        .M_AXI_AWADDR       (m_axi_inst_awaddr),
-        .M_AXI_AWLEN        (m_axi_inst_awlen),
-        .M_AXI_AWSIZE       (m_axi_inst_awsize),
-        .M_AXI_AWBURST      (m_axi_inst_awburst),
-        .M_AXI_AWVALID      (m_axi_inst_awvalid),
-        .M_AXI_AWREADY      (M_AXI_AWREADY),
-        .M_AXI_WDATA        (m_axi_inst_wdata),
-        .M_AXI_WSTRB        (m_axi_inst_wstrb),
-        .M_AXI_WLAST        (m_axi_inst_wlast),
-        .M_AXI_WVALID       (m_axi_inst_wvalid),
-        .M_AXI_WREADY       (M_AXI_WREADY),
-        .M_AXI_BID          (M_AXI_BID),
-        .M_AXI_BRESP        (M_AXI_BRESP),
-        .M_AXI_BVALID       (M_AXI_BVALID),
-        .M_AXI_ARADDR       (m_axi_inst_araddr),
-        .M_AXI_ARLEN        (m_axi_inst_arlen),
-        .M_AXI_ARSIZE       (m_axi_inst_arsize),
-        .M_AXI_ARBURST      (m_axi_inst_arburst),
-        .M_AXI_ARVALID      (m_axi_inst_arvalid),
-        .M_AXI_ARREADY      (M_AXI_ARREADY),
-        .M_AXI_RID          (M_AXI_RID),
-        .M_AXI_RDATA        (M_AXI_RDATA),
-        .M_AXI_RRESP        (M_AXI_RRESP),
-        .M_AXI_RLAST        (M_AXI_RLAST),
-        .M_AXI_RVALID       (M_AXI_RVALID)
+        .M_AXI_AWADDR       (axi_inst_awaddr),
+        .M_AXI_AWLEN        (axi_inst_awlen),
+        .M_AXI_AWSIZE       (axi_inst_awsize),
+        .M_AXI_AWBURST      (axi_inst_awburst),
+        .M_AXI_AWVALID      (axi_inst_awvalid),
+        .M_AXI_AWREADY      (axi_inst_awready),
+        .M_AXI_WDATA        (axi_inst_wdata),
+        .M_AXI_WSTRB        (axi_inst_wstrb),
+        .M_AXI_WLAST        (axi_inst_wlast),
+        .M_AXI_WVALID       (axi_inst_wvalid),
+        .M_AXI_WREADY       (axi_inst_wready),
+        .M_AXI_BID          (axi_inst_bid),
+        .M_AXI_BRESP        (axi_inst_bresp),
+        .M_AXI_BVALID       (axi_inst_bvalid),
+        .M_AXI_ARADDR       (axi_inst_araddr),
+        .M_AXI_ARLEN        (axi_inst_arlen),
+        .M_AXI_ARSIZE       (axi_inst_arsize),
+        .M_AXI_ARBURST      (axi_inst_arburst),
+        .M_AXI_ARVALID      (axi_inst_arvalid),
+        .M_AXI_ARREADY      (axi_inst_arready),
+        .M_AXI_RID          (axi_inst_rid),
+        .M_AXI_RDATA        (axi_inst_rdata),
+        .M_AXI_RRESP        (axi_inst_rresp),
+        .M_AXI_RLAST        (axi_inst_rlast),
+        .M_AXI_RVALID       (axi_inst_rvalid)
     );
 
     // データキャッシュ
-    wire [31:0] m_axi_data_awaddr, m_axi_data_wdata, m_axi_data_araddr;
-    wire [7:0]  m_axi_data_awlen, m_axi_data_arlen;
-    wire [3:0]  m_axi_data_wstrb;
-    wire [2:0]  m_axi_data_awsize, m_axi_data_arsize;
-    wire [1:0]  m_axi_data_awburst, m_axi_data_arburst;
-    wire        m_axi_data_awvalid, m_axi_data_wlast, m_axi_data_wvalid;
-    wire        m_axi_data_arvalid;
+    wire [31:0] axi_data_awaddr, axi_data_wdata, axi_data_araddr, axi_data_rdata;
+    wire [7:0]  axi_data_awlen, axi_data_arlen;
+    wire [3:0]  axi_data_wstrb;
+    wire [2:0]  axi_data_awsize, axi_data_arsize;
+    wire [1:0]  axi_data_awburst, axi_data_bresp, axi_data_arburst, axi_data_rresp;
+    wire        axi_data_awvalid, axi_data_awready, axi_data_wlast, axi_data_wvalid, axi_data_wready;
+    wire        axi_data_bid, axi_data_bvalid;
+    wire        axi_data_arvalid, axi_data_arready, axi_data_rid, axi_data_rlast, axi_data_rvalid;
 
-    wire        exists_data_cache;
-    wire        data_rden;
-
-    assign data_rden = allow_data_r ? DATA_RDEN : 1'b0;
+    wire [31:0] data_roaddr, data_rdata;
+    wire        exists_data_cache, data_rvalid;
 
     cache_axi data_cache (
         // 制御
@@ -259,43 +319,99 @@ module mmu_axi
         // メモリアクセス
         .HIT_CHECK          (DATA_RIADDR),
         .HIT_CHECK_RESULT   (exists_data_cache),
-        .RDEN               (data_rden),
+        .RDEN               (data_rden[0]),
         .RIADDR             (DATA_RIADDR),
-        .ROADDR             (DATA_ROADDR),
-        .RVALID             (DATA_RVALID),
-        .RDATA              (DATA_RDATA),
-        .WREN               (DATA_WREN),
+        .ROADDR             (data_roaddr),
+        .RVALID             (data_rvalid),
+        .RDATA              (data_rdata),
+        .WREN               (data_wren[0]),
         .WADDR              (DATA_WADDR),
         .WDATA              (DATA_WDATA),
 
         // AXIバス
-        .M_AXI_CLK          (M_AXI_CLK),
-        .M_AXI_RSTN         (M_AXI_RSTN),
-        .M_AXI_AWADDR       (m_axi_data_awaddr),
-        .M_AXI_AWLEN        (m_axi_data_awlen),
-        .M_AXI_AWSIZE       (m_axi_data_awsize),
-        .M_AXI_AWBURST      (m_axi_data_awburst),
-        .M_AXI_AWVALID      (m_axi_data_awvalid),
-        .M_AXI_AWREADY      (M_AXI_AWREADY),
-        .M_AXI_WDATA        (m_axi_data_wdata),
-        .M_AXI_WSTRB        (m_axi_data_wstrb),
-        .M_AXI_WLAST        (m_axi_data_wlast),
-        .M_AXI_WVALID       (m_axi_data_wvalid),
-        .M_AXI_WREADY       (M_AXI_WREADY),
-        .M_AXI_BID          (M_AXI_BID),
-        .M_AXI_BRESP        (M_AXI_BRESP),
-        .M_AXI_BVALID       (M_AXI_BVALID),
-        .M_AXI_ARADDR       (m_axi_data_araddr),
-        .M_AXI_ARLEN        (m_axi_data_arlen),
-        .M_AXI_ARSIZE       (m_axi_data_arsize),
-        .M_AXI_ARBURST      (m_axi_data_arburst),
-        .M_AXI_ARVALID      (m_axi_data_arvalid),
-        .M_AXI_ARREADY      (M_AXI_ARREADY),
-        .M_AXI_RID          (M_AXI_RID),
-        .M_AXI_RDATA        (M_AXI_RDATA),
-        .M_AXI_RRESP        (M_AXI_RRESP),
-        .M_AXI_RLAST        (M_AXI_RLAST),
-        .M_AXI_RVALID       (M_AXI_RVALID)
+        .M_AXI_AWADDR       (axi_data_awaddr),
+        .M_AXI_AWLEN        (axi_data_awlen),
+        .M_AXI_AWSIZE       (axi_data_awsize),
+        .M_AXI_AWBURST      (axi_data_awburst),
+        .M_AXI_AWVALID      (axi_data_awvalid),
+        .M_AXI_AWREADY      (axi_data_awready),
+        .M_AXI_WDATA        (axi_data_wdata),
+        .M_AXI_WSTRB        (axi_data_wstrb),
+        .M_AXI_WLAST        (axi_data_wlast),
+        .M_AXI_WVALID       (axi_data_wvalid),
+        .M_AXI_WREADY       (axi_data_wready),
+        .M_AXI_BID          (axi_data_bid),
+        .M_AXI_BRESP        (axi_data_bresp),
+        .M_AXI_BVALID       (axi_data_bvalid),
+        .M_AXI_ARADDR       (axi_data_araddr),
+        .M_AXI_ARLEN        (axi_data_arlen),
+        .M_AXI_ARSIZE       (axi_data_arsize),
+        .M_AXI_ARBURST      (axi_data_arburst),
+        .M_AXI_ARVALID      (axi_data_arvalid),
+        .M_AXI_ARREADY      (axi_data_arready),
+        .M_AXI_RID          (axi_data_rid),
+        .M_AXI_RDATA        (axi_data_rdata),
+        .M_AXI_RRESP        (axi_data_rresp),
+        .M_AXI_RLAST        (axi_data_rlast),
+        .M_AXI_RVALID       (axi_data_rvalid)
+    );
+
+    /* ----- 外部デバイス ----- */
+    wire [31:0] axi_device_awaddr, axi_device_wdata, axi_device_araddr, axi_device_rdata;
+    wire [7:0]  axi_device_awlen, axi_device_arlen;
+    wire [3:0]  axi_device_wstrb;
+    wire [2:0]  axi_device_awsize, axi_device_arsize;
+    wire [1:0]  axi_device_awburst, axi_device_bresp, axi_device_arburst, axi_device_rresp;
+    wire        axi_device_awvalid, axi_device_awready, axi_device_wlast, axi_device_wvalid, axi_device_wready;
+    wire        axi_device_bid, axi_device_bvalid;
+    wire        axi_device_arvalid, axi_device_arready, axi_device_rid, axi_device_rlast, axi_device_rvalid;
+
+    wire [31:0] device_roaddr, device_rdata;
+    wire        device_loading, device_rvalid;
+
+    translate_axi translate_axi (
+        // 制御
+        .CLK                (CLK),
+        .RST                (RST),
+        .STALL              (MEM_WAIT),
+        .LOADING            (device_loading),
+
+        // メモリアクセス
+        .RDEN               (data_rden[1]),
+        .RIADDR             (DATA_RIADDR),
+        .ROADDR             (device_roaddr),
+        .RVALID             (device_rvalid),
+        .RDATA              (device_rdata),
+        .WREN               (data_wren[1]),
+        .WADDR              (DATA_WADDR),
+        .WDATA              (DATA_WDATA),
+
+        // AXIバス
+        .M_AXI_AWADDR       (axi_device_awaddr),
+        .M_AXI_AWLEN        (axi_device_awlen),
+        .M_AXI_AWSIZE       (axi_device_awsize),
+        .M_AXI_AWBURST      (axi_device_awburst),
+        .M_AXI_AWVALID      (axi_device_awvalid),
+        .M_AXI_AWREADY      (axi_device_awready),
+        .M_AXI_WDATA        (axi_device_wdata),
+        .M_AXI_WSTRB        (axi_device_wstrb),
+        .M_AXI_WLAST        (axi_device_wlast),
+        .M_AXI_WVALID       (axi_device_wvalid),
+        .M_AXI_WREADY       (axi_device_wready),
+        .M_AXI_BID          (axi_device_bid),
+        .M_AXI_BRESP        (axi_device_bresp),
+        .M_AXI_BVALID       (axi_device_bvalid),
+        .M_AXI_ARADDR       (axi_device_araddr),
+        .M_AXI_ARLEN        (axi_device_arlen),
+        .M_AXI_ARSIZE       (axi_device_arsize),
+        .M_AXI_ARBURST      (axi_device_arburst),
+        .M_AXI_ARVALID      (axi_device_arvalid),
+        .M_AXI_ARREADY      (axi_device_arready),
+        .M_AXI_RID          (axi_device_rid),
+        .M_AXI_RDATA        (axi_device_rdata),
+        .M_AXI_RRESP        (axi_device_rresp),
+        .M_AXI_RLAST        (axi_device_rlast),
+        .M_AXI_RVALID       (axi_device_rvalid)
     );
 
 endmodule

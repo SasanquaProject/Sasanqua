@@ -24,10 +24,6 @@ module cache_axi
         input wire  [31:0]  WDATA,
 
         /* ----- AXIバス ----- */
-        // クロック・リセット
-        input wire          M_AXI_CLK,
-        input wire          M_AXI_RSTN,
-
         // AWチャネル
         output reg  [31:0]  M_AXI_AWADDR,
         output wire [7:0]   M_AXI_AWLEN,
@@ -123,8 +119,8 @@ module cache_axi
     end
 
     /* ----- キャッシュアクセス ----- */
-    assign ram_a_rden  = RDEN;
-    assign ram_a_raddr = RDEN ? RIADDR[11:2] : ROADDR[11:2];
+    assign ram_a_rden  = !STALL && RDEN;
+    assign ram_a_raddr = !STALL && RDEN ? RIADDR[11:2] : ROADDR[11:2];
     assign RDATA       = ram_a_rdata;
     assign ram_a_wren  = WREN;
     assign ram_a_waddr = WADDR[11:2];
