@@ -81,9 +81,18 @@ module mmu_axi
     );
 
     assign MEM_WAIT    = !exists_inst_cache || !exists_data_cache || device_loading;
-    assign DATA_ROADDR = data_rvalid ? data_roaddr : device_roaddr;
-    assign DATA_RVALID = data_rvalid ? data_rvalid : device_rvalid;
-    assign DATA_RDATA  = data_rvalid ? data_rdata : device_rdata;
+    assign INST_ROADDR = inst_rvalid ? inst_roaddr : rom_inst_roaddr;
+    assign INST_RVALID = inst_rvalid ? inst_rvalid : rom_inst_rvalid;
+    assign INST_RDATA  = inst_rvalid ? inst_rdata : rom_inst_rdata;
+    assign DATA_ROADDR = data_rvalid   ? data_roaddr :
+                         device_rvalid ? device_roaddr :
+                                         rom_data_roaddr;
+    assign DATA_RVALID = data_rvalid   ? data_rvalid :
+                         device_rvalid ? device_rvalid :
+                                         rom_data_rvalid;
+    assign DATA_RDATA  = data_rvalid   ? data_rdata :
+                         device_rvalid ? device_rdata :
+                                         rom_data_rdata;
 
     /* ----- AXIバス制御 ----- */
     interconnect_axi interconnect_axi (
@@ -215,19 +224,49 @@ module mmu_axi
     );
 
     /* ----- アクセス振り分け ----- */
-    wire [1:0] inst_rden, data_rden, data_wren;
+    wire [2:0] inst_rden, data_rden, data_wren;
 
     assign inst_rden = access_direction(INST_RIADDR, INST_RDEN);
     assign data_rden = access_direction(DATA_RIADDR, DATA_RDEN);
     assign data_wren = access_direction(DATA_WADDR, DATA_WREN);
 
-    function [1:0] access_direction;
+    function [2:0] access_direction;
         input [31:0] ADDR;
         input        EN;
 
-        if (ADDR[31:30] == 2'b00) access_direction = { 1'b0,   EN }; // 0x0000_0000 ~ 0x3fff_ffff : RAM
-        else                      access_direction = {   EN, 1'b0 }; // 0x3fff_ffff ~ 0xffff_ffff : Other devices
+        if      (ADDR[31:12] == 20'b0) access_direction = { 1'b0, 1'b0,   EN }; // 0x0000_0000 ~ 0x0000_0fff : ROM
+        else if (ADDR[31:30] ==  2'b0) access_direction = { 1'b0,   EN, 1'b0 }; // 0x0000_1000 ~ 0x3fff_ffff : RAM
+        else                           access_direction = {   EN, 1'b0, 1'b0 }; // 0x3fff_ffff ~ 0xffff_ffff : Other devices
     endfunction
+
+    /* ----- ROM ----- */
+    wire [31:0] rom_inst_roaddr, rom_inst_rdata, rom_data_roaddr, rom_data_rdata;
+    wire [9:0]  rom_inst_roaddr_10, rom_data_roaddr_10;
+    wire        rom_inst_rvalid, rom_data_rvalid;
+
+    assign rom_inst_roaddr = { 20'b0, rom_inst_roaddr_10, 2'b0 };
+    assign rom_data_roaddr = { 20'b0, rom_data_roaddr_10, 2'b0 };
+
+    rom_dualport # (
+        .WIDTH  (10),
+        .SIZE   (1024)
+    ) rom_dualport (
+        // 制御
+        .CLK                (CLK),
+        .RST                (RST),
+
+        // アクセスポート
+        .A_RDEN             (inst_rden[0]),
+        .A_RIADDR           (INST_RIADDR[11:2]),
+        .A_ROADDR           (rom_inst_roaddr_10),
+        .A_RVALID           (rom_inst_rvalid),
+        .A_RDATA            (rom_inst_rdata),
+        .B_RDEN             (data_rden[0]),
+        .B_RIADDR           (DATA_RIADDR[11:2]),
+        .B_ROADDR           (rom_data_roaddr_10),
+        .B_RVALID           (rom_data_rvalid),
+        .B_RDATA            (rom_data_rdata)
+    );
 
     /* ----- キャッシュメモリ ----- */
     // 命令キャッシュ
@@ -240,8 +279,8 @@ module mmu_axi
     wire        axi_inst_bid, axi_inst_bvalid;
     wire        axi_inst_arvalid, axi_inst_arready, axi_inst_rid, axi_inst_rlast, axi_inst_rvalid;
 
-    wire        exists_inst_cache, dummy_wren;
-    wire [31:0] dummy_waddr, dummy_wdata;
+    wire        exists_inst_cache, inst_rvalid, dummy_wren;
+    wire [31:0] inst_roaddr, inst_rdata, dummy_waddr, dummy_wdata;
 
     assign dummy_wren   = 1'b0;
     assign dummy_waddr  = 32'b0;
@@ -256,11 +295,11 @@ module mmu_axi
         // メモリアクセス
         .HIT_CHECK          (INST_RIADDR),
         .HIT_CHECK_RESULT   (exists_inst_cache),
-        .RDEN               (inst_rden[0]),
+        .RDEN               (inst_rden[1]),
         .RIADDR             (INST_RIADDR),
-        .ROADDR             (INST_ROADDR),
-        .RVALID             (INST_RVALID),
-        .RDATA              (INST_RDATA),
+        .ROADDR             (inst_roaddr),
+        .RVALID             (inst_rvalid),
+        .RDATA              (inst_rdata),
         .WREN               (dummy_wren),
         .WADDR              (dummy_waddr),
         .WDATA              (dummy_wdata),
@@ -315,12 +354,12 @@ module mmu_axi
         // メモリアクセス
         .HIT_CHECK          (DATA_RIADDR),
         .HIT_CHECK_RESULT   (exists_data_cache),
-        .RDEN               (data_rden[0]),
+        .RDEN               (data_rden[1]),
         .RIADDR             (DATA_RIADDR),
         .ROADDR             (data_roaddr),
         .RVALID             (data_rvalid),
         .RDATA              (data_rdata),
-        .WREN               (data_wren[0]),
+        .WREN               (data_wren[1]),
         .WADDR              (DATA_WADDR),
         .WDATA              (DATA_WDATA),
 
@@ -373,12 +412,12 @@ module mmu_axi
         .LOADING            (device_loading),
 
         // メモリアクセス
-        .RDEN               (data_rden[1]),
+        .RDEN               (data_rden[2]),
         .RIADDR             (DATA_RIADDR),
         .ROADDR             (device_roaddr),
         .RVALID             (device_rvalid),
         .RDATA              (device_rdata),
-        .WREN               (data_wren[1]),
+        .WREN               (data_wren[2]),
         .WADDR              (DATA_WADDR),
         .WDATA              (DATA_WDATA),
 

@@ -2,6 +2,9 @@
 wire [31:0]                     STAT;
 
 /* ----- AXIバス接続用 ----- */
+// リセット
+assign RSTN = ~RST;
+
 // AWチャネル
 wire                            M_AXI_AWID;
 wire [31:0]                     M_AXI_AWADDR;
