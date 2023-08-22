@@ -1,10 +1,10 @@
-/* ----- バス用リセット信号 ----- */
-wire                            RSTN = ~RST;
-
 /* ----- Sasanqua ----- */
 wire [31:0]                     STAT;
 
 /* ----- AXIバス接続用 ----- */
+// リセット
+assign RSTN = ~RST;
+
 // AWチャネル
 wire                            M_AXI_AWID;
 wire [31:0]                     M_AXI_AWADDR;
@@ -58,15 +58,15 @@ wire                            M_AXI_RVALID;
 wire                            M_AXI_RREADY;
 
 /* ----- sasanqua.v 接続 ----- */
-sasanqua sasanqua (
+sasanqua # (
+    .START_ADDR     (0)
+) sasanqua (
     // 制御
     .CLK            (CLK),
     .RST            (RST),
     .STAT           (STAT),
 
     // AXIバス
-    .M_AXI_CLK      (CLK),
-    .M_AXI_RSTN     (RSTN),
     .M_AXI_AWID     (M_AXI_AWID),
     .M_AXI_AWADDR   (M_AXI_AWADDR),
     .M_AXI_AWLEN    (M_AXI_AWLEN),
@@ -195,7 +195,7 @@ begin
 end
 endtask
 
-task write_rv32i_test_inst;
+task write_handwrite_inst;
 integer i;
 begin
     for (i = 0; i < 4096; i = i + 1) begin
