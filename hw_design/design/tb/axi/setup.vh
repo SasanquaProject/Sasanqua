@@ -1,6 +1,3 @@
-/* ----- バス用リセット信号 ----- */
-wire                            RSTN = ~RST;
-
 /* ----- Sasanqua ----- */
 wire [31:0]                     STAT;
 
@@ -67,8 +64,6 @@ sasanqua # (
     .STAT           (STAT),
 
     // AXIバス
-    .M_AXI_CLK      (CLK),
-    .M_AXI_RSTN     (RSTN),
     .M_AXI_AWID     (M_AXI_AWID),
     .M_AXI_AWADDR   (M_AXI_AWADDR),
     .M_AXI_AWLEN    (M_AXI_AWLEN),

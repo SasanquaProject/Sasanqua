@@ -11,10 +11,6 @@ module sasanqua
         output  wire [31:0] STAT,
 
         /* ----- AXIバス ----- */
-        // クロック・リセット
-        input wire          M_AXI_CLK,
-        input wire          M_AXI_RSTN,
-
         // AWチャネル
         output wire         M_AXI_AWID,
         output wire [31:0]  M_AXI_AWADDR,
@@ -97,8 +93,6 @@ module sasanqua
         .DATA_WDATA     (data_wdata),
 
         // AXIバス
-        .M_AXI_CLK      (M_AXI_CLK),
-        .M_AXI_RSTN     (M_AXI_RSTN),
         .M_AXI_AWID     (M_AXI_AWID),
         .M_AXI_AWADDR   (M_AXI_AWADDR),
         .M_AXI_AWLEN    (M_AXI_AWLEN),

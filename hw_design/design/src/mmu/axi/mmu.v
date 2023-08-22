@@ -27,10 +27,6 @@ module mmu_axi
         input wire [31:0]   DATA_WDATA,
 
         /* ----- AXIバス ----- */
-        // クロック・リセット
-        input wire          M_AXI_CLK,
-        input wire          M_AXI_RSTN,
-
         // AWチャネル
         output wire         M_AXI_AWID,
         output wire [31:0]  M_AXI_AWADDR,
