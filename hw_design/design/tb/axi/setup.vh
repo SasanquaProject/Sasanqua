@@ -197,7 +197,7 @@ begin
 end
 endtask
 
-task write_rv32i_test_inst;
+task write_handwrite_inst;
 integer i;
 begin
     for (i = 0; i < 4096; i = i + 1) begin
