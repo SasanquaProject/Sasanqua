@@ -28,7 +28,7 @@ module rom_dualport
     reg [31:0] rom [0:(SIZE-1)];
 
     initial begin
-        $readmemh("bootrom.binhex", rom);
+        $readmemh("bootrom.mem", rom);
     end
 
     always @ (posedge CLK) begin

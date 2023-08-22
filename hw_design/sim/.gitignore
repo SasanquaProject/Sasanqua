@@ -107,8 +107,3 @@
 !*.elf
 !*.bmm
 !*.xmp
-
-#########
-#Exeutable-files
-#########
-!*.binhex
