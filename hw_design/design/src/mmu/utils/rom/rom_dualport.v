@@ -24,7 +24,7 @@ module rom_dualport
         output reg  [31:0]          B_RDATA
     );
 
-    (* ram_style = "block" *)
+    (* rom_style = "block" *)
     reg [31:0] rom [0:(SIZE-1)];
 
     initial begin
