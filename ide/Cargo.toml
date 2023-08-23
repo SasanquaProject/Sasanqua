@@ -1,0 +1,7 @@
+[workspace]
+members = [
+    "pgenerator/pgen",
+    "src/cui",
+    "src/gui",
+]
+exclude = []
