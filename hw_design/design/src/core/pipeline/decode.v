@@ -1,4 +1,4 @@
-module decode_1st
+module decode
     (
         /* ----- 制御 ----- */
         input wire          CLK,
@@ -12,14 +12,14 @@ module decode_1st
         input wire  [31:0]  INST_DATA,
 
         /* ----- デコード部2との接続 ----- */
-        output wire [31:0]  DECODE_1ST_PC,
-        output wire [6:0]   DECODE_1ST_OPCODE,
-        output wire [4:0]   DECODE_1ST_RD,
-        output wire [4:0]   DECODE_1ST_RS1,
-        output wire [4:0]   DECODE_1ST_RS2,
-        output wire [2:0]   DECODE_1ST_FUNCT3,
-        output wire [6:0]   DECODE_1ST_FUNCT7,
-        output wire [31:0]  DECODE_1ST_IMM
+        output wire [31:0]  DECODE_PC,
+        output wire [6:0]   DECODE_OPCODE,
+        output wire [4:0]   DECODE_RD,
+        output wire [4:0]   DECODE_RS1,
+        output wire [4:0]   DECODE_RS2,
+        output wire [2:0]   DECODE_FUNCT3,
+        output wire [6:0]   DECODE_FUNCT7,
+        output wire [31:0]  DECODE_IMM
     );
 
     /* ----- 入力取り込み ----- */
@@ -40,14 +40,14 @@ module decode_1st
     end
 
     /* ---- デコード ----- */
-    assign DECODE_1ST_PC       = inst_pc;
-    assign DECODE_1ST_OPCODE   = inst_data[6:0];
-    assign DECODE_1ST_RD       = inst_data[11:7];
-    assign DECODE_1ST_RS1      = inst_data[19:15];
-    assign DECODE_1ST_RS2      = inst_data[24:20];
-    assign DECODE_1ST_FUNCT3   = inst_data[14:12];
-    assign DECODE_1ST_FUNCT7   = inst_data[31:25];
-    assign DECODE_1ST_IMM      = decode_imm(inst_data);
+    assign DECODE_PC       = inst_pc;
+    assign DECODE_OPCODE   = inst_data[6:0];
+    assign DECODE_RD       = inst_data[11:7];
+    assign DECODE_RS1      = inst_data[19:15];
+    assign DECODE_RS2      = inst_data[24:20];
+    assign DECODE_FUNCT3   = inst_data[14:12];
+    assign DECODE_FUNCT7   = inst_data[31:25];
+    assign DECODE_IMM      = decode_imm(inst_data);
 
     function [31:0] decode_imm;
         input [31:0] INST;

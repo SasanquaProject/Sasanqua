@@ -2,10 +2,10 @@
 verilog xil_defaultlib  --include "../../../../../../design/tb/axi" \
 "../../../../../../design/tb/axi/axi_slave_BFM.v" \
 "../../../../../../design/src/mmu/axi/cache.v" \
+"../../../../../../design/src/core/pipeline/check.v" \
 "../../../../../../design/src/core/core.v" \
 "../../../../../../design/src/core/pipeline/cushion.v" \
-"../../../../../../design/src/core/pipeline/decode_1st.v" \
-"../../../../../../design/src/core/pipeline/decode_2nd.v" \
+"../../../../../../design/src/core/pipeline/decode.v" \
 "../../../../../../design/src/core/pipeline/fetch.v" \
 "../../../../../../design/src/mmu/axi/interconnect.v" \
 "../../../../../../design/src/mmu/axi/mmu.v" \

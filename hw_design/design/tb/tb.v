@@ -46,25 +46,25 @@ wire [31:0] INST_PC                 = sasanqua.core.inst_pc;
 wire [31:0] INST_DATA               = sasanqua.core.inst_data;
 
 // Core: Decode 1st
-wire [31:0] DECODE_1ST_PC           = sasanqua.core.decode_1st_pc;
-wire [6:0]  DECODE_1ST_OPCODE       = sasanqua.core.decode_1st_opcode;
-wire [4:0]  DECODE_1ST_RD           = sasanqua.core.decode_1st_rd;
-wire [4:0]  DECODE_1ST_RS1          = sasanqua.core.decode_1st_rs1;
-wire [4:0]  DECODE_1ST_RS2          = sasanqua.core.decode_1st_rs2;
-wire [2:0]  DECODE_1ST_FUNCT3       = sasanqua.core.decode_1st_funct3;
-wire [6:0]  DECODE_1ST_FUNCT7       = sasanqua.core.decode_1st_funct7;
-wire [31:0] DECODE_1ST_IMM          = sasanqua.core.decode_1st_imm;
+wire [31:0] DECODE_PC               = sasanqua.core.decode_pc;
+wire [6:0]  DECODE_OPCODE           = sasanqua.core.decode_opcode;
+wire [4:0]  DECODE_RD               = sasanqua.core.decode_rd;
+wire [4:0]  DECODE_RS1              = sasanqua.core.decode_rs1;
+wire [4:0]  DECODE_RS2              = sasanqua.core.decode_rs2;
+wire [2:0]  DECODE_FUNCT3           = sasanqua.core.decode_funct3;
+wire [6:0]  DECODE_FUNCT7           = sasanqua.core.decode_funct7;
+wire [31:0] DECODE_IMM              = sasanqua.core.decode_imm;
 
 // Core: Decode 2nd
-wire [31:0] DECODE_2ND_PC           = sasanqua.core.decode_2nd_pc;
-wire [6:0]  DECODE_2ND_OPCODE       = sasanqua.core.decode_2nd_opcode;
-wire [4:0]  DECODE_2ND_RD           = sasanqua.core.decode_2nd_rd;
-wire [4:0]  DECODE_2ND_RS1          = sasanqua.core.decode_2nd_rs1;
-wire [4:0]  DECODE_2ND_RS2          = sasanqua.core.decode_2nd_rs2;
-wire [11:0] DECODE_2ND_CSR          = sasanqua.core.decode_2nd_csr;
-wire [2:0]  DECODE_2ND_FUNCT3       = sasanqua.core.decode_2nd_funct3;
-wire [6:0]  DECODE_2ND_FUNCT7       = sasanqua.core.decode_2nd_funct7;
-wire [31:0] DECODE_2ND_IMM          = sasanqua.core.decode_2nd_imm;
+wire [31:0] CHECK_PC                = sasanqua.core.check_pc;
+wire [6:0]  CHECK_OPCODE            = sasanqua.core.check_opcode;
+wire [4:0]  CHECK_RD                = sasanqua.core.check_rd;
+wire [4:0]  CHECK_RS1               = sasanqua.core.check_rs1;
+wire [4:0]  CHECK_RS2               = sasanqua.core.check_rs2;
+wire [11:0] CHECK_CSR               = sasanqua.core.check_csr;
+wire [2:0]  CHECK_FUNCT3            = sasanqua.core.check_funct3;
+wire [6:0]  CHECK_FUNCT7            = sasanqua.core.check_funct7;
+wire [31:0] CHECK_IMM               = sasanqua.core.check_imm;
 
 // Core: Schedule 1st, Register(r)
 wire [31:0] SCHEDULE_1ST_PC         = sasanqua.core.schedule_1st_pc;
