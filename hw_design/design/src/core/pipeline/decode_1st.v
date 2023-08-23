@@ -19,11 +19,7 @@ module decode_1st
         output wire [4:0]   DECODE_1ST_RS2,
         output wire [2:0]   DECODE_1ST_FUNCT3,
         output wire [6:0]   DECODE_1ST_FUNCT7,
-        output wire [31:0]  DECODE_1ST_IMM_I,
-        output wire [31:0]  DECODE_1ST_IMM_S,
-        output wire [31:0]  DECODE_1ST_IMM_B,
-        output wire [31:0]  DECODE_1ST_IMM_U,
-        output wire [31:0]  DECODE_1ST_IMM_J
+        output wire [31:0]  DECODE_1ST_IMM
     );
 
     /* ----- 入力取り込み ----- */
@@ -51,10 +47,37 @@ module decode_1st
     assign DECODE_1ST_RS2      = inst_data[24:20];
     assign DECODE_1ST_FUNCT3   = inst_data[14:12];
     assign DECODE_1ST_FUNCT7   = inst_data[31:25];
-    assign DECODE_1ST_IMM_I    = { 20'b0, inst_data[31:20] };
-    assign DECODE_1ST_IMM_S    = { 20'b0, inst_data[31:25], inst_data[11:7] };
-    assign DECODE_1ST_IMM_B    = { 19'b0, inst_data[31], inst_data[7], inst_data[30:25], inst_data[11:8], 1'b0 };
-    assign DECODE_1ST_IMM_U    = { inst_data[31:12], 12'b0 };
-    assign DECODE_1ST_IMM_J    = { 11'b0, inst_data[31], inst_data[19:12], inst_data[20], inst_data[30:21], 1'b0 };
+    assign DECODE_1ST_IMM      = decode_imm(inst_data);
+
+    function [31:0] decode_imm;
+        input [31:0] INST;
+
+        case (INST[6:0])
+            // R形式
+            7'b0110011: decode_imm = 32'b0;
+
+            // I形式
+            7'b1100111: decode_imm = { 20'b0, INST[31:20] };
+            7'b0000011: decode_imm = { 20'b0, INST[31:20] };
+            7'b0010011: decode_imm = { 20'b0, INST[31:20] };
+            7'b0001111: decode_imm = { 20'b0, INST[31:20] };
+            7'b1110011: decode_imm = { 20'b0, INST[31:20] };
+
+            // S形式
+            7'b0100011: decode_imm = { 20'b0, INST[31:25], INST[11:7] };
+
+            // B形式
+            7'b1100011: decode_imm = { 19'b0, INST[31], INST[7], INST[30:25], INST[11:8], 1'b0 };
+
+            // U形式
+            7'b0110111: decode_imm = { INST[31:12], 12'b0 };
+            7'b0010111: decode_imm = { INST[31:12], 12'b0 };
+
+            // J形式
+            7'b1101111: decode_imm = { 11'b0, INST[31], INST[19:12], INST[20], INST[30:21], 1'b0 };
+
+            default:    decode_imm = 32'hffff_ffff;
+        endcase
+    endfunction
 
 endmodule

@@ -60,7 +60,7 @@ module core
     );
 
     /* ----- 2. 命令デコード1 ----- */
-    wire [31:0] decode_1st_pc, decode_1st_imm_i, decode_1st_imm_s, decode_1st_imm_b, decode_1st_imm_u, decode_1st_imm_j;
+    wire [31:0] decode_1st_pc, decode_1st_imm;
     wire [6:0]  decode_1st_opcode, decode_1st_funct7;
     wire [4:0]  decode_1st_rd, decode_1st_rs1, decode_1st_rs2;
     wire [2:0]  decode_1st_funct3;
@@ -85,11 +85,7 @@ module core
         .DECODE_1ST_RS2     (decode_1st_rs2),
         .DECODE_1ST_FUNCT3  (decode_1st_funct3),
         .DECODE_1ST_FUNCT7  (decode_1st_funct7),
-        .DECODE_1ST_IMM_I   (decode_1st_imm_i),
-        .DECODE_1ST_IMM_S   (decode_1st_imm_s),
-        .DECODE_1ST_IMM_B   (decode_1st_imm_b),
-        .DECODE_1ST_IMM_U   (decode_1st_imm_u),
-        .DECODE_1ST_IMM_J   (decode_1st_imm_j)
+        .DECODE_1ST_IMM     (decode_1st_imm)
     );
 
     /* ----- 3. 命令デコード2 ----- */
@@ -115,11 +111,7 @@ module core
         .DECODE_1ST_RS2     (decode_1st_rs2),
         .DECODE_1ST_FUNCT3  (decode_1st_funct3),
         .DECODE_1ST_FUNCT7  (decode_1st_funct7),
-        .DECODE_1ST_IMM_I   (decode_1st_imm_i),
-        .DECODE_1ST_IMM_S   (decode_1st_imm_s),
-        .DECODE_1ST_IMM_B   (decode_1st_imm_b),
-        .DECODE_1ST_IMM_U   (decode_1st_imm_u),
-        .DECODE_1ST_IMM_J   (decode_1st_imm_j),
+        .DECODE_1ST_IMM     (decode_1st_imm),
 
         // スケジューラ1との接続
         .DECODE_2ND_PC      (decode_2nd_pc),

@@ -53,11 +53,7 @@ wire [4:0]  DECODE_1ST_RS1          = sasanqua.core.decode_1st_rs1;
 wire [4:0]  DECODE_1ST_RS2          = sasanqua.core.decode_1st_rs2;
 wire [2:0]  DECODE_1ST_FUNCT3       = sasanqua.core.decode_1st_funct3;
 wire [6:0]  DECODE_1ST_FUNCT7       = sasanqua.core.decode_1st_funct7;
-wire [31:0] DECODE_1ST_IMM_I        = sasanqua.core.decode_1st_imm_i;
-wire [31:0] DECODE_1ST_IMM_S        = sasanqua.core.decode_1st_imm_s;
-wire [31:0] DECODE_1ST_IMM_B        = sasanqua.core.decode_1st_imm_b;
-wire [31:0] DECODE_1ST_IMM_U        = sasanqua.core.decode_1st_imm_u;
-wire [31:0] DECODE_1ST_IMM_J        = sasanqua.core.decode_1st_imm_j;
+wire [31:0] DECODE_1ST_IMM          = sasanqua.core.decode_1st_imm;
 
 // Core: Decode 2nd
 wire [31:0] DECODE_2ND_PC           = sasanqua.core.decode_2nd_pc;

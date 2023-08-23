@@ -15,11 +15,7 @@ module decode_2nd
         input wire [4:0]    DECODE_1ST_RS2,
         input wire [2:0]    DECODE_1ST_FUNCT3,
         input wire [6:0]    DECODE_1ST_FUNCT7,
-        input wire [31:0]   DECODE_1ST_IMM_I,
-        input wire [31:0]   DECODE_1ST_IMM_S,
-        input wire [31:0]   DECODE_1ST_IMM_B,
-        input wire [31:0]   DECODE_1ST_IMM_U,
-        input wire [31:0]   DECODE_1ST_IMM_J,
+        input wire [31:0]   DECODE_1ST_IMM,
 
         /* ----- スケジューラ1との接続 ----- */
         output wire [31:0]  DECODE_2ND_PC,
@@ -30,11 +26,11 @@ module decode_2nd
         output wire [11:0]  DECODE_2ND_CSR,
         output wire [2:0]   DECODE_2ND_FUNCT3,
         output wire [6:0]   DECODE_2ND_FUNCT7,
-        output reg  [31:0]  DECODE_2ND_IMM
+        output wire [31:0]  DECODE_2ND_IMM
     );
 
     /* ----- 入力取り込み ----- */
-    reg  [31:0] decode_1st_pc, decode_1st_imm_i, decode_1st_imm_s, decode_1st_imm_b, decode_1st_imm_u, decode_1st_imm_j;
+    reg  [31:0] decode_1st_pc, decode_1st_imm;
     reg  [6:0]  decode_1st_opcode, decode_1st_funct7;
     reg  [4:0]  decode_1st_rd, decode_1st_rs1, decode_1st_rs2;
     reg  [2:0]  decode_1st_funct3;
@@ -48,11 +44,7 @@ module decode_2nd
             decode_1st_rs2 <= 5'b0;
             decode_1st_funct3 <= 3'b0;
             decode_1st_funct7 <= 7'b0;
-            decode_1st_imm_i <= 32'b0;
-            decode_1st_imm_s <= 32'b0;
-            decode_1st_imm_b <= 32'b0;
-            decode_1st_imm_u <= 32'b0;
-            decode_1st_imm_j <= 32'b0;
+            decode_1st_imm <= 32'b0;
         end
         else if (STALL || MEM_WAIT) begin
             // do nothing
@@ -65,11 +57,7 @@ module decode_2nd
             decode_1st_rs2 <= DECODE_1ST_RS2;
             decode_1st_funct3 <= DECODE_1ST_FUNCT3;
             decode_1st_funct7 <= DECODE_1ST_FUNCT7;
-            decode_1st_imm_i <= DECODE_1ST_IMM_I;
-            decode_1st_imm_s <= DECODE_1ST_IMM_S;
-            decode_1st_imm_b <= DECODE_1ST_IMM_B;
-            decode_1st_imm_u <= DECODE_1ST_IMM_U;
-            decode_1st_imm_j <= DECODE_1ST_IMM_J;
+            decode_1st_imm <= DECODE_1ST_IMM;
         end
     end
 
@@ -79,55 +67,9 @@ module decode_2nd
     assign DECODE_2ND_RD       = decode_1st_rd;
     assign DECODE_2ND_RS1      = decode_1st_rs1;
     assign DECODE_2ND_RS2      = decode_1st_rs2;
-    assign DECODE_2ND_CSR      = decode_1st_imm_i[11:0];
+    assign DECODE_2ND_CSR      = decode_1st_imm[11:0];
     assign DECODE_2ND_FUNCT3   = decode_1st_funct3;
     assign DECODE_2ND_FUNCT7   = decode_1st_funct7;
-
-    always @* begin
-        // R形式
-        if (
-            decode_1st_opcode == 7'b0110011
-        )
-            DECODE_2ND_IMM <= 32'b0;
-
-        // I形式
-        else if (
-            decode_1st_opcode == 7'b1100111 ||
-            decode_1st_opcode == 7'b0000011 ||
-            decode_1st_opcode == 7'b0010011 ||
-            decode_1st_opcode == 7'b0001111 ||
-            decode_1st_opcode == 7'b1110011
-        )
-            DECODE_2ND_IMM <= decode_1st_imm_i;
-
-        // S形式
-        else if (
-            decode_1st_opcode == 7'b0100011
-        )
-            DECODE_2ND_IMM <= decode_1st_imm_s;
-
-        // B形式
-        else if (
-            decode_1st_opcode == 7'b1100011
-        )
-            DECODE_2ND_IMM <= decode_1st_imm_b;
-
-        // U形式
-        else if (
-            decode_1st_opcode == 7'b0110111 ||
-            decode_1st_opcode == 7'b0010111
-        )
-            DECODE_2ND_IMM <= decode_1st_imm_u;
-
-        // J形式
-        else if (
-            decode_1st_opcode == 7'b1101111
-        )
-            DECODE_2ND_IMM <= decode_1st_imm_j;
-
-        // 未対応命令
-        else
-            DECODE_2ND_IMM <= 32'b0;
-    end
+    assign DECODE_2ND_IMM      = decode_1st_imm;
 
 endmodule
