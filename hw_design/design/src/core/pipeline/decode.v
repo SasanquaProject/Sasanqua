@@ -28,7 +28,7 @@ module decode
     always @ (posedge CLK) begin
         if (RST || FLUSH) begin
             inst_pc <= 32'b0;
-            inst_data <= 32'b0;
+            inst_data <= 32'h0000_0013;
         end
         else if (STALL || MEM_WAIT) begin
             // do nothing

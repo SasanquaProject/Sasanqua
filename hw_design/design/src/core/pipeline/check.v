@@ -62,14 +62,16 @@ module check
     end
 
     /* ----- デコード ----- */
+    wire is_unimp = decode_imm == 32'hffff_ffff;
+
     assign CHECK_PC     = decode_pc;
-    assign CHECK_OPCODE = decode_opcode;
-    assign CHECK_RD     = decode_rd;
-    assign CHECK_RS1    = decode_rs1;
-    assign CHECK_RS2    = decode_rs2;
-    assign CHECK_CSR    = decode_imm[11:0];
-    assign CHECK_FUNCT3 = decode_funct3;
-    assign CHECK_FUNCT7 = decode_funct7;
-    assign CHECK_IMM    = decode_imm;
+    assign CHECK_OPCODE = is_unimp ? 7'b1101111 : decode_opcode;
+    assign CHECK_RD     = is_unimp ? 5'b0 : decode_rd;
+    assign CHECK_RS1    = is_unimp ? 5'b0 : decode_rs1;
+    assign CHECK_RS2    = is_unimp ? 5'b0 : decode_rs2;
+    assign CHECK_CSR    = is_unimp ? 5'b0 : decode_imm[11:0];
+    assign CHECK_FUNCT3 = is_unimp ? 5'b0 : decode_funct3;
+    assign CHECK_FUNCT7 = is_unimp ? 5'b0 : decode_funct7;
+    assign CHECK_IMM    = is_unimp ? 32'b0 : decode_imm;
 
 endmodule
