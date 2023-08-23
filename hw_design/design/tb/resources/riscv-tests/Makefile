@@ -3,17 +3,18 @@ SHELL := /bin/bash
 IMAGE := riscv/devenv
 
 TARGET_DIR := ./target
-BIN_DIR := ./bin
-ELF_FILES := $(shell find ${TARGET_DIR}/share/riscv-tests/isa/rv32*i-p*)
+OUT_DIR := ./out
+ELF_FILES := $(shell find ${TARGET_DIR}/share/riscv-tests/isa/rv32*i*)
 
 bin:
-	make elf
-	mkdir -p $(BIN_DIR)
+	mkdir -p $(OUT_DIR)/bin
+	mkdir -p $(OUT_DIR)/cheader
 	for f in $(ELF_FILES); do\
 		if [[ ! $$f =~ "dump" ]]; then\
 			FILE_NAME="$${f##*/}";\
 			echo $$FILE_NAME;\
-			riscv64-unknown-elf-objcopy -O binary $$f $(BIN_DIR)/$$FILE_NAME.bin;\
+			riscv64-unknown-elf-objcopy -O binary $$f $(OUT_DIR)/bin/$$FILE_NAME.bin;\
+			cd $(OUT_DIR)/bin && xxd -i $$FILE_NAME.bin > ../cheader/$$FILE_NAME.h && cd ../../;\
 		fi;\
 	done
 
