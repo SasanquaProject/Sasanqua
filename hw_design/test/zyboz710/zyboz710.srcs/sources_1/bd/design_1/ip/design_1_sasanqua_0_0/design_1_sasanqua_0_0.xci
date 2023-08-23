@@ -4,7 +4,7 @@
     "xci_name": "design_1_sasanqua_0_0",
     "cell_name": "sasanqua_0",
     "component_reference": "xilinx.com:user:sasanqua:1.0",
-    "ip_revision": "10",
+    "ip_revision": "11",
     "gen_directory": "../../../../../../zyboz710.gen/sources_1/bd/design_1/ip/design_1_sasanqua_0_0",
     "parameters": {
       "component_parameters": {
@@ -31,7 +31,7 @@
       },
       "runtime_parameters": {
         "IPCONTEXT": [ { "value": "IP_Integrator" } ],
-        "IPREVISION": [ { "value": "10" } ],
+        "IPREVISION": [ { "value": "11" } ],
         "MANAGED": [ { "value": "TRUE" } ],
         "OUTPUTDIR": [ { "value": "../../../../../../zyboz710.gen/sources_1/bd/design_1/ip/design_1_sasanqua_0_0" } ],
         "SELECTEDSIMMODEL": [ { "value": "" } ],
