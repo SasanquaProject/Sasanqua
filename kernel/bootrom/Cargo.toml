@@ -1,0 +1,11 @@
+[package]
+name = "bootrom"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+riscv = { version = "0.10.1", features = ["critical-section-single-hart"]}
+heapless = "0.7"
+embedded-hal = "=1.0.0-alpha.11"
+embedded-hal-nb = "1.0.0-alpha.3"
+nb = "1.1.0"
