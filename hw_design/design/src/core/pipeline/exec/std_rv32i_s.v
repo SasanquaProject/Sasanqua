@@ -1,4 +1,4 @@
-module std_rv32i_s
+module exec_std_rv32i_s
     (
         /* ----- 制御 ----- */
         input wire          CLK,

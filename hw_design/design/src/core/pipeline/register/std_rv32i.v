@@ -1,4 +1,4 @@
-module rv32i_reg
+module reg_std_rv32i
     (
         /* ----- 制御 ----- */
         input wire          CLK,
