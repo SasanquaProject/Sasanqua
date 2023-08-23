@@ -428,7 +428,7 @@ module exec_std_rv32i_s
             end
             17'b1110011_000_0000000: begin // ecall
                 JMP_DO <= 1'b1;
-                JMP_PC <= 32'h0000_0004;
+                JMP_PC <= 32'h2000_0004;
             end
             default: begin
                 JMP_DO <= 1'b0;

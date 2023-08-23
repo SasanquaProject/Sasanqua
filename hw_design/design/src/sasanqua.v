@@ -64,7 +64,7 @@ module sasanqua
         output wire         M_AXI_RREADY
     );
 
-    assign STAT = core.rv32i_reg.registers[3];
+    assign STAT = core.reg_std_rv32i_0.registers[3];
 
     /* ----- MMU ----- */
     wire        mem_wait;
