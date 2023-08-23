@@ -173,7 +173,7 @@ module core
     wire [11:0] reg_csr_addr;
     wire        reg_csr_valid;
 
-    csr csr (
+    csr_reg csr_reg (
         // 制御
         .CLK                (CLK),
         .RST                (RST),
@@ -242,7 +242,7 @@ module core
     wire [4:0]  reg_w_rd, mem_r_rd;
     wire [3:0]  mem_r_strb, mem_w_strb;
 
-    exec exec (
+    std_rv32i_s std_rv32i_s_0 (
         // 制御
         .CLK            (CLK),
         .RST            (RST),

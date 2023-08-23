@@ -1,4 +1,4 @@
-module csr
+module csr_reg
     (
         /* ----- 制御 ----- */
         input wire          CLK,
