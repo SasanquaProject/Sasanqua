@@ -8,13 +8,13 @@ module schedule_1st
         input wire          MEM_WAIT,
 
         /* ----- デコード部2との接続 ----- */
-        input wire  [31:0]  DECODE_2ND_PC,
-        input wire  [6:0]   DECODE_2ND_OPCODE,
-        input wire  [4:0]   DECODE_2ND_RD,
-        input wire  [11:0]  DECODE_2ND_CSR,
-        input wire  [2:0]   DECODE_2ND_FUNCT3,
-        input wire  [6:0]   DECODE_2ND_FUNCT7,
-        input wire  [31:0]  DECODE_2ND_IMM,
+        input wire  [31:0]  CHECK_PC,
+        input wire  [6:0]   CHECK_OPCODE,
+        input wire  [4:0]   CHECK_RD,
+        input wire  [11:0]  CHECK_CSR,
+        input wire  [2:0]   CHECK_FUNCT3,
+        input wire  [6:0]   CHECK_FUNCT7,
+        input wire  [31:0]  CHECK_IMM,
 
         /* ----- 実行部との接続 ----- */
         output wire [31:0]  SCHEDULE_1ST_PC,
@@ -27,43 +27,43 @@ module schedule_1st
     );
 
     /* ----- 入力取り込み ----- */
-    reg  [31:0] decode_2nd_pc, decode_2nd_imm;
-    reg  [11:0] decode_2nd_csr;
-    reg  [6:0]  decode_2nd_opcode, decode_2nd_funct7;
-    reg  [4:0]  decode_2nd_rd;
-    reg  [2:0]  decode_2nd_funct3;
+    reg  [31:0] check_pc, check_imm;
+    reg  [11:0] check_csr;
+    reg  [6:0]  check_opcode, check_funct7;
+    reg  [4:0]  check_rd;
+    reg  [2:0]  check_funct3;
 
     always @ (posedge CLK) begin
         if (RST || FLUSH) begin
-            decode_2nd_pc <= 32'b0;
-            decode_2nd_opcode <= 7'b0;
-            decode_2nd_rd <= 5'b0;
-            decode_2nd_csr <= 12'b0;
-            decode_2nd_funct3 <= 3'b0;
-            decode_2nd_funct7 <= 7'b0;
-            decode_2nd_imm <= 32'b0;
+            check_pc <= 32'b0;
+            check_opcode <= 7'b0;
+            check_rd <= 5'b0;
+            check_csr <= 12'b0;
+            check_funct3 <= 3'b0;
+            check_funct7 <= 7'b0;
+            check_imm <= 32'b0;
         end
         else if (STALL || MEM_WAIT) begin
             // do nothing
         end
         else begin
-            decode_2nd_pc <= DECODE_2ND_PC;
-            decode_2nd_opcode <= DECODE_2ND_OPCODE;
-            decode_2nd_rd <= DECODE_2ND_RD;
-            decode_2nd_csr <= DECODE_2ND_CSR;
-            decode_2nd_funct3 <= DECODE_2ND_FUNCT3;
-            decode_2nd_funct7 <= DECODE_2ND_FUNCT7;
-            decode_2nd_imm <= DECODE_2ND_IMM;
+            check_pc <= CHECK_PC;
+            check_opcode <= CHECK_OPCODE;
+            check_rd <= CHECK_RD;
+            check_csr <= CHECK_CSR;
+            check_funct3 <= CHECK_FUNCT3;
+            check_funct7 <= CHECK_FUNCT7;
+            check_imm <= CHECK_IMM;
         end
     end
 
     /* ----- 出力(仮) ----- */
-    assign SCHEDULE_1ST_PC      = decode_2nd_pc;
-    assign SCHEDULE_1ST_OPCODE  = decode_2nd_opcode;
-    assign SCHEDULE_1ST_RD      = decode_2nd_rd;
-    assign SCHEDULE_1ST_CSR     = decode_2nd_csr;
-    assign SCHEDULE_1ST_FUNCT3  = decode_2nd_funct3;
-    assign SCHEDULE_1ST_FUNCT7  = decode_2nd_funct7;
-    assign SCHEDULE_1ST_IMM     = decode_2nd_imm;
+    assign SCHEDULE_1ST_PC      = check_pc;
+    assign SCHEDULE_1ST_OPCODE  = check_opcode;
+    assign SCHEDULE_1ST_RD      = check_rd;
+    assign SCHEDULE_1ST_CSR     = check_csr;
+    assign SCHEDULE_1ST_FUNCT3  = check_funct3;
+    assign SCHEDULE_1ST_FUNCT7  = check_funct7;
+    assign SCHEDULE_1ST_IMM     = check_imm;
 
 endmodule

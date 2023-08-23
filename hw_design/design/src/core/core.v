@@ -59,78 +59,70 @@ module core
         .INST_DATA  (inst_data)
     );
 
-    /* ----- 2. 命令デコード1 ----- */
-    wire [31:0] decode_1st_pc, decode_1st_imm_i, decode_1st_imm_s, decode_1st_imm_b, decode_1st_imm_u, decode_1st_imm_j;
-    wire [6:0]  decode_1st_opcode, decode_1st_funct7;
-    wire [4:0]  decode_1st_rd, decode_1st_rs1, decode_1st_rs2;
-    wire [2:0]  decode_1st_funct3;
+    /* ----- 2. 命令デコード ----- */
+    wire [31:0] decode_pc, decode_imm;
+    wire [6:0]  decode_opcode, decode_funct7;
+    wire [4:0]  decode_rd, decode_rs1, decode_rs2;
+    wire [2:0]  decode_funct3;
 
-    decode_1st decode_1st (
+    decode decode (
         // 制御
-        .CLK                (CLK),
-        .RST                (RST),
-        .FLUSH              (flush),
-        .STALL              (stall),
-        .MEM_WAIT           (MEM_WAIT),
+        .CLK            (CLK),
+        .RST            (RST),
+        .FLUSH          (flush),
+        .STALL          (stall),
+        .MEM_WAIT       (MEM_WAIT),
 
         // フェッチ部との接続
-        .INST_PC            (inst_pc),
-        .INST_DATA          (inst_data),
+        .INST_PC        (inst_pc),
+        .INST_DATA      (inst_data),
 
-        // デコード部2との接続
-        .DECODE_1ST_PC      (decode_1st_pc),
-        .DECODE_1ST_OPCODE  (decode_1st_opcode),
-        .DECODE_1ST_RD      (decode_1st_rd),
-        .DECODE_1ST_RS1     (decode_1st_rs1),
-        .DECODE_1ST_RS2     (decode_1st_rs2),
-        .DECODE_1ST_FUNCT3  (decode_1st_funct3),
-        .DECODE_1ST_FUNCT7  (decode_1st_funct7),
-        .DECODE_1ST_IMM_I   (decode_1st_imm_i),
-        .DECODE_1ST_IMM_S   (decode_1st_imm_s),
-        .DECODE_1ST_IMM_B   (decode_1st_imm_b),
-        .DECODE_1ST_IMM_U   (decode_1st_imm_u),
-        .DECODE_1ST_IMM_J   (decode_1st_imm_j)
+        // 検査部との接続
+        .DECODE_PC      (decode_pc),
+        .DECODE_OPCODE  (decode_opcode),
+        .DECODE_RD      (decode_rd),
+        .DECODE_RS1     (decode_rs1),
+        .DECODE_RS2     (decode_rs2),
+        .DECODE_FUNCT3  (decode_funct3),
+        .DECODE_FUNCT7  (decode_funct7),
+        .DECODE_IMM     (decode_imm)
     );
 
-    /* ----- 3. 命令デコード2 ----- */
-    wire [31:0] decode_2nd_pc, decode_2nd_imm;
-    wire [11:0] decode_2nd_csr;
-    wire [6:0]  decode_2nd_opcode, decode_2nd_funct7;
-    wire [4:0]  decode_2nd_rd, decode_2nd_rs1, decode_2nd_rs2;
-    wire [2:0]  decode_2nd_funct3;
+    /* ----- 3. 命令検査 ----- */
+    wire [31:0] check_pc, check_imm;
+    wire [11:0] check_csr;
+    wire [6:0]  check_opcode, check_funct7;
+    wire [4:0]  check_rd, check_rs1, check_rs2;
+    wire [2:0]  check_funct3;
 
-    decode_2nd decode_2nd (
+    check check (
         // 制御
-        .CLK                (CLK),
-        .RST                (RST),
-        .FLUSH              (flush),
-        .STALL              (stall),
-        .MEM_WAIT           (MEM_WAIT),
+        .CLK            (CLK),
+        .RST            (RST),
+        .FLUSH          (flush),
+        .STALL          (stall),
+        .MEM_WAIT       (MEM_WAIT),
 
         // デコード部1との接続
-        .DECODE_1ST_PC      (decode_1st_pc),
-        .DECODE_1ST_OPCODE  (decode_1st_opcode),
-        .DECODE_1ST_RD      (decode_1st_rd),
-        .DECODE_1ST_RS1     (decode_1st_rs1),
-        .DECODE_1ST_RS2     (decode_1st_rs2),
-        .DECODE_1ST_FUNCT3  (decode_1st_funct3),
-        .DECODE_1ST_FUNCT7  (decode_1st_funct7),
-        .DECODE_1ST_IMM_I   (decode_1st_imm_i),
-        .DECODE_1ST_IMM_S   (decode_1st_imm_s),
-        .DECODE_1ST_IMM_B   (decode_1st_imm_b),
-        .DECODE_1ST_IMM_U   (decode_1st_imm_u),
-        .DECODE_1ST_IMM_J   (decode_1st_imm_j),
+        .DECODE_PC      (decode_pc),
+        .DECODE_OPCODE  (decode_opcode),
+        .DECODE_RD      (decode_rd),
+        .DECODE_RS1     (decode_rs1),
+        .DECODE_RS2     (decode_rs2),
+        .DECODE_FUNCT3  (decode_funct3),
+        .DECODE_FUNCT7  (decode_funct7),
+        .DECODE_IMM     (decode_imm),
 
         // スケジューラ1との接続
-        .DECODE_2ND_PC      (decode_2nd_pc),
-        .DECODE_2ND_OPCODE  (decode_2nd_opcode),
-        .DECODE_2ND_RD      (decode_2nd_rd),
-        .DECODE_2ND_RS1     (decode_2nd_rs1),
-        .DECODE_2ND_RS2     (decode_2nd_rs2),
-        .DECODE_2ND_CSR     (decode_2nd_csr),
-        .DECODE_2ND_FUNCT3  (decode_2nd_funct3),
-        .DECODE_2ND_FUNCT7  (decode_2nd_funct7),
-        .DECODE_2ND_IMM     (decode_2nd_imm)
+        .CHECK_PC       (check_pc),
+        .CHECK_OPCODE   (check_opcode),
+        .CHECK_RD       (check_rd),
+        .CHECK_RS1      (check_rs1),
+        .CHECK_RS2      (check_rs2),
+        .CHECK_CSR      (check_csr),
+        .CHECK_FUNCT3   (check_funct3),
+        .CHECK_FUNCT7   (check_funct7),
+        .CHECK_IMM      (check_imm)
     );
 
     /* ----- 4-1. スケジューリング1 ----- */
@@ -149,13 +141,13 @@ module core
         .MEM_WAIT           (MEM_WAIT),
 
         // デコード部2との接続
-        .DECODE_2ND_PC      (decode_2nd_pc),
-        .DECODE_2ND_OPCODE  (decode_2nd_opcode),
-        .DECODE_2ND_RD      (decode_2nd_rd),
-        .DECODE_2ND_CSR     (decode_2nd_csr),
-        .DECODE_2ND_FUNCT3  (decode_2nd_funct3),
-        .DECODE_2ND_FUNCT7  (decode_2nd_funct7),
-        .DECODE_2ND_IMM     (decode_2nd_imm),
+        .CHECK_PC           (check_pc),
+        .CHECK_OPCODE       (check_opcode),
+        .CHECK_RD           (check_rd),
+        .CHECK_CSR          (check_csr),
+        .CHECK_FUNCT3       (check_funct3),
+        .CHECK_FUNCT7       (check_funct7),
+        .CHECK_IMM          (check_imm),
 
         // 実行部との接続
         .SCHEDULE_1ST_PC    (schedule_1st_pc),
@@ -173,7 +165,7 @@ module core
     wire [11:0] reg_csr_addr;
     wire        reg_csr_valid;
 
-    csr csr (
+    reg_std_csr reg_std_csr_0 (
         // 制御
         .CLK                (CLK),
         .RST                (RST),
@@ -182,7 +174,7 @@ module core
         .MEM_WAIT           (MEM_WAIT),
 
         // レジスタアクセス
-        .RIADDR             (decode_2nd_csr),
+        .RIADDR             (check_csr),
         .RVALID             (reg_csr_valid),
         .ROADDR             (reg_csr_addr),
         .RDATA              (reg_csr_data),
@@ -205,7 +197,7 @@ module core
     wire [4:0]  reg_rs1_addr, reg_rs2_addr;
     wire        reg_rs1_valid, reg_rs2_valid;
 
-    rv32i_reg rv32i_reg (
+    reg_std_rv32i reg_std_rv32i_0 (
         // 制御
         .CLK                (CLK),
         .RST                (RST),
@@ -214,11 +206,11 @@ module core
         .MEM_WAIT           (MEM_WAIT),
 
         // レジスタアクセス
-        .A_RIADDR           (decode_2nd_rs1),
+        .A_RIADDR           (check_rs1),
         .A_RVALID           (reg_rs1_valid),
         .A_ROADDR           (reg_rs1_addr),
         .A_RDATA            (reg_rs1_data),
-        .B_RIADDR           (decode_2nd_rs2),
+        .B_RIADDR           (check_rs2),
         .B_RVALID           (reg_rs2_valid),
         .B_ROADDR           (reg_rs2_addr),
         .B_RDATA            (reg_rs2_data),
@@ -242,7 +234,7 @@ module core
     wire [4:0]  reg_w_rd, mem_r_rd;
     wire [3:0]  mem_r_strb, mem_w_strb;
 
-    exec exec (
+    exec_std_rv32i_s exec_std_rv32i_s_0 (
         // 制御
         .CLK            (CLK),
         .RST            (RST),

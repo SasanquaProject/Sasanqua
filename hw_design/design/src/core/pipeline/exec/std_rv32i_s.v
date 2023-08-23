@@ -1,4 +1,4 @@
-module exec
+module exec_std_rv32i_s
     (
         /* ----- 制御 ----- */
         input wire          CLK,
@@ -63,7 +63,7 @@ module exec
     assign rs2_data_s = rs2_data;
 
     always @ (posedge CLK) begin
-        if (RST || FLUSH || STALL) begin
+        if (RST || FLUSH) begin
             pc <= 32'b0;
             opcode <= 7'b0;
             rd_addr <= 5'b0;
@@ -79,6 +79,20 @@ module exec
         end
         else if (MEM_WAIT) begin
             // do nothing
+        end
+        else if (STALL) begin
+            pc <= 32'b0;
+            opcode <= 7'b0;
+            rd_addr <= 5'b0;
+            rs1_addr <= 5'b0;
+            rs1_data <= 32'b0;
+            rs2_addr <= 5'b0;
+            rs2_data <= 32'b0;
+            csr_addr <= 12'b0;
+            csr_data <= 32'b0;
+            funct3 <= 3'b0;
+            funct7 <= 7'b0;
+            imm <= 32'b0;
         end
         else begin
             pc <= PC;
@@ -428,7 +442,7 @@ module exec
             end
             17'b1110011_000_0000000: begin // ecall
                 JMP_DO <= 1'b1;
-                JMP_PC <= 32'h0000_0004;
+                JMP_PC <= 32'h2000_0004;
             end
             default: begin
                 JMP_DO <= 1'b0;

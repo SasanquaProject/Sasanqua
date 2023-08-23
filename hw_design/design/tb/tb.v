@@ -4,7 +4,7 @@ module sasanqua_tb;
 
 /* ----- 各種定数 ----- */
 localparam integer C_AXI_DATA_WIDTH = 32;
-localparam integer C_OFFSET_WIDTH   = 32;
+localparam integer C_OFFSET_WIDTH   = 16;
 localparam integer STEP             = 1000 / 100;   // 100Mhz
 
 /* ----- クロック ----- */
@@ -46,29 +46,25 @@ wire [31:0] INST_PC                 = sasanqua.core.inst_pc;
 wire [31:0] INST_DATA               = sasanqua.core.inst_data;
 
 // Core: Decode 1st
-wire [31:0] DECODE_1ST_PC           = sasanqua.core.decode_1st_pc;
-wire [6:0]  DECODE_1ST_OPCODE       = sasanqua.core.decode_1st_opcode;
-wire [4:0]  DECODE_1ST_RD           = sasanqua.core.decode_1st_rd;
-wire [4:0]  DECODE_1ST_RS1          = sasanqua.core.decode_1st_rs1;
-wire [4:0]  DECODE_1ST_RS2          = sasanqua.core.decode_1st_rs2;
-wire [2:0]  DECODE_1ST_FUNCT3       = sasanqua.core.decode_1st_funct3;
-wire [6:0]  DECODE_1ST_FUNCT7       = sasanqua.core.decode_1st_funct7;
-wire [31:0] DECODE_1ST_IMM_I        = sasanqua.core.decode_1st_imm_i;
-wire [31:0] DECODE_1ST_IMM_S        = sasanqua.core.decode_1st_imm_s;
-wire [31:0] DECODE_1ST_IMM_B        = sasanqua.core.decode_1st_imm_b;
-wire [31:0] DECODE_1ST_IMM_U        = sasanqua.core.decode_1st_imm_u;
-wire [31:0] DECODE_1ST_IMM_J        = sasanqua.core.decode_1st_imm_j;
+wire [31:0] DECODE_PC               = sasanqua.core.decode_pc;
+wire [6:0]  DECODE_OPCODE           = sasanqua.core.decode_opcode;
+wire [4:0]  DECODE_RD               = sasanqua.core.decode_rd;
+wire [4:0]  DECODE_RS1              = sasanqua.core.decode_rs1;
+wire [4:0]  DECODE_RS2              = sasanqua.core.decode_rs2;
+wire [2:0]  DECODE_FUNCT3           = sasanqua.core.decode_funct3;
+wire [6:0]  DECODE_FUNCT7           = sasanqua.core.decode_funct7;
+wire [31:0] DECODE_IMM              = sasanqua.core.decode_imm;
 
 // Core: Decode 2nd
-wire [31:0] DECODE_2ND_PC           = sasanqua.core.decode_2nd_pc;
-wire [6:0]  DECODE_2ND_OPCODE       = sasanqua.core.decode_2nd_opcode;
-wire [4:0]  DECODE_2ND_RD           = sasanqua.core.decode_2nd_rd;
-wire [4:0]  DECODE_2ND_RS1          = sasanqua.core.decode_2nd_rs1;
-wire [4:0]  DECODE_2ND_RS2          = sasanqua.core.decode_2nd_rs2;
-wire [11:0] DECODE_2ND_CSR          = sasanqua.core.decode_2nd_csr;
-wire [2:0]  DECODE_2ND_FUNCT3       = sasanqua.core.decode_2nd_funct3;
-wire [6:0]  DECODE_2ND_FUNCT7       = sasanqua.core.decode_2nd_funct7;
-wire [31:0] DECODE_2ND_IMM          = sasanqua.core.decode_2nd_imm;
+wire [31:0] CHECK_PC                = sasanqua.core.check_pc;
+wire [6:0]  CHECK_OPCODE            = sasanqua.core.check_opcode;
+wire [4:0]  CHECK_RD                = sasanqua.core.check_rd;
+wire [4:0]  CHECK_RS1               = sasanqua.core.check_rs1;
+wire [4:0]  CHECK_RS2               = sasanqua.core.check_rs2;
+wire [11:0] CHECK_CSR               = sasanqua.core.check_csr;
+wire [2:0]  CHECK_FUNCT3            = sasanqua.core.check_funct3;
+wire [6:0]  CHECK_FUNCT7            = sasanqua.core.check_funct7;
+wire [31:0] CHECK_IMM               = sasanqua.core.check_imm;
 
 // Core: Schedule 1st, Register(r)
 wire [31:0] SCHEDULE_1ST_PC         = sasanqua.core.schedule_1st_pc;
@@ -133,38 +129,38 @@ wire        MEMR_JMP_DO             = sasanqua.core.memr_jmp_do;
 wire [31:0] MEMR_JMP_PC             = sasanqua.core.memr_jmp_pc;
 
 // Register: rv32i
-wire [31:0] I_REG_0                 = sasanqua.core.rv32i_reg.registers[0];
-wire [31:0] I_REG_1                 = sasanqua.core.rv32i_reg.registers[1];
-wire [31:0] I_REG_2                 = sasanqua.core.rv32i_reg.registers[2];
-wire [31:0] I_REG_3                 = sasanqua.core.rv32i_reg.registers[3];
-wire [31:0] I_REG_4                 = sasanqua.core.rv32i_reg.registers[4];
-wire [31:0] I_REG_5                 = sasanqua.core.rv32i_reg.registers[5];
-wire [31:0] I_REG_6                 = sasanqua.core.rv32i_reg.registers[6];
-wire [31:0] I_REG_7                 = sasanqua.core.rv32i_reg.registers[7];
-wire [31:0] I_REG_8                 = sasanqua.core.rv32i_reg.registers[8];
-wire [31:0] I_REG_9                 = sasanqua.core.rv32i_reg.registers[9];
-wire [31:0] I_REG_10                = sasanqua.core.rv32i_reg.registers[10];
-wire [31:0] I_REG_11                = sasanqua.core.rv32i_reg.registers[11];
-wire [31:0] I_REG_12                = sasanqua.core.rv32i_reg.registers[12];
-wire [31:0] I_REG_13                = sasanqua.core.rv32i_reg.registers[13];
-wire [31:0] I_REG_14                = sasanqua.core.rv32i_reg.registers[14];
-wire [31:0] I_REG_15                = sasanqua.core.rv32i_reg.registers[15];
-wire [31:0] I_REG_16                = sasanqua.core.rv32i_reg.registers[16];
-wire [31:0] I_REG_17                = sasanqua.core.rv32i_reg.registers[17];
-wire [31:0] I_REG_18                = sasanqua.core.rv32i_reg.registers[18];
-wire [31:0] I_REG_19                = sasanqua.core.rv32i_reg.registers[19];
-wire [32:0] I_REG_20                = sasanqua.core.rv32i_reg.registers[20];
-wire [32:0] I_REG_21                = sasanqua.core.rv32i_reg.registers[21];
-wire [32:0] I_REG_22                = sasanqua.core.rv32i_reg.registers[22];
-wire [32:0] I_REG_23                = sasanqua.core.rv32i_reg.registers[23];
-wire [32:0] I_REG_24                = sasanqua.core.rv32i_reg.registers[24];
-wire [32:0] I_REG_25                = sasanqua.core.rv32i_reg.registers[25];
-wire [32:0] I_REG_26                = sasanqua.core.rv32i_reg.registers[26];
-wire [32:0] I_REG_27                = sasanqua.core.rv32i_reg.registers[27];
-wire [32:0] I_REG_28                = sasanqua.core.rv32i_reg.registers[28];
-wire [32:0] I_REG_29                = sasanqua.core.rv32i_reg.registers[29];
-wire [32:0] I_REG_30                = sasanqua.core.rv32i_reg.registers[30];
-wire [32:0] I_REG_31                = sasanqua.core.rv32i_reg.registers[31];
+wire [31:0] I_REG_0                 = sasanqua.core.reg_std_rv32i_0.registers[0];
+wire [31:0] I_REG_1                 = sasanqua.core.reg_std_rv32i_0.registers[1];
+wire [31:0] I_REG_2                 = sasanqua.core.reg_std_rv32i_0.registers[2];
+wire [31:0] I_REG_3                 = sasanqua.core.reg_std_rv32i_0.registers[3];
+wire [31:0] I_REG_4                 = sasanqua.core.reg_std_rv32i_0.registers[4];
+wire [31:0] I_REG_5                 = sasanqua.core.reg_std_rv32i_0.registers[5];
+wire [31:0] I_REG_6                 = sasanqua.core.reg_std_rv32i_0.registers[6];
+wire [31:0] I_REG_7                 = sasanqua.core.reg_std_rv32i_0.registers[7];
+wire [31:0] I_REG_8                 = sasanqua.core.reg_std_rv32i_0.registers[8];
+wire [31:0] I_REG_9                 = sasanqua.core.reg_std_rv32i_0.registers[9];
+wire [31:0] I_REG_10                = sasanqua.core.reg_std_rv32i_0.registers[10];
+wire [31:0] I_REG_11                = sasanqua.core.reg_std_rv32i_0.registers[11];
+wire [31:0] I_REG_12                = sasanqua.core.reg_std_rv32i_0.registers[12];
+wire [31:0] I_REG_13                = sasanqua.core.reg_std_rv32i_0.registers[13];
+wire [31:0] I_REG_14                = sasanqua.core.reg_std_rv32i_0.registers[14];
+wire [31:0] I_REG_15                = sasanqua.core.reg_std_rv32i_0.registers[15];
+wire [31:0] I_REG_16                = sasanqua.core.reg_std_rv32i_0.registers[16];
+wire [31:0] I_REG_17                = sasanqua.core.reg_std_rv32i_0.registers[17];
+wire [31:0] I_REG_18                = sasanqua.core.reg_std_rv32i_0.registers[18];
+wire [31:0] I_REG_19                = sasanqua.core.reg_std_rv32i_0.registers[19];
+wire [32:0] I_REG_20                = sasanqua.core.reg_std_rv32i_0.registers[20];
+wire [32:0] I_REG_21                = sasanqua.core.reg_std_rv32i_0.registers[21];
+wire [32:0] I_REG_22                = sasanqua.core.reg_std_rv32i_0.registers[22];
+wire [32:0] I_REG_23                = sasanqua.core.reg_std_rv32i_0.registers[23];
+wire [32:0] I_REG_24                = sasanqua.core.reg_std_rv32i_0.registers[24];
+wire [32:0] I_REG_25                = sasanqua.core.reg_std_rv32i_0.registers[25];
+wire [32:0] I_REG_26                = sasanqua.core.reg_std_rv32i_0.registers[26];
+wire [32:0] I_REG_27                = sasanqua.core.reg_std_rv32i_0.registers[27];
+wire [32:0] I_REG_28                = sasanqua.core.reg_std_rv32i_0.registers[28];
+wire [32:0] I_REG_29                = sasanqua.core.reg_std_rv32i_0.registers[29];
+wire [32:0] I_REG_30                = sasanqua.core.reg_std_rv32i_0.registers[30];
+wire [32:0] I_REG_31                = sasanqua.core.reg_std_rv32i_0.registers[31];
 
 /* ----- riscv-tests用タスク ----- */
 task riscv_tests;
@@ -176,7 +172,7 @@ begin
     #(STEP*10)
     RST = 0;
 
-    @(posedge MEMR_JMP_PC == 32'h0000_003C);
+    @(posedge MEMR_JMP_PC == 32'h2000_003C);
     #(STEP*10)
 
     if (I_REG_3 == 32'b1)
