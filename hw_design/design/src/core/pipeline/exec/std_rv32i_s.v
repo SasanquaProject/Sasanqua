@@ -63,7 +63,7 @@ module exec_std_rv32i_s
     assign rs2_data_s = rs2_data;
 
     always @ (posedge CLK) begin
-        if (RST || FLUSH || STALL) begin
+        if (RST || FLUSH) begin
             pc <= 32'b0;
             opcode <= 7'b0;
             rd_addr <= 5'b0;
@@ -79,6 +79,20 @@ module exec_std_rv32i_s
         end
         else if (MEM_WAIT) begin
             // do nothing
+        end
+        else if (STALL) begin
+            pc <= 32'b0;
+            opcode <= 7'b0;
+            rd_addr <= 5'b0;
+            rs1_addr <= 5'b0;
+            rs1_data <= 32'b0;
+            rs2_addr <= 5'b0;
+            rs2_data <= 32'b0;
+            csr_addr <= 12'b0;
+            csr_data <= 32'b0;
+            funct3 <= 3'b0;
+            funct7 <= 7'b0;
+            imm <= 32'b0;
         end
         else begin
             pc <= PC;
