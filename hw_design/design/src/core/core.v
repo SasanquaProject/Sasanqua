@@ -88,7 +88,7 @@ module core
         .DECODE_IMM     (decode_imm)
     );
 
-    /* ----- 3. 命令デコード2 ----- */
+    /* ----- 3. 命令検査 ----- */
     wire [31:0] check_pc, check_imm;
     wire [11:0] check_csr;
     wire [6:0]  check_opcode, check_funct7;
