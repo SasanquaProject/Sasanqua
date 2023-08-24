@@ -10,5 +10,5 @@ pub mod sasanqua {
 }
 
 pub mod vendor {
-    pub use ipgen::vendor::Xilinx;
+    pub use ipgen::vendor::*;
 }

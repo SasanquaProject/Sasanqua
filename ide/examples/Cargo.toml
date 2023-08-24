@@ -10,5 +10,9 @@ thiserror = { workspace = true }
 pgen = { package = "pgen", path = "../pgenerator/pgen" }
 
 [[example]]
-name = "pgen_simple"
-path = "pgen/pgen_simple.rs"
+name = "pgen_xilinx"
+path = "pgen/pgen_xilinx.rs"
+
+[[example]]
+name = "pgen_any"
+path = "pgen/pgen_any.rs"
