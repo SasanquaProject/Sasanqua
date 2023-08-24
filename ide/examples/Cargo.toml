@@ -7,7 +7,7 @@ publish = false
 [dev-dependencies]
 anyhow = { workspace = true }
 thiserror = { workspace = true }
-pgen = { path = "../pgenerator/pgen" }
+pgen = { package = "pgen", path = "../pgenerator/pgen" }
 
 [[example]]
 name = "pgen_simple"
