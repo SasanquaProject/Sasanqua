@@ -3,6 +3,7 @@ members = [
     "pgenerator/pgen",
     "src/cui",
     "src/gui",
+    "examples",
 ]
 exclude = []
 

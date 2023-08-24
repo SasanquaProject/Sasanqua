@@ -16,6 +16,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "examples"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "pgen",
+ "thiserror",
+]
+
+[[package]]
 name = "gui"
 version = "0.1.0"
 dependencies = [
@@ -27,6 +36,7 @@ name = "pgen"
 version = "0.1.0"
 dependencies = [
  "pgen_driver",
+ "pgen_ipgen",
 ]
 
 [[package]]
@@ -36,6 +46,7 @@ dependencies = [
  "anyhow",
  "pgen_ipgen",
  "thiserror",
+ "vfs",
 ]
 
 [[package]]
