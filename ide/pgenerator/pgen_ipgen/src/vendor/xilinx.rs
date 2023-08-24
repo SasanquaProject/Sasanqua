@@ -4,8 +4,8 @@ mod xgui;
 
 use vfs::VfsPath;
 
-use hwgen::SasanquaT;
 use hwgen::sasanqua::bus::BusInterface;
+use hwgen::SasanquaT;
 
 use crate::utils::merge_vfs;
 use crate::vendor::Vendor;
@@ -45,8 +45,8 @@ mod test {
     use thiserror::Error;
     use vfs::{MemoryFS, VfsPath};
 
-    use hwgen::sasanqua::Sasanqua;
     use hwgen::sasanqua::bus::AXI4;
+    use hwgen::sasanqua::Sasanqua;
 
     use super::Xilinx;
     use crate::IPInfo;

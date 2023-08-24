@@ -4,13 +4,18 @@ use std::path::PathBuf;
 
 use vfs::PhysicalFS;
 
+use hwgen::sasanqua::bus::BusInterface;
+use hwgen::SasanquaT;
 use ipgen::vendor::Vendor;
 use ipgen::IPInfo;
-use hwgen::SasanquaT;
-use hwgen::sasanqua::bus::BusInterface;
 
 #[allow(unused_variables)]
-pub fn gen<V, S, B>(name: impl Into<String>, version: impl Into<String>, vendor: V, sasanqua: S) -> anyhow::Result<()>
+pub fn gen<V, S, B>(
+    name: impl Into<String>,
+    version: impl Into<String>,
+    vendor: V,
+    sasanqua: S,
+) -> anyhow::Result<()>
 where
     V: Vendor<S, B> + 'static,
     S: SasanquaT<B> + 'static,

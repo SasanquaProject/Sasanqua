@@ -1,7 +1,7 @@
 use pgen::gen;
-use pgen::vendor::Xilinx;
-use pgen::sasanqua::Sasanqua;
 use pgen::sasanqua::bus::AXI4;
+use pgen::sasanqua::Sasanqua;
+use pgen::vendor::Xilinx;
 
 fn main() -> anyhow::Result<()> {
     let sasanqua = Sasanqua::new(AXI4);

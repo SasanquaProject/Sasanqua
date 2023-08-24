@@ -8,7 +8,9 @@ pub fn merge_vfs(dst: &mut VfsPath, dst_dir: &str, src: VfsPath) -> anyhow::Resu
             let path = format!("{}/{}", dst_dir, f.as_str());
             if f.is_file().unwrap() {
                 let content = f.read_to_string()?;
-                dst.join(path)?.create_file()?.write_all(content.as_bytes())?;
+                dst.join(path)?
+                    .create_file()?
+                    .write_all(content.as_bytes())?;
             } else if f.is_dir().unwrap() {
                 dst.join(path)?.create_dir()?;
             }

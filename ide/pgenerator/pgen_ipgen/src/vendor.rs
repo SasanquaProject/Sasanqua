@@ -2,8 +2,8 @@ mod xilinx;
 
 use vfs::VfsPath;
 
-use hwgen::SasanquaT;
 use hwgen::sasanqua::bus::BusInterface;
+use hwgen::SasanquaT;
 
 use crate::IPInfo;
 pub use xilinx::Xilinx;

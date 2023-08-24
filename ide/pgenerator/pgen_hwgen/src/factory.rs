@@ -7,8 +7,8 @@ use vfs::VfsPath;
 use self::core::CoreFactory;
 use self::mmu::MMUFactory;
 use self::sasanqua::SasanquaFactory;
-use crate::sasanqua::Sasanqua;
 use crate::sasanqua::bus::BusInterface;
+use crate::sasanqua::Sasanqua;
 
 pub trait HwFactory<B>
 where

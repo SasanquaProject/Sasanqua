@@ -1,6 +1,6 @@
 pub mod prelude;
-pub mod vendor;
 mod utils;
+pub mod vendor;
 
 use std::marker::PhantomData;
 
@@ -8,8 +8,8 @@ use vfs::VfsPath;
 
 use vendor::Vendor;
 
-use hwgen::SasanquaT;
 use hwgen::sasanqua::bus::BusInterface;
+use hwgen::SasanquaT;
 
 #[derive(Debug)]
 pub struct IPInfo<S, B>
@@ -46,8 +46,8 @@ where
 mod test {
     use vfs::MemoryFS;
 
-    use hwgen::sasanqua::Sasanqua;
     use hwgen::sasanqua::bus::AXI4;
+    use hwgen::sasanqua::Sasanqua;
 
     use crate::vendor::Xilinx;
     use crate::IPInfo;

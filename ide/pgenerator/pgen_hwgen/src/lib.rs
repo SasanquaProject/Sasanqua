@@ -1,12 +1,12 @@
 mod factory;
-mod resources;
 pub mod prelude;
+mod resources;
 pub mod sasanqua;
 
-use vfs::{VfsPath, MemoryFS};
+use vfs::{MemoryFS, VfsPath};
 
-use sasanqua::*;
 use sasanqua::bus::{BusInterface, AXI4};
+use sasanqua::*;
 
 pub trait SasanquaT<B>
 where
@@ -31,8 +31,8 @@ mod test {
     use vfs::VfsPath;
 
     use super::prelude::*;
-    use super::sasanqua::Sasanqua;
     use super::sasanqua::bus::AXI4;
+    use super::sasanqua::Sasanqua;
 
     #[test]
     fn check_req_files() {
