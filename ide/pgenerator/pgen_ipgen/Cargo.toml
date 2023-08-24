@@ -7,3 +7,5 @@ edition = "2021"
 anyhow = { workspace = true }
 thiserror = { workspace = true }
 vfs = { workspace = true }
+serde = { version = "1.0", features = ["derive"] }
+serde-xml-rs = "0.6"
