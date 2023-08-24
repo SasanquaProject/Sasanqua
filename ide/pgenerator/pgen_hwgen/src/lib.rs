@@ -1,10 +1,11 @@
-pub mod sasanqua;
 mod factory;
 mod resources;
+pub mod prelude;
+pub mod sasanqua;
 
 use vfs::{VfsPath, MemoryFS};
 
-use sasanqua::Sasanqua;
+use sasanqua::*;
 use sasanqua::bus::{BusInterface, AXI4};
 
 pub trait SasanquaT<B>
@@ -29,7 +30,7 @@ mod test {
     use thiserror::Error;
     use vfs::VfsPath;
 
-    use super::SasanquaT;
+    use super::prelude::*;
     use super::sasanqua::Sasanqua;
     use super::sasanqua::bus::AXI4;
 
