@@ -3,10 +3,12 @@ mod resources;
 
 use vfs::{MemoryFS, VfsPath};
 
+#[derive(Debug)]
 pub struct Sasanqua {
     pub bus_if: BusInterface,
 }
 
+#[derive(Debug)]
 pub enum BusInterface {
     AXI,
 }

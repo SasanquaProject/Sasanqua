@@ -6,8 +6,9 @@ use vfs::PhysicalFS;
 
 use ipgen::vendor::Vendor;
 use ipgen::IPInfo;
+use hwgen::Sasanqua;
 
-pub fn gen<V>(name: impl Into<String>, version: impl Into<String>) -> anyhow::Result<()>
+pub fn gen<V>(name: impl Into<String>, version: impl Into<String>, sasanqua: Sasanqua) -> anyhow::Result<()>
 where
     V: Vendor,
 {
@@ -16,7 +17,7 @@ where
 
     let out_dir = setup_env(name.clone())?;
     let mut root = PhysicalFS::new(out_dir).into();
-    IPInfo::new(name, version).gen::<V>(&mut root)?;
+    IPInfo::new(name, version, sasanqua).gen::<V>(&mut root)?;
 
     Ok(())
 }

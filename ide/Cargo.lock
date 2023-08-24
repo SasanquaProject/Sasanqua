@@ -42,6 +42,7 @@ name = "pgen"
 version = "0.1.0"
 dependencies = [
  "pgen_driver",
+ "pgen_hwgen",
  "pgen_ipgen",
 ]
 
@@ -70,6 +71,7 @@ name = "pgen_ipgen"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "pgen_hwgen",
  "serde",
  "serde-xml-rs",
  "thiserror",
