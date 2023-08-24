@@ -2,3 +2,6 @@
 name = "pgen_driver"
 version = "0.1.0"
 edition = "2021"
+
+[dependencies]
+ipgen = { package = "pgen_ipgen", path = "../pgen_ipgen" }

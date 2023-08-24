@@ -26,3 +26,10 @@ dependencies = [
 [[package]]
 name = "pgen_driver"
 version = "0.1.0"
+dependencies = [
+ "pgen_ipgen",
+]
+
+[[package]]
+name = "pgen_ipgen"
+version = "0.1.0"
