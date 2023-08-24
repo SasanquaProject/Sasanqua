@@ -1,3 +1,4 @@
+pub mod prelude;
 pub mod vendor;
 
 use vfs::filesystem::FileSystem;

@@ -6,4 +6,5 @@ edition = "2021"
 [dependencies]
 anyhow = { workspace = true }
 thiserror = { workspace = true }
+vfs = { workspace = true }
 ipgen = { package = "pgen_ipgen", path = "../pgen_ipgen" }
