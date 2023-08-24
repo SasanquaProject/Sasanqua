@@ -50,10 +50,15 @@ name = "pgen_driver"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "pgen_hwgen",
  "pgen_ipgen",
  "thiserror",
  "vfs",
 ]
+
+[[package]]
+name = "pgen_hwgen"
+version = "0.1.0"
 
 [[package]]
 name = "pgen_ipgen"
