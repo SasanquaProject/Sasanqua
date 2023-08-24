@@ -59,6 +59,11 @@ dependencies = [
 [[package]]
 name = "pgen_hwgen"
 version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "thiserror",
+ "vfs",
+]
 
 [[package]]
 name = "pgen_ipgen"
