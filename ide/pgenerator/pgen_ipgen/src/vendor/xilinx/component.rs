@@ -20,7 +20,6 @@ struct Component {
     user: String,
     #[serde(rename = "spirit:version")]
     version: String,
-
     // TODO: spirit:busInterfaces
     // TODO: spirit:addressSpaces
     // TODO: spirit:model
