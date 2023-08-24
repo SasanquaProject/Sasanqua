@@ -1,5 +1,7 @@
 pub mod vendor;
 
+use vfs::filesystem::FileSystem;
+
 use vendor::Vendor;
 
 #[derive(Debug)]
@@ -19,20 +21,24 @@ impl IPInfo {
         }
     }
 
-    pub fn gen<V: Vendor>(&self) -> anyhow::Result<()> {
-        V::gen(self)
+    pub fn gen<V: Vendor>(&self, fs: &mut impl FileSystem) -> anyhow::Result<()> {
+        V::gen(self, fs)
     }
 }
 
 #[cfg(test)]
 mod test {
+    use vfs::MemoryFS;
+
     use crate::IPInfo;
     use crate::vendor::Xilinx;
 
     #[test]
-    fn ipgen_test() {
-        let ipinfo = IPInfo::new("Sasanqua", "0.1.0");
-        let res = ipinfo.gen::<Xilinx>();
-        assert!(res.is_ok());
+    fn ipgen_xilinx() {
+        let mut fs = MemoryFS::new();
+        let res = IPInfo::new("Sasanqua", "0.1.0")
+            .gen::<Xilinx>(&mut fs)
+            .is_ok();
+        assert!(res);
     }
 }
