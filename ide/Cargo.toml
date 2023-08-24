@@ -5,3 +5,7 @@ members = [
     "src/gui",
 ]
 exclude = []
+
+[workspace.dependencies]
+anyhow = "1.0"
+thiserror = "1.0"
