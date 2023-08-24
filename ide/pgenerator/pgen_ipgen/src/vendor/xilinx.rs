@@ -31,6 +31,7 @@ impl Vendor for Xilinx {
 
 #[cfg(test)]
 mod test {
+    use thiserror::Error;
     use vfs::{MemoryFS, VfsPath};
 
     use super::Xilinx;
@@ -49,8 +50,16 @@ mod test {
     }
 
     fn open_file(root: &VfsPath, path: &str) -> anyhow::Result<VfsPath> {
+        #[derive(Error, Debug)]
+        #[error("A specified file is not found.")]
+        struct FileNotFound;
+
         let f = root.join(path).unwrap();
-        assert!(f.exists()?);
+        let exists = f.exists()?;
+        if !exists {
+            return Err(FileNotFound.into());
+        }
+
         Ok(f)
     }
 }

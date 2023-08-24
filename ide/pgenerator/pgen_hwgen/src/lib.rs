@@ -1,3 +1,4 @@
+mod factory;
 mod resources;
 
 use vfs::{VfsPath, MemoryFS};
@@ -16,8 +17,8 @@ impl Sasanqua {
     }
 
     pub fn gen(&self) -> anyhow::Result<VfsPath> {
-        let fs = MemoryFS::new();
-        let root = fs.into();
+        let mut root = MemoryFS::new().into();
+        factory::gen_verilog_files(self, &mut root)?;
 
         Ok(root)
     }
@@ -25,6 +26,7 @@ impl Sasanqua {
 
 #[cfg(test)]
 mod test {
+    use thiserror::Error;
     use vfs::VfsPath;
 
     use super::{Sasanqua, BusInterface};
@@ -45,7 +47,6 @@ mod test {
         assert!(open_file(&hw_vfs, "core/pipeline/exec/std_rv32i_s.v").is_ok());
         assert!(open_file(&hw_vfs, "core/pipeline/register/std_csr.v").is_ok());
         assert!(open_file(&hw_vfs, "core/pipeline/register/std_rv32i.v").is_ok());
-        assert!(open_file(&hw_vfs, "mmu/mmu.v").is_ok());
         assert!(open_file(&hw_vfs, "mmu/axi/cache.v").is_ok());
         assert!(open_file(&hw_vfs, "mmu/axi/interconnect.v").is_ok());
         assert!(open_file(&hw_vfs, "mmu/axi/mmu.v").is_ok());
@@ -55,8 +56,16 @@ mod test {
     }
 
     fn open_file(root: &VfsPath, path: &str) -> anyhow::Result<VfsPath> {
+        #[derive(Error, Debug)]
+        #[error("A specified file is not found.")]
+        struct FileNotFound;
+
         let f = root.join(path).unwrap();
-        assert!(f.exists()?);
+        let exists = f.exists()?;
+        if !exists {
+            return Err(FileNotFound.into());
+        }
+
         Ok(f)
     }
 }
