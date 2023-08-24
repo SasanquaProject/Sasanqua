@@ -1,13 +1,13 @@
-mod sasanqua;
 mod core;
 mod mmu;
+mod sasanqua;
 
 use vfs::VfsPath;
 
-use crate::Sasanqua;
-use self::sasanqua::SasanquaFactory;
 use self::core::CoreFactory;
 use self::mmu::MMUFactory;
+use self::sasanqua::SasanquaFactory;
+use crate::Sasanqua;
 
 trait HwFactory {
     fn gen(sasanqua: &Sasanqua, root: &mut VfsPath) -> anyhow::Result<()>;

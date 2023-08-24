@@ -1,7 +1,7 @@
 mod factory;
 mod resources;
 
-use vfs::{VfsPath, MemoryFS};
+use vfs::{MemoryFS, VfsPath};
 
 pub struct Sasanqua {
     pub bus_if: BusInterface,
@@ -29,7 +29,7 @@ mod test {
     use thiserror::Error;
     use vfs::VfsPath;
 
-    use super::{Sasanqua, BusInterface};
+    use super::{BusInterface, Sasanqua};
 
     #[test]
     fn check_req_files() {

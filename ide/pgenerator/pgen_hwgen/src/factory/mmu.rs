@@ -1,8 +1,8 @@
 use vfs::VfsPath;
 
-use crate::Sasanqua;
-use crate::resources::*;
 use super::HwFactory;
+use crate::resources::*;
+use crate::Sasanqua;
 
 pub struct MMUFactory;
 
