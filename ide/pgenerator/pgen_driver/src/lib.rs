@@ -4,19 +4,29 @@ use std::path::PathBuf;
 
 use vfs::PhysicalFS;
 
+use hwgen::sasanqua::bus::BusInterface;
+use hwgen::SasanquaT;
 use ipgen::vendor::Vendor;
 use ipgen::IPInfo;
 
-pub fn gen<V>(name: impl Into<String>, version: impl Into<String>) -> anyhow::Result<()>
+#[allow(unused_variables)]
+pub fn gen<V, S, B>(
+    name: impl Into<String>,
+    version: impl Into<String>,
+    vendor: V,
+    sasanqua: S,
+) -> anyhow::Result<()>
 where
-    V: Vendor,
+    V: Vendor<S, B> + 'static,
+    S: SasanquaT<B> + 'static,
+    B: BusInterface + 'static,
 {
     let name = name.into();
     let version = version.into();
 
     let out_dir = setup_env(name.clone())?;
     let mut root = PhysicalFS::new(out_dir).into();
-    IPInfo::new(name, version).gen::<V>(&mut root)?;
+    IPInfo::new(name, version, sasanqua).gen::<V>(&mut root)?;
 
     Ok(())
 }

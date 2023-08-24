@@ -8,3 +8,4 @@ anyhow = { workspace = true }
 thiserror = { workspace = true }
 vfs = { workspace = true }
 ipgen = { package = "pgen_ipgen", path = "../pgen_ipgen" }
+hwgen = { package = "pgen_hwgen", path = "../pgen_hwgen" }
