@@ -1,4 +1,5 @@
 mod bd;
+mod component;
 mod xgui;
 
 use vfs::VfsPath;
@@ -10,7 +11,9 @@ pub struct Xilinx;
 
 impl Vendor for Xilinx {
     fn gen(_: &IPInfo, root: &mut VfsPath) -> anyhow::Result<()> {
-        // TODO: component.xml
+        root.join("component.xml")?
+            .create_file()?
+            .write_all(component::component_xml().as_bytes())?;
 
         root.join("bd")?.create_dir()?;
         root.join("bd/bd.tcl")?
