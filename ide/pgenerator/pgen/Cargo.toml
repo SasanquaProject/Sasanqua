@@ -5,3 +5,4 @@ edition = "2021"
 
 [dependencies]
 driver = { package = "pgen_driver", path = "../pgen_driver" }
+ipgen = { package = "pgen_ipgen", path = "../pgen_ipgen" }

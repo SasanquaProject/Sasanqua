@@ -3,5 +3,11 @@ members = [
     "pgenerator/pgen",
     "src/cui",
     "src/gui",
+    "examples",
 ]
 exclude = []
+
+[workspace.dependencies]
+anyhow = "1.0"
+thiserror = "1.0"
+vfs = "0.9"
