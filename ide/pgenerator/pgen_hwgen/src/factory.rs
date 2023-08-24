@@ -7,16 +7,26 @@ use vfs::VfsPath;
 use self::core::CoreFactory;
 use self::mmu::MMUFactory;
 use self::sasanqua::SasanquaFactory;
-use crate::Sasanqua;
+use crate::sasanqua::Sasanqua;
+use crate::sasanqua::bus::BusInterface;
 
-trait HwFactory {
-    fn gen(sasanqua: &Sasanqua, root: &mut VfsPath) -> anyhow::Result<()>;
+pub trait HwFactory<B>
+where
+    B: BusInterface,
+{
+    fn gen(sasanqua: &Sasanqua<B>, root: &mut VfsPath) -> anyhow::Result<()>;
 }
 
-pub fn gen_verilog_files(sasanqua: &Sasanqua, root: &mut VfsPath) -> anyhow::Result<()> {
-    <SasanquaFactory as HwFactory>::gen(sasanqua, root)?;
-    <CoreFactory as HwFactory>::gen(sasanqua, root)?;
-    <MMUFactory as HwFactory>::gen(sasanqua, root)?;
+pub fn gen<B>(sasanqua: &Sasanqua<B>, root: &mut VfsPath) -> anyhow::Result<()>
+where
+    B: BusInterface,
+    SasanquaFactory: HwFactory<B>,
+    CoreFactory: HwFactory<B>,
+    MMUFactory: HwFactory<B>,
+{
+    SasanquaFactory::gen(sasanqua, root)?;
+    CoreFactory::gen(sasanqua, root)?;
+    MMUFactory::gen(sasanqua, root)?;
 
     Ok(())
 }

@@ -2,12 +2,13 @@ use vfs::VfsPath;
 
 use super::HwFactory;
 use crate::resources::*;
-use crate::Sasanqua;
+use crate::sasanqua::Sasanqua;
+use crate::sasanqua::bus::AXI4;
 
 pub struct MMUFactory;
 
-impl HwFactory for MMUFactory {
-    fn gen(_: &Sasanqua, root: &mut VfsPath) -> anyhow::Result<()> {
+impl HwFactory<AXI4> for MMUFactory {
+    fn gen(_: &Sasanqua<AXI4>, root: &mut VfsPath) -> anyhow::Result<()> {
         // mmu
         root.join("mmu")?.create_dir()?;
 

@@ -4,14 +4,21 @@ mod xgui;
 
 use vfs::VfsPath;
 
+use hwgen::SasanquaT;
+use hwgen::sasanqua::bus::BusInterface;
+
 use crate::utils::merge_vfs;
 use crate::vendor::Vendor;
 use crate::IPInfo;
 
 pub struct Xilinx;
 
-impl Vendor for Xilinx {
-    fn gen(ipinfo: &IPInfo, root: &mut VfsPath) -> anyhow::Result<()> {
+impl<S, B> Vendor<S, B> for Xilinx
+where
+    S: SasanquaT<B>,
+    B: BusInterface,
+{
+    fn gen(ipinfo: &IPInfo<S, B>, root: &mut VfsPath) -> anyhow::Result<()> {
         root.join("src")?.create_dir()?;
         merge_vfs(root, "src", ipinfo.sasanqua.gen()?)?;
 
@@ -38,14 +45,15 @@ mod test {
     use thiserror::Error;
     use vfs::{MemoryFS, VfsPath};
 
-    use hwgen::{Sasanqua, BusInterface};
+    use hwgen::sasanqua::Sasanqua;
+    use hwgen::sasanqua::bus::AXI4;
 
     use super::Xilinx;
     use crate::IPInfo;
 
     #[test]
     fn check_req_files() {
-        let sasanqua = Sasanqua::new(BusInterface::AXI);
+        let sasanqua = Sasanqua::new(AXI4);
 
         let mut root = MemoryFS::new().into();
         IPInfo::new("test", "0.1.0", sasanqua)

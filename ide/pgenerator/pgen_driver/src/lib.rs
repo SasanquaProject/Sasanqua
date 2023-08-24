@@ -6,11 +6,15 @@ use vfs::PhysicalFS;
 
 use ipgen::vendor::Vendor;
 use ipgen::IPInfo;
-use hwgen::Sasanqua;
+use hwgen::SasanquaT;
+use hwgen::sasanqua::bus::BusInterface;
 
-pub fn gen<V>(name: impl Into<String>, version: impl Into<String>, sasanqua: Sasanqua) -> anyhow::Result<()>
+#[allow(unused_variables)]
+pub fn gen<V, S, B>(name: impl Into<String>, version: impl Into<String>, vendor: V, sasanqua: S) -> anyhow::Result<()>
 where
-    V: Vendor,
+    V: Vendor<S, B> + 'static,
+    S: SasanquaT<B> + 'static,
+    B: BusInterface + 'static,
 {
     let name = name.into();
     let version = version.into();

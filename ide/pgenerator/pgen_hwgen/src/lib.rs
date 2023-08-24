@@ -1,26 +1,24 @@
+pub mod sasanqua;
 mod factory;
 mod resources;
 
-use vfs::{MemoryFS, VfsPath};
+use vfs::{VfsPath, MemoryFS};
 
-#[derive(Debug)]
-pub struct Sasanqua {
-    pub bus_if: BusInterface,
+use sasanqua::Sasanqua;
+use sasanqua::bus::{BusInterface, AXI4};
+
+pub trait SasanquaT<B>
+where
+    Self: std::fmt::Debug,
+    B: BusInterface,
+{
+    fn gen(&self) -> anyhow::Result<VfsPath>;
 }
 
-#[derive(Debug)]
-pub enum BusInterface {
-    AXI,
-}
-
-impl Sasanqua {
-    pub fn new(bus_if: BusInterface) -> Sasanqua {
-        Sasanqua { bus_if }
-    }
-
-    pub fn gen(&self) -> anyhow::Result<VfsPath> {
+impl SasanquaT<AXI4> for Sasanqua<AXI4> {
+    fn gen(&self) -> anyhow::Result<VfsPath> {
         let mut root = MemoryFS::new().into();
-        factory::gen_verilog_files(self, &mut root)?;
+        factory::gen(self, &mut root)?;
 
         Ok(root)
     }
@@ -31,11 +29,13 @@ mod test {
     use thiserror::Error;
     use vfs::VfsPath;
 
-    use super::{BusInterface, Sasanqua};
+    use super::SasanquaT;
+    use super::sasanqua::Sasanqua;
+    use super::sasanqua::bus::AXI4;
 
     #[test]
     fn check_req_files() {
-        let sasanqua = Sasanqua::new(BusInterface::AXI);
+        let sasanqua = Sasanqua::new(AXI4);
         let hw_vfs = sasanqua.gen().unwrap();
 
         assert!(open_file(&hw_vfs, "sasanqua.v").is_ok());

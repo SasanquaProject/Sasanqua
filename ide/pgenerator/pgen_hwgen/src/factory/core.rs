@@ -2,12 +2,13 @@ use vfs::VfsPath;
 
 use super::HwFactory;
 use crate::resources::*;
-use crate::Sasanqua;
+use crate::sasanqua::Sasanqua;
+use crate::sasanqua::bus::AXI4;
 
 pub struct CoreFactory;
 
-impl HwFactory for CoreFactory {
-    fn gen(_: &Sasanqua, root: &mut VfsPath) -> anyhow::Result<()> {
+impl HwFactory<AXI4> for CoreFactory {
+    fn gen(_: &Sasanqua<AXI4>, root: &mut VfsPath) -> anyhow::Result<()> {
         // core
         root.join("core")?.create_dir()?;
 

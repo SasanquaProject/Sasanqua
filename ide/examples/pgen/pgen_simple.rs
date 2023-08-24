@@ -1,8 +1,9 @@
 use pgen::gen;
 use pgen::vendor::Xilinx;
-use pgen::sasanqua::{Sasanqua, BusInterface};
+use pgen::sasanqua::Sasanqua;
+use pgen::sasanqua::bus::AXI4;
 
-fn main() {
-    let sasanqua = Sasanqua::new(BusInterface::AXI);
-    gen::<Xilinx>("pgen_simple", "0.1.0", sasanqua).unwrap();
+fn main() -> anyhow::Result<()> {
+    let sasanqua = Sasanqua::new(AXI4);
+    gen("pgen_simple", "0.1.0", Xilinx, sasanqua)
 }

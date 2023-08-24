@@ -2,10 +2,16 @@ mod xilinx;
 
 use vfs::VfsPath;
 
-use crate::IPInfo;
+use hwgen::SasanquaT;
+use hwgen::sasanqua::bus::BusInterface;
 
+use crate::IPInfo;
 pub use xilinx::Xilinx;
 
-pub trait Vendor {
-    fn gen(info: &IPInfo, root: &mut VfsPath) -> anyhow::Result<()>;
+pub trait Vendor<S, B>
+where
+    S: SasanquaT<B>,
+    B: BusInterface,
+{
+    fn gen(info: &IPInfo<S, B>, root: &mut VfsPath) -> anyhow::Result<()>;
 }
