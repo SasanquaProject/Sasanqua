@@ -9,3 +9,4 @@ exclude = []
 [workspace.dependencies]
 anyhow = "1.0"
 thiserror = "1.0"
+vfs = "0.9"
