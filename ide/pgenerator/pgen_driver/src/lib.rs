@@ -10,9 +10,8 @@ where
     let name = name.into();
     let version = version.into();
 
-    let mut fs = PhysicalFS::new(name.clone());
-    let ipinfo = IPInfo::new(name, version);
-    ipinfo.gen::<V>(&mut fs)?;
+    let mut fs = PhysicalFS::new(name.clone()).into();
+    IPInfo::new(name, version).gen::<V>(&mut fs)?;
 
     Ok(())
 }

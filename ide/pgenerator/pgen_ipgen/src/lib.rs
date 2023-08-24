@@ -1,7 +1,7 @@
 pub mod prelude;
 pub mod vendor;
 
-use vfs::filesystem::FileSystem;
+use vfs::VfsPath;
 
 use vendor::Vendor;
 
@@ -22,8 +22,8 @@ impl IPInfo {
         }
     }
 
-    pub fn gen<V: Vendor>(&self, fs: &mut impl FileSystem) -> anyhow::Result<()> {
-        V::gen(self, fs)
+    pub fn gen<V: Vendor>(&self, root: &mut VfsPath) -> anyhow::Result<()> {
+        V::gen(self, root)
     }
 }
 
@@ -36,7 +36,7 @@ mod test {
 
     #[test]
     fn ipgen_xilinx() {
-        let mut fs = MemoryFS::new();
+        let mut fs = MemoryFS::new().into();
         let res = IPInfo::new("Sasanqua", "0.1.0")
             .gen::<Xilinx>(&mut fs)
             .is_ok();

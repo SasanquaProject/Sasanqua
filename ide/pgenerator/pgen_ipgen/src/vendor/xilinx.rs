@@ -1,4 +1,4 @@
-use vfs::FileSystem;
+use vfs::VfsPath;
 
 use crate::IPInfo;
 use crate::vendor::Vendor;
@@ -6,7 +6,7 @@ use crate::vendor::Vendor;
 pub struct Xilinx;
 
 impl Vendor for Xilinx {
-    fn gen(_: &IPInfo, _: &mut impl FileSystem) -> anyhow::Result<()> {
+    fn gen(_: &IPInfo, _: &mut VfsPath) -> anyhow::Result<()> {
         // TODO: component.xml
         // TODO: xgui/**.tcl
         // TODO: bd/*.tcl
@@ -23,10 +23,9 @@ mod test {
 
     #[test]
     fn check_req_files() {
-        let mut fs = MemoryFS::new();
-        IPInfo::new("test", "0.1.0").gen::<Xilinx>(&mut fs).unwrap();
+        let mut root = MemoryFS::new().into();
+        IPInfo::new("test", "0.1.0").gen::<Xilinx>(&mut root).unwrap();
 
-        let root: VfsPath = fs.into();
         assert!(open_file(&root, "component.xml").is_ok());
         assert!(open_file(&root, "xgui/xgui.tcl").is_ok());
         assert!(open_file(&root, "bd/bd.tcl").is_ok());

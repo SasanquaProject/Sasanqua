@@ -1,11 +1,11 @@
 mod xilinx;
 
-use vfs::FileSystem;
+use vfs::VfsPath;
 
 use crate::IPInfo;
 
 pub use xilinx::Xilinx;
 
 pub trait Vendor {
-    fn gen(info: &IPInfo, fs: &mut impl FileSystem) -> anyhow::Result<()>;
+    fn gen(info: &IPInfo, root: &mut VfsPath) -> anyhow::Result<()>;
 }
