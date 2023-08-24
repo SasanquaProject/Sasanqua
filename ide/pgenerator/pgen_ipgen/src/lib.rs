@@ -31,8 +31,8 @@ impl IPInfo {
 mod test {
     use vfs::MemoryFS;
 
-    use crate::IPInfo;
     use crate::vendor::Xilinx;
+    use crate::IPInfo;
 
     #[test]
     fn ipgen_xilinx() {

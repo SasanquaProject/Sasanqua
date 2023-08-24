@@ -3,8 +3,8 @@ mod xgui;
 
 use vfs::VfsPath;
 
-use crate::IPInfo;
 use crate::vendor::Vendor;
+use crate::IPInfo;
 
 pub struct Xilinx;
 
@@ -12,14 +12,12 @@ impl Vendor for Xilinx {
     fn gen(_: &IPInfo, root: &mut VfsPath) -> anyhow::Result<()> {
         // TODO: component.xml
 
-        root.join("bd")?
-            .create_dir()?;
+        root.join("bd")?.create_dir()?;
         root.join("bd/bd.tcl")?
             .create_file()?
             .write_all(bd::BD_TCL)?;
 
-        root.join("xgui")?
-            .create_dir()?;
+        root.join("xgui")?.create_dir()?;
         root.join("xgui/xgui.tcl")?
             .create_file()?
             .write_all(xgui::XGUI_TCL)?;
@@ -30,15 +28,17 @@ impl Vendor for Xilinx {
 
 #[cfg(test)]
 mod test {
-    use vfs::{VfsPath, MemoryFS};
+    use vfs::{MemoryFS, VfsPath};
 
-    use crate::IPInfo;
     use super::Xilinx;
+    use crate::IPInfo;
 
     #[test]
     fn check_req_files() {
         let mut root = MemoryFS::new().into();
-        IPInfo::new("test", "0.1.0").gen::<Xilinx>(&mut root).unwrap();
+        IPInfo::new("test", "0.1.0")
+            .gen::<Xilinx>(&mut root)
+            .unwrap();
 
         assert!(open_file(&root, "component.xml").is_ok());
         assert!(open_file(&root, "xgui/xgui.tcl").is_ok());

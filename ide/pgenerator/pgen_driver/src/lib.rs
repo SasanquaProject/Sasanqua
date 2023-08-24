@@ -4,8 +4,8 @@ use std::path::PathBuf;
 
 use vfs::PhysicalFS;
 
-use ipgen::IPInfo;
 use ipgen::vendor::Vendor;
+use ipgen::IPInfo;
 
 pub fn gen<V>(name: impl Into<String>, version: impl Into<String>) -> anyhow::Result<()>
 where
