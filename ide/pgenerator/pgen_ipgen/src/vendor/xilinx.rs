@@ -7,7 +7,7 @@ use vfs::VfsPath;
 use hwgen::sasanqua::bus::BusInterface;
 use hwgen::SasanquaT;
 
-use crate::utils::merge_vfs;
+use crate::utils::vfs::merge_vfs;
 use crate::vendor::Vendor;
 use crate::IPInfo;
 
