@@ -1,5 +1,4 @@
 use serde::Serialize;
-use serde_xml_rs::to_string;
 
 use hwgen::SasanquaT;
 use hwgen::sasanqua::bus::BusInterface;
@@ -11,7 +10,7 @@ where
     S: SasanquaT<B>,
     B: BusInterface,
 {
-    Top::from(ipinfo).into()
+    serde_xml_rs::to_string(&Top::from(ipinfo)).unwrap()
 }
 
 #[derive(Serialize)]
@@ -35,12 +34,6 @@ struct Top {
     // TODO: spirit:description
     // TODO: spirit:parameters
     // TODO: spirit:vendorExtensions
-}
-
-impl Into<String> for Top {
-    fn into(self) -> String {
-        to_string(&self).unwrap()
-    }
 }
 
 impl<S, B> From<&IPInfo<S, B>> for Top
