@@ -6,13 +6,12 @@ use hwgen::sasanqua::bus::BusInterface;
 
 use crate::IPInfo;
 
-pub fn gen_ip_xact_xml<S, B>(_ipinfo: &IPInfo<S, B>) -> String
+pub fn gen_ip_xact_xml<S, B>(ipinfo: &IPInfo<S, B>) -> String
 where
     S: SasanquaT<B>,
     B: BusInterface,
 {
-    let component = Top::default();
-    Into::<String>::into(component)
+    Top::from(ipinfo).into()
 }
 
 #[derive(Serialize)]
@@ -44,8 +43,12 @@ impl Into<String> for Top {
     }
 }
 
-impl Default for Top {
-    fn default() -> Self {
+impl<S, B> From<&IPInfo<S, B>> for Top
+where
+    S: SasanquaT<B>,
+    B: BusInterface,
+{
+    fn from(_ipinfo: &IPInfo<S, B>) -> Self {
         Top {
             vendor: "YNakagami".to_string(),
             library: "user".to_string(),
