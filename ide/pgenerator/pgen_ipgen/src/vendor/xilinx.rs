@@ -1,5 +1,4 @@
 mod bd;
-mod component;
 mod xgui;
 
 use vfs::VfsPath;
@@ -8,6 +7,7 @@ use hwgen::sasanqua::bus::BusInterface;
 use hwgen::SasanquaT;
 
 use crate::utils::vfs::merge_vfs;
+use crate::utils::ip_xact::gen_ip_xact_xml;
 use crate::vendor::Vendor;
 use crate::IPInfo;
 
@@ -34,7 +34,7 @@ where
 
         root.join("component.xml")?
             .create_file()?
-            .write_all(component::component_xml().as_bytes())?;
+            .write_all(gen_ip_xact_xml(ipinfo).as_bytes())?;
 
         Ok(())
     }

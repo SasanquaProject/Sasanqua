@@ -1,14 +1,23 @@
 use serde::Serialize;
 use serde_xml_rs::to_string;
 
-pub fn component_xml() -> String {
-    let component = Component::default();
+use hwgen::SasanquaT;
+use hwgen::sasanqua::bus::BusInterface;
+
+use crate::IPInfo;
+
+pub fn gen_ip_xact_xml<S, B>(_ipinfo: &IPInfo<S, B>) -> String
+where
+    S: SasanquaT<B>,
+    B: BusInterface,
+{
+    let component = Top::default();
     Into::<String>::into(component)
 }
 
 #[derive(Serialize)]
 #[serde(rename = "spirit:component")]
-struct Component {
+struct Top {
     // 固定値
     #[serde(rename = "spirit:vendor")]
     vendor: String,
@@ -29,15 +38,15 @@ struct Component {
     // TODO: spirit:vendorExtensions
 }
 
-impl Into<String> for Component {
+impl Into<String> for Top {
     fn into(self) -> String {
         to_string(&self).unwrap()
     }
 }
 
-impl Default for Component {
+impl Default for Top {
     fn default() -> Self {
-        Component {
+        Top {
             vendor: "YNakagami".to_string(),
             library: "user".to_string(),
             user: String::default(),
