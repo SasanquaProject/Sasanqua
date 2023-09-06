@@ -47,7 +47,11 @@ module exec_std_rv32i_s
 
         // PC更新
         output reg          JMP_DO,
-        output reg  [31:0]  JMP_PC
+        output reg  [31:0]  JMP_PC,
+
+        // 例外
+        output wire         EXC_EN,
+        output wire [3:0]   EXC_CODE
     );
 
     /* ----- 入力取り込み ----- */
@@ -492,12 +496,16 @@ module exec_std_rv32i_s
         endcase
     end
 
+    // 例外
+    assign EXC_EN   = 1'b0;
+    assign EXC_CODE = 4'b0;
+
     // その他
-    always @* begin
+    // always @* begin
         // fence
         // fence.i
         // ebreak
         // ecall
-    end
+    // end
 
 endmodule
