@@ -10,9 +10,9 @@ module reg_std_csr
         /* ----- レジスタアクセス ----- */
         // 読み
         input wire  [11:0]  RIADDR,
-        output wire         RVALID,
+        output reg          RVALID,
         output wire [11:0]  ROADDR,
-        output wire [31:0]  RDATA,
+        output reg  [31:0]  RDATA,
 
         // 書き
         input wire          WREN,
@@ -76,65 +76,30 @@ module reg_std_csr
     end
 
     /* ----- レジスタアクセス ----- */
-    // レジスタ群
-    wire [32:0] mvendorid, marchid, mimpid, mhartid;
-
-    assign mvendorid    = 32'b0;
-    assign marchid      = 32'b0;
-    assign mimpid       = 32'b0;
-    assign mhartid      = 32'b0;
-
     // 読み
-    reg  [31:0] rdata;
+    assign ROADDR = riaddr;
 
     always @* begin
         case (riaddr)
-            12'hf11: rdata <= mvendorid;
-            12'hf12: rdata <= marchid;
-            12'hf13: rdata <= mimpid;
-            12'hf14: rdata <= mhartid;
-            default: rdata <= 32'b0;
+            12'b0:              RVALID <= 1'b1;
+            fwd_csr_addr:       RVALID <= 1'b0;
+            fwd_exec_addr:      RVALID <= fwd_exec_en;
+            fwd_cushion_addr:   RVALID <= fwd_cushion_en;
+            default:            RVALID <= 1'b1;
         endcase
     end
 
-    assign ROADDR = riaddr;
-    assign RVALID = forwarding_check(riaddr, fwd_csr_addr, fwd_exec_addr, fwd_exec_en, fwd_cushion_addr, fwd_cushion_en);
-    assign RDATA  = forwarding(riaddr, rdata, fwd_exec_addr, fwd_exec_data, fwd_cushion_addr, fwd_cushion_data, waddr, wdata);
+    always @* begin
+        case (riaddr)
+            // Fowarding
+            12'b0:              RDATA <= 32'b0;
+            fwd_exec_addr:      RDATA <= fwd_exec_data;
+            fwd_cushion_addr:   RDATA <= fwd_cushion_data;
+            waddr:              RDATA <= wdata;
 
-    function forwarding_check;
-        input [11:0]    target_addr;
-        input [11:0]    csr_addr;
-        input [11:0]    exec_addr;
-        input           exec_en;
-        input [11:0]    cushion_addr;
-        input           cushion_en;
-
-        case (target_addr)
-            12'b0:          forwarding_check = 1'b1;
-            csr_addr:       forwarding_check = 1'b0;
-            exec_addr:      forwarding_check = exec_en;
-            cushion_addr:   forwarding_check = cushion_en;
-            default:        forwarding_check = 1'b1;
+            // CSR
+            default:            RDATA <= 32'b0;
         endcase
-    endfunction
-
-    function [31:0] forwarding;
-        input [11:0]    target_addr;
-        input [31:0]    target_data;
-        input [11:0]    exec_addr;
-        input [31:0]    exec_data;
-        input [11:0]    cushion_addr;
-        input [31:0]    cushion_data;
-        input [11:0]    memr_addr;
-        input [31:0]    memr_data;
-
-        case (target_addr)
-            12'b0:          forwarding = 32'b0;
-            exec_addr:      forwarding = exec_data;
-            cushion_addr:   forwarding = cushion_data;
-            memr_addr:      forwarding = memr_data;
-            default:        forwarding = target_data;
-        endcase
-    endfunction
+    end
 
 endmodule
