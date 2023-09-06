@@ -500,9 +500,9 @@ module exec_std_rv32i_s
             EXC_CODE <= 4'd2;
             EXC_PC <= pc;
         end
-        else if ({ opcode, funct3, funct7} == 17'b1110011_000_0000000) begin // Environment call
+        else if ({ opcode, funct3, funct7} == 17'b1110011_000_0000000) begin // Environment break or call
             EXC_EN <= 1'b1;
-            EXC_CODE <= 4'd11;
+            EXC_CODE <= imm[11:0] == 12'b0 ? 4'd11 : 4'd3;
             EXC_PC <= pc;
         end
         else begin
