@@ -75,25 +75,42 @@ module reg_std_csr
         end
     end
 
-    /* ----- レジスタアクセス(CSR) ----- */
-    wire [31:0] tmp;
-    assign tmp = 32'b0;
+    /* ----- レジスタアクセス ----- */
+    // レジスタ群
+    wire [32:0] mvendorid, marchid, mimpid, mhartid;
+
+    assign mvendorid    = 32'b0;
+    assign marchid      = 32'b0;
+    assign mimpid       = 32'b0;
+    assign mhartid      = 32'b0;
 
     // 読み
+    reg  [31:0] rdata;
+
+    always @* begin
+        case (riaddr)
+            12'hf11: rdata <= mvendorid;
+            12'hf12: rdata <= marchid;
+            12'hf13: rdata <= mimpid;
+            12'hf14: rdata <= mhartid;
+            default: rdata <= 32'b0;
+        endcase
+    end
+
     assign ROADDR = riaddr;
     assign RVALID = forwarding_check(riaddr, fwd_csr_addr, fwd_exec_addr, fwd_exec_en, fwd_cushion_addr, fwd_cushion_en);
-    assign RDATA  = forwarding(riaddr, tmp, fwd_exec_addr, fwd_exec_data, fwd_cushion_addr, fwd_cushion_data, waddr, wdata);
+    assign RDATA  = forwarding(riaddr, rdata, fwd_exec_addr, fwd_exec_data, fwd_cushion_addr, fwd_cushion_data, waddr, wdata);
 
     function forwarding_check;
-        input [4:0]     target_addr;
-        input [4:0]     csr_addr;
-        input [4:0]     exec_addr;
+        input [11:0]    target_addr;
+        input [11:0]    csr_addr;
+        input [11:0]    exec_addr;
         input           exec_en;
-        input [4:0]     cushion_addr;
+        input [11:0]    cushion_addr;
         input           cushion_en;
 
         case (target_addr)
-            5'b0:           forwarding_check = 1'b1;
+            12'b0:          forwarding_check = 1'b1;
             csr_addr:       forwarding_check = 1'b0;
             exec_addr:      forwarding_check = exec_en;
             cushion_addr:   forwarding_check = cushion_en;
@@ -102,17 +119,17 @@ module reg_std_csr
     endfunction
 
     function [31:0] forwarding;
-        input [4:0]     target_addr;
+        input [11:0]    target_addr;
         input [31:0]    target_data;
-        input [4:0]     exec_addr;
+        input [11:0]    exec_addr;
         input [31:0]    exec_data;
-        input [4:0]     cushion_addr;
+        input [11:0]    cushion_addr;
         input [31:0]    cushion_data;
-        input [4:0]     memr_addr;
+        input [11:0]    memr_addr;
         input [31:0]    memr_data;
 
         case (target_addr)
-            5'b0:           forwarding = 32'b0;
+            12'b0:          forwarding = 32'b0;
             exec_addr:      forwarding = exec_data;
             cushion_addr:   forwarding = cushion_data;
             memr_addr:      forwarding = memr_data;
