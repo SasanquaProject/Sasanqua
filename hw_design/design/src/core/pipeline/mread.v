@@ -43,6 +43,7 @@ module mread
         // 例外
         input wire          CUSHION_EXC_EN,
         input wire  [3:0]   CUSHION_EXC_CODE,
+        input wire  [31:0]  CUSHION_EXC_PC,
 
         /* ----- メモリアクセス(w)部との接続 ----- */
         // レジスタ(rv32i:W)
@@ -65,7 +66,8 @@ module mread
 
         // 例外
         output wire         MEMR_EXC_EN,
-        output wire [3:0]   MEMR_EXC_CODE
+        output wire [3:0]   MEMR_EXC_CODE,
+        output wire [31:0]  MEMR_EXC_PC
     );
 
     /* ----- MMUとの接続 ----- */
@@ -74,7 +76,7 @@ module mread
 
     /* ----- 入力取り込み ----- */
     reg         cushion_csr_w_en, cushion_mem_r_en, cushion_mem_r_signed, cushion_mem_w_en, cushion_jmp_do, cushion_exc_en;
-    reg [31:0]  cushion_reg_w_data, cushion_csr_w_data, cushion_mem_r_addr, cushion_mem_w_addr, cushion_mem_w_data, cushion_jmp_pc;
+    reg [31:0]  cushion_reg_w_data, cushion_csr_w_data, cushion_mem_r_addr, cushion_mem_w_addr, cushion_mem_w_data, cushion_jmp_pc, cushion_exc_pc;
     reg [11:0]  cushion_csr_w_addr;
     reg [4:0]   cushion_reg_w_rd, cushion_mem_r_rd;
     reg [3:0]   cushion_mem_r_strb, cushion_mem_w_strb, cushion_exc_code;
@@ -99,6 +101,7 @@ module mread
             cushion_jmp_pc <= 32'b0;
             cushion_exc_en <= 1'b0;
             cushion_exc_code <= 4'b0;
+            cushion_exc_pc <= 32'b0;
         end
         else if (MEM_WAIT) begin
             // do nothing
@@ -122,6 +125,7 @@ module mread
             cushion_jmp_pc <= CUSHION_JMP_PC;
             cushion_exc_en <= CUSHION_EXC_EN;
             cushion_exc_code <= CUSHION_EXC_CODE;
+            cushion_exc_pc <= CUSHION_EXC_PC;
         end
     end
 
@@ -143,6 +147,7 @@ module mread
     assign MEMR_JMP_PC       = cushion_jmp_pc;
     assign MEMR_EXC_EN       = cushion_exc_en;
     assign MEMR_EXC_CODE     = cushion_exc_code;
+    assign MEMR_EXC_PC       = cushion_exc_pc;
 
     function [31:0] gen_rddata;
         input [31:0]    DATA;

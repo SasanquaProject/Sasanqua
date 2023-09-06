@@ -1,11 +1,23 @@
 module reg_std_csr
     (
         /* ----- 制御 ----- */
+        // クロック・リセット
         input wire          CLK,
         input wire          RST,
+
+        // パイプライン
         input wire          FLUSH,
         input wire          STALL,
         input wire          MEM_WAIT,
+
+        // 例外
+        input wire          EXC_EN,
+        input wire  [3:0]   EXC_CODE,
+        input wire  [31:0]  EXC_PC,
+
+        // CSRに基づく他モジュールの制御
+        output wire [1:0]   TRAP_VEC_MODE,
+        output wire [31:0]  TRAP_VEC_BASE,
 
         /* ----- レジスタアクセス ----- */
         // 読み
@@ -30,6 +42,10 @@ module reg_std_csr
         input wire  [11:0]  FWD_CUSHION_ADDR,
         input wire  [31:0]  FWD_CUSHION_DATA
     );
+
+    /* ----- 他モジュールへの制御信号 ----- */
+    assign TRAP_VEC_MODE = mtvec[1:0];
+    assign TRAP_VEC_BASE = { mtvec[31:2], 2'b0 };
 
     /* ----- 入力取り込み ----- */
     reg  [11:0] riaddr, waddr, fwd_csr_addr, fwd_exec_addr, fwd_cushion_addr;
@@ -116,6 +132,10 @@ module reg_std_csr
             mscratch <= 32'b0;
             mepc <= 32'b0;
             mcause <= 32'b0;
+        end
+        else if (EXC_EN) begin
+            mcause <= { 1'b0, { 27'b0, EXC_CODE } };
+            mepc <= EXC_PC;
         end
         else begin
             case (WADDR)

@@ -7,8 +7,10 @@ module fetch
         // クロック・リセット
         input wire          CLK,
         input wire          RST,
+
+        // パイプライン
         input wire          FLUSH,
-        input wire  [31:0]  NEW_PC,
+        input wire  [31:0]  FLUSH_PC,
         input wire          STALL,
         input wire          MEM_WAIT,
 
@@ -39,7 +41,7 @@ module fetch
         if (RST)
             pc <= START_ADDR;
         else if (FLUSH)
-            pc <= NEW_PC;
+            pc <= FLUSH_PC;
         else if (STALL || MEM_WAIT) begin
             // do nothing
         end

@@ -38,7 +38,7 @@ wire [31:0] DATA_WDATA              = sasanqua.mmu.DATA_WDATA;
 
 // Core: Pipeline
 wire        FLUSH                   = sasanqua.core.flush;
-wire [31:0] NEW_PC                  = sasanqua.core.fetch.NEW_PC;
+wire [31:0] FLUSH_PC                = sasanqua.core.flush_pc;
 wire        STALL                   = sasanqua.core.stall;
 
 // Core: Fetch
@@ -178,7 +178,7 @@ begin
     #(STEP*10)
     RST = 0;
 
-    @(posedge MEMR_JMP_PC == 32'h2000_003C);
+    @(MEMR_JMP_DO && MEMR_JMP_PC == 32'h2000_003C);
     #(STEP*10)
 
     if (I_REG_3 == 32'b1)
