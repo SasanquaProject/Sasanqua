@@ -495,7 +495,12 @@ module exec_std_rv32i_s
 
     // 例外
     always @* begin
-        if ({ opcode, funct3, funct7} == 17'b1110011_000_0000000) begin // Environment call
+        if (imm == 32'hffff_ffff) begin // Illegal instruction
+            EXC_EN <= 1'b1;
+            EXC_CODE <= 4'd2;
+            EXC_PC <= pc;
+        end
+        else if ({ opcode, funct3, funct7} == 17'b1110011_000_0000000) begin // Environment call
             EXC_EN <= 1'b1;
             EXC_CODE <= 4'd11;
             EXC_PC <= pc;
