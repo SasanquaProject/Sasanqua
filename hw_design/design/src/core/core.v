@@ -1,5 +1,6 @@
 module core
     # (
+        parameter HART_ID    = 32'h0,
         parameter START_ADDR = 32'h2000_0000
     )
     (

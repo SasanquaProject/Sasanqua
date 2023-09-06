@@ -139,6 +139,7 @@ module sasanqua
 
     /* ----- Core ----- */
     core # (
+        .HART_ID        (0),
         .START_ADDR     (START_ADDR)
     ) core (
         // 制御
