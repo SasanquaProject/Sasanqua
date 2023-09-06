@@ -13,14 +13,6 @@
 
 void setup(unsigned char *addr, unsigned char *program, size_t length) {
 	for (int idx = 0; idx < length; ++ idx) {
-		if (idx == 4) {
-			*(addr++) = 0x6f;
-			*(addr++) = 0x00;
-			*(addr++) = 0x80;
-			*(addr++) = 0x03;
-			program += 4;
-			continue;
-		}
 		*(addr++) = *(program++);
 	}
 }
