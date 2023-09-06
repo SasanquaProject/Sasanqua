@@ -9,7 +9,7 @@
 #define STAT	(*(volatile unsigned int*)(XPAR_SASANQUA_CONTROLLER_0_BASEADDR + 0x0004))
 
 #define t2s(a) #a
-#define test(ty, name) run_test(t2s(ty ## _ ## name), ty ## _ ## name ##_bin, ty ##_ ## name ## _bin_len)
+#define test(ty, name) result = run_test(t2s(ty ## _ ## name), ty ## _ ## name ##_bin, ty ##_ ## name ## _bin_len)
 
 void setup(unsigned char *addr, unsigned char *program, size_t length) {
 	for (int idx = 0; idx < length; ++ idx) {
@@ -24,22 +24,31 @@ void reset(void) {
 	Xil_Out32(0xF8000004, 0x0000767B); // LOCK SCLR
 }
 
-void run_test(char *name, unsigned char *program, size_t length) {
+int run_test(char *name, unsigned char *program, size_t length) {
+	static int success_cnt = 0;
+	static int all_cnt = 0;
+
 	setup((unsigned char*)0x20000000, program, length);
 	reset();
 
 	xil_printf("%s ... ", name);
 	sleep(1);
 
+	++ all_cnt;
 	if (STAT == 1) {
+		++ success_cnt;
 		xil_printf("Success!\n");
 	} else {
 		xil_printf("Failed (at %d)\n", STAT >> 1);
 	}
+
+	return success_cnt * 1000 + all_cnt;
 }
 
 int main(void) {
 	Xil_DCacheDisable();
+
+	int result;
 
 	test(rv32ui_p, add);
 	test(rv32ui_p, addi);
@@ -80,6 +89,8 @@ int main(void) {
 	test(rv32ui_p, sw);
 	test(rv32ui_p, xor);
 	test(rv32ui_p, xori);
+
+	xil_printf("Result : %3d /%3d\n\n", result/1000, result%1000);
 
 	return 0;
 }
