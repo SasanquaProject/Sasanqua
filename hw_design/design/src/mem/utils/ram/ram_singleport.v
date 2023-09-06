@@ -14,7 +14,7 @@ module ram_singleport
         output wire [31:0]          RDATA,
         input wire                  WREN,
         input wire  [(WIDTH-1):0]   WADDR,
-        input wire  [31:0]          WDATA,
+        input wire  [31:0]          WDATA
     );
 
     (* ram_style = "block" *)

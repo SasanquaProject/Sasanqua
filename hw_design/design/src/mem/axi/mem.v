@@ -1,4 +1,4 @@
-module mmu_axi
+module mem_axi
     (
         /* ----- 制御 ----- */
         // クロック, リセット
