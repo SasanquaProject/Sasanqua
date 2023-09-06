@@ -76,6 +76,9 @@ module reg_std_csr
     end
 
     /* ----- レジスタアクセス ----- */
+    // レジスタ群
+    reg [31:0] mtvec, mscratch, mepc, mcause;
+
     // 読み
     assign ROADDR = riaddr;
 
@@ -98,8 +101,31 @@ module reg_std_csr
             waddr:              RDATA <= wdata;
 
             // CSR
+            12'h305:            RDATA <= mtvec;
+            12'h340:            RDATA <= mscratch;
+            12'h341:            RDATA <= mepc;
+            12'h342:            RDATA <= mcause;
             default:            RDATA <= 32'b0;
         endcase
+    end
+
+    // 書き
+    always @ (posedge CLK) begin
+        if (RST) begin
+            mtvec <= 32'b0;
+            mscratch <= 32'b0;
+            mepc <= 32'b0;
+            mcause <= 32'b0;
+        end
+        else begin
+            case (WADDR)
+                12'h305: mtvec <= WDATA;
+                12'h340: mscratch <= WDATA;
+                12'h341: mepc <= WDATA;
+                12'h342: mcause <= WDATA;
+                default: ;
+            endcase
+        end
     end
 
 endmodule
