@@ -30,8 +30,9 @@ module core
     );
 
     /* ----- パイプライン制御 ----- */
-    wire flush = memr_jmp_do;
-    wire stall = !reg_rs1_valid || !reg_rs2_valid || !reg_csr_valid;
+    wire        flush    = memr_jmp_do;
+    wire [31:0] flush_pc = memr_jmp_pc;
+    wire        stall    = !reg_rs1_valid || !reg_rs2_valid || !reg_csr_valid;
 
     /* ----- 1. 命令フェッチ ----- */
     wire [31:0] inst_pc, inst_data;
@@ -43,7 +44,7 @@ module core
         .CLK        (CLK),
         .RST        (RST),
         .FLUSH      (flush),
-        .NEW_PC     (memr_jmp_pc),
+        .FLUSH_PC   (flush_pc),
         .STALL      (stall),
         .MEM_WAIT   (MEM_WAIT),
 
@@ -161,6 +162,9 @@ module core
 
     /* ----- 4-2. レジスタアクセス ----- */
     // CSR
+    wire [1:0]  trap_vec_mode;
+    wire [31:0] trap_vec_base;
+
     wire [31:0] reg_csr_data;
     wire [11:0] reg_csr_addr;
     wire        reg_csr_valid;
@@ -172,6 +176,11 @@ module core
         .FLUSH              (flush),
         .STALL              (stall),
         .MEM_WAIT           (MEM_WAIT),
+        .EXC_EN             (memr_exc_en),
+        .EXC_CODE           (memr_exc_code),
+        .EXC_PC             (memr_exc_pc),
+        .TRAP_VEC_MODE      (trap_vec_mode),
+        .TRAP_VEC_BASE      (trap_vec_base),
 
         // レジスタアクセス
         .RIADDR             (check_csr),
@@ -228,11 +237,11 @@ module core
     );
 
     /* ----- 5. 実行 ----- */
-    wire        reg_w_en, mem_r_en, mem_r_signed, csr_w_en, mem_w_en, jmp_do;
-    wire [31:0] reg_w_data, csr_w_data, mem_r_addr, mem_w_addr, mem_w_data, jmp_pc;
+    wire        reg_w_en, mem_r_en, mem_r_signed, csr_w_en, mem_w_en, jmp_do, exc_en;
+    wire [31:0] reg_w_data, csr_w_data, mem_r_addr, mem_w_addr, mem_w_data, jmp_pc, exc_pc;
     wire [11:0] csr_w_addr;
     wire [4:0]  reg_w_rd, mem_r_rd;
-    wire [3:0]  mem_r_strb, mem_w_strb;
+    wire [3:0]  mem_r_strb, mem_w_strb, exc_code;
 
     exec_std_rv32i_s exec_std_rv32i_s_0 (
         // 制御
@@ -273,15 +282,18 @@ module core
         .MEM_W_STRB     (mem_w_strb),
         .MEM_W_DATA     (mem_w_data),
         .JMP_DO         (jmp_do),
-        .JMP_PC         (jmp_pc)
+        .JMP_PC         (jmp_pc),
+        .EXC_EN         (exc_en),
+        .EXC_CODE       (exc_code),
+        .EXC_PC         (exc_pc)
     );
 
     /* ----- 6. 実行部待機 ------ */
-    wire        cushion_reg_w_en, cushion_mem_r_en, cushion_mem_r_signed, cushion_csr_w_en, cushion_mem_w_en, cushion_jmp_do;
-    wire [31:0] cushion_reg_w_data, cushion_csr_w_data, cushion_mem_r_addr, cushion_mem_w_addr, cushion_mem_w_data, cushion_jmp_pc;
+    wire        cushion_reg_w_en, cushion_mem_r_en, cushion_mem_r_signed, cushion_csr_w_en, cushion_mem_w_en, cushion_jmp_do, cushion_exc_en;
+    wire [31:0] cushion_reg_w_data, cushion_csr_w_data, cushion_mem_r_addr, cushion_mem_w_addr, cushion_mem_w_data, cushion_jmp_pc, cushion_exc_pc;
     wire [11:0] cushion_csr_w_addr;
     wire [4:0]  cushion_reg_w_rd, cushion_mem_r_rd;
-    wire [3:0]  cushion_mem_r_strb, cushion_mem_w_strb;
+    wire [3:0]  cushion_mem_r_strb, cushion_mem_w_strb, cushion_exc_code;
 
     cushion cushion (
         // 制御
@@ -289,6 +301,8 @@ module core
         .RST                    (RST),
         .FLUSH                  (flush),
         .MEM_WAIT               (MEM_WAIT),
+        .TRAP_VEC_MODE          (trap_vec_mode),
+        .TRAP_VEC_BASE          (trap_vec_base),
 
         // 実行部との接続
         .EXEC_REG_W_EN          (reg_w_en),
@@ -308,6 +322,9 @@ module core
         .EXEC_MEM_W_DATA        (mem_w_data),
         .EXEC_JMP_DO            (jmp_do),
         .EXEC_JMP_PC            (jmp_pc),
+        .EXEC_EXC_EN            (exc_en),
+        .EXEC_EXC_CODE          (exc_code),
+        .EXEC_EXC_PC            (exc_pc),
 
         // メモリアクセス部(r)との接続
         .CUSHION_REG_W_EN       (cushion_reg_w_en),
@@ -326,14 +343,18 @@ module core
         .CUSHION_MEM_W_STRB     (cushion_mem_w_strb),
         .CUSHION_MEM_W_DATA     (cushion_mem_w_data),
         .CUSHION_JMP_DO         (cushion_jmp_do),
-        .CUSHION_JMP_PC         (cushion_jmp_pc)
+        .CUSHION_JMP_PC         (cushion_jmp_pc),
+        .CUSHION_EXC_EN         (cushion_exc_en),
+        .CUSHION_EXC_CODE       (cushion_exc_code),
+        .CUSHION_EXC_PC         (cushion_exc_pc)
     );
 
     /* ----- 7. メモリアクセス(r) ----- */
-    wire        memr_csr_w_en, memr_mem_w_en, memr_jmp_do;
-    wire [31:0] memr_reg_w_data, memr_csr_w_data, memr_mem_w_addr, memr_mem_w_data, memr_jmp_pc;
+    wire        memr_csr_w_en, memr_mem_w_en, memr_jmp_do, memr_exc_en;
+    wire [31:0] memr_reg_w_data, memr_csr_w_data, memr_mem_w_addr, memr_mem_w_data, memr_jmp_pc, memr_exc_pc;
     wire [11:0] memr_csr_w_addr;
     wire [4:0]  memr_reg_w_rd;
+    wire [3:0]  memr_exc_code;
 
     mread mread (
         // 制御
@@ -366,6 +387,9 @@ module core
         .CUSHION_MEM_W_DATA     (cushion_mem_w_data),
         .CUSHION_JMP_DO         (cushion_jmp_do),
         .CUSHION_JMP_PC         (cushion_jmp_pc),
+        .CUSHION_EXC_EN         (cushion_exc_en),
+        .CUSHION_EXC_CODE       (cushion_exc_code),
+        .CUSHION_EXC_PC         (cushion_exc_pc),
 
         // メモリアクセス(w)との接続
         .MEMR_REG_W_RD          (memr_reg_w_rd),
@@ -377,7 +401,10 @@ module core
         .MEMR_MEM_W_ADDR        (memr_mem_w_addr),
         .MEMR_MEM_W_DATA        (memr_mem_w_data),
         .MEMR_JMP_DO            (memr_jmp_do),
-        .MEMR_JMP_PC            (memr_jmp_pc)
+        .MEMR_JMP_PC            (memr_jmp_pc),
+        .MEMR_EXC_EN            (memr_exc_en),
+        .MEMR_EXC_CODE          (memr_exc_code),
+        .MEMR_EXC_PC            (memr_exc_pc)
     );
 
     /* ----- 8. メモリアクセス(w) ----- */

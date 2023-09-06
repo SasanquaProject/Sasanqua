@@ -38,7 +38,7 @@ wire [31:0] DATA_WDATA              = sasanqua.mmu.DATA_WDATA;
 
 // Core: Pipeline
 wire        FLUSH                   = sasanqua.core.flush;
-wire [31:0] NEW_PC                  = sasanqua.core.fetch.NEW_PC;
+wire [31:0] FLUSH_PC                = sasanqua.core.flush_pc;
 wire        STALL                   = sasanqua.core.stall;
 
 // Core: Fetch
@@ -99,6 +99,8 @@ wire [3:0]  EXEC_MEM_W_STRB         = sasanqua.core.mem_w_strb;
 wire [31:0] EXEC_MEM_W_DATA         = sasanqua.core.mem_w_data;
 wire        EXEC_JMP_DO             = sasanqua.core.jmp_do;
 wire [31:0] EXEC_JMP_PC             = sasanqua.core.jmp_pc;
+wire        EXEC_EXC_EN             = sasanqua.core.exec_std_rv32i_s_0.EXC_EN;
+wire [3:0]  EXEC_EXC_CODE           = sasanqua.core.exec_std_rv32i_s_0.EXC_CODE;
 
 // Core: Cushion
 wire [4:0]  CUSHION_REG_W_RD        = sasanqua.core.cushion_reg_w_rd;
@@ -116,6 +118,8 @@ wire [3:0]  CUSHION_MEM_W_STRB      = sasanqua.core.cushion_mem_w_strb;
 wire [31:0] CUSHION_MEM_W_DATA      = sasanqua.core.cushion_mem_w_data;
 wire        CUSHION_JMP_DO          = sasanqua.core.cushion_jmp_do;
 wire [31:0] CUSHION_JMP_PC          = sasanqua.core.cushion_jmp_pc;
+wire        CUSHION_EXC_EN          = sasanqua.core.cushion_exc_en;
+wire [3:0]  CUSHION_EXC_CODE        = sasanqua.core.cushion_exc_code;
 
 // Core: Mem(r)
 wire [4:0]  MEMR_REG_W_RD           = sasanqua.core.memr_reg_w_rd;
@@ -127,6 +131,8 @@ wire [31:0] MEMR_MEM_W_ADDR         = sasanqua.core.memr_mem_w_addr;
 wire [31:0] MEMR_MEM_W_DATA         = sasanqua.core.memr_mem_w_data;
 wire        MEMR_JMP_DO             = sasanqua.core.memr_jmp_do;
 wire [31:0] MEMR_JMP_PC             = sasanqua.core.memr_jmp_pc;
+wire        MEMR_EXC_EN             = sasanqua.core.memr_exc_en;
+wire [3:0]  MEMR_EXC_CODE           = sasanqua.core.memr_exc_code;
 
 // Register: rv32i
 wire [31:0] I_REG_0                 = sasanqua.core.reg_std_rv32i_0.registers[0];
@@ -172,7 +178,7 @@ begin
     #(STEP*10)
     RST = 0;
 
-    @(posedge MEMR_JMP_PC == 32'h2000_003C);
+    @(MEMR_JMP_DO && MEMR_JMP_PC == 32'h2000_003C);
     #(STEP*10)
 
     if (I_REG_3 == 32'b1)
@@ -187,45 +193,45 @@ integer fd;
 initial begin
     RST = 0;
 
-    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/bin/rv32ui-p-add.bin", "rb");        riscv_tests( 0, fd);
-    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/bin/rv32ui-p-addi.bin", "rb");       riscv_tests( 1, fd);
-    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/bin/rv32ui-p-and.bin", "rb");        riscv_tests( 2, fd);
-    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/bin/rv32ui-p-andi.bin", "rb");       riscv_tests( 3, fd);
-    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/bin/rv32ui-p-auipc.bin", "rb");      riscv_tests( 4, fd);
-    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/bin/rv32ui-p-beq.bin", "rb");        riscv_tests( 5, fd);
-    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/bin/rv32ui-p-bge.bin", "rb");        riscv_tests( 6, fd);
-    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/bin/rv32ui-p-bgeu.bin", "rb");       riscv_tests( 7, fd);
-    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/bin/rv32ui-p-blt.bin", "rb");        riscv_tests( 8, fd);
-    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/bin/rv32ui-p-bltu.bin", "rb");       riscv_tests( 9, fd);
-    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/bin/rv32ui-p-bne.bin", "rb");        riscv_tests(10, fd);
-    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/bin/rv32ui-p-jal.bin", "rb");        riscv_tests(11, fd);
-    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/bin/rv32ui-p-jalr.bin", "rb");       riscv_tests(12, fd);
-    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/bin/rv32ui-p-lb.bin", "rb");         riscv_tests(13, fd);
-    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/bin/rv32ui-p-lbu.bin", "rb");        riscv_tests(14, fd);
-    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/bin/rv32ui-p-lh.bin", "rb");         riscv_tests(15, fd);
-    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/bin/rv32ui-p-lhu.bin", "rb");        riscv_tests(16, fd);
-    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/bin/rv32ui-p-lui.bin", "rb");        riscv_tests(17, fd);
-    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/bin/rv32ui-p-lw.bin", "rb");         riscv_tests(18, fd);
-    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/bin/rv32ui-p-or.bin", "rb");         riscv_tests(19, fd);
-    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/bin/rv32ui-p-ori.bin", "rb");        riscv_tests(20, fd);
-    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/bin/rv32ui-p-sb.bin", "rb");         riscv_tests(21, fd);
-    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/bin/rv32ui-p-sh.bin", "rb");         riscv_tests(22, fd);
-    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/bin/rv32ui-p-sll.bin", "rb");        riscv_tests(23, fd);
-    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/bin/rv32ui-p-slli.bin", "rb");       riscv_tests(24, fd);
-    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/bin/rv32ui-p-slt.bin", "rb");        riscv_tests(25, fd);
-    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/bin/rv32ui-p-slti.bin", "rb");       riscv_tests(26, fd);
-    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/bin/rv32ui-p-sltiu.bin", "rb");      riscv_tests(27, fd);
-    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/bin/rv32ui-p-sltu.bin", "rb");       riscv_tests(28, fd);
-    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/bin/rv32ui-p-sra.bin", "rb");        riscv_tests(29, fd);
-    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/bin/rv32ui-p-srai.bin", "rb");       riscv_tests(30, fd);
-    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/bin/rv32ui-p-srl.bin", "rb");        riscv_tests(31, fd);
-    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/bin/rv32ui-p-srli.bin", "rb");       riscv_tests(32, fd);
-    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/bin/rv32ui-p-sub.bin", "rb");        riscv_tests(33, fd);
-    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/bin/rv32ui-p-sw.bin", "rb");         riscv_tests(34, fd);
-    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/bin/rv32ui-p-xor.bin", "rb");        riscv_tests(35, fd);
-    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/bin/rv32ui-p-xori.bin", "rb");       riscv_tests(36, fd);
-    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/bin/rv32ui-p-fence_i.bin", "rb");    riscv_tests(37, fd);
-    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/bin/rv32ui-p-simple.bin", "rb");     riscv_tests(38, fd);
+    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/out/bin/rv32ui-p-add.bin", "rb");        riscv_tests( 0, fd);
+    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/out/bin/rv32ui-p-addi.bin", "rb");       riscv_tests( 1, fd);
+    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/out/bin/rv32ui-p-and.bin", "rb");        riscv_tests( 2, fd);
+    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/out/bin/rv32ui-p-andi.bin", "rb");       riscv_tests( 3, fd);
+    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/out/bin/rv32ui-p-auipc.bin", "rb");      riscv_tests( 4, fd);
+    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/out/bin/rv32ui-p-beq.bin", "rb");        riscv_tests( 5, fd);
+    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/out/bin/rv32ui-p-bge.bin", "rb");        riscv_tests( 6, fd);
+    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/out/bin/rv32ui-p-bgeu.bin", "rb");       riscv_tests( 7, fd);
+    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/out/bin/rv32ui-p-blt.bin", "rb");        riscv_tests( 8, fd);
+    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/out/bin/rv32ui-p-bltu.bin", "rb");       riscv_tests( 9, fd);
+    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/out/bin/rv32ui-p-bne.bin", "rb");        riscv_tests(10, fd);
+    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/out/bin/rv32ui-p-jal.bin", "rb");        riscv_tests(11, fd);
+    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/out/bin/rv32ui-p-jalr.bin", "rb");       riscv_tests(12, fd);
+    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/out/bin/rv32ui-p-lb.bin", "rb");         riscv_tests(13, fd);
+    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/out/bin/rv32ui-p-lbu.bin", "rb");        riscv_tests(14, fd);
+    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/out/bin/rv32ui-p-lh.bin", "rb");         riscv_tests(15, fd);
+    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/out/bin/rv32ui-p-lhu.bin", "rb");        riscv_tests(16, fd);
+    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/out/bin/rv32ui-p-lui.bin", "rb");        riscv_tests(17, fd);
+    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/out/bin/rv32ui-p-lw.bin", "rb");         riscv_tests(18, fd);
+    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/out/bin/rv32ui-p-or.bin", "rb");         riscv_tests(19, fd);
+    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/out/bin/rv32ui-p-ori.bin", "rb");        riscv_tests(20, fd);
+    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/out/bin/rv32ui-p-sb.bin", "rb");         riscv_tests(21, fd);
+    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/out/bin/rv32ui-p-sh.bin", "rb");         riscv_tests(22, fd);
+    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/out/bin/rv32ui-p-sll.bin", "rb");        riscv_tests(23, fd);
+    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/out/bin/rv32ui-p-slli.bin", "rb");       riscv_tests(24, fd);
+    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/out/bin/rv32ui-p-slt.bin", "rb");        riscv_tests(25, fd);
+    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/out/bin/rv32ui-p-slti.bin", "rb");       riscv_tests(26, fd);
+    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/out/bin/rv32ui-p-sltiu.bin", "rb");      riscv_tests(27, fd);
+    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/out/bin/rv32ui-p-sltu.bin", "rb");       riscv_tests(28, fd);
+    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/out/bin/rv32ui-p-sra.bin", "rb");        riscv_tests(29, fd);
+    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/out/bin/rv32ui-p-srai.bin", "rb");       riscv_tests(30, fd);
+    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/out/bin/rv32ui-p-srl.bin", "rb");        riscv_tests(31, fd);
+    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/out/bin/rv32ui-p-srli.bin", "rb");       riscv_tests(32, fd);
+    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/out/bin/rv32ui-p-sub.bin", "rb");        riscv_tests(33, fd);
+    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/out/bin/rv32ui-p-sw.bin", "rb");         riscv_tests(34, fd);
+    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/out/bin/rv32ui-p-xor.bin", "rb");        riscv_tests(35, fd);
+    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/out/bin/rv32ui-p-xori.bin", "rb");       riscv_tests(36, fd);
+    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/out/bin/rv32ui-p-fence_i.bin", "rb");    riscv_tests(37, fd);
+    fd = $fopen("../../../../../../design/tb/resources/riscv-tests/out/bin/rv32ui-p-simple.bin", "rb");     riscv_tests(38, fd);
 
     $stop;
 end

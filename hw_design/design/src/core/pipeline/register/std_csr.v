@@ -1,18 +1,30 @@
 module reg_std_csr
     (
         /* ----- 制御 ----- */
+        // クロック・リセット
         input wire          CLK,
         input wire          RST,
+
+        // パイプライン
         input wire          FLUSH,
         input wire          STALL,
         input wire          MEM_WAIT,
 
+        // 例外
+        input wire          EXC_EN,
+        input wire  [3:0]   EXC_CODE,
+        input wire  [31:0]  EXC_PC,
+
+        // CSRに基づく他モジュールの制御
+        output wire [1:0]   TRAP_VEC_MODE,
+        output wire [31:0]  TRAP_VEC_BASE,
+
         /* ----- レジスタアクセス ----- */
         // 読み
         input wire  [11:0]  RIADDR,
-        output wire         RVALID,
+        output reg          RVALID,
         output wire [11:0]  ROADDR,
-        output wire [31:0]  RDATA,
+        output reg  [31:0]  RDATA,
 
         // 書き
         input wire          WREN,
@@ -30,6 +42,10 @@ module reg_std_csr
         input wire  [11:0]  FWD_CUSHION_ADDR,
         input wire  [31:0]  FWD_CUSHION_DATA
     );
+
+    /* ----- 他モジュールへの制御信号 ----- */
+    assign TRAP_VEC_MODE = mtvec[1:0];
+    assign TRAP_VEC_BASE = { mtvec[31:2], 2'b0 };
 
     /* ----- 入力取り込み ----- */
     reg  [11:0] riaddr, waddr, fwd_csr_addr, fwd_exec_addr, fwd_cushion_addr;
@@ -75,49 +91,61 @@ module reg_std_csr
         end
     end
 
-    /* ----- レジスタアクセス(CSR) ----- */
-    wire [31:0] tmp;
-    assign tmp = 32'b0;
+    /* ----- レジスタアクセス ----- */
+    // レジスタ群
+    reg [31:0] mtvec, mscratch, mepc, mcause;
 
     // 読み
     assign ROADDR = riaddr;
-    assign RVALID = forwarding_check(riaddr, fwd_csr_addr, fwd_exec_addr, fwd_exec_en, fwd_cushion_addr, fwd_cushion_en);
-    assign RDATA  = forwarding(riaddr, tmp, fwd_exec_addr, fwd_exec_data, fwd_cushion_addr, fwd_cushion_data, waddr, wdata);
 
-    function forwarding_check;
-        input [4:0]     target_addr;
-        input [4:0]     csr_addr;
-        input [4:0]     exec_addr;
-        input           exec_en;
-        input [4:0]     cushion_addr;
-        input           cushion_en;
-
-        case (target_addr)
-            5'b0:           forwarding_check = 1'b1;
-            csr_addr:       forwarding_check = 1'b0;
-            exec_addr:      forwarding_check = exec_en;
-            cushion_addr:   forwarding_check = cushion_en;
-            default:        forwarding_check = 1'b1;
+    always @* begin
+        case (riaddr)
+            12'b0:              RVALID <= 1'b1;
+            fwd_csr_addr:       RVALID <= 1'b0;
+            fwd_exec_addr:      RVALID <= fwd_exec_en;
+            fwd_cushion_addr:   RVALID <= fwd_cushion_en;
+            default:            RVALID <= 1'b1;
         endcase
-    endfunction
+    end
 
-    function [31:0] forwarding;
-        input [4:0]     target_addr;
-        input [31:0]    target_data;
-        input [4:0]     exec_addr;
-        input [31:0]    exec_data;
-        input [4:0]     cushion_addr;
-        input [31:0]    cushion_data;
-        input [4:0]     memr_addr;
-        input [31:0]    memr_data;
+    always @* begin
+        case (riaddr)
+            // Fowarding
+            12'b0:              RDATA <= 32'b0;
+            fwd_exec_addr:      RDATA <= fwd_exec_data;
+            fwd_cushion_addr:   RDATA <= fwd_cushion_data;
+            waddr:              RDATA <= wdata;
 
-        case (target_addr)
-            5'b0:           forwarding = 32'b0;
-            exec_addr:      forwarding = exec_data;
-            cushion_addr:   forwarding = cushion_data;
-            memr_addr:      forwarding = memr_data;
-            default:        forwarding = target_data;
+            // CSR
+            12'h305:            RDATA <= mtvec;
+            12'h340:            RDATA <= mscratch;
+            12'h341:            RDATA <= mepc;
+            12'h342:            RDATA <= mcause;
+            default:            RDATA <= 32'b0;
         endcase
-    endfunction
+    end
+
+    // 書き
+    always @ (posedge CLK) begin
+        if (RST) begin
+            mtvec <= 32'b0;
+            mscratch <= 32'b0;
+            mepc <= 32'b0;
+            mcause <= 32'b0;
+        end
+        else if (EXC_EN) begin
+            mcause <= { 1'b0, { 27'b0, EXC_CODE } };
+            mepc <= EXC_PC;
+        end
+        else begin
+            case (WADDR)
+                12'h305: mtvec <= WDATA;
+                12'h340: mscratch <= WDATA;
+                12'h341: mepc <= WDATA;
+                12'h342: mcause <= WDATA;
+                default: ;
+            endcase
+        end
+    end
 
 endmodule

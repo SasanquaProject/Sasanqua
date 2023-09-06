@@ -47,7 +47,12 @@ module exec_std_rv32i_s
 
         // PC更新
         output reg          JMP_DO,
-        output reg  [31:0]  JMP_PC
+        output reg  [31:0]  JMP_PC,
+
+        // 例外
+        output reg          EXC_EN,
+        output reg  [3:0]   EXC_CODE,
+        output reg  [31:0]  EXC_PC
     );
 
     /* ----- 入力取り込み ----- */
@@ -440,10 +445,6 @@ module exec_std_rv32i_s
                 JMP_DO <= 1'b1;
                 JMP_PC <= (rs1_data + { { 20{ imm[11] } }, imm[11:0] }) & (~32'b1);
             end
-            17'b1110011_000_0000000: begin // ecall
-                JMP_DO <= 1'b1;
-                JMP_PC <= 32'h2000_0004;
-            end
             default: begin
                 JMP_DO <= 1'b0;
                 JMP_PC <= 32'b0;
@@ -492,12 +493,31 @@ module exec_std_rv32i_s
         endcase
     end
 
-    // その他
+    // 例外
     always @* begin
+        if (imm == 32'hffff_ffff) begin // Illegal instruction
+            EXC_EN <= 1'b1;
+            EXC_CODE <= 4'd2;
+            EXC_PC <= pc;
+        end
+        else if ({ opcode, funct3, funct7} == 17'b1110011_000_0000000) begin // Environment break or call
+            EXC_EN <= 1'b1;
+            EXC_CODE <= imm[11:0] == 12'b0 ? 4'd11 : 4'd3;
+            EXC_PC <= pc;
+        end
+        else begin
+            EXC_EN <= 1'b0;
+            EXC_CODE <= 4'b0;
+            EXC_PC <= 32'b0;
+        end
+    end
+
+    // その他
+    // always @* begin
         // fence
         // fence.i
         // ebreak
         // ecall
-    end
+    // end
 
 endmodule
