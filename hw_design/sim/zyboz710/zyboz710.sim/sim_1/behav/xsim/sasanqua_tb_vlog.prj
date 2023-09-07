@@ -22,6 +22,7 @@ verilog xil_defaultlib  --include "../../../../../../design/tb/axi" \
 "../../../../../../design/src/core/components/pipeline/exec/std_rv32i_s.v" \
 "../../../../../../design/tb/axi/sync_fifo.v" \
 "../../../../../../design/src/mem/axi/translate.v" \
+"../../../../../../design/src/core/components/pipeline/trap.v" \
 "../../../../../../design/tb/tb.v" \
 
 # compile glbl module

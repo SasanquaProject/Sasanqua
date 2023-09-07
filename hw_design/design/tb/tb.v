@@ -90,6 +90,7 @@ wire [6:0]  SCHEDULE_1ST_FUNCT7     = sasanqua.core.main.schedule_1st_funct7;
 wire [31:0] SCHEDULE_1ST_IMM        = sasanqua.core.main.schedule_1st_imm;
 
 // Core: Exec
+wire [31:0] EXEC_PC                 = sasanqua.core.main.o_pc;
 wire [4:0]  EXEC_REG_W_RD           = sasanqua.core.main.reg_w_rd;
 wire [31:0] EXEC_REG_W_DATA         = sasanqua.core.main.reg_w_data;
 wire [11:0] EXEC_CSR_W_ADDR         = sasanqua.core.main.csr_w_addr;
@@ -109,6 +110,7 @@ wire        EXEC_EXC_EN             = sasanqua.core.main.exec_std_rv32i_s_0.EXC_
 wire [3:0]  EXEC_EXC_CODE           = sasanqua.core.main.exec_std_rv32i_s_0.EXC_CODE;
 
 // Core: Cushion
+wire [31:0] CUSHION_PC              = sasanqua.core.main.cushion_pc;
 wire [4:0]  CUSHION_REG_W_RD        = sasanqua.core.main.cushion_reg_w_rd;
 wire [31:0] CUSHION_REG_W_DATA      = sasanqua.core.main.cushion_reg_w_data;
 wire [11:0] CUSHION_CSR_W_ADDR      = sasanqua.core.main.cushion_csr_w_addr;
@@ -137,8 +139,11 @@ wire [31:0] MEMR_MEM_W_ADDR         = sasanqua.core.main.memr_mem_w_addr;
 wire [31:0] MEMR_MEM_W_DATA         = sasanqua.core.main.memr_mem_w_data;
 wire        MEMR_JMP_DO             = sasanqua.core.main.memr_jmp_do;
 wire [31:0] MEMR_JMP_PC             = sasanqua.core.main.memr_jmp_pc;
-wire        MEMR_EXC_EN             = sasanqua.core.main.memr_exc_en;
-wire [3:0]  MEMR_EXC_CODE           = sasanqua.core.main.memr_exc_code;
+
+// Core: Trap
+wire [31:0] TRAP_PC                 = sasanqua.core.main.trap_pc;
+wire        TRAP_EN                 = sasanqua.core.main.trap_en;
+wire [31:0] TRAP_CODE               = sasanqua.core.main.trap_code;
 
 // Register: rv32i
 wire [31:0] I_REG_0                 = sasanqua.core.main.reg_std_rv32i_0.registers[0];

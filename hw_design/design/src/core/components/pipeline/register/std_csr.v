@@ -10,12 +10,10 @@ module reg_std_csr
         input wire          STALL,
         input wire          MEM_WAIT,
 
-        // 例外
-        input wire          EXC_EN,
-        input wire  [3:0]   EXC_CODE,
-        input wire  [31:0]  EXC_PC,
-
-        // CSRに基づく他モジュールの制御
+        // Trap
+        input wire          TRAP_EN,
+        input wire  [31:0]  TRAP_CODE,
+        input wire  [31:0]  TRAP_PC,
         output wire [1:0]   TRAP_VEC_MODE,
         output wire [31:0]  TRAP_VEC_BASE,
 
@@ -133,9 +131,9 @@ module reg_std_csr
             mepc <= 32'b0;
             mcause <= 32'b0;
         end
-        else if (EXC_EN) begin
-            mcause <= { 1'b0, { 27'b0, EXC_CODE } };
-            mepc <= EXC_PC;
+        else if (TRAP_EN) begin
+            mcause <= TRAP_CODE;
+            mepc <= TRAP_PC;
         end
         else begin
             case (WADDR)

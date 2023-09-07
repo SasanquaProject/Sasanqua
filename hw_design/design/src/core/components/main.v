@@ -30,8 +30,8 @@ module main
     );
 
     /* ----- パイプライン制御 ----- */
-    wire        flush    = memr_jmp_do;
-    wire [31:0] flush_pc = memr_jmp_pc;
+    wire        flush    = memr_jmp_do || trap_en;
+    wire [31:0] flush_pc = memr_jmp_do ? memr_jmp_pc : trap_jmp_to;
     wire        stall    = !reg_rs1_valid || !reg_rs2_valid || !reg_csr_valid;
 
     /* ----- 1. 命令フェッチ ----- */
@@ -176,9 +176,9 @@ module main
         .FLUSH              (flush),
         .STALL              (stall),
         .MEM_WAIT           (MEM_WAIT),
-        .EXC_EN             (memr_exc_en),
-        .EXC_CODE           (memr_exc_code),
-        .EXC_PC             (memr_exc_pc),
+        .TRAP_EN            (trap_en),
+        .TRAP_CODE          (trap_code),
+        .TRAP_PC            (trap_pc),
         .TRAP_VEC_MODE      (trap_vec_mode),
         .TRAP_VEC_BASE      (trap_vec_base),
 
@@ -238,7 +238,7 @@ module main
 
     /* ----- 5. 実行 ----- */
     wire        reg_w_en, mem_r_en, mem_r_signed, csr_w_en, mem_w_en, jmp_do, exc_en;
-    wire [31:0] reg_w_data, csr_w_data, mem_r_addr, mem_w_addr, mem_w_data, jmp_pc, exc_pc;
+    wire [31:0] o_pc, reg_w_data, csr_w_data, mem_r_addr, mem_w_addr, mem_w_data, jmp_pc;
     wire [11:0] csr_w_addr;
     wire [4:0]  reg_w_rd, mem_r_rd;
     wire [3:0]  mem_r_strb, mem_w_strb, exc_code;
@@ -252,7 +252,7 @@ module main
         .MEM_WAIT       (MEM_WAIT),
 
         // 前段との接続
-        .PC             (schedule_1st_pc),
+        .I_PC           (schedule_1st_pc),
         .OPCODE         (schedule_1st_opcode),
         .RD_ADDR        (schedule_1st_rd),
         .RS1_ADDR       (reg_rs1_addr),
@@ -266,6 +266,7 @@ module main
         .IMM            (schedule_1st_imm),
 
         // 後段との接続
+        .O_PC           (o_pc),
         .REG_W_EN       (reg_w_en),
         .REG_W_RD       (reg_w_rd),
         .REG_W_DATA     (reg_w_data),
@@ -284,13 +285,12 @@ module main
         .JMP_DO         (jmp_do),
         .JMP_PC         (jmp_pc),
         .EXC_EN         (exc_en),
-        .EXC_CODE       (exc_code),
-        .EXC_PC         (exc_pc)
+        .EXC_CODE       (exc_code)
     );
 
     /* ----- 6. 実行部待機 ------ */
     wire        cushion_reg_w_en, cushion_mem_r_en, cushion_mem_r_signed, cushion_csr_w_en, cushion_mem_w_en, cushion_jmp_do, cushion_exc_en;
-    wire [31:0] cushion_reg_w_data, cushion_csr_w_data, cushion_mem_r_addr, cushion_mem_w_addr, cushion_mem_w_data, cushion_jmp_pc, cushion_exc_pc;
+    wire [31:0] cushion_pc, cushion_reg_w_data, cushion_csr_w_data, cushion_mem_r_addr, cushion_mem_w_addr, cushion_mem_w_data, cushion_jmp_pc;
     wire [11:0] cushion_csr_w_addr;
     wire [4:0]  cushion_reg_w_rd, cushion_mem_r_rd;
     wire [3:0]  cushion_mem_r_strb, cushion_mem_w_strb, cushion_exc_code;
@@ -301,10 +301,9 @@ module main
         .RST                    (RST),
         .FLUSH                  (flush),
         .MEM_WAIT               (MEM_WAIT),
-        .TRAP_VEC_MODE          (trap_vec_mode),
-        .TRAP_VEC_BASE          (trap_vec_base),
 
         // 実行部との接続
+        .EXEC_PC                (o_pc),
         .EXEC_REG_W_EN          (reg_w_en),
         .EXEC_REG_W_RD          (reg_w_rd),
         .EXEC_REG_W_DATA        (reg_w_data),
@@ -324,9 +323,9 @@ module main
         .EXEC_JMP_PC            (jmp_pc),
         .EXEC_EXC_EN            (exc_en),
         .EXEC_EXC_CODE          (exc_code),
-        .EXEC_EXC_PC            (exc_pc),
 
         // メモリアクセス部(r)との接続
+        .CUSHION_PC             (cushion_pc),
         .CUSHION_REG_W_EN       (cushion_reg_w_en),
         .CUSHION_REG_W_RD       (cushion_reg_w_rd),
         .CUSHION_REG_W_DATA     (cushion_reg_w_data),
@@ -345,16 +344,14 @@ module main
         .CUSHION_JMP_DO         (cushion_jmp_do),
         .CUSHION_JMP_PC         (cushion_jmp_pc),
         .CUSHION_EXC_EN         (cushion_exc_en),
-        .CUSHION_EXC_CODE       (cushion_exc_code),
-        .CUSHION_EXC_PC         (cushion_exc_pc)
+        .CUSHION_EXC_CODE       (cushion_exc_code)
     );
 
-    /* ----- 7. メモリアクセス(r) ----- */
-    wire        memr_csr_w_en, memr_mem_w_en, memr_jmp_do, memr_exc_en;
-    wire [31:0] memr_reg_w_data, memr_csr_w_data, memr_mem_w_addr, memr_mem_w_data, memr_jmp_pc, memr_exc_pc;
+    /* ----- 7-1. メモリアクセス(r) ----- */
+    wire        memr_csr_w_en, memr_mem_w_en, memr_jmp_do;
+    wire [31:0] memr_reg_w_data, memr_csr_w_data, memr_mem_w_addr, memr_mem_w_data, memr_jmp_pc;
     wire [11:0] memr_csr_w_addr;
     wire [4:0]  memr_reg_w_rd;
-    wire [3:0]  memr_exc_code;
 
     mread mread (
         // 制御
@@ -387,9 +384,6 @@ module main
         .CUSHION_MEM_W_DATA     (cushion_mem_w_data),
         .CUSHION_JMP_DO         (cushion_jmp_do),
         .CUSHION_JMP_PC         (cushion_jmp_pc),
-        .CUSHION_EXC_EN         (cushion_exc_en),
-        .CUSHION_EXC_CODE       (cushion_exc_code),
-        .CUSHION_EXC_PC         (cushion_exc_pc),
 
         // メモリアクセス(w)との接続
         .MEMR_REG_W_RD          (memr_reg_w_rd),
@@ -401,15 +395,37 @@ module main
         .MEMR_MEM_W_ADDR        (memr_mem_w_addr),
         .MEMR_MEM_W_DATA        (memr_mem_w_data),
         .MEMR_JMP_DO            (memr_jmp_do),
-        .MEMR_JMP_PC            (memr_jmp_pc),
-        .MEMR_EXC_EN            (memr_exc_en),
-        .MEMR_EXC_CODE          (memr_exc_code),
-        .MEMR_EXC_PC            (memr_exc_pc)
+        .MEMR_JMP_PC            (memr_jmp_pc)
+    );
+
+    /* ----- 7-2. Trap処理 ----- */
+    wire        trap_en;
+    wire [31:0] trap_pc, trap_code, trap_jmp_to;
+
+    trap trap (
+        // 制御
+        .CLK                (CLK),
+        .RST                (RST),
+        .FLUSH              (flush),
+        .MEM_WAIT           (MEM_WAIT),
+
+        // 待機部との接続
+        .CUSHION_PC         (cushion_pc),
+        .CUSHION_EXC_EN     (cushion_exc_en),
+        .CUSHION_EXC_CODE   (cushion_exc_code),
+
+        // Trap情報
+        .TRAP_VEC_MODE      (trap_vec_mode),
+        .TRAP_VEC_BASE      (trap_vec_base),
+        .TRAP_PC            (trap_pc),
+        .TRAP_EN            (trap_en),
+        .TRAP_CODE          (trap_code),
+        .TRAP_JMP_TO        (trap_jmp_to)
     );
 
     /* ----- 8. メモリアクセス(w) ----- */
-    assign DATA_WREN    = memr_mem_w_en;
-    assign DATA_WADDR   = memr_mem_w_addr;
-    assign DATA_WDATA   = memr_mem_w_data;
+    assign DATA_WREN  = flush ? 1'b0 : memr_mem_w_en;
+    assign DATA_WADDR = flush ? 32'b0 : memr_mem_w_addr;
+    assign DATA_WDATA = flush ? 32'b0 : memr_mem_w_data;
 
 endmodule
