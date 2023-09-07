@@ -26,12 +26,16 @@ module main
         output wire [31:0]  DATA_WDATA,
 
         // ハザード
-        input wire          MEM_WAIT
+        input wire          MEM_WAIT,
+
+        /* ----- 割り込み ----- */
+        input wire          INT_EN,
+        input wire  [3:0]   INT_CODE
     );
 
     /* ----- パイプライン制御 ----- */
-    wire        flush    = memr_jmp_do || trap_en;
-    wire [31:0] flush_pc = memr_jmp_do ? memr_jmp_pc : trap_jmp_to;
+    wire        flush    = trap_en || memr_jmp_do;
+    wire [31:0] flush_pc = trap_en ? trap_jmp_to : memr_jmp_pc;
     wire        stall    = !reg_rs1_valid || !reg_rs2_valid || !reg_csr_valid;
 
     /* ----- 1. 命令フェッチ ----- */
@@ -413,6 +417,10 @@ module main
         .CUSHION_PC         (cushion_pc),
         .CUSHION_EXC_EN     (cushion_exc_en),
         .CUSHION_EXC_CODE   (cushion_exc_code),
+
+        // 割り込み
+        .INT_EN             (INT_EN),
+        .INT_CODE           (INT_CODE),
 
         // Trap情報
         .TRAP_VEC_MODE      (trap_vec_mode),

@@ -23,7 +23,7 @@ module exec_std_rv32i_s
 
         /* ----- 後段との接続 ----- */
         // PC
-        output reg  [31:0]  O_PC,
+        output wire [31:0]  O_PC,
 
         // レジスタ(rv32i:W)
         output reg          REG_W_EN,
@@ -118,6 +118,8 @@ module exec_std_rv32i_s
     end
 
     /* ----- 実行 ----- */
+    assign O_PC = pc;
+
     // 整数演算
     always @* begin
         casez ({opcode, funct3, funct7})

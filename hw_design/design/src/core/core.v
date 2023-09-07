@@ -89,7 +89,11 @@ module core
         .DATA_WREN      (DATA_WREN),
         .DATA_WADDR     (DATA_WADDR),
         .DATA_WDATA     (DATA_WDATA),
-        .MEM_WAIT       (MEM_WAIT)
+        .MEM_WAIT       (MEM_WAIT),
+
+        // 割り込み
+        .INT_EN         (int_en),
+        .INT_CODE       (int_code)
     );
 
 endmodule
