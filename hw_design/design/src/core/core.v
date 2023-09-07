@@ -41,8 +41,8 @@ module core
     wire [31:0] clint_roaddr, clint_rdata;
 
     clint # (
-        .BASE_ADDR  (32'h1000_0000),
-        .TICK_CNT   (32'd10)
+        .BASE_ADDR  (32'h0200_0000),
+        .TICK_CNT   (32'd35)
     ) clint (
         // 制御
         .CLK        (CLK),

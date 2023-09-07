@@ -9,11 +9,11 @@ trap_vector:
 setup:
     la t0, trap_vector
     csrw mtvec, t0
-    lui t0, 0x1000C
+    lui t0, 0x0200C
     addi t0, t0, -8
     lw t1, 0(t0)
     addi t1, t1, 10
-    lui t0, 0x10004
+    lui t0, 0x02004
     sw t1, 0(t0)
 
 loop:
