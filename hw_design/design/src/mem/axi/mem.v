@@ -235,7 +235,8 @@ module mem_axi
         input        EN;
 
         if      (ADDR[31:12] == 20'b0) access_direction = { 1'b0, 1'b0,   EN }; // 0x0000_0000 ~ 0x0000_0fff : ROM
-        else if (ADDR[31:30] ==  2'b0) access_direction = { 1'b0,   EN, 1'b0 }; // 0x0000_1000 ~ 0x3fff_ffff : RAM
+        else if (ADDR[31:29] ==  3'd0) access_direction = { 1'b0, 1'b0, 1'b0 }; // 0x0000_1000 ~ 0x1fff_ffff : Internal Devices
+        else if (ADDR[31:30] ==  2'd0) access_direction = { 1'b0,   EN, 1'b0 }; // 0x0000_1000 ~ 0x3fff_ffff : RAM
         else                           access_direction = {   EN, 1'b0, 1'b0 }; // 0x3fff_ffff ~ 0xffff_ffff : Other devices
     endfunction
 

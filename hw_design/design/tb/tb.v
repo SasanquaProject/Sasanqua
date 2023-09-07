@@ -20,7 +20,7 @@ end
 `include "./axi/setup.vh"
 
 /* ----- 監視対象信号 ----- */
-// MMU
+// Mem
 wire        MEM_WAIT                = sasanqua.mem.MEM_WAIT;
 wire        INST_RDEN               = sasanqua.mem.INST_RDEN;
 wire [31:0] INST_RIADDR             = sasanqua.mem.INST_RIADDR;
@@ -35,6 +35,12 @@ wire [31:0] DATA_RDATA              = sasanqua.mem.DATA_RDATA;
 wire        DATA_WREN               = sasanqua.mem.DATA_WREN;
 wire [31:0] DATA_WADDR              = sasanqua.mem.DATA_WADDR;
 wire [31:0] DATA_WDATA              = sasanqua.mem.DATA_WDATA;
+
+// CLINT
+wire [31:0] CLINT_MTIME             = sasanqua.core.clint.mtime[0];
+wire [31:0] CLINT_MTIMECMP          = sasanqua.core.clint.mtimecmp[0];
+wire        CLINT_INT_EN            = sasanqua.core.clint.INT_EN;
+wire [3:0]  CLINT_INT_CODE          = sasanqua.core.clint.INT_CODE;
 
 // Core: Pipeline
 wire        FLUSH                   = sasanqua.core.main.flush;

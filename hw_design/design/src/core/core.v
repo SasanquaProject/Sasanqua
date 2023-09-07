@@ -34,9 +34,40 @@ module core
     mmu mmu ();
 
     /* ----- CLINT ----- */
-    clint clint ();
+    wire        int_en;
+    wire [3:0]  int_code;
+
+    wire        clint_rvalid;
+    wire [31:0] clint_roaddr, clint_rdata;
+
+    clint # (
+        .BASE_ADDR  (32'h1000_0000),
+        .TICK_CNT   (32'd10)
+    ) clint (
+        // 制御
+        .CLK        (CLK),
+        .RST        (RST),
+
+        // レジスタアクセス
+        .RDEN       (DATA_RDEN),
+        .RIADDR     (DATA_RIADDR),
+        .ROADDR     (clint_roaddr),
+        .RVALID     (clint_rvalid),
+        .RDATA      (clint_rdata),
+        .WREN       (DATA_WREN),
+        .WADDR      (DATA_WADDR),
+        .WDATA      (DATA_WDATA),
+
+        // 割り込み
+        .INT_EN     (int_en),
+        .INT_CODE   (int_code)
+    );
 
     /* ----- Main ----- */
+    wire [31:0] data_roaddr = DATA_RVALID ? DATA_ROADDR : clint_roaddr;
+    wire        data_rvalid = DATA_RVALID ? DATA_RVALID : clint_rvalid;
+    wire [31:0] data_rdata  = DATA_RVALID ? DATA_RDATA  : clint_rdata;
+
     main # (
         .START_ADDR     (START_ADDR)
     ) main (
@@ -52,9 +83,9 @@ module core
         .INST_RDATA     (INST_RDATA),
         .DATA_RDEN      (DATA_RDEN),
         .DATA_RIADDR    (DATA_RIADDR),
-        .DATA_ROADDR    (DATA_ROADDR),
-        .DATA_RVALID    (DATA_RVALID),
-        .DATA_RDATA     (DATA_RDATA),
+        .DATA_ROADDR    (data_roaddr),
+        .DATA_RVALID    (data_rvalid),
+        .DATA_RDATA     (data_rdata),
         .DATA_WREN      (DATA_WREN),
         .DATA_WADDR     (DATA_WADDR),
         .DATA_WDATA     (DATA_WDATA),
