@@ -1,5 +1,5 @@
 bootrom
 bootrom.dump
 bootrom.mem
-bootrom.o
 bootrom.bin
+*.o

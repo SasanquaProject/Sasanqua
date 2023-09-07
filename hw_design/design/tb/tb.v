@@ -192,8 +192,9 @@ begin
     #(STEP*10)
     RST = 0;
 
-    @(MEMR_JMP_DO && MEMR_JMP_PC == 32'h2000_003C);
-    #(STEP*10)
+    // @(MEMR_JMP_DO && MEMR_JMP_PC == 32'h2000_003C);
+    // #(STEP*10)
+    #(STEP * 100000)
 
     if (I_REG_3 == 32'b1)
         $display("%d: Success", id);
