@@ -12,6 +12,7 @@ module trap
         input wire  [3:0]   CUSHION_EXC_CODE,
 
         /* ----- 割り込み ----- */
+        input wire          INT_ALLOW,
         input wire          INT_EN,
         input wire  [3:0]   INT_CODE,
 
@@ -25,7 +26,7 @@ module trap
     );
 
     /* ----- 入力取り込み ----- */
-    reg         cushion_exc_en, int_en;
+    reg         cushion_exc_en, int_allow, int_en;
     reg [1:0]   trap_vec_mode;
     reg [3:0]   cushion_exc_code, int_code;
     reg [31:0]  cushion_pc, trap_vec_base;
@@ -35,6 +36,7 @@ module trap
             cushion_pc <= 32'b0;
             cushion_exc_en <= 1'b0;
             cushion_exc_code <= 4'b0;
+            int_allow <= 1'b0;
             int_en <= 1'b0;
             int_code <= 4'b0;
             trap_vec_mode <= 2'b0;
@@ -47,6 +49,7 @@ module trap
             cushion_pc <= CUSHION_PC;
             cushion_exc_en <= CUSHION_EXC_EN;
             cushion_exc_code <= CUSHION_EXC_CODE;
+            int_allow <= INT_ALLOW;
             int_en <= INT_EN;
             int_code <= INT_CODE;
             trap_vec_mode <= TRAP_VEC_MODE;
@@ -56,7 +59,7 @@ module trap
 
     /* ---- Trap情報出力 ----- */
     assign TRAP_PC     = cushion_pc;
-    assign TRAP_EN     = cushion_exc_en || int_en;
+    assign TRAP_EN     = cushion_exc_en || (int_en && int_allow);
     assign TRAP_CODE   = cushion_exc_en ? { 28'b0, cushion_exc_code } : { 1'b0, 27'b0, int_code };
     assign TRAP_JMP_TO = cushion_exc_en ? calc_jmp_to(trap_vec_mode, trap_vec_base, cushion_exc_code) :
                                           calc_jmp_to(trap_vec_mode, trap_vec_base, int_code);

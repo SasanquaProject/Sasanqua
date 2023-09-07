@@ -168,6 +168,7 @@ module main
     // CSR
     wire [1:0]  trap_vec_mode;
     wire [31:0] trap_vec_base;
+    wire        int_allow;
 
     wire [31:0] reg_csr_data;
     wire [11:0] reg_csr_addr;
@@ -185,6 +186,7 @@ module main
         .TRAP_PC            (trap_pc),
         .TRAP_VEC_MODE      (trap_vec_mode),
         .TRAP_VEC_BASE      (trap_vec_base),
+        .INT_ALLOW          (int_allow),
 
         // レジスタアクセス
         .RIADDR             (check_csr),
@@ -419,6 +421,7 @@ module main
         .CUSHION_EXC_CODE   (cushion_exc_code),
 
         // 割り込み
+        .INT_ALLOW          (int_allow),
         .INT_EN             (INT_EN),
         .INT_CODE           (INT_CODE),
 

@@ -42,6 +42,9 @@ wire [31:0] CLINT_MTIMECMP          = sasanqua.core.clint.mtimecmp[0];
 wire        CLINT_INT_EN            = sasanqua.core.clint.INT_EN;
 wire [3:0]  CLINT_INT_CODE          = sasanqua.core.clint.INT_CODE;
 
+// Core: Status
+wire        INT_ALLOW               = sasanqua.core.main.int_allow;
+
 // Core: Pipeline
 wire        FLUSH                   = sasanqua.core.main.flush;
 wire [31:0] FLUSH_PC                = sasanqua.core.main.flush_pc;

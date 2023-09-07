@@ -15,6 +15,7 @@ setup:
     addi t1, t1, 10
     lui t0, 0x02004
     sw t1, 0(t0)
+    csrwi mstatus, 8
 
 loop:
     j loop
