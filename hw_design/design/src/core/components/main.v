@@ -34,9 +34,13 @@ module main
     );
 
     /* ----- パイプライン制御 ----- */
+    // 制御信号
     wire        flush    = trap_en || memr_jmp_do;
     wire [31:0] flush_pc = trap_en ? trap_jmp_to : memr_jmp_pc;
     wire        stall    = !reg_rs1_valid || !reg_rs2_valid || !reg_csr_valid;
+
+    // PC管理
+    reg  [31:0] executing_pc;
 
     /* ----- 1. 命令フェッチ ----- */
     wire [31:0] inst_pc, inst_data;
@@ -415,7 +419,12 @@ module main
         .FLUSH              (flush),
         .MEM_WAIT           (MEM_WAIT),
 
-        // 待機部との接続
+        // 前段との接続
+        .INST_PC            (inst_pc),
+        .DECODE_PC          (decode_pc),
+        .CHECK_PC           (check_pc),
+        .SCHEDULE_1ST_PC    (schedule_1st_pc),
+        .EXEC_PC            (o_pc),
         .CUSHION_PC         (cushion_pc),
         .CUSHION_EXC_EN     (cushion_exc_en),
         .CUSHION_EXC_CODE   (cushion_exc_code),
