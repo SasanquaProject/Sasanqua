@@ -1,9 +1,9 @@
-bootrom.mem:
-	cargo objdump -- -dSC > bootrom.dump
-	cargo objcopy -- -O binary bootrom.bin
-	od -An -tx4 -w4 -v bootrom.bin > bootrom.mem
+kernel.mem:
+	cargo objdump -- -dSC > kernel.dump
+	cargo objcopy -- -O binary kernel.bin
+	od -An -tx4 -w4 -v kernel.bin > kernel.mem
 
 clean:
-	rm -rf bootrom.bin bootrom.dump bootrom.mem
+	rm -rf kernel.bin kernel.dump kernel.mem
 
-.PHONY: bootrom.mem clean
+.PHONY: kernel.mem clean

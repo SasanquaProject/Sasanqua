@@ -1,7 +1,7 @@
 #![no_std]
 #![no_main]
 
-use core::arch::{global_asm, asm};
+use core::arch::global_asm;
 use core::panic::PanicInfo;
 
 #[allow(unused_imports)]
@@ -38,8 +38,5 @@ pub extern "C" fn setup() {
 
 #[no_mangle]
 pub extern "C" fn run() {
-    unsafe {
-        asm!("lui t0, 0x20000");
-        asm!("jr t0");
-    }
+    loop {}
 }
