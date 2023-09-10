@@ -215,7 +215,7 @@ module translate_axi
     end
 
     always @ (posedge CLK) begin
-        if (RST || sw_next_state == S_SW_IDLE) begin
+        if (RST) begin
             M_AXI_WDATA <= 32'b0;
             M_AXI_WSTRB <= 4'b1111;
             M_AXI_WLAST <= 1'b0;
@@ -225,6 +225,11 @@ module translate_axi
             M_AXI_WDATA <= WDATA;
             M_AXI_WLAST <= 1'b1;
             M_AXI_WVALID <= 1'b1;
+        end
+        else if (sw_next_state == S_SW_FINISH) begin
+            M_AXI_WDATA <= 32'b0;
+            M_AXI_WLAST <= 1'b0;
+            M_AXI_WVALID <= 1'b0;
         end
     end
 
