@@ -1,7 +1,7 @@
 #![no_std]
 #![no_main]
 
-use core::arch::global_asm;
+use core::arch::{global_asm, asm};
 use core::panic::PanicInfo;
 
 #[allow(unused_imports)]
@@ -13,10 +13,6 @@ global_asm!(r#"
 .section .text, "ax"
 _start:
     j start_rust
-_boot:
-    li t0, 0
-    lui t0, 0x20000
-    jr t0
 "#);
 
 #[panic_handler]
@@ -28,12 +24,22 @@ fn panic(_info: &PanicInfo) -> ! {
 pub unsafe extern "C" fn start_rust() {
     extern "Rust" {
         fn setup();
+        fn run() -> !;
     }
 
-    setup()
+    setup();
+    run()
 }
 
 #[no_mangle]
 pub extern "C" fn setup() {
 
+}
+
+#[no_mangle]
+pub extern "C" fn run() {
+    unsafe {
+        asm!("lui t0, 0x20000");
+        asm!("jr t0");
+    }
 }
