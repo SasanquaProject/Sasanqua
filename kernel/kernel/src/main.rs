@@ -13,10 +13,6 @@ global_asm!(r#"
 .section .text, "ax"
 _start:
     j start_rust
-_boot:
-    li t0, 0
-    lui t0, 0x20000
-    jr t0
 "#);
 
 #[panic_handler]
@@ -27,13 +23,20 @@ fn panic(_info: &PanicInfo) -> ! {
 #[no_mangle]
 pub unsafe extern "C" fn start_rust() {
     extern "Rust" {
-        fn setup() -> !;
+        fn setup();
+        fn run() -> !;
     }
 
-    setup()
+    setup();
+    run()
 }
 
 #[no_mangle]
 pub extern "C" fn setup() {
 
+}
+
+#[no_mangle]
+pub extern "C" fn run() {
+    loop {}
 }
