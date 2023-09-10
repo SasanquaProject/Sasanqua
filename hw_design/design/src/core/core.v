@@ -42,7 +42,7 @@ module core
 
     clint # (
         .BASE_ADDR  (32'h0200_0000),
-        .TICK_CNT   (32'd10)
+        .TICK_CNT   (32'd100) // 1/100
     ) clint (
         // 制御
         .CLK        (CLK),
