@@ -10,14 +10,15 @@ module reg_std_csr
         input wire          STALL,
         input wire          MEM_WAIT,
 
-        // 例外
-        input wire          EXC_EN,
-        input wire  [3:0]   EXC_CODE,
-        input wire  [31:0]  EXC_PC,
-
-        // CSRに基づく他モジュールの制御
+        // Trap
+        input wire          TRAP_EN,
+        input wire  [31:0]  TRAP_CODE,
+        input wire  [31:0]  TRAP_PC,
         output wire [1:0]   TRAP_VEC_MODE,
         output wire [31:0]  TRAP_VEC_BASE,
+
+        // 割り込み
+        output wire         INT_ALLOW,
 
         /* ----- レジスタアクセス ----- */
         // 読み
@@ -46,6 +47,7 @@ module reg_std_csr
     /* ----- 他モジュールへの制御信号 ----- */
     assign TRAP_VEC_MODE = mtvec[1:0];
     assign TRAP_VEC_BASE = { mtvec[31:2], 2'b0 };
+    assign INT_ALLOW     = mstatus[3];
 
     /* ----- 入力取り込み ----- */
     reg  [11:0] riaddr, waddr, fwd_csr_addr, fwd_exec_addr, fwd_cushion_addr;
@@ -93,7 +95,7 @@ module reg_std_csr
 
     /* ----- レジスタアクセス ----- */
     // レジスタ群
-    reg [31:0] mtvec, mscratch, mepc, mcause;
+    reg [31:0] mstatus, mtvec, mscratch, mepc, mcause;
 
     // 読み
     assign ROADDR = riaddr;
@@ -117,6 +119,7 @@ module reg_std_csr
             waddr:              RDATA <= wdata;
 
             // CSR
+            12'h300:            RDATA <= mstatus;
             12'h305:            RDATA <= mtvec;
             12'h340:            RDATA <= mscratch;
             12'h341:            RDATA <= mepc;
@@ -128,17 +131,20 @@ module reg_std_csr
     // 書き
     always @ (posedge CLK) begin
         if (RST) begin
+            mstatus <= 32'b0;
             mtvec <= 32'b0;
             mscratch <= 32'b0;
             mepc <= 32'b0;
             mcause <= 32'b0;
         end
-        else if (EXC_EN) begin
-            mcause <= { 1'b0, { 27'b0, EXC_CODE } };
-            mepc <= EXC_PC;
+        else if (TRAP_EN) begin
+            mstatus <= { 24'b0, mstatus[3], 7'b0 };
+            mcause <= TRAP_CODE;
+            mepc <= TRAP_PC;
         end
         else begin
             case (WADDR)
+                12'h300: mstatus <= WDATA;
                 12'h305: mtvec <= WDATA;
                 12'h340: mscratch <= WDATA;
                 12'h341: mepc <= WDATA;

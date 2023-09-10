@@ -8,7 +8,7 @@ module exec_std_rv32i_s
         input wire          MEM_WAIT,
 
         /* ----- 前段との接続 ----- */
-        input wire  [31:0]  PC,
+        input wire  [31:0]  I_PC,
         input wire  [6:0]   OPCODE,
         input wire  [4:0]   RD_ADDR,
         input wire  [4:0]   RS1_ADDR,
@@ -22,6 +22,9 @@ module exec_std_rv32i_s
         input wire  [31:0]  IMM,
 
         /* ----- 後段との接続 ----- */
+        // PC
+        output wire [31:0]  O_PC,
+
         // レジスタ(rv32i:W)
         output reg          REG_W_EN,
         output reg  [4:0]   REG_W_RD,
@@ -51,8 +54,7 @@ module exec_std_rv32i_s
 
         // 例外
         output reg          EXC_EN,
-        output reg  [3:0]   EXC_CODE,
-        output reg  [31:0]  EXC_PC
+        output reg  [3:0]   EXC_CODE
     );
 
     /* ----- 入力取り込み ----- */
@@ -100,7 +102,7 @@ module exec_std_rv32i_s
             imm <= 32'b0;
         end
         else begin
-            pc <= PC;
+            pc <= I_PC;
             opcode <= OPCODE;
             rd_addr <= RD_ADDR;
             rs1_addr <= RS1_ADDR;
@@ -116,6 +118,8 @@ module exec_std_rv32i_s
     end
 
     /* ----- 実行 ----- */
+    assign O_PC = pc;
+
     // 整数演算
     always @* begin
         casez ({opcode, funct3, funct7})
@@ -498,17 +502,14 @@ module exec_std_rv32i_s
         if (imm == 32'hffff_ffff) begin // Illegal instruction
             EXC_EN <= 1'b1;
             EXC_CODE <= 4'd2;
-            EXC_PC <= pc;
         end
         else if ({ opcode, funct3, funct7} == 17'b1110011_000_0000000) begin // Environment break or call
             EXC_EN <= 1'b1;
             EXC_CODE <= imm[11:0] == 12'b0 ? 4'd11 : 4'd3;
-            EXC_PC <= pc;
         end
         else begin
             EXC_EN <= 1'b0;
             EXC_CODE <= 4'b0;
-            EXC_PC <= 32'b0;
         end
     end
 

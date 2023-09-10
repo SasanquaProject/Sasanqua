@@ -64,14 +64,14 @@ module sasanqua
         output wire         M_AXI_RREADY
     );
 
-    assign STAT = core.reg_std_rv32i_0.registers[3];
+    assign STAT = core.main.reg_std_rv32i_0.registers[3];
 
-    /* ----- MMU ----- */
+    /* ----- Memory ----- */
     wire        mem_wait;
     wire        inst_rden, inst_rvalid, data_rden, data_rvalid, data_wren;
     wire [31:0] inst_riaddr, inst_roaddr, inst_rdata, data_riaddr, data_roaddr, data_rdata, data_waddr, data_wdata;
 
-    mmu_axi mmu (
+    mem_axi mem (
         // 制御
         .CLK            (CLK),
         .RST            (RST),
@@ -139,6 +139,7 @@ module sasanqua
 
     /* ----- Core ----- */
     core # (
+        .HART_ID        (0),
         .START_ADDR     (START_ADDR)
     ) core (
         // 制御
