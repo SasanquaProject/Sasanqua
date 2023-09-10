@@ -72,10 +72,10 @@ module translate_axi
             RVALID <= 1'b0;
             RDATA <= 32'b0;
         end
-        else if (RDEN && M_AXI_RVALID) begin
+        else if (RDEN && sr_next_state == S_SR_IDLE) begin
             ROADDR <= RIADDR;
             RVALID <= 1'b1;
-            RDATA <= M_AXI_RDATA;
+            RDATA <= rdata_cache;
         end
         else if (STALL) begin
             // do nothing
@@ -93,6 +93,7 @@ module translate_axi
     parameter S_SR_FINISH = 2'b10;
 
     reg [1:0]  sr_state, sr_next_state;
+    reg [31:0] rdata_cache;
 
     always @ (posedge CLK) begin
         if (RST)
@@ -137,6 +138,7 @@ module translate_axi
             M_AXI_ARADDR <= 32'b0;
             M_AXI_ARLEN <= 8'b0;
             M_AXI_ARVALID <= 1'b0;
+            rdata_cache <= 32'b0;
         end
         else if (sr_next_state == S_SR_ADDR) begin
             M_AXI_ARADDR <= RIADDR;
@@ -148,6 +150,8 @@ module translate_axi
             M_AXI_ARLEN <= 8'b0;
             M_AXI_ARVALID <= 1'b0;
         end
+        else if (sr_state == S_SR_WAIT && M_AXI_RVALID)
+            rdata_cache <= M_AXI_RDATA;
     end
 
     /* ----- AW, Wチャネル用ステートマシン ----- */
