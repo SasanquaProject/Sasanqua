@@ -46,7 +46,7 @@ module fetch
 
     always @ (posedge CLK) begin
         if (RST || FLUSH) begin
-            cache_pc <= 32'b0;
+            cache_pc <= FLUSH_PC;
             cache_data <= 32'h0000_0013;
         end
         else if (INST_RVALID) begin
