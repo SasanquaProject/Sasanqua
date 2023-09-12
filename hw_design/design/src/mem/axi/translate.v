@@ -9,6 +9,7 @@ module translate_axi
 
         /* ----- メモリアクセス ----- */
         // 読み
+        input wire          RSELECT,
         input wire          RDEN,
         input wire  [31:0]  RIADDR,
         output reg  [31:0]  ROADDR,
@@ -16,6 +17,7 @@ module translate_axi
         output reg  [31:0]  RDATA,
 
         // 書き
+        input wire          WSELECT,
         input wire          WREN,
         input wire  [31:0]  WADDR,
         input wire  [31:0]  WDATA,
@@ -57,7 +59,10 @@ module translate_axi
         input  wire         M_AXI_RVALID
     );
 
-    assign LOADING = (RDEN && sr_next_state != S_SR_IDLE) || (WREN && sw_next_state != S_SW_IDLE);
+    assign rden = RSELECT && RDEN;
+    assign wren = WSELECT && WREN;
+
+    assign LOADING = (rden && sr_next_state != S_SR_IDLE) || (wren && sw_next_state != S_SW_IDLE);
 
     /* ----- AXIバス設定 ----- */
     assign M_AXI_AWSIZE    = 3'b010;
@@ -72,7 +77,7 @@ module translate_axi
             RVALID <= 1'b0;
             RDATA <= 32'b0;
         end
-        else if (RDEN && sr_next_state == S_SR_IDLE) begin
+        else if (rden && sr_next_state == S_SR_IDLE) begin
             ROADDR <= RIADDR;
             RVALID <= 1'b1;
             RDATA <= rdata_cache;
@@ -105,7 +110,7 @@ module translate_axi
     always @* begin
         case (sr_state)
             S_SR_IDLE:
-                if (RDEN)
+                if (rden)
                     sr_next_state <= S_SR_ADDR;
                 else
                     sr_next_state <= S_SR_IDLE;
@@ -123,7 +128,7 @@ module translate_axi
                     sr_next_state <= S_SR_WAIT;
 
             S_SR_FINISH:
-                if (!WREN || sw_state == S_SW_FINISH)
+                if (!wren || sw_state == S_SW_FINISH)
                     sr_next_state <= S_SR_IDLE;
                 else
                     sr_next_state <= S_SR_FINISH;
@@ -172,7 +177,7 @@ module translate_axi
     always @* begin
         case (sw_state)
             S_SW_IDLE:
-                if (WREN)
+                if (wren)
                     sw_next_state <= S_SW_ADDR;
                 else
                     sw_next_state <= S_SW_IDLE;
@@ -190,7 +195,7 @@ module translate_axi
                     sw_next_state <= S_SW_WRITE;
 
             S_SW_FINISH:
-                if (!RDEN || sr_state == S_SR_FINISH)
+                if (!rden || sr_state == S_SR_FINISH)
                     sw_next_state <= S_SW_IDLE;
                 else
                     sw_next_state <= S_SW_FINISH;

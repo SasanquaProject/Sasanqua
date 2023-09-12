@@ -2001,8 +2001,29 @@
         "inst_hier_path": "axi_interconnect_1",
         "xci_name": "design_1_axi_interconnect_1_0",
         "parameters": {
+          "ENABLE_ADVANCED_OPTIONS": {
+            "value": "0"
+          },
+          "M00_HAS_DATA_FIFO": {
+            "value": "0"
+          },
+          "M00_HAS_REGSLICE": {
+            "value": "0"
+          },
+          "M01_HAS_DATA_FIFO": {
+            "value": "0"
+          },
+          "M01_HAS_REGSLICE": {
+            "value": "0"
+          },
           "NUM_MI": {
             "value": "2"
+          },
+          "S00_HAS_DATA_FIFO": {
+            "value": "0"
+          },
+          "S00_HAS_REGSLICE": {
+            "value": "0"
           }
         },
         "interface_ports": {

@@ -27,15 +27,7 @@ module fetch
     );
 
     /* ----- PC ----- */
-    reg         rden;
     reg  [31:0] pc;
-
-    always @* begin
-        if (STALL)
-            rden <= 1'b0;
-        else
-            rden <= 1'b1;
-    end
 
     always @ (posedge CLK) begin
         if (RST)
@@ -63,8 +55,8 @@ module fetch
         end
     end
 
-    assign INST_RDEN    = FLUSH ? 1'b0 : rden;
-    assign INST_RIADDR  = FLUSH ? 32'b0 : pc;
+    assign INST_RDEN    = !(FLUSH || STALL || MEM_WAIT);
+    assign INST_RIADDR  = pc;
     assign INST_PC      = INST_RVALID ? INST_ROADDR : cache_pc;
     assign INST_DATA    = INST_RVALID ? INST_RDATA : cache_data;
 

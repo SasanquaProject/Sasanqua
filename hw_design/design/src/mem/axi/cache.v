@@ -12,6 +12,7 @@ module cache_axi
         output wire         HIT_CHECK_RESULT,
 
         // 読み
+        input wire          RSELECT,
         input wire          RDEN,
         input wire  [31:0]  RIADDR,
         output reg  [31:0]  ROADDR,
@@ -19,6 +20,7 @@ module cache_axi
         output wire [31:0]  RDATA,
 
         // 書き
+        input wire          WSELECT,
         input wire          WREN,
         input wire  [31:0]  WADDR,
         input wire  [31:0]  WDATA,
@@ -97,18 +99,23 @@ module cache_axi
         .B_WDATA    (ram_b_wdata)
     );
 
+    assign rden = RSELECT && RDEN;
+    assign wren = WSELECT && WREN;
+
     /* ----- キャッシュ制御 ----- */
     reg         cache_written;
     reg [19:0]  cached_addr;
 
-    assign HIT_CHECK_RESULT = !RDEN || HIT_CHECK[31:12] == cached_addr;
+    assign HIT_CHECK_RESULT = !RSELECT ||
+                              HIT_CHECK[31:12] == 32'b0 ||
+                              HIT_CHECK[31:12] == cached_addr;
 
     always @ (posedge CLK) begin
         if (RST) begin
             cache_written <= 1'b0;
             cached_addr <= 20'hf_ffff;
         end
-        else if (WREN)
+        else if (wren)
             cache_written <= 1'b1;
         else if (ar_state == S_AR_WAIT && ar_next_state == S_AR_IDLE) begin
             cached_addr <= RIADDR[31:12];
@@ -119,10 +126,10 @@ module cache_axi
     end
 
     /* ----- キャッシュアクセス ----- */
-    assign ram_a_rden  = !STALL && RDEN;
-    assign ram_a_raddr = !STALL && RDEN ? RIADDR[11:2] : ROADDR[11:2];
+    assign ram_a_rden  = !STALL && rden;
+    assign ram_a_raddr = !STALL && rden ? RIADDR[11:2] : ROADDR[11:2];
     assign RDATA       = ram_a_rdata;
-    assign ram_a_wren  = WREN;
+    assign ram_a_wren  = wren;
     assign ram_a_waddr = WADDR[11:2];
     assign ram_a_wdata = WDATA;
 
@@ -134,7 +141,7 @@ module cache_axi
         else if (STALL) begin
             // do nothing
         end
-        else if (RDEN) begin
+        else if (rden) begin
             ROADDR <= RIADDR;
             RVALID <= RIADDR[31:12] == cached_addr;
         end
@@ -161,7 +168,7 @@ module cache_axi
     always @* begin
         case (ar_state)
             S_AR_IDLE:
-                if (RDEN && RIADDR[31:12] != cached_addr && !cache_written)
+                if (!HIT_CHECK_RESULT && !cache_written)
                     ar_next_state <= S_AR_ADDR;
                 else
                     ar_next_state <= S_AR_IDLE;
@@ -268,7 +275,7 @@ module cache_axi
     always @* begin
         case (awb_state)
             S_AWB_IDLE:
-                if (RDEN && RIADDR[31:12] != cached_addr && cache_written)
+                if (!HIT_CHECK_RESULT && cache_written)
                     awb_next_state <= S_AWB_ADDR;
                 else
                     awb_next_state <= S_AWB_IDLE;
