@@ -2,7 +2,7 @@
   "schema": "xilinx.com:schema:json_instance:1.0",
   "ip_inst": {
     "xci_name": "design_1_auto_ds_0",
-    "cell_name": "axi_interconnect_1/m01_couplers/auto_ds",
+    "cell_name": "axi_interconnect_0/m01_couplers/auto_ds",
     "component_reference": "xilinx.com:ip:axi_dwidth_converter:2.1",
     "ip_revision": "27",
     "gen_directory": "../../../../../../zyboz710.gen/sources_1/bd/design_1/ip/design_1_auto_ds_0",

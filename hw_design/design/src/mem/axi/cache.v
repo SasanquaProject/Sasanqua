@@ -12,6 +12,7 @@ module cache_axi
         output wire         HIT_CHECK_RESULT,
 
         // 読み
+        input wire          RSELECT,
         input wire          RDEN,
         input wire  [31:0]  RIADDR,
         output reg  [31:0]  ROADDR,
@@ -19,6 +20,7 @@ module cache_axi
         output wire [31:0]  RDATA,
 
         // 書き
+        input wire          WSELECT,
         input wire          WREN,
         input wire  [31:0]  WADDR,
         input wire  [31:0]  WDATA,
@@ -33,7 +35,7 @@ module cache_axi
         input  wire         M_AXI_AWREADY,
 
         // Wチャネル
-        output reg  [31:0]  M_AXI_WDATA,
+        output wire [31:0]  M_AXI_WDATA,
         output wire [3:0]   M_AXI_WSTRB,
         output reg          M_AXI_WLAST,
         output reg          M_AXI_WVALID,
@@ -97,32 +99,37 @@ module cache_axi
         .B_WDATA    (ram_b_wdata)
     );
 
+    assign rden = RSELECT && RDEN;
+    assign wren = WSELECT && WREN;
+
     /* ----- キャッシュ制御 ----- */
     reg         cache_written;
     reg [19:0]  cached_addr;
 
-    assign HIT_CHECK_RESULT = !RDEN || HIT_CHECK[31:12] == cached_addr;
+    assign HIT_CHECK_RESULT = !RSELECT ||
+                              HIT_CHECK[31:12] == 32'b0 ||
+                              HIT_CHECK[31:12] == cached_addr;
 
     always @ (posedge CLK) begin
         if (RST) begin
             cache_written <= 1'b0;
             cached_addr <= 20'hf_ffff;
         end
-        else if (WREN)
-            cache_written <= 1'b1;
         else if (ar_state == S_AR_WAIT && ar_next_state == S_AR_IDLE) begin
             cached_addr <= RIADDR[31:12];
         end
-        else if (awb_state == S_AWB_WAIT && awb_next_state == S_AWB_IDLE) begin
+        else if (awb_state == S_AWB_WAIT && awb_next_state == S_AWB_WAIT_AR) begin
             cache_written <= 1'b0;
         end
+        else if (wren && awb_state == S_AWB_IDLE)
+            cache_written <= 1'b1;
     end
 
     /* ----- キャッシュアクセス ----- */
-    assign ram_a_rden  = !STALL && RDEN;
-    assign ram_a_raddr = !STALL && RDEN ? RIADDR[11:2] : ROADDR[11:2];
+    assign ram_a_rden  = !STALL && rden;
+    assign ram_a_raddr = !STALL && rden ? RIADDR[11:2] : ROADDR[11:2];
     assign RDATA       = ram_a_rdata;
-    assign ram_a_wren  = WREN;
+    assign ram_a_wren  = wren && awb_state == S_AWB_IDLE;
     assign ram_a_waddr = WADDR[11:2];
     assign ram_a_wdata = WDATA;
 
@@ -134,7 +141,7 @@ module cache_axi
         else if (STALL) begin
             // do nothing
         end
-        else if (RDEN) begin
+        else if (rden) begin
             ROADDR <= RIADDR;
             RVALID <= RIADDR[31:12] == cached_addr;
         end
@@ -145,9 +152,10 @@ module cache_axi
 
     /* ----- RAMアクセス制御 ------ */
     // ARチャネル用ステートマシン
-    parameter S_AR_IDLE = 2'b00;
-    parameter S_AR_ADDR = 2'b01;
-    parameter S_AR_WAIT = 2'b11;
+    parameter S_AR_IDLE  = 2'b00;
+    parameter S_AR_CHECK = 2'b01;
+    parameter S_AR_ADDR  = 2'b11;
+    parameter S_AR_WAIT  = 2'b10;
 
     reg [1:0] ar_state, ar_next_state;
 
@@ -161,10 +169,16 @@ module cache_axi
     always @* begin
         case (ar_state)
             S_AR_IDLE:
-                if (RDEN && RIADDR[31:12] != cached_addr && !cache_written)
-                    ar_next_state <= S_AR_ADDR;
+                if (!HIT_CHECK_RESULT)
+                    ar_next_state <= S_AR_CHECK;
                 else
                     ar_next_state <= S_AR_IDLE;
+
+            S_AR_CHECK:
+                if (!cache_written)
+                    ar_next_state <= S_AR_ADDR;
+                else
+                    ar_next_state <= S_AR_CHECK;
 
             S_AR_ADDR:
                 if (M_AXI_ARREADY)
@@ -192,7 +206,7 @@ module cache_axi
             M_AXI_ARADDR <= 32'h0;
             M_AXI_ARVALID <= 1'b0;
         end
-        else if (ar_state == S_AR_IDLE && ar_next_state == S_AR_ADDR)
+        else if (ar_state == S_AR_CHECK && ar_next_state == S_AR_ADDR)
             M_AXI_ARADDR <= { RIADDR[31:12], 12'b0 };
         else if (ar_next_state == S_AR_ADDR)
             M_AXI_ARVALID <= 1'b1;
@@ -254,7 +268,8 @@ module cache_axi
     // AW, Bチャネル用ステートマシン
     parameter S_AWB_IDLE    = 2'b00;
     parameter S_AWB_ADDR    = 2'b01;
-    parameter S_AWB_WAIT    = 2'b10;
+    parameter S_AWB_WAIT    = 2'b11;
+    parameter S_AWB_WAIT_AR = 2'b10;
 
     reg [1:0] awb_state, awb_next_state;
 
@@ -268,7 +283,7 @@ module cache_axi
     always @* begin
         case (awb_state)
             S_AWB_IDLE:
-                if (RDEN && RIADDR[31:12] != cached_addr && cache_written)
+                if (!HIT_CHECK_RESULT && cache_written)
                     awb_next_state <= S_AWB_ADDR;
                 else
                     awb_next_state <= S_AWB_IDLE;
@@ -282,11 +297,17 @@ module cache_axi
             S_AWB_WAIT:
                 if (M_AXI_BVALID)
                     if (M_AXI_AWADDR[11:0] == 12'b0)
-                        awb_next_state <= S_AWB_IDLE;
+                        awb_next_state <= S_AWB_WAIT_AR;
                     else
                         awb_next_state <= S_AWB_ADDR;
                 else
                     awb_next_state <= S_AWB_WAIT;
+
+            S_AWB_WAIT_AR:
+                if (ar_state == S_AR_IDLE)
+                    awb_next_state <= S_AWB_IDLE;
+                else
+                    awb_next_state <= S_AWB_WAIT_AR;
 
             default:
                 awb_next_state <= S_AWB_IDLE;
@@ -312,7 +333,7 @@ module cache_axi
 
     // Wチャネル用ステートマシン
     parameter S_W_IDLE  = 2'b00;
-    parameter S_W_WRITE = 2'b01;
+    parameter S_W_FETCH = 2'b01;
     parameter S_W_WAIT  = 2'b11;
 
     reg [1:0] w_state, w_next_state;
@@ -320,6 +341,7 @@ module cache_axi
 
     assign ram_b_rden  = awb_next_state != S_AWB_IDLE;
     assign ram_b_raddr = w_cnt;
+    assign M_AXI_WDATA = ram_b_rdata;
 
     always @ (posedge CLK) begin
         if (RST)
@@ -336,9 +358,15 @@ module cache_axi
                 else
                     w_next_state <= S_W_IDLE;
 
+            S_W_FETCH:
+                w_next_state <= S_W_WAIT;
+
             S_W_WAIT:
-                if (M_AXI_WREADY && w_cnt[4:0] == 5'b0)
-                    w_next_state <= S_W_IDLE;
+                if (M_AXI_WREADY)
+                    if (M_AXI_WLAST)
+                        w_next_state <= S_W_IDLE;
+                    else
+                        w_next_state <= S_W_FETCH;
                 else
                     w_next_state <= S_W_WAIT;
 
@@ -348,24 +376,21 @@ module cache_axi
     end
 
     always @ (posedge CLK) begin
-        if (RST) begin
-            w_cnt <= 10'b0;
-            M_AXI_WDATA <= 32'b0;
+        if (RST || awb_state == S_AWB_IDLE) begin
+            w_cnt <= 10'h3ff;
             M_AXI_WVALID <= 1'b0;
             M_AXI_WLAST <= 1'b0;
         end
-        else if (awb_state == S_AWB_IDLE && awb_next_state == S_AWB_ADDR)
-            w_cnt <= 10'b0;
-        else if (
-            (w_state == S_W_IDLE && w_next_state == S_W_WAIT) ||
-            (w_next_state == S_W_WAIT && M_AXI_WREADY)
-        ) begin
-            w_cnt <= w_cnt + 10'b1;
-            M_AXI_WDATA <= ram_b_rdata;
+        else if (w_next_state == S_W_FETCH) begin
+            w_cnt <= w_cnt + 10'd1;
+            M_AXI_WVALID <= 1'b0;
+            M_AXI_WLAST <= 1'b0;
+        end
+        else if (w_state == S_W_FETCH) begin
             M_AXI_WVALID <= 1'b1;
             M_AXI_WLAST <= w_cnt[4:0] == 5'h1f;
         end
-        else if (w_state == S_W_WAIT && w_next_state == S_W_IDLE) begin
+        else if (w_next_state == S_W_IDLE) begin
             M_AXI_WVALID <= 1'b0;
             M_AXI_WLAST <= 1'b0;
         end

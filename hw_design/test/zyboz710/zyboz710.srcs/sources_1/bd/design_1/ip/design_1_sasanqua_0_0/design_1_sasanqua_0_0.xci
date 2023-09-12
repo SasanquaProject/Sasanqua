@@ -9,10 +9,10 @@
     "parameters": {
       "component_parameters": {
         "Component_Name": [ { "value": "design_1_sasanqua_0_0", "resolve_type": "user", "usage": "all" } ],
-        "START_ADDR": [ { "value": "0x00000000", "value_src": "user", "resolve_type": "user", "format": "bitString", "usage": "all" } ]
+        "START_ADDR": [ { "value": "0x20000000", "resolve_type": "user", "format": "bitString", "usage": "all" } ]
       },
       "model_parameters": {
-        "START_ADDR": [ { "value": "0x00000000", "resolve_type": "generated", "format": "bitString", "usage": "all" } ]
+        "START_ADDR": [ { "value": "0x20000000", "resolve_type": "generated", "format": "bitString", "usage": "all" } ]
       },
       "project_parameters": {
         "ARCHITECTURE": [ { "value": "zynq" } ],

@@ -224,21 +224,20 @@ module mem_axi
     );
 
     /* ----- アクセス振り分け ----- */
-    wire [2:0] inst_rden, data_rden, data_wren;
+    wire [2:0] inst_rselect, data_rselect, data_wselect;
 
-    assign inst_rden = access_direction(INST_RIADDR, INST_RDEN);
-    assign data_rden = access_direction(DATA_RIADDR, DATA_RDEN);
-    assign data_wren = access_direction(DATA_WADDR, DATA_WREN);
+    assign inst_rselect = access_direction(INST_RIADDR);
+    assign data_rselect = access_direction(DATA_RIADDR);
+    assign data_wselect = access_direction(DATA_WADDR);
 
     function [2:0] access_direction;
         input [31:0] ADDR;
-        input        EN;
 
-        if      (ADDR[31:12] == 20'b0) access_direction = { 1'b0, 1'b0,   EN }; // 0x0000_0000 ~ 0x0000_0fff : ROM
-        else if (ADDR[31:29] ==  3'd0) access_direction = { 1'b0, 1'b0, 1'b0 }; // 0x0000_1000 ~ 0x1fff_ffff : On-chip peripherals
-        else if (ADDR[31:30] ==  2'd0) access_direction = { 1'b0,   EN, 1'b0 }; // 0x2000_0000 ~ 0x3fff_ffff : RAM
-        else if (ADDR[31]    ==  1'd0) access_direction = {   EN, 1'b0, 1'b0 }; // 0x4000_0000 ~ 0x7fff_ffff : Other peripherals
-        else                           access_direction = { 1'b0, 1'b0, 1'b0 }; // 0x8000_0000 ~ 0xffff_ffff : (Reserved);
+        if      (ADDR[31:12] == 20'b0) access_direction = 3'b001; // 0x0000_0000 ~ 0x0000_0fff : ROM
+        else if (ADDR[31:29] ==  3'd0) access_direction = 3'b000; // 0x0000_1000 ~ 0x1fff_ffff : On-chip peripherals
+        else if (ADDR[31:30] ==  2'd0) access_direction = 3'b010; // 0x2000_0000 ~ 0x3fff_ffff : RAM
+        else if (ADDR[31]    ==  1'd0) access_direction = 3'b100; // 0x4000_0000 ~ 0x7fff_ffff : Other peripherals
+        else                           access_direction = 3'b000; // 0x8000_0000 ~ 0xffff_ffff : (Reserved);
     endfunction
 
     /* ----- ROM ----- */
@@ -258,12 +257,14 @@ module mem_axi
         .RST                (RST),
 
         // アクセスポート
-        .A_RDEN             (inst_rden[0]),
+        .A_SELECT           (inst_rselect[0]),
+        .A_RDEN             (INST_RDEN),
         .A_RIADDR           (INST_RIADDR[11:2]),
         .A_ROADDR           (rom_inst_roaddr_10),
         .A_RVALID           (rom_inst_rvalid),
         .A_RDATA            (rom_inst_rdata),
-        .B_RDEN             (data_rden[0]),
+        .B_SELECT           (data_rselect[0]),
+        .B_RDEN             (DATA_RDEN),
         .B_RIADDR           (DATA_RIADDR[11:2]),
         .B_ROADDR           (rom_data_roaddr_10),
         .B_RVALID           (rom_data_rvalid),
@@ -281,12 +282,13 @@ module mem_axi
     wire        axi_inst_bid, axi_inst_bvalid;
     wire        axi_inst_arvalid, axi_inst_arready, axi_inst_rid, axi_inst_rlast, axi_inst_rvalid;
 
-    wire        exists_inst_cache, inst_rvalid, dummy_wren;
+    wire        exists_inst_cache, inst_rvalid, dummy_wselect, dummy_wren;
     wire [31:0] inst_roaddr, inst_rdata, dummy_waddr, dummy_wdata;
 
-    assign dummy_wren   = 1'b0;
-    assign dummy_waddr  = 32'b0;
-    assign dummy_wdata  = 32'b0;
+    assign dummy_wselect = 1'b0;
+    assign dummy_wren    = 1'b0;
+    assign dummy_waddr   = 32'b0;
+    assign dummy_wdata   = 32'b0;
 
     cache_axi inst_cache (
         // 制御
@@ -297,11 +299,13 @@ module mem_axi
         // メモリアクセス
         .HIT_CHECK          (INST_RIADDR),
         .HIT_CHECK_RESULT   (exists_inst_cache),
-        .RDEN               (inst_rden[1]),
+        .RSELECT            (inst_rselect[1]),
+        .RDEN               (INST_RDEN),
         .RIADDR             (INST_RIADDR),
         .ROADDR             (inst_roaddr),
         .RVALID             (inst_rvalid),
         .RDATA              (inst_rdata),
+        .WSELECT            (dummy_wselect),
         .WREN               (dummy_wren),
         .WADDR              (dummy_waddr),
         .WDATA              (dummy_wdata),
@@ -356,12 +360,14 @@ module mem_axi
         // メモリアクセス
         .HIT_CHECK          (DATA_RIADDR),
         .HIT_CHECK_RESULT   (exists_data_cache),
-        .RDEN               (data_rden[1]),
+        .RSELECT            (data_rselect[1]),
+        .RDEN               (DATA_RDEN),
         .RIADDR             (DATA_RIADDR),
         .ROADDR             (data_roaddr),
         .RVALID             (data_rvalid),
         .RDATA              (data_rdata),
-        .WREN               (data_wren[1]),
+        .WSELECT            (data_wselect[1]),
+        .WREN               (DATA_WREN),
         .WADDR              (DATA_WADDR),
         .WDATA              (DATA_WDATA),
 
@@ -414,12 +420,14 @@ module mem_axi
         .LOADING            (device_loading),
 
         // メモリアクセス
-        .RDEN               (data_rden[2]),
+        .RSELECT            (data_rselect[2]),
+        .RDEN               (DATA_RDEN),
         .RIADDR             (DATA_RIADDR),
         .ROADDR             (device_roaddr),
         .RVALID             (device_rvalid),
         .RDATA              (device_rdata),
-        .WREN               (data_wren[2]),
+        .WSELECT            (data_wselect[2]),
+        .WREN               (DATA_WREN),
         .WADDR              (DATA_WADDR),
         .WDATA              (DATA_WDATA),
 

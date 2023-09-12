@@ -76,7 +76,7 @@ module trap
     assign TRAP_PC     = cushion_pc      != 32'b0 ? cushion_pc : (
                          exec_pc         != 32'b0 ? exec_pc : (
                          schedule_1st_pc != 32'b0 ? schedule_1st_pc : (
-                         check_pc        != 32'b0 ? exec_pc : (
+                         check_pc        != 32'b0 ? check_pc : (
                          decode_pc       != 32'b0 ? decode_pc : inst_pc ))));
     assign TRAP_EN     = cushion_exc_en || (int_en && int_allow);
     assign TRAP_CODE   = cushion_exc_en ? { 28'b0, cushion_exc_code } : { 1'b0, 27'b0, int_code };
