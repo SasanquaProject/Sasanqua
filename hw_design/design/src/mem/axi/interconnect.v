@@ -141,6 +141,10 @@ module interconnect_axi
 
     reg [1:0] ac_r_state, ac_r_next_state;
 
+    assign s1_r_allow = ac_r_state == AC_R_S1 || ac_r_next_state == AC_R_S1;
+    assign s2_r_allow = ac_r_state == AC_R_S2 || ac_r_next_state == AC_R_S2;
+    assign s3_r_allow = ac_r_state == AC_R_S3 || ac_r_next_state == AC_R_S3;
+
     always @ (posedge CLK) begin
         if (RST)
             ac_r_state <= AC_R_IDLE;
@@ -175,6 +179,10 @@ module interconnect_axi
     parameter AC_W_S3   = 2'b11;
 
     reg [1:0] ac_w_state, ac_w_next_state;
+
+    assign s1_w_allow = ac_w_state == AC_W_S1 || ac_w_next_state == AC_W_S1;
+    assign s2_w_allow = ac_w_state == AC_W_S2 || ac_w_next_state == AC_W_S2;
+    assign s3_w_allow = ac_w_state == AC_W_S3 || ac_w_next_state == AC_W_S3;
 
     always @ (posedge CLK) begin
         if (RST)
@@ -222,83 +230,83 @@ module interconnect_axi
     assign M_AXI_RREADY     = 1'b1;
 
     // 接続バス選択
-    assign M_AXI_AWADDR     = (ac_w_state == AC_W_S1) ? S1_AXI_AWADDR :
-                              (ac_w_state == AC_W_S2) ? S2_AXI_AWADDR :
-                                                        S3_AXI_AWADDR ;
-    assign M_AXI_AWLEN      = (ac_w_state == AC_W_S1) ? S1_AXI_AWLEN :
-                              (ac_w_state == AC_W_S2) ? S2_AXI_AWLEN :
-                                                        S3_AXI_AWLEN ;
-    assign M_AXI_AWSIZE     = (ac_w_state == AC_W_S1) ? S1_AXI_AWSIZE :
-                              (ac_w_state == AC_W_S2) ? S2_AXI_AWSIZE :
-                                                        S3_AXI_AWSIZE ;
-    assign M_AXI_AWBURST    = (ac_w_state == AC_W_S1) ? S1_AXI_AWBURST :
-                              (ac_w_state == AC_W_S2) ? S2_AXI_AWBURST:
-                                                        S3_AXI_AWBURST;
-    assign M_AXI_AWVALID    = (ac_w_state == AC_W_S1) ? S1_AXI_AWVALID :
-                              (ac_w_state == AC_W_S2) ? S2_AXI_AWVALID :
-                                                        S3_AXI_AWVALID ;
-    assign M_AXI_WDATA      = (ac_w_state == AC_W_S1) ? S1_AXI_WDATA :
-                              (ac_w_state == AC_W_S2) ? S2_AXI_WDATA :
-                                                        S3_AXI_WDATA ;
-    assign M_AXI_WSTRB      = (ac_w_state == AC_W_S1) ? S1_AXI_WSTRB :
-                              (ac_w_state == AC_W_S2) ? S2_AXI_WSTRB :
-                                                        S3_AXI_WSTRB ;
-    assign M_AXI_WLAST      = (ac_w_state == AC_W_S1) ? S1_AXI_WLAST :
-                              (ac_w_state == AC_W_S2) ? S2_AXI_WLAST :
-                                                        S3_AXI_WLAST ;
-    assign M_AXI_WVALID     = (ac_w_state == AC_W_S1) ? S1_AXI_WVALID :
-                              (ac_w_state == AC_W_S2) ? S2_AXI_WVALID :
-                                                        S3_AXI_WVALID ;
-    assign M_AXI_ARADDR     = (ac_r_state == AC_R_S1) ? S1_AXI_ARADDR :
-                              (ac_r_state == AC_R_S2) ? S2_AXI_ARADDR :
-                                                        S3_AXI_ARADDR ;
-    assign M_AXI_ARLEN      = (ac_r_state == AC_R_S1) ? S1_AXI_ARLEN :
-                              (ac_r_state == AC_R_S2) ? S2_AXI_ARLEN :
-                                                        S3_AXI_ARLEN ;
-    assign M_AXI_ARSIZE     = (ac_r_state == AC_R_S1) ? S1_AXI_ARSIZE :
-                              (ac_r_state == AC_R_S2) ? S2_AXI_ARSIZE :
-                                                        S3_AXI_ARSIZE ;
-    assign M_AXI_ARBURST    = (ac_r_state == AC_R_S1) ? S1_AXI_ARBURST :
-                              (ac_r_state == AC_R_S2) ? S2_AXI_ARBURST :
-                                                        S3_AXI_ARBURST ;
-    assign M_AXI_ARVALID    = (ac_r_state == AC_R_S1) ? S1_AXI_ARVALID :
-                              (ac_r_state == AC_R_S2) ? S2_AXI_ARVALID :
-                                                        S3_AXI_ARVALID ;
+    assign M_AXI_AWADDR     = s1_w_allow ? S1_AXI_AWADDR :
+                              s2_w_allow ? S2_AXI_AWADDR :
+                                           S3_AXI_AWADDR ;
+    assign M_AXI_AWLEN      = s1_w_allow ? S1_AXI_AWLEN :
+                              s2_w_allow ? S2_AXI_AWLEN :
+                                           S3_AXI_AWLEN ;
+    assign M_AXI_AWSIZE     = s1_w_allow ? S1_AXI_AWSIZE :
+                              s2_w_allow ? S2_AXI_AWSIZE :
+                                           S3_AXI_AWSIZE ;
+    assign M_AXI_AWBURST    = s1_w_allow ? S1_AXI_AWBURST :
+                              s2_w_allow ? S2_AXI_AWBURST:
+                                           S3_AXI_AWBURST;
+    assign M_AXI_AWVALID    = s1_w_allow ? S1_AXI_AWVALID :
+                              s2_w_allow ? S2_AXI_AWVALID :
+                                           S3_AXI_AWVALID ;
+    assign M_AXI_WDATA      = s1_w_allow ? S1_AXI_WDATA :
+                              s2_w_allow ? S2_AXI_WDATA :
+                                           S3_AXI_WDATA ;
+    assign M_AXI_WSTRB      = s1_w_allow ? S1_AXI_WSTRB :
+                              s2_w_allow ? S2_AXI_WSTRB :
+                                           S3_AXI_WSTRB ;
+    assign M_AXI_WLAST      = s1_w_allow ? S1_AXI_WLAST :
+                              s2_w_allow ? S2_AXI_WLAST :
+                                           S3_AXI_WLAST ;
+    assign M_AXI_WVALID     = s1_w_allow ? S1_AXI_WVALID :
+                              s2_w_allow ? S2_AXI_WVALID :
+                                           S3_AXI_WVALID ;
+    assign M_AXI_ARADDR     = s1_r_allow ? S1_AXI_ARADDR :
+                              s2_r_allow ? S2_AXI_ARADDR :
+                                           S3_AXI_ARADDR ;
+    assign M_AXI_ARLEN      = s1_r_allow ? S1_AXI_ARLEN :
+                              s2_r_allow ? S2_AXI_ARLEN :
+                                           S3_AXI_ARLEN ;
+    assign M_AXI_ARSIZE     = s1_r_allow ? S1_AXI_ARSIZE :
+                              s2_r_allow ? S2_AXI_ARSIZE :
+                                           S3_AXI_ARSIZE ;
+    assign M_AXI_ARBURST    = s1_r_allow ? S1_AXI_ARBURST :
+                              s2_r_allow ? S2_AXI_ARBURST :
+                                           S3_AXI_ARBURST ;
+    assign M_AXI_ARVALID    = s1_r_allow ? S1_AXI_ARVALID :
+                              s2_r_allow ? S2_AXI_ARVALID :
+                                           S3_AXI_ARVALID ;
 
-    assign S1_AXI_AWREADY   = ac_w_state == AC_W_S1 ? M_AXI_AWREADY : 1'b0;
-    assign S1_AXI_WREADY    = ac_w_state == AC_W_S1 ? M_AXI_WREADY : 1'b0;
-    assign S1_AXI_BID       = ac_w_state == AC_W_S1 ? M_AXI_BID : 1'b0;
-    assign S1_AXI_BRESP     = ac_w_state == AC_W_S1 ? M_AXI_BRESP : 2'b0;
-    assign S1_AXI_BVALID    = ac_w_state == AC_W_S1 ? M_AXI_BVALID : 1'b0;
-    assign S1_AXI_ARREADY   = ac_r_state == AC_R_S1 ? M_AXI_ARREADY : 1'b0;
-    assign S1_AXI_RID       = ac_r_state == AC_R_S1 ? M_AXI_RID : 1'b0;
-    assign S1_AXI_RDATA     = ac_r_state == AC_R_S1 ? M_AXI_RDATA : 32'b0;
-    assign S1_AXI_RRESP     = ac_r_state == AC_R_S1 ? M_AXI_RRESP : 2'b0;
-    assign S1_AXI_RLAST     = ac_r_state == AC_R_S1 ? M_AXI_RLAST : 2'b0;
-    assign S1_AXI_RVALID    = ac_r_state == AC_R_S1 ? M_AXI_RVALID : 1'b0;
+    assign S1_AXI_AWREADY   = s1_w_allow ? M_AXI_AWREADY : 1'b0;
+    assign S1_AXI_WREADY    = s1_w_allow ? M_AXI_WREADY : 1'b0;
+    assign S1_AXI_BID       = s1_w_allow ? M_AXI_BID : 1'b0;
+    assign S1_AXI_BRESP     = s1_w_allow ? M_AXI_BRESP : 2'b0;
+    assign S1_AXI_BVALID    = s1_w_allow ? M_AXI_BVALID : 1'b0;
+    assign S1_AXI_ARREADY   = s1_r_allow ? M_AXI_ARREADY : 1'b0;
+    assign S1_AXI_RID       = s1_r_allow ? M_AXI_RID : 1'b0;
+    assign S1_AXI_RDATA     = s1_r_allow ? M_AXI_RDATA : 32'b0;
+    assign S1_AXI_RRESP     = s1_r_allow ? M_AXI_RRESP : 2'b0;
+    assign S1_AXI_RLAST     = s1_r_allow ? M_AXI_RLAST : 2'b0;
+    assign S1_AXI_RVALID    = s1_r_allow ? M_AXI_RVALID : 1'b0;
 
-    assign S2_AXI_AWREADY   = ac_w_state == AC_W_S2 ? M_AXI_AWREADY : 1'b0;
-    assign S2_AXI_WREADY    = ac_w_state == AC_W_S2 ? M_AXI_WREADY : 1'b0;
-    assign S2_AXI_BID       = ac_w_state == AC_W_S2 ? M_AXI_BID : 1'b0;
-    assign S2_AXI_BRESP     = ac_w_state == AC_W_S2 ? M_AXI_BRESP : 2'b0;
-    assign S2_AXI_BVALID    = ac_w_state == AC_W_S2 ? M_AXI_BVALID : 1'b0;
-    assign S2_AXI_ARREADY   = ac_r_state == AC_R_S2 ? M_AXI_ARREADY : 1'b0;
-    assign S2_AXI_RID       = ac_r_state == AC_R_S2 ? M_AXI_RID : 1'b0;
-    assign S2_AXI_RDATA     = ac_r_state == AC_R_S2 ? M_AXI_RDATA : 32'b0;
-    assign S2_AXI_RRESP     = ac_r_state == AC_R_S2 ? M_AXI_RRESP : 2'b0;
-    assign S2_AXI_RLAST     = ac_r_state == AC_R_S2 ? M_AXI_RLAST : 2'b0;
-    assign S2_AXI_RVALID    = ac_r_state == AC_R_S2 ? M_AXI_RVALID : 1'b0;
+    assign S2_AXI_AWREADY   = s2_w_allow ? M_AXI_AWREADY : 1'b0;
+    assign S2_AXI_WREADY    = s2_w_allow ? M_AXI_WREADY : 1'b0;
+    assign S2_AXI_BID       = s2_w_allow ? M_AXI_BID : 1'b0;
+    assign S2_AXI_BRESP     = s2_w_allow ? M_AXI_BRESP : 2'b0;
+    assign S2_AXI_BVALID    = s2_w_allow ? M_AXI_BVALID : 1'b0;
+    assign S2_AXI_ARREADY   = s2_r_allow ? M_AXI_ARREADY : 1'b0;
+    assign S2_AXI_RID       = s2_r_allow ? M_AXI_RID : 1'b0;
+    assign S2_AXI_RDATA     = s2_r_allow ? M_AXI_RDATA : 32'b0;
+    assign S2_AXI_RRESP     = s2_r_allow ? M_AXI_RRESP : 2'b0;
+    assign S2_AXI_RLAST     = s2_r_allow ? M_AXI_RLAST : 2'b0;
+    assign S2_AXI_RVALID    = s2_r_allow ? M_AXI_RVALID : 1'b0;
 
-    assign S3_AXI_AWREADY   = ac_w_state == AC_W_S3 ? M_AXI_AWREADY : 1'b0;
-    assign S3_AXI_WREADY    = ac_w_state == AC_W_S3 ? M_AXI_WREADY : 1'b0;
-    assign S3_AXI_BID       = ac_w_state == AC_W_S3 ? M_AXI_BID : 1'b0;
-    assign S3_AXI_BRESP     = ac_w_state == AC_W_S3 ? M_AXI_BRESP : 2'b0;
-    assign S3_AXI_BVALID    = ac_w_state == AC_W_S3 ? M_AXI_BVALID : 1'b0;
-    assign S3_AXI_ARREADY   = ac_r_state == AC_R_S3 ? M_AXI_ARREADY : 1'b0;
-    assign S3_AXI_RID       = ac_r_state == AC_R_S3 ? M_AXI_RID : 1'b0;
-    assign S3_AXI_RDATA     = ac_r_state == AC_R_S3 ? M_AXI_RDATA : 32'b0;
-    assign S3_AXI_RRESP     = ac_r_state == AC_R_S3 ? M_AXI_RRESP : 2'b0;
-    assign S3_AXI_RLAST     = ac_r_state == AC_R_S3 ? M_AXI_RLAST : 2'b0;
-    assign S3_AXI_RVALID    = ac_r_state == AC_R_S3 ? M_AXI_RVALID : 1'b0;
+    assign S3_AXI_AWREADY   = s3_w_allow ? M_AXI_AWREADY : 1'b0;
+    assign S3_AXI_WREADY    = s3_w_allow ? M_AXI_WREADY : 1'b0;
+    assign S3_AXI_BID       = s3_w_allow ? M_AXI_BID : 1'b0;
+    assign S3_AXI_BRESP     = s3_w_allow ? M_AXI_BRESP : 2'b0;
+    assign S3_AXI_BVALID    = s3_w_allow ? M_AXI_BVALID : 1'b0;
+    assign S3_AXI_ARREADY   = s3_r_allow ? M_AXI_ARREADY : 1'b0;
+    assign S3_AXI_RID       = s3_r_allow ? M_AXI_RID : 1'b0;
+    assign S3_AXI_RDATA     = s3_r_allow ? M_AXI_RDATA : 32'b0;
+    assign S3_AXI_RRESP     = s3_r_allow ? M_AXI_RRESP : 2'b0;
+    assign S3_AXI_RLAST     = s3_r_allow ? M_AXI_RLAST : 2'b0;
+    assign S3_AXI_RVALID    = s3_r_allow ? M_AXI_RVALID : 1'b0;
 
 endmodule
