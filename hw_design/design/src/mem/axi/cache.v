@@ -115,21 +115,21 @@ module cache_axi
             cache_written <= 1'b0;
             cached_addr <= 20'hf_ffff;
         end
-        else if (wren)
-            cache_written <= 1'b1;
         else if (ar_state == S_AR_WAIT && ar_next_state == S_AR_IDLE) begin
             cached_addr <= RIADDR[31:12];
         end
-        else if (awb_state == S_AWB_WAIT && awb_next_state == S_AWB_IDLE) begin
+        else if (awb_state == S_AWB_WAIT && awb_next_state == S_AWB_WAIT_AR) begin
             cache_written <= 1'b0;
         end
+        else if (wren && awb_state == S_AWB_IDLE)
+            cache_written <= 1'b1;
     end
 
     /* ----- キャッシュアクセス ----- */
     assign ram_a_rden  = !STALL && rden;
     assign ram_a_raddr = !STALL && rden ? RIADDR[11:2] : ROADDR[11:2];
     assign RDATA       = ram_a_rdata;
-    assign ram_a_wren  = wren;
+    assign ram_a_wren  = wren && awb_state == S_AWB_IDLE;
     assign ram_a_waddr = WADDR[11:2];
     assign ram_a_wdata = WDATA;
 
@@ -152,9 +152,10 @@ module cache_axi
 
     /* ----- RAMアクセス制御 ------ */
     // ARチャネル用ステートマシン
-    parameter S_AR_IDLE = 2'b00;
-    parameter S_AR_ADDR = 2'b01;
-    parameter S_AR_WAIT = 2'b11;
+    parameter S_AR_IDLE  = 2'b00;
+    parameter S_AR_CHECK = 2'b01;
+    parameter S_AR_ADDR  = 2'b11;
+    parameter S_AR_WAIT  = 2'b10;
 
     reg [1:0] ar_state, ar_next_state;
 
@@ -168,10 +169,16 @@ module cache_axi
     always @* begin
         case (ar_state)
             S_AR_IDLE:
-                if (!HIT_CHECK_RESULT && !cache_written)
-                    ar_next_state <= S_AR_ADDR;
+                if (!HIT_CHECK_RESULT)
+                    ar_next_state <= S_AR_CHECK;
                 else
                     ar_next_state <= S_AR_IDLE;
+
+            S_AR_CHECK:
+                if (!cache_written)
+                    ar_next_state <= S_AR_ADDR;
+                else
+                    ar_next_state <= S_AR_CHECK;
 
             S_AR_ADDR:
                 if (M_AXI_ARREADY)
@@ -199,7 +206,7 @@ module cache_axi
             M_AXI_ARADDR <= 32'h0;
             M_AXI_ARVALID <= 1'b0;
         end
-        else if (ar_state == S_AR_IDLE && ar_next_state == S_AR_ADDR)
+        else if (ar_state == S_AR_CHECK && ar_next_state == S_AR_ADDR)
             M_AXI_ARADDR <= { RIADDR[31:12], 12'b0 };
         else if (ar_next_state == S_AR_ADDR)
             M_AXI_ARVALID <= 1'b1;
@@ -261,7 +268,8 @@ module cache_axi
     // AW, Bチャネル用ステートマシン
     parameter S_AWB_IDLE    = 2'b00;
     parameter S_AWB_ADDR    = 2'b01;
-    parameter S_AWB_WAIT    = 2'b10;
+    parameter S_AWB_WAIT    = 2'b11;
+    parameter S_AWB_WAIT_AR = 2'b10;
 
     reg [1:0] awb_state, awb_next_state;
 
@@ -289,11 +297,17 @@ module cache_axi
             S_AWB_WAIT:
                 if (M_AXI_BVALID)
                     if (M_AXI_AWADDR[11:0] == 12'b0)
-                        awb_next_state <= S_AWB_IDLE;
+                        awb_next_state <= S_AWB_WAIT_AR;
                     else
                         awb_next_state <= S_AWB_ADDR;
                 else
                     awb_next_state <= S_AWB_WAIT;
+
+            S_AWB_WAIT_AR:
+                if (ar_state == S_AR_IDLE)
+                    awb_next_state <= S_AWB_IDLE;
+                else
+                    awb_next_state <= S_AWB_WAIT_AR;
 
             default:
                 awb_next_state <= S_AWB_IDLE;
