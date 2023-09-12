@@ -35,7 +35,7 @@ module cache_axi
         input  wire         M_AXI_AWREADY,
 
         // Wチャネル
-        output reg  [31:0]  M_AXI_WDATA,
+        output wire [31:0]  M_AXI_WDATA,
         output wire [3:0]   M_AXI_WSTRB,
         output reg          M_AXI_WLAST,
         output reg          M_AXI_WVALID,
@@ -319,7 +319,7 @@ module cache_axi
 
     // Wチャネル用ステートマシン
     parameter S_W_IDLE  = 2'b00;
-    parameter S_W_WRITE = 2'b01;
+    parameter S_W_FETCH = 2'b01;
     parameter S_W_WAIT  = 2'b11;
 
     reg [1:0] w_state, w_next_state;
@@ -327,6 +327,7 @@ module cache_axi
 
     assign ram_b_rden  = awb_next_state != S_AWB_IDLE;
     assign ram_b_raddr = w_cnt;
+    assign M_AXI_WDATA = ram_b_rdata;
 
     always @ (posedge CLK) begin
         if (RST)
@@ -343,9 +344,15 @@ module cache_axi
                 else
                     w_next_state <= S_W_IDLE;
 
+            S_W_FETCH:
+                w_next_state <= S_W_WAIT;
+
             S_W_WAIT:
-                if (M_AXI_WREADY && w_cnt[4:0] == 5'b0)
-                    w_next_state <= S_W_IDLE;
+                if (M_AXI_WREADY)
+                    if (M_AXI_WLAST)
+                        w_next_state <= S_W_IDLE;
+                    else
+                        w_next_state <= S_W_FETCH;
                 else
                     w_next_state <= S_W_WAIT;
 
@@ -355,24 +362,21 @@ module cache_axi
     end
 
     always @ (posedge CLK) begin
-        if (RST) begin
-            w_cnt <= 10'b0;
-            M_AXI_WDATA <= 32'b0;
+        if (RST || awb_state == S_AWB_IDLE) begin
+            w_cnt <= 10'h3ff;
             M_AXI_WVALID <= 1'b0;
             M_AXI_WLAST <= 1'b0;
         end
-        else if (awb_state == S_AWB_IDLE && awb_next_state == S_AWB_ADDR)
-            w_cnt <= 10'b0;
-        else if (
-            (w_state == S_W_IDLE && w_next_state == S_W_WAIT) ||
-            (w_next_state == S_W_WAIT && M_AXI_WREADY)
-        ) begin
-            w_cnt <= w_cnt + 10'b1;
-            M_AXI_WDATA <= ram_b_rdata;
+        else if (w_next_state == S_W_FETCH) begin
+            w_cnt <= w_cnt + 10'd1;
+            M_AXI_WVALID <= 1'b0;
+            M_AXI_WLAST <= 1'b0;
+        end
+        else if (w_state == S_W_FETCH) begin
             M_AXI_WVALID <= 1'b1;
             M_AXI_WLAST <= w_cnt[4:0] == 5'h1f;
         end
-        else if (w_state == S_W_WAIT && w_next_state == S_W_IDLE) begin
+        else if (w_next_state == S_W_IDLE) begin
             M_AXI_WVALID <= 1'b0;
             M_AXI_WLAST <= 1'b0;
         end
