@@ -5,7 +5,7 @@ void uart_reset(void) {
 }
 
 void uart_wait() {
-    while(STAT != 0b100);
+    while(STAT & 0b100 != 0b100);
 }
 
 void uart_sendc(char c) {
