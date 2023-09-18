@@ -1,6 +1,7 @@
 #include "utils.h"
 #include "peripherals/clint.h"
 #include "peripherals/uart.h"
+#include "peripherals/spi.h"
 
 #define SEC 1000000  // = 100Mhz / 100
 
@@ -10,7 +11,15 @@ void trap_handler(void) {
 
 int main(void) {
     /* Setup peripherals */
+    // UART
     uart_init();
+    uart_sendc('0');
+
+    // SPI
+    spi_init();
+    uart_sendc('1');
+
+    // spi_read();
 
     /* Boot process */
     uart_sendc('H');
