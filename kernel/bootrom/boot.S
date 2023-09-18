@@ -5,11 +5,10 @@ _start:
     j setup
 
 trap_vector:
-    csrr t2, mepc
-
     call trap_handler
-
-    jr t2
+    csrwi mstatus, 8
+    csrr ra, mepc
+    ret
 
 setup:
     la t0, trap_vector
