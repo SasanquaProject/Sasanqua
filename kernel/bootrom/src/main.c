@@ -10,7 +10,7 @@ void trap_handler(void) {
 
 int main(void) {
     /* Setup peripherals */
-    uart_reset();
+    uart_init();
 
     /* Boot process */
     uart_sendc('H');
