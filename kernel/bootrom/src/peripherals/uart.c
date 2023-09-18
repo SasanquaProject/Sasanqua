@@ -1,11 +1,11 @@
 #include "uart.h"
 
-void uart_reset(void) {
+void uart_init(void) {
     CTRL = 0b00011;   // reset tx/rx fifo
 }
 
 void uart_wait() {
-    while(STAT != 0b100);
+    while(STAT & 0b100 != 0b100);
 }
 
 void uart_sendc(char c) {
