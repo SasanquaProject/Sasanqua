@@ -218,7 +218,14 @@
 #define XPAR_PS7_SLCR_0_S_AXI_HIGHADDR 0xF8000FFF
 
 
+/* Peripheral Definitions for peripheral SASANQUA_CONTROLLER_0 */
+#define XPAR_SASANQUA_CONTROLLER_0_BASEADDR 0x43C00000
+#define XPAR_SASANQUA_CONTROLLER_0_HIGHADDR 0x43C0FFFF
+
+
 /******************************************************************/
+
+
 
 
 
