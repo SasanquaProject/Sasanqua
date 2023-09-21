@@ -5,7 +5,7 @@
     "cell_name": "proc_sys_reset_0",
     "component_reference": "xilinx.com:ip:proc_sys_reset:5.0",
     "ip_revision": "13",
-    "gen_directory": "../../../../../../zyboz710.gen/sources_1/bd/design_1/ip/design_1_proc_sys_reset_0_0",
+    "gen_directory": "../../../../../../zyboz710.gen/sources_1/bd/design_1/ip/design_1_proc_sys_reset_0_0_1",
     "parameters": {
       "component_parameters": {
         "C_NUM_PERP_ARESETN": [ { "value": "1", "resolve_type": "user", "format": "long", "usage": "all" } ],
@@ -50,7 +50,7 @@
         "IPCONTEXT": [ { "value": "IP_Integrator" } ],
         "IPREVISION": [ { "value": "13" } ],
         "MANAGED": [ { "value": "TRUE" } ],
-        "OUTPUTDIR": [ { "value": "../../../../../../zyboz710.gen/sources_1/bd/design_1/ip/design_1_proc_sys_reset_0_0" } ],
+        "OUTPUTDIR": [ { "value": "../../../../../../zyboz710.gen/sources_1/bd/design_1/ip/design_1_proc_sys_reset_0_0_1" } ],
         "SELECTEDSIMMODEL": [ { "value": "" } ],
         "SHAREDDIR": [ { "value": "../../ipshared" } ],
         "SWVERSION": [ { "value": "2022.2" } ],
