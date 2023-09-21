@@ -5,11 +5,11 @@
     "cell_name": "axi_interconnect_0",
     "component_reference": "xilinx.com:ip:axi_interconnect:2.1",
     "ip_revision": "28",
-    "gen_directory": "../../../../../../zyboz710.gen/sources_1/bd/design_1/ip/design_1_axi_interconnect_0_0",
+    "gen_directory": "../../../../../../zyboz710.gen/sources_1/bd/design_1/ip/design_1_axi_interconnect_0_0_1",
     "parameters": {
       "component_parameters": {
         "NUM_SI": [ { "value": "1", "resolve_type": "user", "format": "long", "usage": "all" } ],
-        "NUM_MI": [ { "value": "3", "value_src": "user", "resolve_type": "user", "format": "long", "usage": "all" } ],
+        "NUM_MI": [ { "value": "4", "value_src": "user", "resolve_type": "user", "format": "long", "usage": "all" } ],
         "STRATEGY": [ { "value": "0", "resolve_type": "user", "format": "long", "usage": "all" } ],
         "ENABLE_ADVANCED_OPTIONS": [ { "value": "0", "resolve_type": "user", "format": "long", "usage": "all" } ],
         "ENABLE_PROTOCOL_CHECKERS": [ { "value": "0", "resolve_type": "user", "format": "long", "usage": "all" } ],
@@ -343,7 +343,7 @@
         "IPCONTEXT": [ { "value": "IP_Integrator_AppCore" } ],
         "IPREVISION": [ { "value": "28" } ],
         "MANAGED": [ { "value": "TRUE" } ],
-        "OUTPUTDIR": [ { "value": "../../../../../../zyboz710.gen/sources_1/bd/design_1/ip/design_1_axi_interconnect_0_0" } ],
+        "OUTPUTDIR": [ { "value": "../../../../../../zyboz710.gen/sources_1/bd/design_1/ip/design_1_axi_interconnect_0_0_1" } ],
         "SELECTEDSIMMODEL": [ { "value": "" } ],
         "SHAREDDIR": [ { "value": "../../ipshared" } ],
         "SWVERSION": [ { "value": "2022.2" } ],

@@ -121,3 +121,15 @@ platform generate -domains
 platform active {design_1_wrapper}
 platform config -updatehw {C:/Users/YNakagami/Develop/projects/mitou2023/Sasanqua/hw_design/test/zyboz710/design_1_wrapper.xsa}
 platform generate -domains 
+platform active {design_1_wrapper}
+platform config -updatehw {C:/Users/YNakagami/Develop/projects/mitou2023/Sasanqua/hw_design/test/zyboz710/design_1_wrapper.xsa}
+platform generate -domains 
+platform active {design_1_wrapper}
+platform config -updatehw {C:/Users/YNakagami/Develop/projects/mitou2023/Sasanqua/hw_design/test/zyboz710/design_1_wrapper.xsa}
+platform generate -domains 
+platform active {design_1_wrapper}
+platform config -updatehw {C:/Users/YNakagami/Develop/projects/mitou2023/Sasanqua/hw_design/test/zyboz710/design_1_wrapper.xsa}
+platform generate
+platform active {design_1_wrapper}
+platform config -updatehw {C:/Users/YNakagami/Develop/projects/mitou2023/Sasanqua/hw_design/test/zyboz710/design_1_wrapper.xsa}
+platform generate -domains 

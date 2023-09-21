@@ -1,7 +1,7 @@
-.global _start
+.global __start
 .global int_allow, int_disallow
 
-_start:
+__start:
     j setup
 
 trap_vector:

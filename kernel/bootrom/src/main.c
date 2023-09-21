@@ -2,6 +2,7 @@
 #include "peripherals/clint.h"
 #include "peripherals/uart.h"
 #include "peripherals/spi.h"
+#include "peripherals/seg7.h"
 
 #define SEC 1000000  // = 100Mhz / 100
 
@@ -30,6 +31,8 @@ int main(void) {
     uart_sendc('!');
     uart_sendc('\r');
     uart_sendc('\n');
+
+    seg7_write(0x123456);
 
     while (1) { }
 }

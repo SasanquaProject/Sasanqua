@@ -90,7 +90,7 @@ void spi_read() {
         unsigned char recv = spi_receive();
         uart_sendc(recv);
     }
-    uart_receive();
-    uart_receive();
-    uart_receive();
+    spi_receive();
+    spi_receive();
+    spi_receive();
 }
