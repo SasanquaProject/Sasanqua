@@ -299,7 +299,6 @@ module mem_axi
         .STALL              (MEM_WAIT),
 
         // メモリアクセス
-        .HIT_CHECK          (INST_RIADDR),
         .HIT_CHECK_RESULT   (exists_inst_cache),
         .RSELECT            (inst_rselect[1]),
         .RDEN               (INST_RDEN),
@@ -361,7 +360,6 @@ module mem_axi
         .STALL              (MEM_WAIT),
 
         // メモリアクセス
-        .HIT_CHECK          (DATA_RIADDR),
         .HIT_CHECK_RESULT   (exists_data_cache),
         .RSELECT            (data_rselect[1]),
         .RDEN               (DATA_RDEN),

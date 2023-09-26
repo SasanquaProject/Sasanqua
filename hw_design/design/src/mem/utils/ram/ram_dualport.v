@@ -35,31 +35,36 @@ module ram_dualport
     wire [3:0]              wstrb;
     wire [(WIDTH-1+2):0]    raddr, waddr;
     wire [31:0]             wdata;
+    reg  [31:0]             rdata, rdata_for_w;
 
-    reg                     cache_wren;
+    reg  [1:0]              cache_wren;
     reg  [3:0]              cache_wstrb;
-    reg  [(WIDTH-1+2):0]    cache_waddr;
-    reg  [31:0]             rdata, rdata_for_w, cache_wdata;
+    reg  [(WIDTH-1+2):0]    cache_waddr [0:1];
+    reg  [31:0]             cache_wdata [0:1];
 
     assign raddr   = B_RDEN ? B_RADDR : A_RADDR;
     assign wren    = B_WREN || A_WREN;
     assign wstrb   = B_WREN ? B_WSTRB : A_WSTRB;
     assign waddr   = B_WREN ? B_WADDR : A_WADDR;
     assign wdata   = B_WREN ? B_WDATA : A_WDATA;
-    assign A_RDATA = cache_wren ? gen_wrdata(cache_waddr, cache_wstrb, rdata_for_w, cache_wdata) : rdata;
-    assign B_RDATA = cache_wren ? gen_wrdata(cache_waddr, cache_wstrb, rdata_for_w, cache_wdata) : rdata;
+    assign A_RDATA = (cache_wren[0] && raddr == cache_waddr[0]) ? gen_wrdata(cache_waddr[0], cache_wstrb, rdata_for_w, cache_wdata[0]) : (
+                     (cache_wren[1] && raddr == cache_waddr[1]) ? cache_wdata[1] :
+                                                                  rdata);
+    assign B_RDATA = A_RDATA;
 
     always @ (posedge CLK) begin
-        cache_wren <= wren;
+        cache_wren <= { cache_wren[0], wren };
         cache_wstrb <= wstrb;
-        cache_waddr <= waddr;
-        cache_wdata <= wdata;
+        cache_waddr[1] <= cache_waddr[0];
+        cache_waddr[0] <= waddr;
+        cache_wdata[1] <= gen_wrdata(cache_waddr[0], cache_wstrb, rdata_for_w, cache_wdata[0]);
+        cache_wdata[0] <= wdata;
 
         rdata <= ram[raddr[(WIDTH-1+2):2]];
         rdata_for_w <= ram[waddr[(WIDTH-1+2):2]];
 
-        if (cache_wren)
-            ram[cache_waddr[(WIDTH-1+2):2]] <= gen_wrdata(cache_waddr, cache_wstrb, rdata_for_w, cache_wdata);
+        if (cache_wren[0])
+            ram[cache_waddr[0][(WIDTH-1+2):2]] <= gen_wrdata(cache_waddr[0], cache_wstrb, rdata_for_w, cache_wdata[0]);
     end
 
     function [31:0] gen_wrdata;

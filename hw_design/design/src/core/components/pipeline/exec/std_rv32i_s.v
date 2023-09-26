@@ -254,21 +254,6 @@ module exec_std_rv32i_s
                 EXEC_REG_W_RD <= rd_addr;
                 EXEC_REG_W_DATA <= 32'hffff_ffff;
             end
-            17'b0100011_000_zzzzzzz: begin  // sb
-                EXEC_REG_W_EN <= 1'b0;
-                EXEC_REG_W_RD <= rd_addr;
-                EXEC_REG_W_DATA <= 32'hffff_ffff;
-            end
-            17'b0100011_001_zzzzzzz: begin  // sh
-                EXEC_REG_W_EN <= 1'b0;
-                EXEC_REG_W_RD <= rd_addr;
-                EXEC_REG_W_DATA <= 32'hffff_ffff;
-            end
-            17'b0100011_010_zzzzzzz: begin  // sw
-                EXEC_REG_W_EN <= 1'b0;
-                EXEC_REG_W_RD <= rd_addr;
-                EXEC_REG_W_DATA <= 32'hffff_ffff;
-            end
             17'b1110011_011_zzzzzzz: begin // csrrc
                 EXEC_REG_W_EN <= 1'b1;
                 EXEC_REG_W_RD <= rd_addr;
@@ -341,27 +326,6 @@ module exec_std_rv32i_s
             10'b0000011_010: begin  // lw
                 EXEC_MEM_R_EN <= 1'b1;
                 EXEC_MEM_R_RD <= rd_addr;
-                EXEC_MEM_R_ADDR <= rs1_data_s + $signed({ { 20{ imm[11] } }, imm[11:0] });
-                EXEC_MEM_R_STRB <= 4'b1111;
-                EXEC_MEM_R_SIGNED <= 1'b0;
-            end
-            10'b0100011_000: begin  // sb
-                EXEC_MEM_R_EN <= 1'b1;
-                EXEC_MEM_R_RD <= 5'b0;
-                EXEC_MEM_R_ADDR <= rs1_data_s + $signed({ { 20{ imm[11] } }, imm[11:0] });
-                EXEC_MEM_R_STRB <= 4'b0001;
-                EXEC_MEM_R_SIGNED <= 1'b0;
-            end
-            10'b0100011_001: begin  // sh
-                EXEC_MEM_R_EN <= 1'b1;
-                EXEC_MEM_R_RD <= 5'b0;
-                EXEC_MEM_R_ADDR <= rs1_data_s + $signed({ { 20{ imm[11] } }, imm[11:0] });
-                EXEC_MEM_R_STRB <= 4'b0011;
-                EXEC_MEM_R_SIGNED <= 1'b0;
-            end
-            10'b0100011_010: begin  // sw
-                EXEC_MEM_R_EN <= 1'b1;
-                EXEC_MEM_R_RD <= 5'b0;
                 EXEC_MEM_R_ADDR <= rs1_data_s + $signed({ { 20{ imm[11] } }, imm[11:0] });
                 EXEC_MEM_R_STRB <= 4'b1111;
                 EXEC_MEM_R_SIGNED <= 1'b0;

@@ -8,7 +8,6 @@ module cache_axi
 
         /* ----- メモリアクセス ----- */
         // ヒットチェック
-        input wire  [31:0]  HIT_CHECK,
         output wire         HIT_CHECK_RESULT,
 
         // 読み
@@ -103,16 +102,20 @@ module cache_axi
         .B_WDATA    (ram_b_wdata)
     );
 
-    assign rden = RSELECT && RDEN;
-    assign wren = WSELECT && WREN;
+    assign rden = RSELECT && RDEN && HIT_CHECK_RESULT_R;
+    assign wren = WSELECT && WREN && HIT_CHECK_RESULT_W;
 
     /* ----- キャッシュ制御 ----- */
     reg         cache_written;
     reg [19:0]  cached_addr;
 
-    assign HIT_CHECK_RESULT = !RSELECT ||
-                              HIT_CHECK[31:12] == 32'b0 ||
-                              HIT_CHECK[31:12] == cached_addr;
+    wire HIT_CHECK_RESULT_R = !RSELECT ||
+                              RIADDR[31:12] == 32'b0 ||
+                              RIADDR[31:12] == cached_addr;
+    wire HIT_CHECK_RESULT_W = !WSELECT ||
+                              WADDR[31:12] == 32'b0 ||
+                              WADDR[31:12] == cached_addr;
+    assign HIT_CHECK_RESULT = HIT_CHECK_RESULT_R && HIT_CHECK_RESULT_W;
 
     always @ (posedge CLK) begin
         if (RST) begin
