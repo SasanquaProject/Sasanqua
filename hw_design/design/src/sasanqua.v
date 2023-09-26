@@ -139,7 +139,41 @@ module sasanqua
         .M_AXI_RREADY   (M_AXI_RREADY)
     );
 
+    /* ----- CLINT ----- */
+    wire        int_en;
+    wire [3:0]  int_code;
+
+    wire        clint_rvalid;
+    wire [31:0] clint_roaddr, clint_rdata;
+
+    clint # (
+        .BASE_ADDR  (32'h0200_0000),
+        .TICK_CNT   (32'd100) // 1/100
+    ) clint (
+        // 制御
+        .CLK        (CLK),
+        .RST        (RST),
+
+        // レジスタアクセス
+        .RDEN       (data_rden),
+        .RIADDR     (data_riaddr),
+        .ROADDR     (clint_roaddr),
+        .RVALID     (clint_rvalid),
+        .RDATA      (clint_rdata),
+        .WREN       (data_wren),
+        .WADDR      (data_waddr),
+        .WDATA      (data_wdata),
+
+        // 割り込み
+        .INT_EN     (int_en),
+        .INT_CODE   (int_code)
+    );
+
     /* ----- Core ----- */
+    wire [31:0] core_data_roaddr = data_rvalid ? data_roaddr : clint_roaddr;
+    wire        core_data_rvalid = data_rvalid ? data_rvalid : clint_rvalid;
+    wire [31:0] core_data_rdata  = data_rvalid ? data_rdata  : clint_rdata;
+
     core # (
         .HART_ID        (0),
         .START_ADDR     (START_ADDR)
@@ -147,6 +181,10 @@ module sasanqua
         // 制御
         .CLK            (CLK),
         .RST            (RST),
+
+        // 割り込み
+        .INT_EN         (int_en),
+        .INT_CODE       (int_code),
 
         // MMU接続
         .INST_RDEN      (inst_rden),
@@ -156,9 +194,9 @@ module sasanqua
         .INST_RDATA     (inst_rdata),
         .DATA_RDEN      (data_rden),
         .DATA_RIADDR    (data_riaddr),
-        .DATA_ROADDR    (data_roaddr),
-        .DATA_RVALID    (data_rvalid),
-        .DATA_RDATA     (data_rdata),
+        .DATA_ROADDR    (core_data_roaddr),
+        .DATA_RVALID    (core_data_rvalid),
+        .DATA_RDATA     (core_data_rdata),
         .DATA_WREN      (data_wren),
         .DATA_WSTRB     (data_wstrb),
         .DATA_WADDR     (data_waddr),

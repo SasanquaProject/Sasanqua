@@ -8,6 +8,10 @@ module core
         input wire          CLK,
         input wire          RST,
 
+        /* ----- 割り込み ----- */
+        input wire          INT_EN,
+        input wire  [3:0]   INT_CODE,
+
         /* ----- Mem接続 ----- */
         // 命令
         output wire         INST_RDEN,
@@ -31,42 +35,8 @@ module core
         input wire          MEM_WAIT
     );
 
-    /* ----- CLINT ----- */
-    wire        int_en;
-    wire [3:0]  int_code;
-
-    wire        clint_rvalid;
-    wire [31:0] clint_roaddr, clint_rdata;
-
-    clint # (
-        .BASE_ADDR  (32'h0200_0000),
-        .TICK_CNT   (32'd100) // 1/100
-    ) clint (
-        // 制御
-        .CLK        (CLK),
-        .RST        (RST),
-
-        // レジスタアクセス
-        .RDEN       (DATA_RDEN),
-        .RIADDR     (DATA_RIADDR),
-        .ROADDR     (clint_roaddr),
-        .RVALID     (clint_rvalid),
-        .RDATA      (clint_rdata),
-        .WREN       (DATA_WREN),
-        .WADDR      (DATA_WADDR),
-        .WDATA      (DATA_WDATA),
-
-        // 割り込み
-        .INT_EN     (int_en),
-        .INT_CODE   (int_code)
-    );
-
     /* ----- MMU ----- */
     wire mmu_wait;
-
-    wire [31:0] data_roaddr = DATA_RVALID ? DATA_ROADDR : clint_roaddr;
-    wire        data_rvalid = DATA_RVALID ? DATA_RVALID : clint_rvalid;
-    wire [31:0] data_rdata  = DATA_RVALID ? DATA_RDATA  : clint_rdata;
 
     mmu mmu (
         // 制御

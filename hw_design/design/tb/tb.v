@@ -38,10 +38,10 @@ wire [31:0] DATA_WADDR              = sasanqua.mem.DATA_WADDR;
 wire [31:0] DATA_WDATA              = sasanqua.mem.DATA_WDATA;
 
 // CLINT
-wire [31:0] CLINT_MTIME             = sasanqua.core.clint.mtime[0];
-wire [31:0] CLINT_MTIMECMP          = sasanqua.core.clint.mtimecmp[0];
-wire        CLINT_INT_EN            = sasanqua.core.clint.INT_EN;
-wire [3:0]  CLINT_INT_CODE          = sasanqua.core.clint.INT_CODE;
+wire [31:0] CLINT_MTIME             = sasanqua.clint.mtime[0];
+wire [31:0] CLINT_MTIMECMP          = sasanqua.clint.mtimecmp[0];
+wire        CLINT_INT_EN            = sasanqua.clint.INT_EN;
+wire [3:0]  CLINT_INT_CODE          = sasanqua.clint.INT_CODE;
 
 // Core: Status
 wire        INT_ALLOW               = sasanqua.core.main.int_allow;
