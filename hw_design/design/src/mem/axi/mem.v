@@ -284,6 +284,7 @@ module mem_axi
     wire        axi_inst_arvalid, axi_inst_arready, axi_inst_rid, axi_inst_rlast, axi_inst_rvalid;
 
     wire        exists_inst_cache, inst_rvalid, dummy_wselect, dummy_wren;
+    wire [3:0]  dummy_wstrb;
     wire [31:0] inst_roaddr, inst_rdata, dummy_waddr, dummy_wdata;
 
     assign dummy_wselect = 1'b0;

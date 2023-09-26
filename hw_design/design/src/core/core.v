@@ -51,9 +51,9 @@ module core
         .MEM_INST_RDATA     (INST_RDATA),
         .MEM_DATA_RDEN      (DATA_RDEN),
         .MEM_DATA_RIADDR    (DATA_RIADDR),
-        .MEM_DATA_ROADDR    (data_roaddr),
-        .MEM_DATA_RVALID    (data_rvalid),
-        .MEM_DATA_RDATA     (data_rdata),
+        .MEM_DATA_ROADDR    (DATA_ROADDR),
+        .MEM_DATA_RVALID    (DATA_RVALID),
+        .MEM_DATA_RDATA     (DATA_RDATA),
         .MEM_DATA_WREN      (DATA_WREN),
         .MEM_DATA_WSTRB     (DATA_WSTRB),
         .MEM_DATA_WADDR     (DATA_WADDR),
@@ -110,8 +110,8 @@ module core
         .MEM_WAIT       (mmu_wait),
 
         // 割り込み
-        .INT_EN         (int_en),
-        .INT_CODE       (int_code)
+        .INT_EN         (INT_EN),
+        .INT_CODE       (INT_CODE)
     );
 
 endmodule

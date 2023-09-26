@@ -417,11 +417,11 @@ module main
         .TRAP_JMP_TO        (trap_jmp_to),
 
         // 前段との接続
-        .INST_PC            (inst_pc),
+        .FETCH_PC           (fetch_pc),
         .DECODE_PC          (decode_pc),
         .CHECK_PC           (check_pc),
         .SCHEDULE_PC        (schedule_pc),
-        .EXEC_PC            (o_pc),
+        .EXEC_PC            (exec_pc),
         .CUSHION_PC         (cushion_pc),
         .CUSHION_EXC_EN     (cushion_exc_en),
         .CUSHION_EXC_CODE   (cushion_exc_code)

@@ -20,7 +20,7 @@ module trap
         output wire [31:0]  TRAP_JMP_TO,
 
         /* ----- 前段との接続 ----- */
-        input wire  [31:0]  INST_PC,
+        input wire  [31:0]  FETCH_PC,
         input wire  [31:0]  DECODE_PC,
         input wire  [31:0]  CHECK_PC,
         input wire  [31:0]  SCHEDULE_PC,
@@ -34,11 +34,11 @@ module trap
     reg         cushion_exc_en, int_allow, int_en;
     reg [1:0]   trap_vec_mode;
     reg [3:0]   cushion_exc_code, int_code;
-    reg [31:0]  inst_pc, decode_pc, check_pc, schedule_pc, exec_pc, cushion_pc, trap_vec_base;
+    reg [31:0]  fetch_pc, decode_pc, check_pc, schedule_pc, exec_pc, cushion_pc, trap_vec_base;
 
     always @ (posedge CLK) begin
         if (RST || FLUSH) begin
-            inst_pc <= 32'b0;
+            fetch_pc <= 32'b0;
             decode_pc <= 32'b0;
             check_pc <= 32'b0;
             schedule_pc <= 32'b0;
@@ -56,7 +56,7 @@ module trap
             // do nothing
         end
         else begin
-            inst_pc <= INST_PC;
+            fetch_pc <= FETCH_PC;
             decode_pc <= DECODE_PC;
             check_pc <= CHECK_PC;
             schedule_pc <= SCHEDULE_PC;
@@ -77,7 +77,7 @@ module trap
                          exec_pc        != 32'b0 ? exec_pc : (
                          schedule_pc    != 32'b0 ? schedule_pc : (
                          check_pc       != 32'b0 ? check_pc : (
-                         decode_pc      != 32'b0 ? decode_pc : inst_pc ))));
+                         decode_pc      != 32'b0 ? decode_pc : fetch_pc ))));
     assign TRAP_EN     = cushion_exc_en || (int_en && int_allow);
     assign TRAP_CODE   = cushion_exc_en ? { 28'b0, cushion_exc_code } : { 1'b0, 27'b0, int_code };
     assign TRAP_JMP_TO = cushion_exc_en ? calc_jmp_to(trap_vec_mode, trap_vec_base, cushion_exc_code) :
