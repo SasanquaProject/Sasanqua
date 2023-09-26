@@ -23,8 +23,9 @@ module mem_axi
         output wire         DATA_RVALID,
         output wire [31:0]  DATA_RDATA,
         input wire          DATA_WREN,
-        input wire [31:0]   DATA_WADDR,
-        input wire [31:0]   DATA_WDATA,
+        input wire  [3:0]   DATA_WSTRB,
+        input wire  [31:0]  DATA_WADDR,
+        input wire  [31:0]  DATA_WDATA,
 
         /* ----- AXIバス ----- */
         // AWチャネル
@@ -287,6 +288,7 @@ module mem_axi
 
     assign dummy_wselect = 1'b0;
     assign dummy_wren    = 1'b0;
+    assign dummy_wstrb   = 4'b0;
     assign dummy_waddr   = 32'b0;
     assign dummy_wdata   = 32'b0;
 
@@ -307,6 +309,7 @@ module mem_axi
         .RDATA              (inst_rdata),
         .WSELECT            (dummy_wselect),
         .WREN               (dummy_wren),
+        .WSTRB              (dummy_wstrb),
         .WADDR              (dummy_waddr),
         .WDATA              (dummy_wdata),
 
@@ -368,6 +371,7 @@ module mem_axi
         .RDATA              (data_rdata),
         .WSELECT            (data_wselect[1]),
         .WREN               (DATA_WREN),
+        .WSTRB              (DATA_WSTRB),
         .WADDR              (DATA_WADDR),
         .WDATA              (DATA_WDATA),
 
@@ -428,6 +432,7 @@ module mem_axi
         .RDATA              (device_rdata),
         .WSELECT            (data_wselect[2]),
         .WREN               (DATA_WREN),
+        .WSTRB              (DATA_WSTRB),
         .WADDR              (DATA_WADDR),
         .WDATA              (DATA_WDATA),
 

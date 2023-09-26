@@ -23,6 +23,7 @@ module core
         input wire          DATA_RVALID,
         input wire  [31:0]  DATA_RDATA,
         output wire         DATA_WREN,
+        output wire [3:0]   DATA_WSTRB,
         output wire [31:0]  DATA_WADDR,
         output wire [31:0]  DATA_WDATA,
 
@@ -84,6 +85,7 @@ module core
         .MEM_DATA_RVALID    (data_rvalid),
         .MEM_DATA_RDATA     (data_rdata),
         .MEM_DATA_WREN      (DATA_WREN),
+        .MEM_DATA_WSTRB     (DATA_WSTRB),
         .MEM_DATA_WADDR     (DATA_WADDR),
         .MEM_DATA_WDATA     (DATA_WDATA),
         .MEM_WAIT           (MEM_WAIT),
@@ -100,6 +102,7 @@ module core
         .MAIN_DATA_RVALID   (main_data_rvalid),
         .MAIN_DATA_RDATA    (main_data_rdata),
         .MAIN_DATA_WREN     (main_data_wren),
+        .MAIN_DATA_WSTRB    (main_data_wstrb),
         .MAIN_DATA_WADDR    (main_data_waddr),
         .MAIN_DATA_WDATA    (main_data_wdata),
         .MMU_WAIT           (mmu_wait)
@@ -109,6 +112,7 @@ module core
     wire        main_inst_rden, main_inst_rvalid;
     wire [31:0] main_inst_riaddr, main_inst_roaddr, main_inst_rdata;
     wire        main_data_rden, main_data_rvalid, main_data_wren;
+    wire [3:0]  main_data_wstrb;
     wire [31:0] main_data_riaddr, main_data_roaddr, main_data_rdata, main_data_waddr, main_data_wdata;
 
     main # (
@@ -130,6 +134,7 @@ module core
         .DATA_RVALID    (main_data_rvalid),
         .DATA_RDATA     (main_data_rdata),
         .DATA_WREN      (main_data_wren),
+        .DATA_WSTRB     (main_data_wstrb),
         .DATA_WADDR     (main_data_waddr),
         .DATA_WDATA     (main_data_wdata),
         .MEM_WAIT       (mmu_wait),

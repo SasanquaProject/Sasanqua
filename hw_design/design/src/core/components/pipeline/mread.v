@@ -52,6 +52,7 @@ module mread
 
         // メモリ(W)
         output wire         MEMR_MEM_W_EN,
+        output wire [3:0]   MEMR_MEM_W_STRB,
         output wire [31:0]  MEMR_MEM_W_ADDR,
         output wire [31:0]  MEMR_MEM_W_DATA,
 
@@ -114,10 +115,9 @@ module mread
     end
 
     /* ----- 出力 ----- */
-    wire [31:0] rddata, wrdata;
+    wire [31:0] rddata;
 
     assign rddata            = gen_rddata(DATA_RDATA, mem_r_addr, mem_r_strb, mem_r_signed);
-    assign wrdata            = gen_wrdata(mem_w_addr, mem_w_strb, DATA_RDATA, mem_w_data);
 
     assign MEMR_REG_W_RD     = mem_r_en ? mem_r_rd : reg_w_rd;
     assign MEMR_REG_W_DATA   = mem_r_en ? rddata : reg_w_data;
@@ -125,8 +125,9 @@ module mread
     assign MEMR_CSR_W_ADDR   = csr_w_addr;
     assign MEMR_CSR_W_DATA   = csr_w_data;
     assign MEMR_MEM_W_EN     = mem_w_en;
+    assign MEMR_MEM_W_STRB   = mem_w_strb;
     assign MEMR_MEM_W_ADDR   = mem_w_addr;
-    assign MEMR_MEM_W_DATA   = wrdata;
+    assign MEMR_MEM_W_DATA   = mem_w_data;
     assign MEMR_JMP_DO       = jmp_do;
     assign MEMR_JMP_PC       = jmp_pc;
 
@@ -145,24 +146,6 @@ module mread
             4'b0110: gen_rddata = SIGNED ? { { 16{ DATA[23] } }, DATA[23: 8] } : { 15'b0, DATA[23: 8] };
             4'b1100: gen_rddata = SIGNED ? { { 16{ DATA[31] } }, DATA[31:16] } : { 15'b0, DATA[31:16] };
             default: gen_rddata = DATA;
-        endcase
-    endfunction
-
-    function [31:0] gen_wrdata;
-        input [31:0]    ADDR;
-        input [3:0]     STRB;
-        input [31:0]    DST;
-        input [31:0]    SRC;
-
-        case ((STRB << ADDR[1:0]))
-            4'b0001: gen_wrdata = (DST & 32'hffff_ff00) | { 24'b0, SRC[7:0] };
-            4'b0010: gen_wrdata = (DST & 32'hffff_00ff) | { 16'b0, SRC[7:0], 8'b0 };
-            4'b0100: gen_wrdata = (DST & 32'hff00_ffff) | { 8'b0, SRC[7:0], 16'b0 };
-            4'b1000: gen_wrdata = (DST & 32'h00ff_ffff) | { SRC[7:0], 24'b0 };
-            4'b0011: gen_wrdata = (DST & 32'hffff_0000) | { 16'b0, SRC[15:0] };
-            4'b0110: gen_wrdata = (DST & 32'hff00_00ff) | { 8'b0, SRC[15:0], 8'b0 };
-            4'b1100: gen_wrdata = (DST & 32'h0000_ffff) | { SRC[15:0], 16'b0 };
-            default: gen_wrdata = SRC;
         endcase
     endfunction
 

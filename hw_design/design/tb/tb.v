@@ -33,6 +33,7 @@ wire [31:0] DATA_ROADDR             = sasanqua.mem.DATA_ROADDR;
 wire        DATA_RVALID             = sasanqua.mem.DATA_RVALID;
 wire [31:0] DATA_RDATA              = sasanqua.mem.DATA_RDATA;
 wire        DATA_WREN               = sasanqua.mem.DATA_WREN;
+wire [3:0]  DATA_WSTRB              = sasanqua.mem.DATA_WSTRB;
 wire [31:0] DATA_WADDR              = sasanqua.mem.DATA_WADDR;
 wire [31:0] DATA_WDATA              = sasanqua.mem.DATA_WDATA;
 

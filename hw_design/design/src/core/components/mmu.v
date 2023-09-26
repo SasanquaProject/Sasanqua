@@ -19,6 +19,7 @@ module mmu
         input wire          MEM_DATA_RVALID,
         input wire  [31:0]  MEM_DATA_RDATA,
         output wire         MEM_DATA_WREN,
+        output wire [3:0]   MEM_DATA_WSTRB,
         output wire [31:0]  MEM_DATA_WADDR,
         output wire [31:0]  MEM_DATA_WDATA,
 
@@ -40,6 +41,7 @@ module mmu
         output wire         MAIN_DATA_RVALID,
         output wire [31:0]  MAIN_DATA_RDATA,
         input wire          MAIN_DATA_WREN,
+        input wire  [3:0]   MAIN_DATA_WSTRB,
         input wire  [31:0]  MAIN_DATA_WADDR,
         input wire  [31:0]  MAIN_DATA_WDATA,
 
@@ -59,6 +61,7 @@ module mmu
     assign MAIN_DATA_RVALID = MEM_DATA_RVALID;
     assign MAIN_DATA_RDATA  = MEM_DATA_RDATA;
     assign MEM_DATA_WREN    = MAIN_DATA_WREN;
+    assign MEM_DATA_WSTRB   = MAIN_DATA_WSTRB;
     assign MEM_DATA_WADDR   = MAIN_DATA_WADDR;
     assign MEM_DATA_WDATA   = MAIN_DATA_WDATA;
 

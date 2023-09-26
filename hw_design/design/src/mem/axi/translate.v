@@ -19,6 +19,7 @@ module translate_axi
         // 書き
         input wire          WSELECT,
         input wire          WREN,
+        input wire  [3:0]   WSTRB,
         input wire  [31:0]  WADDR,
         input wire  [31:0]  WDATA,
 
@@ -225,17 +226,19 @@ module translate_axi
 
     always @ (posedge CLK) begin
         if (RST) begin
+            M_AXI_WSTRB <= 4'b0;
             M_AXI_WDATA <= 32'b0;
-            M_AXI_WSTRB <= 4'b1111;
             M_AXI_WLAST <= 1'b0;
             M_AXI_WVALID <= 1'b0;
         end
         else if (sw_next_state == S_SW_ADDR) begin
+            M_AXI_WSTRB <= WSTRB;
             M_AXI_WDATA <= WDATA;
             M_AXI_WLAST <= 1'b1;
             M_AXI_WVALID <= 1'b1;
         end
         else if (sw_next_state == S_SW_FINISH) begin
+            M_AXI_WSTRB <= 4'b0;
             M_AXI_WDATA <= 32'b0;
             M_AXI_WLAST <= 1'b0;
             M_AXI_WVALID <= 1'b0;

@@ -22,6 +22,7 @@ module main
         input wire          DATA_RVALID,
         input wire  [31:0]  DATA_RDATA,
         output wire         DATA_WREN,
+        output wire [3:0]   DATA_WSTRB,
         output wire [31:0]  DATA_WADDR,
         output wire [31:0]  DATA_WDATA,
 
@@ -343,6 +344,7 @@ module main
     wire [31:0] memr_reg_w_data, memr_csr_w_data, memr_mem_w_addr, memr_mem_w_data, memr_jmp_pc;
     wire [11:0] memr_csr_w_addr;
     wire [4:0]  memr_reg_w_rd;
+    wire [3:0]  memr_mem_w_strb;
 
     mread mread (
         // 制御
@@ -383,6 +385,7 @@ module main
         .MEMR_CSR_W_ADDR        (memr_csr_w_addr),
         .MEMR_CSR_W_DATA        (memr_csr_w_data),
         .MEMR_MEM_W_EN          (memr_mem_w_en),
+        .MEMR_MEM_W_STRB        (memr_mem_w_strb),
         .MEMR_MEM_W_ADDR        (memr_mem_w_addr),
         .MEMR_MEM_W_DATA        (memr_mem_w_data),
         .MEMR_JMP_DO            (memr_jmp_do),
@@ -426,6 +429,7 @@ module main
 
     /* ----- 8. メモリアクセス(w) ----- */
     assign DATA_WREN  = flush ? 1'b0 : memr_mem_w_en;
+    assign DATA_WSTRB = flush ? 4'b0 : memr_mem_w_strb;
     assign DATA_WADDR = flush ? 32'b0 : memr_mem_w_addr;
     assign DATA_WDATA = flush ? 32'b0 : memr_mem_w_data;
 

@@ -22,6 +22,7 @@ module cache_axi
         // 書き
         input wire          WSELECT,
         input wire          WREN,
+        input wire  [3:0]   WSTRB,
         input wire  [31:0]  WADDR,
         input wire  [31:0]  WDATA,
 
@@ -73,11 +74,12 @@ module cache_axi
 
     /* ----- RAM ----- */
     wire        ram_a_rden, ram_a_wren, ram_b_rden, ram_b_wren;
-    wire [9:0]  ram_a_raddr, ram_a_waddr, ram_b_raddr, ram_b_waddr;
+    wire [3:0]  ram_a_wstrb, ram_b_wstrb;
+    wire [11:0] ram_a_raddr, ram_a_waddr, ram_b_raddr, ram_b_waddr;
     wire [31:0] ram_a_rdata, ram_a_wdata, ram_b_rdata, ram_b_wdata;
 
     ram_dualport # (
-        .WIDTH  (10),
+        .WIDTH  (12-2),
         .SIZE   (1024)
     ) ram_dualport (
         // 制御
@@ -89,12 +91,14 @@ module cache_axi
         .A_RADDR    (ram_a_raddr),
         .A_RDATA    (ram_a_rdata),
         .A_WREN     (ram_a_wren),
+        .A_WSTRB    (ram_a_wstrb),
         .A_WADDR    (ram_a_waddr),
         .A_WDATA    (ram_a_wdata),
         .B_RDEN     (ram_b_rden),
         .B_RADDR    (ram_b_raddr),
         .B_RDATA    (ram_b_rdata),
         .B_WREN     (ram_b_wren),
+        .B_WSTRB    (ram_b_wstrb),
         .B_WADDR    (ram_b_waddr),
         .B_WDATA    (ram_b_wdata)
     );
@@ -127,10 +131,11 @@ module cache_axi
 
     /* ----- キャッシュアクセス ----- */
     assign ram_a_rden  = !STALL && rden;
-    assign ram_a_raddr = !STALL && rden ? RIADDR[11:2] : ROADDR[11:2];
+    assign ram_a_raddr = !STALL && rden ? RIADDR[11:0] : ROADDR[11:0];
     assign RDATA       = ram_a_rdata;
     assign ram_a_wren  = wren && awb_state == S_AWB_IDLE;
-    assign ram_a_waddr = WADDR[11:2];
+    assign ram_a_wstrb = WSTRB;
+    assign ram_a_waddr = WADDR[11:0];
     assign ram_a_wdata = WDATA;
 
     always @ (posedge CLK) begin
@@ -228,7 +233,8 @@ module cache_axi
     reg [9:0] r_cnt;
 
     assign ram_b_wren  = r_state == S_R_READ && M_AXI_RVALID;
-    assign ram_b_waddr = r_cnt;
+    assign ram_b_wstrb = 4'b1111;
+    assign ram_b_waddr = { r_cnt, 2'b00 };
     assign ram_b_wdata = M_AXI_RDATA;
 
     always @ (posedge CLK) begin
@@ -340,7 +346,7 @@ module cache_axi
     reg [9:0] w_cnt;
 
     assign ram_b_rden  = awb_next_state != S_AWB_IDLE;
-    assign ram_b_raddr = w_cnt;
+    assign ram_b_raddr = { w_cnt, 2'b00 };
     assign M_AXI_WDATA = ram_b_rdata;
 
     always @ (posedge CLK) begin

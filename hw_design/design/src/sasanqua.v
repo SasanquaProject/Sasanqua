@@ -69,6 +69,7 @@ module sasanqua
     /* ----- Memory ----- */
     wire        mem_wait;
     wire        inst_rden, inst_rvalid, data_rden, data_rvalid, data_wren;
+    wire [3:0]  data_wstrb;
     wire [31:0] inst_riaddr, inst_roaddr, inst_rdata, data_riaddr, data_roaddr, data_rdata, data_waddr, data_wdata;
 
     mem_axi mem (
@@ -89,6 +90,7 @@ module sasanqua
         .DATA_RVALID    (data_rvalid),
         .DATA_RDATA     (data_rdata),
         .DATA_WREN      (data_wren),
+        .DATA_WSTRB     (data_wstrb),
         .DATA_WADDR     (data_waddr),
         .DATA_WDATA     (data_wdata),
 
@@ -158,6 +160,7 @@ module sasanqua
         .DATA_RVALID    (data_rvalid),
         .DATA_RDATA     (data_rdata),
         .DATA_WREN      (data_wren),
+        .DATA_WSTRB     (data_wstrb),
         .DATA_WADDR     (data_waddr),
         .DATA_WDATA     (data_wdata),
         .MEM_WAIT       (mem_wait)
