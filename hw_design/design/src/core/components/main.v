@@ -34,13 +34,9 @@ module main
     );
 
     /* ----- パイプライン制御 ----- */
-    // 制御信号
     wire        flush    = trap_en || memr_jmp_do;
     wire [31:0] flush_pc = trap_en ? trap_jmp_to : memr_jmp_pc;
     wire        stall    = !reg_rs1_valid || !reg_rs2_valid || !reg_csr_valid;
-
-    // PC管理
-    reg  [31:0] executing_pc;
 
     /* ----- 1. 命令フェッチ ----- */
     wire [31:0] inst_pc, inst_data;
