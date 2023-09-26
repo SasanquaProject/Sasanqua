@@ -6,16 +6,6 @@ module trap
         input wire          FLUSH,
         input wire          MEM_WAIT,
 
-        /* ----- 前段との接続 ----- */
-        input wire  [31:0]  INST_PC,
-        input wire  [31:0]  DECODE_PC,
-        input wire  [31:0]  CHECK_PC,
-        input wire  [31:0]  SCHEDULE_PC,
-        input wire  [31:0]  EXEC_PC,
-        input wire  [31:0]  CUSHION_PC,
-        input wire          CUSHION_EXC_EN,
-        input wire  [3:0]   CUSHION_EXC_CODE,
-
         /* ----- 割り込み ----- */
         input wire          INT_ALLOW,
         input wire          INT_EN,
@@ -27,7 +17,17 @@ module trap
         output wire [31:0]  TRAP_PC,
         output wire         TRAP_EN,
         output wire [31:0]  TRAP_CODE,
-        output wire [31:0]  TRAP_JMP_TO
+        output wire [31:0]  TRAP_JMP_TO,
+
+        /* ----- 前段との接続 ----- */
+        input wire  [31:0]  INST_PC,
+        input wire  [31:0]  DECODE_PC,
+        input wire  [31:0]  CHECK_PC,
+        input wire  [31:0]  SCHEDULE_PC,
+        input wire  [31:0]  EXEC_PC,
+        input wire  [31:0]  CUSHION_PC,
+        input wire          CUSHION_EXC_EN,
+        input wire  [3:0]   CUSHION_EXC_CODE
     );
 
     /* ----- 入力取り込み ----- */

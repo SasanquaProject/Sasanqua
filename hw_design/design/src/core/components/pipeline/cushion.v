@@ -9,42 +9,42 @@ module cushion
         input wire          FLUSH,
         input wire          MEM_WAIT,
 
-        /* ----- 実行部との接続 ----- */
+        /* ----- 前段との接続 ----- */
         // PC
-        input wire  [31:0]  EXEC_PC,
+        input wire  [31:0]  PC,
 
         // レジスタ(rv32i:W)
-        input wire          EXEC_REG_W_EN,
-        input wire  [4:0]   EXEC_REG_W_RD,
-        input wire  [31:0]  EXEC_REG_W_DATA,
+        input wire          REG_W_EN,
+        input wire  [4:0]   REG_W_RD,
+        input wire  [31:0]  REG_W_DATA,
 
         // レジスタ(csrs:W)
-        input wire          EXEC_CSR_W_EN,
-        input wire  [11:0]  EXEC_CSR_W_ADDR,
-        input wire  [31:0]  EXEC_CSR_W_DATA,
+        input wire          CSR_W_EN,
+        input wire  [11:0]  CSR_W_ADDR,
+        input wire  [31:0]  CSR_W_DATA,
 
         // メモリ(R)
-        input wire          EXEC_MEM_R_EN,
-        input wire  [4:0]   EXEC_MEM_R_RD,
-        input wire  [31:0]  EXEC_MEM_R_ADDR,
-        input wire  [3:0]   EXEC_MEM_R_STRB,
-        input wire          EXEC_MEM_R_SIGNED,
+        input wire          MEM_R_EN,
+        input wire  [4:0]   MEM_R_RD,
+        input wire  [31:0]  MEM_R_ADDR,
+        input wire  [3:0]   MEM_R_STRB,
+        input wire          MEM_R_SIGNED,
 
         // メモリ(W)
-        input wire          EXEC_MEM_W_EN,
-        input wire  [31:0]  EXEC_MEM_W_ADDR,
-        input wire  [3:0]   EXEC_MEM_W_STRB,
-        input wire  [31:0]  EXEC_MEM_W_DATA,
+        input wire          MEM_W_EN,
+        input wire  [31:0]  MEM_W_ADDR,
+        input wire  [3:0]   MEM_W_STRB,
+        input wire  [31:0]  MEM_W_DATA,
 
         // PC更新
-        input wire          EXEC_JMP_DO,
-        input wire  [31:0]  EXEC_JMP_PC,
+        input wire          JMP_DO,
+        input wire  [31:0]  JMP_PC,
 
         // 例外
-        input wire          EXEC_EXC_EN,
-        input wire  [3:0]   EXEC_EXC_CODE,
+        input wire          EXC_EN,
+        input wire  [3:0]   EXC_CODE,
 
-        /* ----- メモリアクセス(r)部との接続 ----- */
+        /* ----- 後段との接続 ----- */
         // PC
         output wire [31:0]  CUSHION_PC,
 
@@ -82,82 +82,82 @@ module cushion
     );
 
     /* ----- 入力取り込み ----- */
-    reg         exec_reg_w_en, exec_csr_w_en, exec_mem_r_en, exec_mem_r_signed, exec_mem_w_en, exec_jmp_do, exec_exc_en;
-    reg [31:0]  exec_pc, exec_reg_w_data, exec_csr_w_data, exec_mem_r_addr, exec_mem_w_addr, exec_mem_w_data, exec_jmp_pc;
-    reg [11:0]  exec_csr_w_addr;
-    reg [4:0]   exec_reg_w_rd, exec_mem_r_rd;
-    reg [3:0]   exec_mem_r_strb, exec_mem_w_strb, exec_exc_code;
+    reg         reg_w_en, csr_w_en, mem_r_en, mem_r_signed, mem_w_en, jmp_do, exc_en;
+    reg [31:0]  pc, reg_w_data, csr_w_data, mem_r_addr, mem_w_addr, mem_w_data, jmp_pc;
+    reg [11:0]  csr_w_addr;
+    reg [4:0]   reg_w_rd, mem_r_rd;
+    reg [3:0]   mem_r_strb, mem_w_strb, exc_code;
 
     always @ (posedge CLK) begin
         if (RST || FLUSH) begin
-            exec_pc <= 32'b0;
-            exec_reg_w_en <= 1'b0;
-            exec_reg_w_rd <= 5'b0;
-            exec_reg_w_data <= 32'b0;
-            exec_csr_w_en <= 1'b0;
-            exec_csr_w_addr <= 12'b0;
-            exec_csr_w_data <= 32'b0;
-            exec_mem_r_en <= 1'b0;
-            exec_mem_r_rd <= 5'b0;
-            exec_mem_r_addr <= 32'b0;
-            exec_mem_r_strb <= 4'b0;
-            exec_mem_r_signed <= 1'b0;
-            exec_mem_w_en <= 1'b0;
-            exec_mem_w_addr <= 32'b0;
-            exec_mem_w_strb <= 4'b0;
-            exec_mem_w_data <= 32'b0;
-            exec_jmp_do <= 1'b0;
-            exec_jmp_pc <= 32'b0;
-            exec_exc_en <= 1'b0;
-            exec_exc_code <= 4'b0;
+            pc <= 32'b0;
+            reg_w_en <= 1'b0;
+            reg_w_rd <= 5'b0;
+            reg_w_data <= 32'b0;
+            csr_w_en <= 1'b0;
+            csr_w_addr <= 12'b0;
+            csr_w_data <= 32'b0;
+            mem_r_en <= 1'b0;
+            mem_r_rd <= 5'b0;
+            mem_r_addr <= 32'b0;
+            mem_r_strb <= 4'b0;
+            mem_r_signed <= 1'b0;
+            mem_w_en <= 1'b0;
+            mem_w_addr <= 32'b0;
+            mem_w_strb <= 4'b0;
+            mem_w_data <= 32'b0;
+            jmp_do <= 1'b0;
+            jmp_pc <= 32'b0;
+            exc_en <= 1'b0;
+            exc_code <= 4'b0;
         end
         else if (MEM_WAIT) begin
             // do nothing
         end
         else begin
-            exec_pc <= EXEC_PC;
-            exec_reg_w_en <= EXEC_REG_W_EN;
-            exec_reg_w_rd <= EXEC_REG_W_RD;
-            exec_reg_w_data <= EXEC_REG_W_DATA;
-            exec_csr_w_en <= EXEC_CSR_W_EN;
-            exec_csr_w_addr <= EXEC_CSR_W_ADDR;
-            exec_csr_w_data <= EXEC_CSR_W_DATA;
-            exec_mem_r_en <= EXEC_MEM_R_EN;
-            exec_mem_r_rd <= EXEC_MEM_R_RD;
-            exec_mem_r_addr <= EXEC_MEM_R_ADDR;
-            exec_mem_r_strb <= EXEC_MEM_R_STRB;
-            exec_mem_r_signed <= EXEC_MEM_R_SIGNED;
-            exec_mem_w_en <= EXEC_MEM_W_EN;
-            exec_mem_w_addr <= EXEC_MEM_W_ADDR;
-            exec_mem_w_strb <= EXEC_MEM_W_STRB;
-            exec_mem_w_data <= EXEC_MEM_W_DATA;
-            exec_jmp_do <= EXEC_JMP_DO;
-            exec_jmp_pc <= EXEC_JMP_PC;
-            exec_exc_en <= EXEC_EXC_EN;
-            exec_exc_code <= EXEC_EXC_CODE;
+            pc <= PC;
+            reg_w_en <= REG_W_EN;
+            reg_w_rd <= REG_W_RD;
+            reg_w_data <= REG_W_DATA;
+            csr_w_en <= CSR_W_EN;
+            csr_w_addr <= CSR_W_ADDR;
+            csr_w_data <= CSR_W_DATA;
+            mem_r_en <= MEM_R_EN;
+            mem_r_rd <= MEM_R_RD;
+            mem_r_addr <= MEM_R_ADDR;
+            mem_r_strb <= MEM_R_STRB;
+            mem_r_signed <= MEM_R_SIGNED;
+            mem_w_en <= MEM_W_EN;
+            mem_w_addr <= MEM_W_ADDR;
+            mem_w_strb <= MEM_W_STRB;
+            mem_w_data <= MEM_W_DATA;
+            jmp_do <= JMP_DO;
+            jmp_pc <= JMP_PC;
+            exc_en <= EXC_EN;
+            exc_code <= EXC_CODE;
         end
     end
 
     /* ----- 出力 ----- */
-    assign CUSHION_PC           = exec_pc;
-    assign CUSHION_REG_W_EN     = exec_reg_w_en;
-    assign CUSHION_REG_W_RD     = exec_reg_w_rd;
-    assign CUSHION_REG_W_DATA   = exec_reg_w_data;
-    assign CUSHION_CSR_W_EN     = exec_csr_w_en;
-    assign CUSHION_CSR_W_ADDR   = exec_csr_w_addr;
-    assign CUSHION_CSR_W_DATA   = exec_csr_w_data;
-    assign CUSHION_MEM_R_EN     = exec_mem_r_en;
-    assign CUSHION_MEM_R_RD     = exec_mem_r_rd;
-    assign CUSHION_MEM_R_ADDR   = exec_mem_r_addr;
-    assign CUSHION_MEM_R_STRB   = exec_mem_r_strb;
-    assign CUSHION_MEM_R_SIGNED = exec_mem_r_signed;
-    assign CUSHION_MEM_W_EN     = exec_mem_w_en;
-    assign CUSHION_MEM_W_ADDR   = exec_mem_w_addr;
-    assign CUSHION_MEM_W_STRB   = exec_mem_w_strb;
-    assign CUSHION_MEM_W_DATA   = exec_mem_w_data;
-    assign CUSHION_JMP_DO       = exec_jmp_do;
-    assign CUSHION_JMP_PC       = exec_jmp_pc;
-    assign CUSHION_EXC_EN       = exec_exc_en;
-    assign CUSHION_EXC_CODE     = exec_exc_code;
+    assign CUSHION_PC           = pc;
+    assign CUSHION_REG_W_EN     = reg_w_en;
+    assign CUSHION_REG_W_RD     = reg_w_rd;
+    assign CUSHION_REG_W_DATA   = reg_w_data;
+    assign CUSHION_CSR_W_EN     = csr_w_en;
+    assign CUSHION_CSR_W_ADDR   = csr_w_addr;
+    assign CUSHION_CSR_W_DATA   = csr_w_data;
+    assign CUSHION_MEM_R_EN     = mem_r_en;
+    assign CUSHION_MEM_R_RD     = mem_r_rd;
+    assign CUSHION_MEM_R_ADDR   = mem_r_addr;
+    assign CUSHION_MEM_R_STRB   = mem_r_strb;
+    assign CUSHION_MEM_R_SIGNED = mem_r_signed;
+    assign CUSHION_MEM_W_EN     = mem_w_en;
+    assign CUSHION_MEM_W_ADDR   = mem_w_addr;
+    assign CUSHION_MEM_W_STRB   = mem_w_strb;
+    assign CUSHION_MEM_W_DATA   = mem_w_data;
+    assign CUSHION_JMP_DO       = jmp_do;
+    assign CUSHION_JMP_PC       = jmp_pc;
+    assign CUSHION_EXC_EN       = exc_en;
+    assign CUSHION_EXC_CODE     = exc_code;
 
 endmodule

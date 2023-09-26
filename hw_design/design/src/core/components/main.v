@@ -39,7 +39,7 @@ module main
     wire        stall    = !reg_rs1_valid || !reg_rs2_valid || !reg_csr_valid;
 
     /* ----- 1. 命令フェッチ ----- */
-    wire [31:0] inst_pc, inst_data;
+    wire [31:0] fetch_pc, fetch_inst;
 
     fetch # (
         .START_ADDR (START_ADDR)
@@ -60,8 +60,8 @@ module main
         .INST_RDATA (INST_RDATA),
 
         // 後段との接続
-        .INST_PC    (inst_pc),
-        .INST_DATA  (inst_data)
+        .FETCH_PC   (fetch_pc),
+        .FETCH_INST (fetch_inst)
     );
 
     /* ----- 2. 命令デコード ----- */
@@ -77,11 +77,11 @@ module main
         .STALL          (stall),
         .MEM_WAIT       (MEM_WAIT),
 
-        // フェッチ部との接続
-        .INST_PC        (inst_pc),
-        .INST_DATA      (inst_data),
+        // 前段との接続
+        .PC             (fetch_pc),
+        .INST           (fetch_inst),
 
-        // 検査部との接続
+        // 後段との接続
         .DECODE_PC      (decode_pc),
         .DECODE_OPCODE  (decode_opcode),
         .DECODE_RD      (decode_rd),
@@ -104,15 +104,15 @@ module main
         .STALL          (stall),
         .MEM_WAIT       (MEM_WAIT),
 
-        // デコード部1との接続
-        .DECODE_PC      (decode_pc),
-        .DECODE_OPCODE  (decode_opcode),
-        .DECODE_RD      (decode_rd),
-        .DECODE_RS1     (decode_rs1),
-        .DECODE_RS2     (decode_rs2),
-        .DECODE_IMM     (decode_imm),
+        // 前段との接続
+        .PC             (decode_pc),
+        .OPCODE         (decode_opcode),
+        .RD             (decode_rd),
+        .RS1            (decode_rs1),
+        .RS2            (decode_rs2),
+        .IMM            (decode_imm),
 
-        // スケジューラ1との接続
+        // 後段との接続
         .CHECK_PC       (check_pc),
         .CHECK_OPCODE   (check_opcode),
         .CHECK_RD       (check_rd),
@@ -122,7 +122,7 @@ module main
         .CHECK_IMM      (check_imm)
     );
 
-    /* ----- 4-1. スケジューリング1 ----- */
+    /* ----- 4-1. スケジューリング ----- */
     wire [31:0] schedule_pc, schedule_imm;
     wire [11:0] schedule_csr;
     wire [16:0] schedule_opcode;
@@ -136,14 +136,14 @@ module main
         .STALL              (stall),
         .MEM_WAIT           (MEM_WAIT),
 
-        // デコード部2との接続
-        .CHECK_PC           (check_pc),
-        .CHECK_OPCODE       (check_opcode),
-        .CHECK_RD           (check_rd),
-        .CHECK_CSR          (check_csr),
-        .CHECK_IMM          (check_imm),
+        // 前段との接続
+        .PC                 (check_pc),
+        .OPCODE             (check_opcode),
+        .RD                 (check_rd),
+        .CSR                (check_csr),
+        .IMM                (check_imm),
 
-        // 実行部との接続
+        // 後段との接続
         .SCHEDULE_PC        (schedule_pc),
         .SCHEDULE_OPCODE    (schedule_opcode),
         .SCHEDULE_RD        (schedule_rd),
@@ -293,29 +293,29 @@ module main
         .FLUSH                  (flush),
         .MEM_WAIT               (MEM_WAIT),
 
-        // 実行部との接続
-        .EXEC_PC                (exec_pc),
-        .EXEC_REG_W_EN          (exec_reg_w_en),
-        .EXEC_REG_W_RD          (exec_reg_w_rd),
-        .EXEC_REG_W_DATA        (exec_reg_w_data),
-        .EXEC_CSR_W_EN          (exec_csr_w_en),
-        .EXEC_CSR_W_ADDR        (exec_csr_w_addr),
-        .EXEC_CSR_W_DATA        (exec_csr_w_data),
-        .EXEC_MEM_R_EN          (exec_mem_r_en),
-        .EXEC_MEM_R_RD          (exec_mem_r_rd),
-        .EXEC_MEM_R_ADDR        (exec_mem_r_addr),
-        .EXEC_MEM_R_STRB        (exec_mem_r_strb),
-        .EXEC_MEM_R_SIGNED      (exec_mem_r_signed),
-        .EXEC_MEM_W_EN          (exec_mem_w_en),
-        .EXEC_MEM_W_ADDR        (exec_mem_w_addr),
-        .EXEC_MEM_W_STRB        (exec_mem_w_strb),
-        .EXEC_MEM_W_DATA        (exec_mem_w_data),
-        .EXEC_JMP_DO            (exec_jmp_do),
-        .EXEC_JMP_PC            (exec_jmp_pc),
-        .EXEC_EXC_EN            (exec_exc_en),
-        .EXEC_EXC_CODE          (exec_exc_code),
+        // 前段との接続
+        .PC                     (exec_pc),
+        .REG_W_EN               (exec_reg_w_en),
+        .REG_W_RD               (exec_reg_w_rd),
+        .REG_W_DATA             (exec_reg_w_data),
+        .CSR_W_EN               (exec_csr_w_en),
+        .CSR_W_ADDR             (exec_csr_w_addr),
+        .CSR_W_DATA             (exec_csr_w_data),
+        .MEM_R_EN               (exec_mem_r_en),
+        .MEM_R_RD               (exec_mem_r_rd),
+        .MEM_R_ADDR             (exec_mem_r_addr),
+        .MEM_R_STRB             (exec_mem_r_strb),
+        .MEM_R_SIGNED           (exec_mem_r_signed),
+        .MEM_W_EN               (exec_mem_w_en),
+        .MEM_W_ADDR             (exec_mem_w_addr),
+        .MEM_W_STRB             (exec_mem_w_strb),
+        .MEM_W_DATA             (exec_mem_w_data),
+        .JMP_DO                 (exec_jmp_do),
+        .JMP_PC                 (exec_jmp_pc),
+        .EXC_EN                 (exec_exc_en),
+        .EXC_CODE               (exec_exc_code),
 
-        // メモリアクセス部(r)との接続
+        // 後段との接続
         .CUSHION_PC             (cushion_pc),
         .CUSHION_REG_W_EN       (cushion_reg_w_en),
         .CUSHION_REG_W_RD       (cushion_reg_w_rd),
@@ -358,25 +358,25 @@ module main
         .DATA_RVALID            (DATA_RVALID),
         .DATA_RDATA             (DATA_RDATA),
 
-        // 実行待機部との接続
-        .CUSHION_REG_W_RD       (cushion_reg_w_rd),
-        .CUSHION_REG_W_DATA     (cushion_reg_w_data),
-        .CUSHION_CSR_W_EN       (cushion_csr_w_en),
-        .CUSHION_CSR_W_ADDR     (cushion_csr_w_addr),
-        .CUSHION_CSR_W_DATA     (cushion_csr_w_data),
-        .CUSHION_MEM_R_EN       (cushion_mem_r_en),
-        .CUSHION_MEM_R_RD       (cushion_mem_r_rd),
-        .CUSHION_MEM_R_ADDR     (cushion_mem_r_addr),
-        .CUSHION_MEM_R_STRB     (cushion_mem_r_strb),
-        .CUSHION_MEM_R_SIGNED   (cushion_mem_r_signed),
-        .CUSHION_MEM_W_EN       (cushion_mem_w_en),
-        .CUSHION_MEM_W_ADDR     (cushion_mem_w_addr),
-        .CUSHION_MEM_W_STRB     (cushion_mem_w_strb),
-        .CUSHION_MEM_W_DATA     (cushion_mem_w_data),
-        .CUSHION_JMP_DO         (cushion_jmp_do),
-        .CUSHION_JMP_PC         (cushion_jmp_pc),
+        // 前段との接続
+        .REG_W_RD               (cushion_reg_w_rd),
+        .REG_W_DATA             (cushion_reg_w_data),
+        .CSR_W_EN               (cushion_csr_w_en),
+        .CSR_W_ADDR             (cushion_csr_w_addr),
+        .CSR_W_DATA             (cushion_csr_w_data),
+        .MEM_R_EN               (cushion_mem_r_en),
+        .MEM_R_RD               (cushion_mem_r_rd),
+        .MEM_R_ADDR             (cushion_mem_r_addr),
+        .MEM_R_STRB             (cushion_mem_r_strb),
+        .MEM_R_SIGNED           (cushion_mem_r_signed),
+        .MEM_W_EN               (cushion_mem_w_en),
+        .MEM_W_ADDR             (cushion_mem_w_addr),
+        .MEM_W_STRB             (cushion_mem_w_strb),
+        .MEM_W_DATA             (cushion_mem_w_data),
+        .JMP_DO                 (cushion_jmp_do),
+        .JMP_PC                 (cushion_jmp_pc),
 
-        // メモリアクセス(w)との接続
+        // 後段との接続
         .MEMR_REG_W_RD          (memr_reg_w_rd),
         .MEMR_REG_W_DATA        (memr_reg_w_data),
         .MEMR_CSR_W_EN          (memr_csr_w_en),
@@ -400,16 +400,6 @@ module main
         .FLUSH              (flush),
         .MEM_WAIT           (MEM_WAIT),
 
-        // 前段との接続
-        .INST_PC            (inst_pc),
-        .DECODE_PC          (decode_pc),
-        .CHECK_PC           (check_pc),
-        .SCHEDULE_PC        (schedule_pc),
-        .EXEC_PC            (o_pc),
-        .CUSHION_PC         (cushion_pc),
-        .CUSHION_EXC_EN     (cushion_exc_en),
-        .CUSHION_EXC_CODE   (cushion_exc_code),
-
         // 割り込み
         .INT_ALLOW          (int_allow),
         .INT_EN             (INT_EN),
@@ -421,7 +411,17 @@ module main
         .TRAP_PC            (trap_pc),
         .TRAP_EN            (trap_en),
         .TRAP_CODE          (trap_code),
-        .TRAP_JMP_TO        (trap_jmp_to)
+        .TRAP_JMP_TO        (trap_jmp_to),
+
+        // 前段との接続
+        .INST_PC            (inst_pc),
+        .DECODE_PC          (decode_pc),
+        .CHECK_PC           (check_pc),
+        .SCHEDULE_PC        (schedule_pc),
+        .EXEC_PC            (o_pc),
+        .CUSHION_PC         (cushion_pc),
+        .CUSHION_EXC_EN     (cushion_exc_en),
+        .CUSHION_EXC_CODE   (cushion_exc_code)
     );
 
     /* ----- 8. メモリアクセス(w) ----- */

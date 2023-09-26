@@ -51,8 +51,8 @@ wire [31:0] FLUSH_PC                = sasanqua.core.main.flush_pc;
 wire        STALL                   = sasanqua.core.main.stall;
 
 // Core: Fetch
-wire [31:0] INST_PC                 = sasanqua.core.main.inst_pc;
-wire [31:0] INST_DATA               = sasanqua.core.main.inst_data;
+wire [31:0] FETCH_PC                = sasanqua.core.main.fetch_pc;
+wire [31:0] FETCH_INST              = sasanqua.core.main.fetch_inst;
 
 // Core: Decode
 wire [31:0] DECODE_PC               = sasanqua.core.main.decode_pc;

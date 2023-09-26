@@ -22,8 +22,8 @@ module fetch
         input  wire [31:0]  INST_RDATA,
 
         /* ----- 後段との接続 ----- */
-        output wire [31:0]  INST_PC,
-        output wire [31:0]  INST_DATA
+        output wire [31:0]  FETCH_PC,
+        output wire [31:0]  FETCH_INST
     );
 
     /* ----- PC ----- */
@@ -42,22 +42,22 @@ module fetch
     end
 
     /* ----- MMUとの接続 ----- */
-    reg [31:0] cache_pc, cache_data;
+    reg [31:0] cache_pc, cache_inst;
 
     always @ (posedge CLK) begin
         if (RST || FLUSH) begin
             cache_pc <= FLUSH_PC;
-            cache_data <= 32'h0000_0013;
+            cache_inst <= 32'h0000_0013;
         end
         else if (INST_RVALID) begin
             cache_pc <= INST_ROADDR;
-            cache_data <= INST_RDATA;
+            cache_inst <= INST_RDATA;
         end
     end
 
     assign INST_RDEN    = !(FLUSH || STALL || MEM_WAIT);
     assign INST_RIADDR  = pc;
-    assign INST_PC      = INST_RVALID ? INST_ROADDR : cache_pc;
-    assign INST_DATA    = INST_RVALID ? INST_RDATA : cache_data;
+    assign FETCH_PC     = INST_RVALID ? INST_ROADDR : cache_pc;
+    assign FETCH_INST   = INST_RVALID ? INST_RDATA : cache_inst;
 
 endmodule

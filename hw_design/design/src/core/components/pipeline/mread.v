@@ -15,30 +15,30 @@ module mread
 
         /* ----- 待機部との接続 ----- */
         // レジスタ(rv32i:W)
-        input wire  [4:0]   CUSHION_REG_W_RD,
-        input wire  [31:0]  CUSHION_REG_W_DATA,
+        input wire  [4:0]   REG_W_RD,
+        input wire  [31:0]  REG_W_DATA,
 
         // レジスタ(csrs:W)
-        input wire          CUSHION_CSR_W_EN,
-        input wire  [11:0]  CUSHION_CSR_W_ADDR,
-        input wire  [31:0]  CUSHION_CSR_W_DATA,
+        input wire          CSR_W_EN,
+        input wire  [11:0]  CSR_W_ADDR,
+        input wire  [31:0]  CSR_W_DATA,
 
         // メモリ(R)
-        input wire          CUSHION_MEM_R_EN,
-        input wire  [4:0]   CUSHION_MEM_R_RD,
-        input wire  [31:0]  CUSHION_MEM_R_ADDR,
-        input wire  [3:0]   CUSHION_MEM_R_STRB,
-        input wire          CUSHION_MEM_R_SIGNED,
+        input wire          MEM_R_EN,
+        input wire  [4:0]   MEM_R_RD,
+        input wire  [31:0]  MEM_R_ADDR,
+        input wire  [3:0]   MEM_R_STRB,
+        input wire          MEM_R_SIGNED,
 
         // メモリ(W)
-        input wire          CUSHION_MEM_W_EN,
-        input wire  [31:0]  CUSHION_MEM_W_ADDR,
-        input wire  [3:0]   CUSHION_MEM_W_STRB,
-        input wire  [31:0]  CUSHION_MEM_W_DATA,
+        input wire          MEM_W_EN,
+        input wire  [31:0]  MEM_W_ADDR,
+        input wire  [3:0]   MEM_W_STRB,
+        input wire  [31:0]  MEM_W_DATA,
 
         // PC更新
-        input wire          CUSHION_JMP_DO,
-        input wire  [31:0]  CUSHION_JMP_PC,
+        input wire          JMP_DO,
+        input wire  [31:0]  JMP_PC,
 
         /* ----- メモリアクセス(w)部との接続 ----- */
         // レジスタ(rv32i:W)
@@ -61,74 +61,74 @@ module mread
     );
 
     /* ----- MMUとの接続 ----- */
-    assign DATA_RDEN    = CUSHION_MEM_R_EN;
-    assign DATA_RIADDR  = CUSHION_MEM_R_ADDR;
+    assign DATA_RDEN    = MEM_R_EN;
+    assign DATA_RIADDR  = MEM_R_ADDR;
 
     /* ----- 入力取り込み ----- */
-    reg         cushion_csr_w_en, cushion_mem_r_en, cushion_mem_r_signed, cushion_mem_w_en, cushion_jmp_do;
-    reg [31:0]  cushion_reg_w_data, cushion_csr_w_data, cushion_mem_r_addr, cushion_mem_w_addr, cushion_mem_w_data, cushion_jmp_pc;
-    reg [11:0]  cushion_csr_w_addr;
-    reg [4:0]   cushion_reg_w_rd, cushion_mem_r_rd;
-    reg [3:0]   cushion_mem_r_strb, cushion_mem_w_strb;
+    reg         csr_w_en, mem_r_en, mem_r_signed, mem_w_en, jmp_do;
+    reg [31:0]  reg_w_data, csr_w_data, mem_r_addr, mem_w_addr, mem_w_data, jmp_pc;
+    reg [11:0]  csr_w_addr;
+    reg [4:0]   reg_w_rd, mem_r_rd;
+    reg [3:0]   mem_r_strb, mem_w_strb;
 
     always @ (posedge CLK) begin
         if (RST || FLUSH) begin
-            cushion_reg_w_rd <= 5'b0;
-            cushion_reg_w_data <= 32'b0;
-            cushion_csr_w_en <= 1'b0;
-            cushion_csr_w_addr <= 12'b0;
-            cushion_csr_w_data <= 32'b0;
-            cushion_mem_r_en <= 1'b0;
-            cushion_mem_r_rd <= 5'b0;
-            cushion_mem_r_addr <= 32'b0;
-            cushion_mem_r_strb <= 4'b0;
-            cushion_mem_r_signed <= 1'b0;
-            cushion_mem_w_en <= 1'b0;
-            cushion_mem_w_addr <= 32'b0;
-            cushion_mem_w_strb <= 4'b0;
-            cushion_mem_w_data <= 32'b0;
-            cushion_jmp_do <= 1'b0;
-            cushion_jmp_pc <= 32'b0;
+            reg_w_rd <= 5'b0;
+            reg_w_data <= 32'b0;
+            csr_w_en <= 1'b0;
+            csr_w_addr <= 12'b0;
+            csr_w_data <= 32'b0;
+            mem_r_en <= 1'b0;
+            mem_r_rd <= 5'b0;
+            mem_r_addr <= 32'b0;
+            mem_r_strb <= 4'b0;
+            mem_r_signed <= 1'b0;
+            mem_w_en <= 1'b0;
+            mem_w_addr <= 32'b0;
+            mem_w_strb <= 4'b0;
+            mem_w_data <= 32'b0;
+            jmp_do <= 1'b0;
+            jmp_pc <= 32'b0;
         end
         else if (MEM_WAIT) begin
             // do nothing
         end
         else begin
-            cushion_reg_w_rd <= CUSHION_REG_W_RD;
-            cushion_reg_w_data <= CUSHION_REG_W_DATA;
-            cushion_csr_w_en <= CUSHION_CSR_W_EN;
-            cushion_csr_w_addr <= CUSHION_CSR_W_ADDR;
-            cushion_csr_w_data <= CUSHION_CSR_W_DATA;
-            cushion_mem_r_en <= CUSHION_MEM_R_EN;
-            cushion_mem_r_rd <= CUSHION_MEM_R_RD;
-            cushion_mem_r_addr <= CUSHION_MEM_R_ADDR;
-            cushion_mem_r_strb <= CUSHION_MEM_R_STRB;
-            cushion_mem_r_signed <= CUSHION_MEM_R_SIGNED;
-            cushion_mem_w_en <= CUSHION_MEM_W_EN;
-            cushion_mem_w_addr <= CUSHION_MEM_W_ADDR;
-            cushion_mem_w_strb <= CUSHION_MEM_W_STRB;
-            cushion_mem_w_data <= CUSHION_MEM_W_DATA;
-            cushion_jmp_do <= CUSHION_JMP_DO;
-            cushion_jmp_pc <= CUSHION_JMP_PC;
+            reg_w_rd <= REG_W_RD;
+            reg_w_data <= REG_W_DATA;
+            csr_w_en <= CSR_W_EN;
+            csr_w_addr <= CSR_W_ADDR;
+            csr_w_data <= CSR_W_DATA;
+            mem_r_en <= MEM_R_EN;
+            mem_r_rd <= MEM_R_RD;
+            mem_r_addr <= MEM_R_ADDR;
+            mem_r_strb <= MEM_R_STRB;
+            mem_r_signed <= MEM_R_SIGNED;
+            mem_w_en <= MEM_W_EN;
+            mem_w_addr <= MEM_W_ADDR;
+            mem_w_strb <= MEM_W_STRB;
+            mem_w_data <= MEM_W_DATA;
+            jmp_do <= JMP_DO;
+            jmp_pc <= JMP_PC;
         end
     end
 
     /* ----- 出力 ----- */
     wire [31:0] rddata, wrdata;
 
-    assign rddata            = gen_rddata(DATA_RDATA, cushion_mem_r_addr, cushion_mem_r_strb, cushion_mem_r_signed);
-    assign wrdata            = gen_wrdata(cushion_mem_w_addr, cushion_mem_w_strb, DATA_RDATA, cushion_mem_w_data);
+    assign rddata            = gen_rddata(DATA_RDATA, mem_r_addr, mem_r_strb, mem_r_signed);
+    assign wrdata            = gen_wrdata(mem_w_addr, mem_w_strb, DATA_RDATA, mem_w_data);
 
-    assign MEMR_REG_W_RD     = cushion_mem_r_en ? cushion_mem_r_rd : cushion_reg_w_rd;
-    assign MEMR_REG_W_DATA   = cushion_mem_r_en ? rddata : cushion_reg_w_data;
-    assign MEMR_CSR_W_EN     = cushion_csr_w_en;
-    assign MEMR_CSR_W_ADDR   = cushion_csr_w_addr;
-    assign MEMR_CSR_W_DATA   = cushion_csr_w_data;
-    assign MEMR_MEM_W_EN     = cushion_mem_w_en;
-    assign MEMR_MEM_W_ADDR   = cushion_mem_w_addr;
+    assign MEMR_REG_W_RD     = mem_r_en ? mem_r_rd : reg_w_rd;
+    assign MEMR_REG_W_DATA   = mem_r_en ? rddata : reg_w_data;
+    assign MEMR_CSR_W_EN     = csr_w_en;
+    assign MEMR_CSR_W_ADDR   = csr_w_addr;
+    assign MEMR_CSR_W_DATA   = csr_w_data;
+    assign MEMR_MEM_W_EN     = mem_w_en;
+    assign MEMR_MEM_W_ADDR   = mem_w_addr;
     assign MEMR_MEM_W_DATA   = wrdata;
-    assign MEMR_JMP_DO       = cushion_jmp_do;
-    assign MEMR_JMP_PC       = cushion_jmp_pc;
+    assign MEMR_JMP_DO       = jmp_do;
+    assign MEMR_JMP_PC       = jmp_pc;
 
     function [31:0] gen_rddata;
         input [31:0]    DATA;

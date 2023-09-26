@@ -7,11 +7,11 @@ module decode
         input wire          STALL,
         input wire          MEM_WAIT,
 
-        /* ----- フェッチ部との接続 ----- */
-        input wire  [31:0]  INST_PC,
-        input wire  [31:0]  INST_DATA,
+        /* ----- 前段との接続 ----- */
+        input wire  [31:0]  PC,
+        input wire  [31:0]  INST,
 
-        /* ----- デコード部2との接続 ----- */
+        /* ----- 後段との接続 ----- */
         output wire [31:0]  DECODE_PC,
         output wire [16:0]  DECODE_OPCODE,  // { opcode, funct3, funct7 }
         output wire [4:0]   DECODE_RD,
@@ -21,29 +21,29 @@ module decode
     );
 
     /* ----- 入力取り込み ----- */
-    reg [31:0]  inst_pc, inst_data;
+    reg [31:0] pc, inst;
 
     always @ (posedge CLK) begin
         if (RST || FLUSH) begin
-            inst_pc <= 32'b0;
-            inst_data <= 32'h0000_0013;
+            pc <= 32'b0;
+            inst <= 32'h0000_0013;
         end
         else if (STALL || MEM_WAIT) begin
             // do nothing
         end
         else begin
-            inst_pc <= INST_PC;
-            inst_data <= INST_DATA;
+            pc <= PC;
+            inst <= INST;
         end
     end
 
     /* ---- デコード ----- */
-    assign DECODE_PC       = inst_pc;
-    assign DECODE_OPCODE   = { inst_data[6:0], inst_data[14:12], inst_data[31:25] };
-    assign DECODE_RD       = inst_data[11:7];
-    assign DECODE_RS1      = inst_data[19:15];
-    assign DECODE_RS2      = inst_data[24:20];
-    assign DECODE_IMM      = decode_imm(inst_data);
+    assign DECODE_PC       = pc;
+    assign DECODE_OPCODE   = { inst[6:0], inst[14:12], inst[31:25] };
+    assign DECODE_RD       = inst[11:7];
+    assign DECODE_RS1      = inst[19:15];
+    assign DECODE_RS2      = inst[24:20];
+    assign DECODE_IMM      = decode_imm(inst);
 
     function [31:0] decode_imm;
         input [31:0] INST;
