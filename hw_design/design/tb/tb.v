@@ -60,8 +60,6 @@ wire [6:0]  DECODE_OPCODE           = sasanqua.core.main.decode_opcode;
 wire [4:0]  DECODE_RD               = sasanqua.core.main.decode_rd;
 wire [4:0]  DECODE_RS1              = sasanqua.core.main.decode_rs1;
 wire [4:0]  DECODE_RS2              = sasanqua.core.main.decode_rs2;
-wire [2:0]  DECODE_FUNCT3           = sasanqua.core.main.decode_funct3;
-wire [6:0]  DECODE_FUNCT7           = sasanqua.core.main.decode_funct7;
 wire [31:0] DECODE_IMM              = sasanqua.core.main.decode_imm;
 
 // Core: Check
@@ -71,8 +69,6 @@ wire [4:0]  CHECK_RD                = sasanqua.core.main.check_rd;
 wire [4:0]  CHECK_RS1               = sasanqua.core.main.check_rs1;
 wire [4:0]  CHECK_RS2               = sasanqua.core.main.check_rs2;
 wire [11:0] CHECK_CSR               = sasanqua.core.main.check_csr;
-wire [2:0]  CHECK_FUNCT3            = sasanqua.core.main.check_funct3;
-wire [6:0]  CHECK_FUNCT7            = sasanqua.core.main.check_funct7;
 wire [31:0] CHECK_IMM               = sasanqua.core.main.check_imm;
 
 // Core: Schedule, Register(r)
@@ -88,8 +84,6 @@ wire [31:0] SCHEDULE_RS2_DATA       = sasanqua.core.main.reg_rs2_data;
 wire        SCHEDULE_CSR_VALID      = sasanqua.core.main.reg_csr_valid;
 wire [11:0] SCHEDULE_CSR_ADDR       = sasanqua.core.main.reg_csr_addr;
 wire [31:0] SCHEDULE_CSR_DATA       = sasanqua.core.main.reg_csr_data;
-wire [2:0]  SCHEDULE_FUNCT3         = sasanqua.core.main.schedule_funct3;
-wire [6:0]  SCHEDULE_FUNCT7         = sasanqua.core.main.schedule_funct7;
 wire [31:0] SCHEDULE_IMM            = sasanqua.core.main.schedule_imm;
 
 // Core: Exec

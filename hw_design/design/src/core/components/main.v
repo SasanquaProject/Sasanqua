@@ -70,9 +70,8 @@ module main
 
     /* ----- 2. 命令デコード ----- */
     wire [31:0] decode_pc, decode_imm;
-    wire [6:0]  decode_opcode, decode_funct7;
+    wire [16:0] decode_opcode;
     wire [4:0]  decode_rd, decode_rs1, decode_rs2;
-    wire [2:0]  decode_funct3;
 
     decode decode (
         // 制御
@@ -92,17 +91,14 @@ module main
         .DECODE_RD      (decode_rd),
         .DECODE_RS1     (decode_rs1),
         .DECODE_RS2     (decode_rs2),
-        .DECODE_FUNCT3  (decode_funct3),
-        .DECODE_FUNCT7  (decode_funct7),
         .DECODE_IMM     (decode_imm)
     );
 
     /* ----- 3. 命令検査 ----- */
     wire [31:0] check_pc, check_imm;
     wire [11:0] check_csr;
-    wire [6:0]  check_opcode, check_funct7;
+    wire [16:0] check_opcode;
     wire [4:0]  check_rd, check_rs1, check_rs2;
-    wire [2:0]  check_funct3;
 
     check check (
         // 制御
@@ -118,8 +114,6 @@ module main
         .DECODE_RD      (decode_rd),
         .DECODE_RS1     (decode_rs1),
         .DECODE_RS2     (decode_rs2),
-        .DECODE_FUNCT3  (decode_funct3),
-        .DECODE_FUNCT7  (decode_funct7),
         .DECODE_IMM     (decode_imm),
 
         // スケジューラ1との接続
@@ -129,17 +123,14 @@ module main
         .CHECK_RS1      (check_rs1),
         .CHECK_RS2      (check_rs2),
         .CHECK_CSR      (check_csr),
-        .CHECK_FUNCT3   (check_funct3),
-        .CHECK_FUNCT7   (check_funct7),
         .CHECK_IMM      (check_imm)
     );
 
     /* ----- 4-1. スケジューリング1 ----- */
     wire [31:0] schedule_pc, schedule_imm;
     wire [11:0] schedule_csr;
-    wire [6:0]  schedule_opcode, schedule_funct7;
+    wire [16:0] schedule_opcode;
     wire [4:0]  schedule_rd, schedule_rs1, schedule_rs2;
-    wire [2:0]  schedule_funct3;
 
     schedule schedule (
         // 制御
@@ -154,8 +145,6 @@ module main
         .CHECK_OPCODE       (check_opcode),
         .CHECK_RD           (check_rd),
         .CHECK_CSR          (check_csr),
-        .CHECK_FUNCT3       (check_funct3),
-        .CHECK_FUNCT7       (check_funct7),
         .CHECK_IMM          (check_imm),
 
         // 実行部との接続
@@ -163,8 +152,6 @@ module main
         .SCHEDULE_OPCODE    (schedule_opcode),
         .SCHEDULE_RD        (schedule_rd),
         .SCHEDULE_CSR       (schedule_csr),
-        .SCHEDULE_FUNCT3    (schedule_funct3),
-        .SCHEDULE_FUNCT7    (schedule_funct7),
         .SCHEDULE_IMM       (schedule_imm)
     );
 
@@ -271,8 +258,6 @@ module main
         .RS2_DATA           (reg_rs2_data),
         .CSR_ADDR           (reg_csr_addr),
         .CSR_DATA           (reg_csr_data),
-        .FUNCT3             (schedule_funct3),
-        .FUNCT7             (schedule_funct7),
         .IMM                (schedule_imm),
 
         // 後段との接続

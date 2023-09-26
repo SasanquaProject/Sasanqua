@@ -9,7 +9,7 @@ module exec_std_rv32i_s
 
         /* ----- 前段との接続 ----- */
         input wire  [31:0]  PC,
-        input wire  [6:0]   OPCODE,
+        input wire  [16:0]  OPCODE,
         input wire  [4:0]   RD_ADDR,
         input wire  [4:0]   RS1_ADDR,
         input wire  [31:0]  RS1_DATA,
@@ -17,8 +17,6 @@ module exec_std_rv32i_s
         input wire  [31:0]  RS2_DATA,
         input wire  [11:0]  CSR_ADDR,
         input wire  [31:0]  CSR_DATA,
-        input wire  [2:0]   FUNCT3,
-        input wire  [6:0]   FUNCT7,
         input wire  [31:0]  IMM,
 
         /* ----- 後段との接続 ----- */
@@ -60,9 +58,8 @@ module exec_std_rv32i_s
     /* ----- 入力取り込み ----- */
     reg         [31:0] pc, imm, rs1_data, rs2_data, csr_data;
     reg         [11:0] csr_addr;
-    reg         [6:0]  opcode, funct7;
+    reg         [16:0] opcode;
     reg         [4:0]  rd_addr, rs1_addr, rs2_addr;
-    reg         [2:0]  funct3;
 
     wire signed [31:0] rs1_data_s, rs2_data_s;
 
@@ -72,7 +69,7 @@ module exec_std_rv32i_s
     always @ (posedge CLK) begin
         if (RST || FLUSH) begin
             pc <= 32'b0;
-            opcode <= 7'b0;
+            opcode <= 17'b0;
             rd_addr <= 5'b0;
             rs1_addr <= 5'b0;
             rs1_data <= 32'b0;
@@ -80,8 +77,6 @@ module exec_std_rv32i_s
             rs2_data <= 32'b0;
             csr_addr <= 12'b0;
             csr_data <= 32'b0;
-            funct3 <= 3'b0;
-            funct7 <= 7'b0;
             imm <= 32'b0;
         end
         else if (MEM_WAIT) begin
@@ -89,7 +84,7 @@ module exec_std_rv32i_s
         end
         else if (STALL) begin
             pc <= 32'b0;
-            opcode <= 7'b0;
+            opcode <= 17'b0;
             rd_addr <= 5'b0;
             rs1_addr <= 5'b0;
             rs1_data <= 32'b0;
@@ -97,8 +92,6 @@ module exec_std_rv32i_s
             rs2_data <= 32'b0;
             csr_addr <= 12'b0;
             csr_data <= 32'b0;
-            funct3 <= 3'b0;
-            funct7 <= 7'b0;
             imm <= 32'b0;
         end
         else begin
@@ -111,8 +104,6 @@ module exec_std_rv32i_s
             rs2_data <= RS2_DATA;
             csr_addr <= CSR_ADDR;
             csr_data <= CSR_DATA;
-            funct3 <= FUNCT3;
-            funct7 <= FUNCT7;
             imm <= IMM;
         end
     end
@@ -122,7 +113,7 @@ module exec_std_rv32i_s
 
     // 整数演算
     always @* begin
-        casez ({opcode, funct3, funct7})
+        casez (opcode)
             17'b0110011_000_0000000: begin  // add
                 EXEC_REG_W_EN <= 1'b1;
                 EXEC_REG_W_RD <= rd_addr;
@@ -318,57 +309,57 @@ module exec_std_rv32i_s
 
     // メモリ操作
     always @* begin
-        casez ({opcode, funct3, funct7})
-            17'b0000011_000_zzzzzzz: begin  // lb
+        casez (opcode[16:7])
+            10'b0000011_000: begin  // lb
                 EXEC_MEM_R_EN <= 1'b1;
                 EXEC_MEM_R_RD <= rd_addr;
                 EXEC_MEM_R_ADDR <= rs1_data_s + $signed({ { 20{ imm[11] } }, imm[11:0] });
                 EXEC_MEM_R_STRB <= 4'b0001;
                 EXEC_MEM_R_SIGNED <= 1'b1;
             end
-            17'b0000011_100_zzzzzzz: begin  // lbu
+            10'b0000011_100: begin  // lbu
                 EXEC_MEM_R_EN <= 1'b1;
                 EXEC_MEM_R_RD <= rd_addr;
                 EXEC_MEM_R_ADDR <= rs1_data_s + $signed({ { 20{ imm[11] } }, imm[11:0] });
                 EXEC_MEM_R_STRB <= 4'b0001;
                 EXEC_MEM_R_SIGNED <= 1'b0;
             end
-            17'b0000011_001_zzzzzzz: begin  // lh
+            10'b0000011_001: begin  // lh
                 EXEC_MEM_R_EN <= 1'b1;
                 EXEC_MEM_R_RD <= rd_addr;
                 EXEC_MEM_R_ADDR <= rs1_data_s + $signed({ { 20{ imm[11] } }, imm[11:0] });
                 EXEC_MEM_R_STRB <= 4'b0011;
                 EXEC_MEM_R_SIGNED <= 1'b1;
             end
-            17'b0000011_101_zzzzzzz: begin  // lhu
+            10'b0000011_101: begin  // lhu
                 EXEC_MEM_R_EN <= 1'b1;
                 EXEC_MEM_R_RD <= rd_addr;
                 EXEC_MEM_R_ADDR <= rs1_data_s + $signed({ { 20{ imm[11] } }, imm[11:0] });
                 EXEC_MEM_R_STRB <= 4'b0011;
                 EXEC_MEM_R_SIGNED <= 1'b0;
             end
-            17'b0000011_010_zzzzzzz: begin  // lw
+            10'b0000011_010: begin  // lw
                 EXEC_MEM_R_EN <= 1'b1;
                 EXEC_MEM_R_RD <= rd_addr;
                 EXEC_MEM_R_ADDR <= rs1_data_s + $signed({ { 20{ imm[11] } }, imm[11:0] });
                 EXEC_MEM_R_STRB <= 4'b1111;
                 EXEC_MEM_R_SIGNED <= 1'b0;
             end
-            17'b0100011_000_zzzzzzz: begin  // sb
+            10'b0100011_000: begin  // sb
                 EXEC_MEM_R_EN <= 1'b1;
                 EXEC_MEM_R_RD <= 5'b0;
                 EXEC_MEM_R_ADDR <= rs1_data_s + $signed({ { 20{ imm[11] } }, imm[11:0] });
                 EXEC_MEM_R_STRB <= 4'b0001;
                 EXEC_MEM_R_SIGNED <= 1'b0;
             end
-            17'b0100011_001_zzzzzzz: begin  // sh
+            10'b0100011_001: begin  // sh
                 EXEC_MEM_R_EN <= 1'b1;
                 EXEC_MEM_R_RD <= 5'b0;
                 EXEC_MEM_R_ADDR <= rs1_data_s + $signed({ { 20{ imm[11] } }, imm[11:0] });
                 EXEC_MEM_R_STRB <= 4'b0011;
                 EXEC_MEM_R_SIGNED <= 1'b0;
             end
-            17'b0100011_010_zzzzzzz: begin  // sw
+            10'b0100011_010: begin  // sw
                 EXEC_MEM_R_EN <= 1'b1;
                 EXEC_MEM_R_RD <= 5'b0;
                 EXEC_MEM_R_ADDR <= rs1_data_s + $signed({ { 20{ imm[11] } }, imm[11:0] });
@@ -386,20 +377,20 @@ module exec_std_rv32i_s
     end
 
     always @* begin
-        casez ({opcode, funct3, funct7})
-            17'b0100011_000_zzzzzzz: begin  // sb
+        casez (opcode[16:7])
+            10'b0100011_000: begin  // sb
                 EXEC_MEM_W_EN <= 1'b1;
                 EXEC_MEM_W_ADDR <= rs1_data_s + $signed({ { 20{ imm[11] } }, imm[11:0] });
                 EXEC_MEM_W_STRB <= 4'b0001;
                 EXEC_MEM_W_DATA <= rs2_data;
             end
-            17'b0100011_001_zzzzzzz: begin  // sh
+            10'b0100011_001: begin  // sh
                 EXEC_MEM_W_EN <= 1'b1;
                 EXEC_MEM_W_ADDR <= rs1_data_s + $signed({ { 20{ imm[11] } }, imm[11:0] });
                 EXEC_MEM_W_STRB <= 4'b0011;
                 EXEC_MEM_W_DATA <= rs2_data;
             end
-            17'b0100011_010_zzzzzzz: begin  // sw
+            10'b0100011_010: begin  // sw
                 EXEC_MEM_W_EN <= 1'b1;
                 EXEC_MEM_W_ADDR <= rs1_data_s + $signed({ { 20{ imm[11] } }, imm[11:0] });
                 EXEC_MEM_W_STRB <= 4'b1111;
@@ -416,36 +407,36 @@ module exec_std_rv32i_s
 
     // PC更新
     always @* begin
-        casez ({opcode, funct3, funct7})
-            17'b1100011_000_zzzzzzz: begin  // beq
+        casez (opcode[16:7])
+            10'b1100011_000: begin  // beq
                 EXEC_JMP_DO <= rs1_data == rs2_data;
                 EXEC_JMP_PC <= pc + { { 19{ imm[12] } }, imm[12:1], 1'b0 };
             end
-            17'b1100011_001_zzzzzzz: begin  // bne
+            10'b1100011_001: begin  // bne
                 EXEC_JMP_DO <= rs1_data != rs2_data;
                 EXEC_JMP_PC <= pc + { { 19{ imm[12] } }, imm[12:1], 1'b0 };
             end
-            17'b1100011_101_zzzzzzz: begin  // bge
+            10'b1100011_101: begin  // bge
                 EXEC_JMP_DO <= rs1_data_s >= rs2_data_s;
                 EXEC_JMP_PC <= pc + { { 19{ imm[12] } }, imm[12:1], 1'b0 };
             end
-            17'b1100011_111_zzzzzzz: begin  // bgeu
+            10'b1100011_111: begin  // bgeu
                 EXEC_JMP_DO <= rs1_data >= rs2_data;
                 EXEC_JMP_PC <= pc + { { 19{ imm[12] } }, imm[12:1], 1'b0 };
             end
-            17'b1100011_100_zzzzzzz: begin  // blt
+            10'b1100011_100: begin  // blt
                 EXEC_JMP_DO <= rs1_data_s < rs2_data_s;
                 EXEC_JMP_PC <= pc + { { 19{ imm[12] } }, imm[12:1], 1'b0 };
             end
-            17'b1100011_110_zzzzzzz: begin  // bltu
+            10'b1100011_110: begin  // bltu
                 EXEC_JMP_DO <= rs1_data < rs2_data;
                 EXEC_JMP_PC <= pc + { { 19{ imm[12] } }, imm[12:1], 1'b0 };
             end
-            17'b1101111_zzz_zzzzzzz: begin  // jal
+            10'b1101111_zzz: begin  // jal
                 EXEC_JMP_DO <= 1'b1;
                 EXEC_JMP_PC <= pc + { { 19{ imm[12] } }, imm[12:1], 1'b0 };
             end
-            17'b1100111_000_zzzzzzz: begin  // jalr
+            10'b1100111_000: begin  // jalr
                 EXEC_JMP_DO <= 1'b1;
                 EXEC_JMP_PC <= (rs1_data + { { 20{ imm[11] } }, imm[11:0] }) & (~32'b1);
             end
@@ -458,7 +449,7 @@ module exec_std_rv32i_s
 
     // CSRs
     always @* begin
-        casez ({opcode, funct3})
+        casez (opcode[16:7])
             10'b1110011_011: begin // csrrc
                 EXEC_CSR_W_EN <= 1'b1;
                 EXEC_CSR_W_ADDR <= csr_addr;
@@ -503,7 +494,7 @@ module exec_std_rv32i_s
             EXEC_EXC_EN <= 1'b1;
             EXEC_EXC_CODE <= 4'd2;
         end
-        else if ({ opcode, funct3, funct7} == 17'b1110011_000_0000000) begin // Environment break or call
+        else if (opcode == 17'b1110011_000_0000000) begin // Environment break or call
             EXEC_EXC_EN <= 1'b1;
             EXEC_EXC_CODE <= imm[11:0] == 12'b0 ? 4'd11 : 4'd3;
         end
