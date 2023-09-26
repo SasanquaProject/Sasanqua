@@ -232,7 +232,7 @@ module translate_axi
             M_AXI_WVALID <= 1'b0;
         end
         else if (sw_next_state == S_SW_ADDR) begin
-            M_AXI_WSTRB <= WSTRB;
+            M_AXI_WSTRB <= (WSTRB << WADDR[1:0]);
             M_AXI_WDATA <= WDATA;
             M_AXI_WLAST <= 1'b1;
             M_AXI_WVALID <= 1'b1;
