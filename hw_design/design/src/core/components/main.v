@@ -203,9 +203,9 @@ module main
 
         // フォワーディング
         .FWD_CSR_ADDR       (schedule_csr),
-        .FWD_EXEC_EN        (csr_w_en),
-        .FWD_EXEC_ADDR      (csr_w_addr),
-        .FWD_EXEC_DATA      (csr_w_data),
+        .FWD_EXEC_EN        (exec_csr_w_en),
+        .FWD_EXEC_ADDR      (exec_csr_w_addr),
+        .FWD_EXEC_DATA      (exec_csr_w_data),
         .FWD_CUSHION_EN     (cushion_csr_w_en),
         .FWD_CUSHION_ADDR   (cushion_csr_w_addr),
         .FWD_CUSHION_DATA   (cushion_csr_w_data)
@@ -238,64 +238,64 @@ module main
 
         // フォワーディング
         .FWD_REG_ADDR       (schedule_rd),
-        .FWD_EXEC_EN        (reg_w_en),
-        .FWD_EXEC_ADDR      (reg_w_rd),
-        .FWD_EXEC_DATA      (reg_w_data),
+        .FWD_EXEC_EN        (exec_reg_w_en),
+        .FWD_EXEC_ADDR      (exec_reg_w_rd),
+        .FWD_EXEC_DATA      (exec_reg_w_data),
         .FWD_CUSHION_EN     (cushion_reg_w_en),
         .FWD_CUSHION_ADDR   (cushion_reg_w_rd),
         .FWD_CUSHION_DATA   (cushion_reg_w_data)
     );
 
     /* ----- 5. 実行 ----- */
-    wire        reg_w_en, mem_r_en, mem_r_signed, csr_w_en, mem_w_en, jmp_do, exc_en;
-    wire [31:0] o_pc, reg_w_data, csr_w_data, mem_r_addr, mem_w_addr, mem_w_data, jmp_pc;
-    wire [11:0] csr_w_addr;
-    wire [4:0]  reg_w_rd, mem_r_rd;
-    wire [3:0]  mem_r_strb, mem_w_strb, exc_code;
+    wire        exec_reg_w_en, exec_mem_r_en, exec_mem_r_signed, exec_csr_w_en, exec_mem_w_en, exec_jmp_do, exec_exc_en;
+    wire [31:0] exec_pc, exec_reg_w_data, exec_csr_w_data, exec_mem_r_addr, exec_mem_w_addr, exec_mem_w_data, exec_jmp_pc;
+    wire [11:0] exec_csr_w_addr;
+    wire [4:0]  exec_reg_w_rd, exec_mem_r_rd;
+    wire [3:0]  exec_mem_r_strb, exec_mem_w_strb, exec_exc_code;
 
     exec_std_rv32i_s exec_std_rv32i_s_0 (
         // 制御
-        .CLK            (CLK),
-        .RST            (RST),
-        .FLUSH          (flush),
-        .STALL          (stall),
-        .MEM_WAIT       (MEM_WAIT),
+        .CLK                (CLK),
+        .RST                (RST),
+        .FLUSH              (flush),
+        .STALL              (stall),
+        .MEM_WAIT           (MEM_WAIT),
 
         // 前段との接続
-        .I_PC           (schedule_pc),
-        .OPCODE         (schedule_opcode),
-        .RD_ADDR        (schedule_rd),
-        .RS1_ADDR       (reg_rs1_addr),
-        .RS1_DATA       (reg_rs1_data),
-        .RS2_ADDR       (reg_rs2_addr),
-        .RS2_DATA       (reg_rs2_data),
-        .CSR_ADDR       (reg_csr_addr),
-        .CSR_DATA       (reg_csr_data),
-        .FUNCT3         (schedule_funct3),
-        .FUNCT7         (schedule_funct7),
-        .IMM            (schedule_imm),
+        .PC                 (schedule_pc),
+        .OPCODE             (schedule_opcode),
+        .RD_ADDR            (schedule_rd),
+        .RS1_ADDR           (reg_rs1_addr),
+        .RS1_DATA           (reg_rs1_data),
+        .RS2_ADDR           (reg_rs2_addr),
+        .RS2_DATA           (reg_rs2_data),
+        .CSR_ADDR           (reg_csr_addr),
+        .CSR_DATA           (reg_csr_data),
+        .FUNCT3             (schedule_funct3),
+        .FUNCT7             (schedule_funct7),
+        .IMM                (schedule_imm),
 
         // 後段との接続
-        .O_PC           (o_pc),
-        .REG_W_EN       (reg_w_en),
-        .REG_W_RD       (reg_w_rd),
-        .REG_W_DATA     (reg_w_data),
-        .CSR_W_EN       (csr_w_en),
-        .CSR_W_ADDR     (csr_w_addr),
-        .CSR_W_DATA     (csr_w_data),
-        .MEM_R_EN       (mem_r_en),
-        .MEM_R_RD       (mem_r_rd),
-        .MEM_R_ADDR     (mem_r_addr),
-        .MEM_R_STRB     (mem_r_strb),
-        .MEM_R_SIGNED   (mem_r_signed),
-        .MEM_W_EN       (mem_w_en),
-        .MEM_W_ADDR     (mem_w_addr),
-        .MEM_W_STRB     (mem_w_strb),
-        .MEM_W_DATA     (mem_w_data),
-        .JMP_DO         (jmp_do),
-        .JMP_PC         (jmp_pc),
-        .EXC_EN         (exc_en),
-        .EXC_CODE       (exc_code)
+        .EXEC_PC            (exec_pc),
+        .EXEC_REG_W_EN      (exec_reg_w_en),
+        .EXEC_REG_W_RD      (exec_reg_w_rd),
+        .EXEC_REG_W_DATA    (exec_reg_w_data),
+        .EXEC_CSR_W_EN      (exec_csr_w_en),
+        .EXEC_CSR_W_ADDR    (exec_csr_w_addr),
+        .EXEC_CSR_W_DATA    (exec_csr_w_data),
+        .EXEC_MEM_R_EN      (exec_mem_r_en),
+        .EXEC_MEM_R_RD      (exec_mem_r_rd),
+        .EXEC_MEM_R_ADDR    (exec_mem_r_addr),
+        .EXEC_MEM_R_STRB    (exec_mem_r_strb),
+        .EXEC_MEM_R_SIGNED  (exec_mem_r_signed),
+        .EXEC_MEM_W_EN      (exec_mem_w_en),
+        .EXEC_MEM_W_ADDR    (exec_mem_w_addr),
+        .EXEC_MEM_W_STRB    (exec_mem_w_strb),
+        .EXEC_MEM_W_DATA    (exec_mem_w_data),
+        .EXEC_JMP_DO        (exec_jmp_do),
+        .EXEC_JMP_PC        (exec_jmp_pc),
+        .EXEC_EXC_EN        (exec_exc_en),
+        .EXEC_EXC_CODE      (exec_exc_code)
     );
 
     /* ----- 6. 実行部待機 ------ */
@@ -313,26 +313,26 @@ module main
         .MEM_WAIT               (MEM_WAIT),
 
         // 実行部との接続
-        .EXEC_PC                (o_pc),
-        .EXEC_REG_W_EN          (reg_w_en),
-        .EXEC_REG_W_RD          (reg_w_rd),
-        .EXEC_REG_W_DATA        (reg_w_data),
-        .EXEC_CSR_W_EN          (csr_w_en),
-        .EXEC_CSR_W_ADDR        (csr_w_addr),
-        .EXEC_CSR_W_DATA        (csr_w_data),
-        .EXEC_MEM_R_EN          (mem_r_en),
-        .EXEC_MEM_R_RD          (mem_r_rd),
-        .EXEC_MEM_R_ADDR        (mem_r_addr),
-        .EXEC_MEM_R_STRB        (mem_r_strb),
-        .EXEC_MEM_R_SIGNED      (mem_r_signed),
-        .EXEC_MEM_W_EN          (mem_w_en),
-        .EXEC_MEM_W_ADDR        (mem_w_addr),
-        .EXEC_MEM_W_STRB        (mem_w_strb),
-        .EXEC_MEM_W_DATA        (mem_w_data),
-        .EXEC_JMP_DO            (jmp_do),
-        .EXEC_JMP_PC            (jmp_pc),
-        .EXEC_EXC_EN            (exc_en),
-        .EXEC_EXC_CODE          (exc_code),
+        .EXEC_PC                (exec_pc),
+        .EXEC_REG_W_EN          (exec_reg_w_en),
+        .EXEC_REG_W_RD          (exec_reg_w_rd),
+        .EXEC_REG_W_DATA        (exec_reg_w_data),
+        .EXEC_CSR_W_EN          (exec_csr_w_en),
+        .EXEC_CSR_W_ADDR        (exec_csr_w_addr),
+        .EXEC_CSR_W_DATA        (exec_csr_w_data),
+        .EXEC_MEM_R_EN          (exec_mem_r_en),
+        .EXEC_MEM_R_RD          (exec_mem_r_rd),
+        .EXEC_MEM_R_ADDR        (exec_mem_r_addr),
+        .EXEC_MEM_R_STRB        (exec_mem_r_strb),
+        .EXEC_MEM_R_SIGNED      (exec_mem_r_signed),
+        .EXEC_MEM_W_EN          (exec_mem_w_en),
+        .EXEC_MEM_W_ADDR        (exec_mem_w_addr),
+        .EXEC_MEM_W_STRB        (exec_mem_w_strb),
+        .EXEC_MEM_W_DATA        (exec_mem_w_data),
+        .EXEC_JMP_DO            (exec_jmp_do),
+        .EXEC_JMP_PC            (exec_jmp_pc),
+        .EXEC_EXC_EN            (exec_exc_en),
+        .EXEC_EXC_CODE          (exec_exc_code),
 
         // メモリアクセス部(r)との接続
         .CUSHION_PC             (cushion_pc),

@@ -64,7 +64,7 @@ wire [2:0]  DECODE_FUNCT3           = sasanqua.core.main.decode_funct3;
 wire [6:0]  DECODE_FUNCT7           = sasanqua.core.main.decode_funct7;
 wire [31:0] DECODE_IMM              = sasanqua.core.main.decode_imm;
 
-// Core: Decode 2nd
+// Core: Check
 wire [31:0] CHECK_PC                = sasanqua.core.main.check_pc;
 wire [6:0]  CHECK_OPCODE            = sasanqua.core.main.check_opcode;
 wire [4:0]  CHECK_RD                = sasanqua.core.main.check_rd;
@@ -93,24 +93,24 @@ wire [6:0]  SCHEDULE_FUNCT7         = sasanqua.core.main.schedule_funct7;
 wire [31:0] SCHEDULE_IMM            = sasanqua.core.main.schedule_imm;
 
 // Core: Exec
-wire [31:0] EXEC_PC                 = sasanqua.core.main.o_pc;
-wire [4:0]  EXEC_REG_W_RD           = sasanqua.core.main.reg_w_rd;
-wire [31:0] EXEC_REG_W_DATA         = sasanqua.core.main.reg_w_data;
-wire [11:0] EXEC_CSR_W_ADDR         = sasanqua.core.main.csr_w_addr;
-wire [31:0] EXEC_CSR_W_DATA         = sasanqua.core.main.csr_w_data;
-wire        EXEC_MEM_R_EN           = sasanqua.core.main.mem_r_en;
-wire [4:0]  EXEC_MEM_R_RD           = sasanqua.core.main.mem_r_rd;
-wire [31:0] EXEC_MEM_R_ADDR         = sasanqua.core.main.mem_r_addr;
-wire [3:0]  EXEC_MEM_R_STRB         = sasanqua.core.main.mem_r_strb;
-wire        EXEC_MEM_R_SIGNED       = sasanqua.core.main.mem_r_signed;
-wire        EXEC_MEM_W_EN           = sasanqua.core.main.mem_w_en;
-wire [31:0] EXEC_MEM_W_ADDR         = sasanqua.core.main.mem_w_addr;
-wire [3:0]  EXEC_MEM_W_STRB         = sasanqua.core.main.mem_w_strb;
-wire [31:0] EXEC_MEM_W_DATA         = sasanqua.core.main.mem_w_data;
-wire        EXEC_JMP_DO             = sasanqua.core.main.jmp_do;
-wire [31:0] EXEC_JMP_PC             = sasanqua.core.main.jmp_pc;
-wire        EXEC_EXC_EN             = sasanqua.core.main.exec_std_rv32i_s_0.EXC_EN;
-wire [3:0]  EXEC_EXC_CODE           = sasanqua.core.main.exec_std_rv32i_s_0.EXC_CODE;
+wire [31:0] EXEC_PC                 = sasanqua.core.main.exec_pc;
+wire [4:0]  EXEC_REG_W_RD           = sasanqua.core.main.exec_reg_w_rd;
+wire [31:0] EXEC_REG_W_DATA         = sasanqua.core.main.exec_reg_w_data;
+wire [11:0] EXEC_CSR_W_ADDR         = sasanqua.core.main.exec_csr_w_addr;
+wire [31:0] EXEC_CSR_W_DATA         = sasanqua.core.main.exec_csr_w_data;
+wire        EXEC_MEM_R_EN           = sasanqua.core.main.exec_mem_r_en;
+wire [4:0]  EXEC_MEM_R_RD           = sasanqua.core.main.exec_mem_r_rd;
+wire [31:0] EXEC_MEM_R_ADDR         = sasanqua.core.main.exec_mem_r_addr;
+wire [3:0]  EXEC_MEM_R_STRB         = sasanqua.core.main.exec_mem_r_strb;
+wire        EXEC_MEM_R_SIGNED       = sasanqua.core.main.exec_mem_r_signed;
+wire        EXEC_MEM_W_EN           = sasanqua.core.main.exec_mem_w_en;
+wire [31:0] EXEC_MEM_W_ADDR         = sasanqua.core.main.exec_mem_w_addr;
+wire [3:0]  EXEC_MEM_W_STRB         = sasanqua.core.main.exec_mem_w_strb;
+wire [31:0] EXEC_MEM_W_DATA         = sasanqua.core.main.exec_mem_w_data;
+wire        EXEC_JMP_DO             = sasanqua.core.main.exec_jmp_do;
+wire [31:0] EXEC_JMP_PC             = sasanqua.core.main.exec_jmp_pc;
+wire        EXEC_EXC_EN             = sasanqua.core.main.exec_exc_en;
+wire [3:0]  EXEC_EXC_CODE           = sasanqua.core.main.exec_exc_code;
 
 // Core: Cushion
 wire [31:0] CUSHION_PC              = sasanqua.core.main.cushion_pc;
@@ -192,9 +192,9 @@ begin
     #(STEP*10)
     RST = 0;
 
-    // @(MEMR_JMP_DO && MEMR_JMP_PC == 32'h2000_003C);
-    // #(STEP*10)
-    #(STEP * 100000)
+    @(MEMR_JMP_DO && MEMR_JMP_PC == 32'h2000_003C);
+    #(STEP*10)
+    // #(STEP * 100000)
 
     if (I_REG_3 == 32'b1)
         $display("%d: Success", id);
