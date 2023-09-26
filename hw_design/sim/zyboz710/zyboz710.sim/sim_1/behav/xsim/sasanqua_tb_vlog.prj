@@ -13,6 +13,7 @@ verilog xil_defaultlib  --include "../../../../../../design/tb/axi" \
 "../../../../../../design/src/mem/axi/mem.v" \
 "../../../../../../design/src/core/components/mmu.v" \
 "../../../../../../design/src/core/components/pipeline/mread.v" \
+"../../../../../../design/src/core/components/plic.v" \
 "../../../../../../design/src/mem/utils/ram/ram_dualport.v" \
 "../../../../../../design/src/mem/utils/rom/rom_dualport.v" \
 "../../../../../../design/src/sasanqua.v" \

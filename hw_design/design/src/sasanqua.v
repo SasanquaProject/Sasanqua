@@ -139,6 +139,9 @@ module sasanqua
         .M_AXI_RREADY   (M_AXI_RREADY)
     );
 
+    /* ----- PLIC ----- */
+    plic plic ();
+
     /* ----- CLINT ----- */
     wire        int_en;
     wire [3:0]  int_code;
