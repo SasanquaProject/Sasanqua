@@ -1,6 +1,6 @@
 module main
     # (
-        parameter START_ADDR = 32'h2000_0000
+        parameter START_ADDR = 32'h0
     )
     (
         /* ----- 制御 ----- */
