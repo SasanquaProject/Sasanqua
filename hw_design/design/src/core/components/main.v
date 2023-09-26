@@ -135,13 +135,13 @@ module main
     );
 
     /* ----- 4-1. スケジューリング1 ----- */
-    wire [31:0] schedule_1st_pc, schedule_1st_imm;
-    wire [11:0] schedule_1st_csr;
-    wire [6:0]  schedule_1st_opcode, schedule_1st_funct7;
-    wire [4:0]  schedule_1st_rd, schedule_1st_rs1, schedule_1st_rs2;
-    wire [2:0]  schedule_1st_funct3;
+    wire [31:0] schedule_pc, schedule_imm;
+    wire [11:0] schedule_csr;
+    wire [6:0]  schedule_opcode, schedule_funct7;
+    wire [4:0]  schedule_rd, schedule_rs1, schedule_rs2;
+    wire [2:0]  schedule_funct3;
 
-    schedule_1st schedule_1st (
+    schedule schedule (
         // 制御
         .CLK                (CLK),
         .RST                (RST),
@@ -159,13 +159,13 @@ module main
         .CHECK_IMM          (check_imm),
 
         // 実行部との接続
-        .SCHEDULE_1ST_PC    (schedule_1st_pc),
-        .SCHEDULE_1ST_OPCODE(schedule_1st_opcode),
-        .SCHEDULE_1ST_RD    (schedule_1st_rd),
-        .SCHEDULE_1ST_CSR   (schedule_1st_csr),
-        .SCHEDULE_1ST_FUNCT3(schedule_1st_funct3),
-        .SCHEDULE_1ST_FUNCT7(schedule_1st_funct7),
-        .SCHEDULE_1ST_IMM   (schedule_1st_imm)
+        .SCHEDULE_PC        (schedule_pc),
+        .SCHEDULE_OPCODE    (schedule_opcode),
+        .SCHEDULE_RD        (schedule_rd),
+        .SCHEDULE_CSR       (schedule_csr),
+        .SCHEDULE_FUNCT3    (schedule_funct3),
+        .SCHEDULE_FUNCT7    (schedule_funct7),
+        .SCHEDULE_IMM       (schedule_imm)
     );
 
     /* ----- 4-2. レジスタアクセス ----- */
@@ -202,7 +202,7 @@ module main
         .WDATA              (memr_csr_w_data),
 
         // フォワーディング
-        .FWD_CSR_ADDR       (schedule_1st_csr),
+        .FWD_CSR_ADDR       (schedule_csr),
         .FWD_EXEC_EN        (csr_w_en),
         .FWD_EXEC_ADDR      (csr_w_addr),
         .FWD_EXEC_DATA      (csr_w_data),
@@ -237,7 +237,7 @@ module main
         .WDATA              (memr_reg_w_data),
 
         // フォワーディング
-        .FWD_REG_ADDR       (schedule_1st_rd),
+        .FWD_REG_ADDR       (schedule_rd),
         .FWD_EXEC_EN        (reg_w_en),
         .FWD_EXEC_ADDR      (reg_w_rd),
         .FWD_EXEC_DATA      (reg_w_data),
@@ -262,18 +262,18 @@ module main
         .MEM_WAIT       (MEM_WAIT),
 
         // 前段との接続
-        .I_PC           (schedule_1st_pc),
-        .OPCODE         (schedule_1st_opcode),
-        .RD_ADDR        (schedule_1st_rd),
+        .I_PC           (schedule_pc),
+        .OPCODE         (schedule_opcode),
+        .RD_ADDR        (schedule_rd),
         .RS1_ADDR       (reg_rs1_addr),
         .RS1_DATA       (reg_rs1_data),
         .RS2_ADDR       (reg_rs2_addr),
         .RS2_DATA       (reg_rs2_data),
         .CSR_ADDR       (reg_csr_addr),
         .CSR_DATA       (reg_csr_data),
-        .FUNCT3         (schedule_1st_funct3),
-        .FUNCT7         (schedule_1st_funct7),
-        .IMM            (schedule_1st_imm),
+        .FUNCT3         (schedule_funct3),
+        .FUNCT7         (schedule_funct7),
+        .IMM            (schedule_imm),
 
         // 後段との接続
         .O_PC           (o_pc),
@@ -423,7 +423,7 @@ module main
         .INST_PC            (inst_pc),
         .DECODE_PC          (decode_pc),
         .CHECK_PC           (check_pc),
-        .SCHEDULE_1ST_PC    (schedule_1st_pc),
+        .SCHEDULE_PC        (schedule_pc),
         .EXEC_PC            (o_pc),
         .CUSHION_PC         (cushion_pc),
         .CUSHION_EXC_EN     (cushion_exc_en),

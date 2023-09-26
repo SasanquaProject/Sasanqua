@@ -1,4 +1,4 @@
-module schedule_1st
+module schedule
     (
         /* ----- 制御 ----- */
         input wire          CLK,
@@ -17,13 +17,13 @@ module schedule_1st
         input wire  [31:0]  CHECK_IMM,
 
         /* ----- 実行部との接続 ----- */
-        output wire [31:0]  SCHEDULE_1ST_PC,
-        output wire [6:0]   SCHEDULE_1ST_OPCODE,
-        output wire [4:0]   SCHEDULE_1ST_RD,
-        output wire [11:0]  SCHEDULE_1ST_CSR,
-        output wire [2:0]   SCHEDULE_1ST_FUNCT3,
-        output wire [6:0]   SCHEDULE_1ST_FUNCT7,
-        output wire [31:0]  SCHEDULE_1ST_IMM
+        output wire [31:0]  SCHEDULE_PC,
+        output wire [6:0]   SCHEDULE_OPCODE,
+        output wire [4:0]   SCHEDULE_RD,
+        output wire [11:0]  SCHEDULE_CSR,
+        output wire [2:0]   SCHEDULE_FUNCT3,
+        output wire [6:0]   SCHEDULE_FUNCT7,
+        output wire [31:0]  SCHEDULE_IMM
     );
 
     /* ----- 入力取り込み ----- */
@@ -58,12 +58,12 @@ module schedule_1st
     end
 
     /* ----- 出力(仮) ----- */
-    assign SCHEDULE_1ST_PC      = check_pc;
-    assign SCHEDULE_1ST_OPCODE  = check_opcode;
-    assign SCHEDULE_1ST_RD      = check_rd;
-    assign SCHEDULE_1ST_CSR     = check_csr;
-    assign SCHEDULE_1ST_FUNCT3  = check_funct3;
-    assign SCHEDULE_1ST_FUNCT7  = check_funct7;
-    assign SCHEDULE_1ST_IMM     = check_imm;
+    assign SCHEDULE_PC      = check_pc;
+    assign SCHEDULE_OPCODE  = check_opcode;
+    assign SCHEDULE_RD      = check_rd;
+    assign SCHEDULE_CSR     = check_csr;
+    assign SCHEDULE_FUNCT3  = check_funct3;
+    assign SCHEDULE_FUNCT7  = check_funct7;
+    assign SCHEDULE_IMM     = check_imm;
 
 endmodule

@@ -54,7 +54,7 @@ wire        STALL                   = sasanqua.core.main.stall;
 wire [31:0] INST_PC                 = sasanqua.core.main.inst_pc;
 wire [31:0] INST_DATA               = sasanqua.core.main.inst_data;
 
-// Core: Decode 1st
+// Core: Decode
 wire [31:0] DECODE_PC               = sasanqua.core.main.decode_pc;
 wire [6:0]  DECODE_OPCODE           = sasanqua.core.main.decode_opcode;
 wire [4:0]  DECODE_RD               = sasanqua.core.main.decode_rd;
@@ -75,22 +75,22 @@ wire [2:0]  CHECK_FUNCT3            = sasanqua.core.main.check_funct3;
 wire [6:0]  CHECK_FUNCT7            = sasanqua.core.main.check_funct7;
 wire [31:0] CHECK_IMM               = sasanqua.core.main.check_imm;
 
-// Core: Schedule 1st, Register(r)
-wire [31:0] SCHEDULE_1ST_PC         = sasanqua.core.main.schedule_1st_pc;
-wire [6:0]  SCHEDULE_1ST_OPCODE     = sasanqua.core.main.schedule_1st_opcode;
-wire [4:0]  SCHEDULE_1ST_RD_ADDR    = sasanqua.core.main.schedule_1st_rd;
-wire        SCHEDULE_1ST_RS1_VALID  = sasanqua.core.main.reg_rs1_valid;
-wire [4:0]  SCHEDULE_1ST_RS1_ADDR   = sasanqua.core.main.reg_rs1_addr;
-wire [31:0] SCHEDULE_1ST_RS1_DATA   = sasanqua.core.main.reg_rs1_data;
-wire        SCHEDULE_1ST_RS2_VALID  = sasanqua.core.main.reg_rs2_valid;
-wire [4:0]  SCHEDULE_1ST_RS2_ADDR   = sasanqua.core.main.reg_rs2_addr;
-wire [31:0] SCHEDULE_1ST_RS2_DATA   = sasanqua.core.main.reg_rs2_data;
-wire        SCHEDULE_1ST_CSR_VALID  = sasanqua.core.main.reg_csr_valid;
-wire [11:0] SCHEDULE_1ST_CSR_ADDR   = sasanqua.core.main.reg_csr_addr;
-wire [31:0] SCHEDULE_1ST_CSR_DATA   = sasanqua.core.main.reg_csr_data;
-wire [2:0]  SCHEDULE_1ST_FUNCT3     = sasanqua.core.main.schedule_1st_funct3;
-wire [6:0]  SCHEDULE_1ST_FUNCT7     = sasanqua.core.main.schedule_1st_funct7;
-wire [31:0] SCHEDULE_1ST_IMM        = sasanqua.core.main.schedule_1st_imm;
+// Core: Schedule, Register(r)
+wire [31:0] SCHEDULE_PC             = sasanqua.core.main.schedule_pc;
+wire [6:0]  SCHEDULE_OPCODE         = sasanqua.core.main.schedule_opcode;
+wire [4:0]  SCHEDULE_RD_ADDR        = sasanqua.core.main.schedule_rd;
+wire        SCHEDULE_RS1_VALID      = sasanqua.core.main.reg_rs1_valid;
+wire [4:0]  SCHEDULE_RS1_ADDR       = sasanqua.core.main.reg_rs1_addr;
+wire [31:0] SCHEDULE_RS1_DATA       = sasanqua.core.main.reg_rs1_data;
+wire        SCHEDULE_RS2_VALID      = sasanqua.core.main.reg_rs2_valid;
+wire [4:0]  SCHEDULE_RS2_ADDR       = sasanqua.core.main.reg_rs2_addr;
+wire [31:0] SCHEDULE_RS2_DATA       = sasanqua.core.main.reg_rs2_data;
+wire        SCHEDULE_CSR_VALID      = sasanqua.core.main.reg_csr_valid;
+wire [11:0] SCHEDULE_CSR_ADDR       = sasanqua.core.main.reg_csr_addr;
+wire [31:0] SCHEDULE_CSR_DATA       = sasanqua.core.main.reg_csr_data;
+wire [2:0]  SCHEDULE_FUNCT3         = sasanqua.core.main.schedule_funct3;
+wire [6:0]  SCHEDULE_FUNCT7         = sasanqua.core.main.schedule_funct7;
+wire [31:0] SCHEDULE_IMM            = sasanqua.core.main.schedule_imm;
 
 // Core: Exec
 wire [31:0] EXEC_PC                 = sasanqua.core.main.o_pc;

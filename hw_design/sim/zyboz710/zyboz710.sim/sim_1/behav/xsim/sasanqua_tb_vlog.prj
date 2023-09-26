@@ -16,7 +16,7 @@ verilog xil_defaultlib  --include "../../../../../../design/tb/axi" \
 "../../../../../../design/src/mem/utils/ram/ram_dualport.v" \
 "../../../../../../design/src/mem/utils/rom/rom_dualport.v" \
 "../../../../../../design/src/sasanqua.v" \
-"../../../../../../design/src/core/components/pipeline/schedule_1st.v" \
+"../../../../../../design/src/core/components/pipeline/schedule.v" \
 "../../../../../../design/src/core/components/pipeline/register/std_csr.v" \
 "../../../../../../design/src/core/components/pipeline/register/std_rv32i.v" \
 "../../../../../../design/src/core/components/pipeline/exec/std_rv32i_s.v" \
