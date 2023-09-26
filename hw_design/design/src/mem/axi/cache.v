@@ -123,7 +123,7 @@ module cache_axi
             cached_addr <= 20'hf_ffff;
         end
         else if (ar_state == S_AR_WAIT && ar_next_state == S_AR_IDLE) begin
-            cached_addr <= RIADDR[31:12];
+            cached_addr <= !HIT_CHECK_RESULT_R ? RIADDR[31:12] : WADDR[31:12];
         end
         else if (awb_state == S_AWB_WAIT && awb_next_state == S_AWB_WAIT_AR) begin
             cache_written <= 1'b0;
@@ -215,7 +215,7 @@ module cache_axi
             M_AXI_ARVALID <= 1'b0;
         end
         else if (ar_state == S_AR_CHECK && ar_next_state == S_AR_ADDR)
-            M_AXI_ARADDR <= { RIADDR[31:12], 12'b0 };
+            M_AXI_ARADDR <= !HIT_CHECK_RESULT_R ? { RIADDR[31:12], 12'b0 } : { WADDR[31:12], 12'b0 };
         else if (ar_next_state == S_AR_ADDR)
             M_AXI_ARVALID <= 1'b1;
         else if (ar_state == S_AR_ADDR && M_AXI_ARREADY) begin
