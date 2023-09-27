@@ -4,10 +4,12 @@
 #include "peripherals/spi.h"
 #include "peripherals/seg7.h"
 
-#define SEC 1000000  // = 100Mhz / 100
+#define SEC  500000 // 50Mhz / 100
+#define MSEC 500    // 50MHz / 10,000
 
 void trap_handler(void) {
     clint_set_timer(1*SEC);
+    seg7_write(seg7_read() + 1);
 }
 
 int main(void) {
@@ -32,7 +34,10 @@ int main(void) {
     uart_sendc('\r');
     uart_sendc('\n');
 
-    seg7_write(0x123456);
+    seg7_write(0);
+
+    clint_set_timer(1*SEC);
+    int_allow();
 
     while (1) { }
 }
