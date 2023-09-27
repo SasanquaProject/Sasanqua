@@ -9,15 +9,15 @@
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="4,093"></ZoomStartTime>
-      <ZoomEndTime time="4,116"></ZoomEndTime>
-      <Cursor1Time time="4,099"></Cursor1Time>
+      <ZoomStartTime time="4,094"></ZoomStartTime>
+      <ZoomEndTime time="4,106"></ZoomEndTime>
+      <Cursor1Time time="4,096"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="337"></NameColumnWidth>
-      <ValueColumnWidth column_width="96"></ValueColumnWidth>
+      <ValueColumnWidth column_width="84"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="11" />
+   <WVObjectSize size="30" />
    <wave_markers>
    </wave_markers>
    <wvobject fp_name="design_1_i/sasanqua_0_M_AXI_AWADDR" type="array">
@@ -100,6 +100,149 @@
       <obj_property name="DisplayName">FullPathName</obj_property>
       <obj_property name="ElementShortName">design_1_i/sasanqua_0_M_AXI_WVALID</obj_property>
       <obj_property name="ObjectShortName">sasanqua_0_M_AXI_WVALID</obj_property>
+      <obj_property name="LABELRADIX">true</obj_property>
+      <obj_property name="WaveformStyle">STYLE_DIGITAL</obj_property>
+   </wvobject>
+   <wvobject fp_name="design_1_i/sasanqua_0_M_AXI_ARSIZE" type="array">
+      <obj_property name="DisplayName">FullPathName</obj_property>
+      <obj_property name="ElementShortName">design_1_i/sasanqua_0_M_AXI_ARSIZE[2:0]</obj_property>
+      <obj_property name="ObjectShortName">sasanqua_0_M_AXI_ARSIZE[2:0]</obj_property>
+      <obj_property name="Radix">BINARYRADIX</obj_property>
+      <obj_property name="LABELRADIX">true</obj_property>
+      <obj_property name="WaveformStyle">STYLE_DIGITAL</obj_property>
+   </wvobject>
+   <wvobject fp_name="design_1_i/sasanqua_0_M_AXI_ARADDR" type="array">
+      <obj_property name="DisplayName">FullPathName</obj_property>
+      <obj_property name="ElementShortName">design_1_i/sasanqua_0_M_AXI_ARADDR[31:0]</obj_property>
+      <obj_property name="ObjectShortName">sasanqua_0_M_AXI_ARADDR[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+      <obj_property name="LABELRADIX">true</obj_property>
+      <obj_property name="WaveformStyle">STYLE_DIGITAL</obj_property>
+   </wvobject>
+   <wvobject fp_name="design_1_i/sasanqua_0_M_AXI_ARBURST" type="array">
+      <obj_property name="DisplayName">FullPathName</obj_property>
+      <obj_property name="ElementShortName">design_1_i/sasanqua_0_M_AXI_ARBURST[1:0]</obj_property>
+      <obj_property name="ObjectShortName">sasanqua_0_M_AXI_ARBURST[1:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+      <obj_property name="LABELRADIX">true</obj_property>
+      <obj_property name="WaveformStyle">STYLE_DIGITAL</obj_property>
+   </wvobject>
+   <wvobject fp_name="design_1_i/sasanqua_0_M_AXI_ARCACHE" type="array">
+      <obj_property name="DisplayName">FullPathName</obj_property>
+      <obj_property name="ElementShortName">design_1_i/sasanqua_0_M_AXI_ARCACHE[3:0]</obj_property>
+      <obj_property name="ObjectShortName">sasanqua_0_M_AXI_ARCACHE[3:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+      <obj_property name="LABELRADIX">true</obj_property>
+      <obj_property name="WaveformStyle">STYLE_DIGITAL</obj_property>
+   </wvobject>
+   <wvobject fp_name="design_1_i/sasanqua_0_M_AXI_ARID" type="logic">
+      <obj_property name="DisplayName">FullPathName</obj_property>
+      <obj_property name="ElementShortName">design_1_i/sasanqua_0_M_AXI_ARID</obj_property>
+      <obj_property name="ObjectShortName">sasanqua_0_M_AXI_ARID</obj_property>
+      <obj_property name="LABELRADIX">true</obj_property>
+      <obj_property name="WaveformStyle">STYLE_DIGITAL</obj_property>
+   </wvobject>
+   <wvobject fp_name="design_1_i/sasanqua_0_M_AXI_ARLEN" type="array">
+      <obj_property name="DisplayName">FullPathName</obj_property>
+      <obj_property name="ElementShortName">design_1_i/sasanqua_0_M_AXI_ARLEN[7:0]</obj_property>
+      <obj_property name="ObjectShortName">sasanqua_0_M_AXI_ARLEN[7:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+      <obj_property name="LABELRADIX">true</obj_property>
+      <obj_property name="WaveformStyle">STYLE_DIGITAL</obj_property>
+   </wvobject>
+   <wvobject fp_name="design_1_i/sasanqua_0_M_AXI_ARLOCK" type="array">
+      <obj_property name="DisplayName">FullPathName</obj_property>
+      <obj_property name="ElementShortName">design_1_i/sasanqua_0_M_AXI_ARLOCK[1:0]</obj_property>
+      <obj_property name="ObjectShortName">sasanqua_0_M_AXI_ARLOCK[1:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+      <obj_property name="LABELRADIX">true</obj_property>
+      <obj_property name="WaveformStyle">STYLE_DIGITAL</obj_property>
+   </wvobject>
+   <wvobject fp_name="design_1_i/sasanqua_0_M_AXI_ARPROT" type="array">
+      <obj_property name="DisplayName">FullPathName</obj_property>
+      <obj_property name="ElementShortName">design_1_i/sasanqua_0_M_AXI_ARPROT[2:0]</obj_property>
+      <obj_property name="ObjectShortName">sasanqua_0_M_AXI_ARPROT[2:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+      <obj_property name="LABELRADIX">true</obj_property>
+      <obj_property name="WaveformStyle">STYLE_DIGITAL</obj_property>
+   </wvobject>
+   <wvobject fp_name="design_1_i/sasanqua_0_M_AXI_ARQOS" type="array">
+      <obj_property name="DisplayName">FullPathName</obj_property>
+      <obj_property name="ElementShortName">design_1_i/sasanqua_0_M_AXI_ARQOS[3:0]</obj_property>
+      <obj_property name="ObjectShortName">sasanqua_0_M_AXI_ARQOS[3:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+      <obj_property name="LABELRADIX">true</obj_property>
+      <obj_property name="WaveformStyle">STYLE_DIGITAL</obj_property>
+   </wvobject>
+   <wvobject fp_name="design_1_i/sasanqua_0_M_AXI_ARREADY" type="logic">
+      <obj_property name="DisplayName">FullPathName</obj_property>
+      <obj_property name="ElementShortName">design_1_i/sasanqua_0_M_AXI_ARREADY</obj_property>
+      <obj_property name="ObjectShortName">sasanqua_0_M_AXI_ARREADY</obj_property>
+      <obj_property name="LABELRADIX">true</obj_property>
+      <obj_property name="WaveformStyle">STYLE_DIGITAL</obj_property>
+   </wvobject>
+   <wvobject fp_name="design_1_i/sasanqua_0_M_AXI_ARUSER" type="logic">
+      <obj_property name="DisplayName">FullPathName</obj_property>
+      <obj_property name="ElementShortName">design_1_i/sasanqua_0_M_AXI_ARUSER</obj_property>
+      <obj_property name="ObjectShortName">sasanqua_0_M_AXI_ARUSER</obj_property>
+      <obj_property name="LABELRADIX">true</obj_property>
+      <obj_property name="WaveformStyle">STYLE_DIGITAL</obj_property>
+   </wvobject>
+   <wvobject fp_name="design_1_i/sasanqua_0_M_AXI_ARVALID" type="logic">
+      <obj_property name="DisplayName">FullPathName</obj_property>
+      <obj_property name="ElementShortName">design_1_i/sasanqua_0_M_AXI_ARVALID</obj_property>
+      <obj_property name="ObjectShortName">sasanqua_0_M_AXI_ARVALID</obj_property>
+      <obj_property name="LABELRADIX">true</obj_property>
+      <obj_property name="WaveformStyle">STYLE_DIGITAL</obj_property>
+   </wvobject>
+   <wvobject fp_name="design_1_i/sasanqua_0_M_AXI_RDATA" type="array">
+      <obj_property name="DisplayName">FullPathName</obj_property>
+      <obj_property name="ElementShortName">design_1_i/sasanqua_0_M_AXI_RDATA[31:0]</obj_property>
+      <obj_property name="ObjectShortName">sasanqua_0_M_AXI_RDATA[31:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+      <obj_property name="LABELRADIX">true</obj_property>
+      <obj_property name="WaveformStyle">STYLE_DIGITAL</obj_property>
+   </wvobject>
+   <wvobject fp_name="design_1_i/sasanqua_0_M_AXI_RID" type="logic">
+      <obj_property name="DisplayName">FullPathName</obj_property>
+      <obj_property name="ElementShortName">design_1_i/sasanqua_0_M_AXI_RID</obj_property>
+      <obj_property name="ObjectShortName">sasanqua_0_M_AXI_RID</obj_property>
+      <obj_property name="LABELRADIX">true</obj_property>
+      <obj_property name="WaveformStyle">STYLE_DIGITAL</obj_property>
+   </wvobject>
+   <wvobject fp_name="design_1_i/sasanqua_0_M_AXI_RLAST" type="logic">
+      <obj_property name="DisplayName">FullPathName</obj_property>
+      <obj_property name="ElementShortName">design_1_i/sasanqua_0_M_AXI_RLAST</obj_property>
+      <obj_property name="ObjectShortName">sasanqua_0_M_AXI_RLAST</obj_property>
+      <obj_property name="LABELRADIX">true</obj_property>
+      <obj_property name="WaveformStyle">STYLE_DIGITAL</obj_property>
+   </wvobject>
+   <wvobject fp_name="design_1_i/sasanqua_0_M_AXI_RREADY" type="logic">
+      <obj_property name="DisplayName">FullPathName</obj_property>
+      <obj_property name="ElementShortName">design_1_i/sasanqua_0_M_AXI_RREADY</obj_property>
+      <obj_property name="ObjectShortName">sasanqua_0_M_AXI_RREADY</obj_property>
+      <obj_property name="LABELRADIX">true</obj_property>
+      <obj_property name="WaveformStyle">STYLE_DIGITAL</obj_property>
+   </wvobject>
+   <wvobject fp_name="design_1_i/sasanqua_0_M_AXI_RRESP" type="array">
+      <obj_property name="DisplayName">FullPathName</obj_property>
+      <obj_property name="ElementShortName">design_1_i/sasanqua_0_M_AXI_RRESP[1:0]</obj_property>
+      <obj_property name="ObjectShortName">sasanqua_0_M_AXI_RRESP[1:0]</obj_property>
+      <obj_property name="Radix">HEXRADIX</obj_property>
+      <obj_property name="LABELRADIX">true</obj_property>
+      <obj_property name="WaveformStyle">STYLE_DIGITAL</obj_property>
+   </wvobject>
+   <wvobject fp_name="design_1_i/sasanqua_0_M_AXI_RUSER" type="logic">
+      <obj_property name="DisplayName">FullPathName</obj_property>
+      <obj_property name="ElementShortName">design_1_i/sasanqua_0_M_AXI_RUSER</obj_property>
+      <obj_property name="ObjectShortName">sasanqua_0_M_AXI_RUSER</obj_property>
+      <obj_property name="LABELRADIX">true</obj_property>
+      <obj_property name="WaveformStyle">STYLE_DIGITAL</obj_property>
+   </wvobject>
+   <wvobject fp_name="design_1_i/sasanqua_0_M_AXI_RVALID" type="logic">
+      <obj_property name="DisplayName">FullPathName</obj_property>
+      <obj_property name="ElementShortName">design_1_i/sasanqua_0_M_AXI_RVALID</obj_property>
+      <obj_property name="ObjectShortName">sasanqua_0_M_AXI_RVALID</obj_property>
       <obj_property name="LABELRADIX">true</obj_property>
       <obj_property name="WaveformStyle">STYLE_DIGITAL</obj_property>
    </wvobject>

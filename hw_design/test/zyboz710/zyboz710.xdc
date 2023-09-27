@@ -12,8 +12,8 @@ set_property PACKAGE_PIN U12 [get_ports UART_RTS]
 set_property IOSTANDARD LVCMOS33 [get_ports UART_RTS]
 
 # SPI
-set_property PACKAGE_PIN T14 [get_ports SPI_CSN[0]]
-set_property IOSTANDARD LVCMOS33 [get_ports SPI_CSN[0]]
+set_property PACKAGE_PIN T14 [get_ports {SPI_CSN[0]}]
+set_property IOSTANDARD LVCMOS33 [get_ports {SPI_CSN[0]}]
 
 set_property PACKAGE_PIN T15 [get_ports SPI_MOSI]
 set_property IOSTANDARD LVCMOS33 [get_ports SPI_MOSI]

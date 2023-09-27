@@ -184,7 +184,9 @@ module translate_axi
                     sw_next_state <= S_SW_IDLE;
 
             S_SW_ADDR:
-                if (M_AXI_AWREADY)
+                if (M_AXI_AWREADY && M_AXI_WREADY)
+                    sw_next_state <= S_SW_FINISH;
+                else if (M_AXI_AWREADY)
                     sw_next_state <= S_SW_WRITE;
                 else
                     sw_next_state <= S_SW_ADDR;
@@ -217,7 +219,7 @@ module translate_axi
             M_AXI_AWLEN <= 8'b0;
             M_AXI_AWVALID <= 1'b1;
         end
-        else if (sw_state == S_SW_ADDR && sw_next_state == S_SW_WRITE) begin
+        else if (sw_state == S_SW_ADDR && M_AXI_AWREADY) begin
             M_AXI_AWADDR <= 32'b0;
             M_AXI_AWLEN <= 8'b0;
             M_AXI_AWVALID <= 1'b0;
@@ -237,7 +239,7 @@ module translate_axi
             M_AXI_WLAST <= 1'b1;
             M_AXI_WVALID <= 1'b1;
         end
-        else if (sw_next_state == S_SW_FINISH) begin
+        else if ((sw_state == S_SW_ADDR || sw_state == S_SW_WRITE) && M_AXI_WREADY) begin
             M_AXI_WSTRB <= 4'b0;
             M_AXI_WDATA <= 32'b0;
             M_AXI_WLAST <= 1'b0;
