@@ -1,29 +1,29 @@
 # compile verilog/system verilog design source files
 verilog xil_defaultlib  --include "../../../../../../design/tb/axi" \
 "../../../../../../design/tb/axi/axi_slave_BFM.v" \
-"../../../../../../design/src/mem/axi/cache.v" \
-"../../../../../../design/src/core/components/pipeline/check.v" \
-"../../../../../../design/src/peripherals/clint.v" \
-"../../../../../../design/src/core/core.v" \
-"../../../../../../design/src/core/components/pipeline/cushion.v" \
-"../../../../../../design/src/core/components/pipeline/decode.v" \
-"../../../../../../design/src/core/components/pipeline/fetch.v" \
-"../../../../../../design/src/mem/axi/interconnect.v" \
-"../../../../../../design/src/core/components/main.v" \
-"../../../../../../design/src/mem/axi/mem.v" \
-"../../../../../../design/src/core/components/mmu.v" \
-"../../../../../../design/src/core/components/pipeline/mread.v" \
-"../../../../../../design/src/peripherals/plic.v" \
-"../../../../../../design/src/mem/utils/ram/ram_dualport.v" \
-"../../../../../../design/src/mem/utils/rom/rom_dualport.v" \
-"../../../../../../design/src/sasanqua.v" \
-"../../../../../../design/src/core/components/pipeline/schedule.v" \
-"../../../../../../design/src/core/components/pipeline/register/std_csr.v" \
-"../../../../../../design/src/core/components/pipeline/register/std_rv32i.v" \
-"../../../../../../design/src/core/components/pipeline/exec/std_rv32i_s.v" \
+"../../../../../../design/src/sasanqua/mem/axi/cache.v" \
+"../../../../../../design/src/sasanqua/core/components/pipeline/check.v" \
+"../../../../../../design/src/sasanqua/peripherals/clint.v" \
+"../../../../../../design/src/sasanqua/core/core.v" \
+"../../../../../../design/src/sasanqua/core/components/pipeline/cushion.v" \
+"../../../../../../design/src/sasanqua/core/components/pipeline/decode.v" \
+"../../../../../../design/src/sasanqua/core/components/pipeline/fetch.v" \
+"../../../../../../design/src/sasanqua/mem/axi/interconnect.v" \
+"../../../../../../design/src/sasanqua/core/components/main.v" \
+"../../../../../../design/src/sasanqua/mem/axi/mem.v" \
+"../../../../../../design/src/sasanqua/core/components/mmu.v" \
+"../../../../../../design/src/sasanqua/core/components/pipeline/mread.v" \
+"../../../../../../design/src/sasanqua/peripherals/plic.v" \
+"../../../../../../design/src/sasanqua/mem/utils/ram/ram_dualport.v" \
+"../../../../../../design/src/sasanqua/mem/utils/rom/rom_dualport.v" \
+"../../../../../../design/src/sasanqua/sasanqua.v" \
+"../../../../../../design/src/sasanqua/core/components/pipeline/schedule.v" \
+"../../../../../../design/src/sasanqua/core/components/pipeline/register/std_csr.v" \
+"../../../../../../design/src/sasanqua/core/components/pipeline/register/std_rv32i.v" \
+"../../../../../../design/src/sasanqua/core/components/pipeline/exec/std_rv32i_s.v" \
 "../../../../../../design/tb/axi/sync_fifo.v" \
-"../../../../../../design/src/mem/axi/translate.v" \
-"../../../../../../design/src/core/components/pipeline/trap.v" \
+"../../../../../../design/src/sasanqua/mem/axi/translate.v" \
+"../../../../../../design/src/sasanqua/core/components/pipeline/trap.v" \
 "../../../../../../design/tb/tb.v" \
 
 # compile glbl module
