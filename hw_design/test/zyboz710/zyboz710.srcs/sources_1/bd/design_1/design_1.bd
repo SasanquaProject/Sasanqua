@@ -55,9 +55,9 @@
       "axi_uartlite_0": "",
       "axi_quad_spi_0": "",
       "axi_7segm_0": "",
-      "sasanqua_0": "",
       "axi_gpio_0": "",
-      "proc_sys_reset_1": ""
+      "proc_sys_reset_1": "",
+      "sasanqua_0": ""
     },
     "interface_ports": {
       "DDR": {
@@ -3680,6 +3680,29 @@
         "xci_path": "ip\\design_1_axi_7segm_0_0\\design_1_axi_7segm_0_0.xci",
         "inst_hier_path": "axi_7segm_0"
       },
+      "axi_gpio_0": {
+        "vlnv": "xilinx.com:ip:axi_gpio:2.0",
+        "xci_name": "design_1_axi_gpio_0_0",
+        "xci_path": "ip\\design_1_axi_gpio_0_0\\design_1_axi_gpio_0_0.xci",
+        "inst_hier_path": "axi_gpio_0",
+        "parameters": {
+          "C_IS_DUAL": {
+            "value": "0"
+          },
+          "GPIO2_BOARD_INTERFACE": {
+            "value": "Custom"
+          },
+          "GPIO_BOARD_INTERFACE": {
+            "value": "sws_4bits"
+          }
+        }
+      },
+      "proc_sys_reset_1": {
+        "vlnv": "xilinx.com:ip:proc_sys_reset:5.0",
+        "xci_name": "design_1_proc_sys_reset_1_0",
+        "xci_path": "ip\\design_1_proc_sys_reset_1_0\\design_1_proc_sys_reset_1_0.xci",
+        "inst_hier_path": "proc_sys_reset_1"
+      },
       "sasanqua_0": {
         "vlnv": "xilinx.com:user:sasanqua:1.0",
         "xci_name": "design_1_sasanqua_0_0",
@@ -3710,29 +3733,6 @@
             }
           }
         }
-      },
-      "axi_gpio_0": {
-        "vlnv": "xilinx.com:ip:axi_gpio:2.0",
-        "xci_name": "design_1_axi_gpio_0_0",
-        "xci_path": "ip\\design_1_axi_gpio_0_0\\design_1_axi_gpio_0_0.xci",
-        "inst_hier_path": "axi_gpio_0",
-        "parameters": {
-          "C_IS_DUAL": {
-            "value": "0"
-          },
-          "GPIO2_BOARD_INTERFACE": {
-            "value": "Custom"
-          },
-          "GPIO_BOARD_INTERFACE": {
-            "value": "sws_4bits"
-          }
-        }
-      },
-      "proc_sys_reset_1": {
-        "vlnv": "xilinx.com:ip:proc_sys_reset:5.0",
-        "xci_name": "design_1_proc_sys_reset_1_0",
-        "xci_path": "ip\\design_1_proc_sys_reset_1_0\\design_1_proc_sys_reset_1_0.xci",
-        "inst_hier_path": "proc_sys_reset_1"
       }
     },
     "interface_nets": {
@@ -3802,8 +3802,8 @@
         "ports": [
           "processing_system7_0/FCLK_CLK1",
           "proc_sys_reset_0/slowest_sync_clk",
-          "sasanqua_0/CLK",
-          "axi_interconnect_0/S00_ACLK"
+          "axi_interconnect_0/S00_ACLK",
+          "sasanqua_0/CLK"
         ]
       },
       "SPI_MISO_1": {

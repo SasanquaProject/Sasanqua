@@ -31,9 +31,9 @@ preplace inst axi_interconnect_1 -pg 1 -lvl 5 -x 1960 -y 240 -defaultsOSRD
 preplace inst axi_uartlite_0 -pg 1 -lvl 4 -x 1550 -y 470 -defaultsOSRD
 preplace inst axi_quad_spi_0 -pg 1 -lvl 4 -x 1550 -y 660 -defaultsOSRD
 preplace inst axi_7segm_0 -pg 1 -lvl 4 -x 1550 -y 870 -defaultsOSRD
-preplace inst sasanqua_0 -pg 1 -lvl 2 -x 790 -y 200 -defaultsOSRD
 preplace inst axi_gpio_0 -pg 1 -lvl 4 -x 1550 -y 1060 -defaultsOSRD
 preplace inst proc_sys_reset_1 -pg 1 -lvl 1 -x 500 -y 450 -defaultsOSRD
+preplace inst sasanqua_0 -pg 1 -lvl 2 -x 790 -y 200 -defaultsOSRD
 preplace netloc Net 1 0 5 10 310 680J 280 930 350 N 350 1790
 preplace netloc SPI_MISO_1 1 4 3 N 650 NJ 650 NJ
 preplace netloc SWITCH_1 1 4 3 NJ 1070 NJ 1070 N

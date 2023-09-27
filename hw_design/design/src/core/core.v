@@ -61,29 +61,29 @@ module core
         .MEM_WAIT           (MEM_WAIT),
 
         // Main->MMU 接続 (物理アドレス or 仮想アドレス)
-        .MAIN_INST_RDEN     (main_inst_rden),
-        .MAIN_INST_RIADDR   (main_inst_riaddr),
-        .MAIN_INST_ROADDR   (main_inst_roaddr),
-        .MAIN_INST_RVALID   (main_inst_rvalid),
-        .MAIN_INST_RDATA    (main_inst_rdata),
-        .MAIN_DATA_RDEN     (main_data_rden),
-        .MAIN_DATA_RIADDR   (main_data_riaddr),
-        .MAIN_DATA_ROADDR   (main_data_roaddr),
-        .MAIN_DATA_RVALID   (main_data_rvalid),
-        .MAIN_DATA_RDATA    (main_data_rdata),
-        .MAIN_DATA_WREN     (main_data_wren),
-        .MAIN_DATA_WSTRB    (main_data_wstrb),
-        .MAIN_DATA_WADDR    (main_data_waddr),
-        .MAIN_DATA_WDATA    (main_data_wdata),
+        .MAIN_INST_RDEN     (inst_rden),
+        .MAIN_INST_RIADDR   (inst_riaddr),
+        .MAIN_INST_ROADDR   (inst_roaddr),
+        .MAIN_INST_RVALID   (inst_rvalid),
+        .MAIN_INST_RDATA    (inst_rdata),
+        .MAIN_DATA_RDEN     (data_rden),
+        .MAIN_DATA_RIADDR   (data_riaddr),
+        .MAIN_DATA_ROADDR   (data_roaddr),
+        .MAIN_DATA_RVALID   (data_rvalid),
+        .MAIN_DATA_RDATA    (data_rdata),
+        .MAIN_DATA_WREN     (data_wren),
+        .MAIN_DATA_WSTRB    (data_wstrb),
+        .MAIN_DATA_WADDR    (data_waddr),
+        .MAIN_DATA_WDATA    (data_wdata),
         .MMU_WAIT           (mmu_wait)
     );
 
     /* ----- Main ----- */
-    wire        main_inst_rden, main_inst_rvalid;
-    wire [31:0] main_inst_riaddr, main_inst_roaddr, main_inst_rdata;
-    wire        main_data_rden, main_data_rvalid, main_data_wren;
-    wire [3:0]  main_data_wstrb;
-    wire [31:0] main_data_riaddr, main_data_roaddr, main_data_rdata, main_data_waddr, main_data_wdata;
+    wire        inst_rden, inst_rvalid;
+    wire [31:0] inst_riaddr, inst_roaddr, inst_rdata;
+    wire        data_rden, data_rvalid, data_wren;
+    wire [3:0]  data_wstrb;
+    wire [31:0] data_riaddr, data_roaddr, data_rdata, data_waddr, data_wdata;
 
     main # (
         .START_ADDR     (START_ADDR)
@@ -93,20 +93,20 @@ module core
         .RST            (RST),
 
         // MMU接続
-        .INST_RDEN      (main_inst_rden),
-        .INST_RIADDR    (main_inst_riaddr),
-        .INST_ROADDR    (main_inst_roaddr),
-        .INST_RVALID    (main_inst_rvalid),
-        .INST_RDATA     (main_inst_rdata),
-        .DATA_RDEN      (main_data_rden),
-        .DATA_RIADDR    (main_data_riaddr),
-        .DATA_ROADDR    (main_data_roaddr),
-        .DATA_RVALID    (main_data_rvalid),
-        .DATA_RDATA     (main_data_rdata),
-        .DATA_WREN      (main_data_wren),
-        .DATA_WSTRB     (main_data_wstrb),
-        .DATA_WADDR     (main_data_waddr),
-        .DATA_WDATA     (main_data_wdata),
+        .INST_RDEN      (inst_rden),
+        .INST_RIADDR    (inst_riaddr),
+        .INST_ROADDR    (inst_roaddr),
+        .INST_RVALID    (inst_rvalid),
+        .INST_RDATA     (inst_rdata),
+        .DATA_RDEN      (data_rden),
+        .DATA_RIADDR    (data_riaddr),
+        .DATA_ROADDR    (data_roaddr),
+        .DATA_RVALID    (data_rvalid),
+        .DATA_RDATA     (data_rdata),
+        .DATA_WREN      (data_wren),
+        .DATA_WSTRB     (data_wstrb),
+        .DATA_WADDR     (data_waddr),
+        .DATA_WDATA     (data_wdata),
         .MEM_WAIT       (mmu_wait),
 
         // 割り込み
