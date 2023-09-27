@@ -3,6 +3,7 @@
 #include "peripherals/uart.h"
 #include "peripherals/spi.h"
 #include "peripherals/seg7.h"
+#include "peripherals/gpio.h"
 
 #define SEC  500000 // 50Mhz / 100
 #define MSEC 500    // 50MHz / 10,000
@@ -12,25 +13,24 @@ void trap_handler(void) {
     seg7_write(seg7_read() + 1);
 }
 
-int main(void) {
-    /* Setup peripherals */
+void setup(void) {
     // UART
     uart_init();
-    uart_sendc('0');
 
     // SPI
-    spi_init();
-    uart_sendc('1');
+    // spi_init();
 
-    // spi_read();
+    // GPIO (Switch x 4)
+    gpio_init((INPUT<<3) | (INPUT<<2) | (INPUT<<1) | INPUT);
+}
 
-    /* Boot process */
-    uart_sendc('H');
-    uart_sendc('e');
-    uart_sendc('l');
-    uart_sendc('l');
+int run(void) {
+    uart_sendc('B');
     uart_sendc('o');
-    uart_sendc('!');
+    uart_sendc('o');
+    uart_sendc('t');
+    uart_sendc(':');
+    uart_sendc('0' + gpio_in());
     uart_sendc('\r');
     uart_sendc('\n');
 
@@ -40,4 +40,9 @@ int main(void) {
     int_allow();
 
     while (1) { }
+}
+
+int main(void) {
+    setup();
+    run();
 }
