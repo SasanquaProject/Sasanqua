@@ -4,7 +4,7 @@
     "xci_name": "design_1_sasanqua_0_0",
     "cell_name": "sasanqua_0",
     "component_reference": "xilinx.com:user:sasanqua:1.0",
-    "ip_revision": "13",
+    "ip_revision": "14",
     "gen_directory": "../../../../../../zyboz710.gen/sources_1/bd/design_1/ip/design_1_sasanqua_0_0",
     "parameters": {
       "component_parameters": {
@@ -31,7 +31,7 @@
       },
       "runtime_parameters": {
         "IPCONTEXT": [ { "value": "IP_Integrator" } ],
-        "IPREVISION": [ { "value": "13" } ],
+        "IPREVISION": [ { "value": "14" } ],
         "MANAGED": [ { "value": "TRUE" } ],
         "OUTPUTDIR": [ { "value": "../../../../../../zyboz710.gen/sources_1/bd/design_1/ip/design_1_sasanqua_0_0" } ],
         "SELECTEDSIMMODEL": [ { "value": "" } ],
@@ -44,7 +44,8 @@
       "ports": {
         "CLK": [ { "direction": "in" } ],
         "RST": [ { "direction": "in" } ],
-        "STAT": [ { "direction": "out", "size_left": "31", "size_right": "0" } ],
+        "GP": [ { "direction": "out", "size_left": "31", "size_right": "0" } ],
+        "STAT": [ { "direction": "out", "size_left": "3", "size_right": "0" } ],
         "M_AXI_AWID": [ { "direction": "out" } ],
         "M_AXI_AWADDR": [ { "direction": "out", "size_left": "31", "size_right": "0" } ],
         "M_AXI_AWLEN": [ { "direction": "out", "size_left": "7", "size_right": "0" } ],

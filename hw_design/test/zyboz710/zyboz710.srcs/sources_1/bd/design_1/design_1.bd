@@ -1,7 +1,7 @@
 {
   "design": {
     "design_info": {
-      "boundary_crc": "0x246DAC9DC3B61DA",
+      "boundary_crc": "0x953EA2285F3F3ADA",
       "device": "xc7z010clg400-1",
       "gen_directory": "../../../../zyboz710.gen/sources_1/bd/design_1",
       "name": "design_1",
@@ -267,6 +267,11 @@
       },
       "SEG_SRCLK": {
         "direction": "O"
+      },
+      "LED": {
+        "direction": "O",
+        "left": "3",
+        "right": "0"
       }
     },
     "components": {
@@ -3654,10 +3659,16 @@
           "proc_sys_reset_0/ext_reset_in"
         ]
       },
+      "sasanqua_0_GP": {
+        "ports": [
+          "sasanqua_0/GP",
+          "sasanqua_controller_0/STAT"
+        ]
+      },
       "sasanqua_0_STAT": {
         "ports": [
           "sasanqua_0/STAT",
-          "sasanqua_controller_0/STAT"
+          "LED"
         ]
       }
     },

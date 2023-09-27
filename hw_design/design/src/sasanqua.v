@@ -4,11 +4,12 @@ module sasanqua
     )
     (
         /* ----- 制御 ------ */
-        input   wire        CLK,
-        input   wire        RST,
+        input wire          CLK,
+        input wire          RST,
 
         /* ----- 状態 ----- */
-        output  wire [31:0] STAT,
+        output wire [31:0]  GP,
+        output wire [3:0]   STAT,
 
         /* ----- AXIバス ----- */
         // AWチャネル
@@ -64,7 +65,14 @@ module sasanqua
         output wire         M_AXI_RREADY
     );
 
-    assign STAT = core.main.reg_std_rv32i_0.registers[3];
+    /* ----- 状態 ----- */
+    assign GP   = core.main.reg_std_rv32i_0.registers[3];
+    assign STAT = {
+        core.main.flush,
+        core.main.stall,
+        core.main.INT_EN,
+        core.main.MEM_WAIT
+    };
 
     /* ----- Memory ----- */
     wire        mem_wait;
