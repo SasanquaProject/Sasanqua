@@ -91,6 +91,38 @@ module main
         .DECODE_IMM     (decode_imm)
     );
 
+    /* ----- 3. 命令プール ----- */
+    wire [31:0] pool_pc, pool_imm;
+    wire [11:0] pool_csr;
+    wire [16:0] pool_opcode;
+    wire [4:0]  pool_rd, pool_rs1, pool_rs2;
+
+    pool pool (
+        // 制御
+        .CLK            (CLK),
+        .RST            (RST),
+        .FLUSH          (flush),
+        .STALL          (stall),
+        .MEM_WAIT       (MEM_WAIT),
+
+        // 前段との接続
+        .PC             (decode_pc),
+        .OPCODE         (decode_opcode),
+        .RD             (decode_rd),
+        .RS1            (decode_rs1),
+        .RS2            (decode_rs2),
+        .IMM            (decode_imm),
+
+        // 後段との接続
+        .POOL_PC        (pool_pc),
+        .POOL_OPCODE    (pool_opcode),
+        .POOL_RD        (pool_rd),
+        .POOL_RS1       (pool_rs1),
+        .POOL_RS2       (pool_rs2),
+        .POOL_CSR       (pool_csr),
+        .POOL_IMM       (pool_imm)
+    );
+
     /* ----- 3. 命令検査 ----- */
     wire [31:0] check_pc, check_imm;
     wire [11:0] check_csr;
@@ -106,12 +138,12 @@ module main
         .MEM_WAIT       (MEM_WAIT),
 
         // 前段との接続
-        .PC             (decode_pc),
-        .OPCODE         (decode_opcode),
-        .RD             (decode_rd),
-        .RS1            (decode_rs1),
-        .RS2            (decode_rs2),
-        .IMM            (decode_imm),
+        .PC             (pool_pc),
+        .OPCODE         (pool_opcode),
+        .RD             (pool_rd),
+        .RS1            (pool_rs1),
+        .RS2            (pool_rs2),
+        .IMM            (pool_imm),
 
         // 後段との接続
         .CHECK_PC       (check_pc),
