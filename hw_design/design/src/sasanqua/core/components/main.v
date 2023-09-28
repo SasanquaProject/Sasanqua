@@ -123,7 +123,8 @@ module main
         .POOL_IMM       (pool_imm)
     );
 
-    /* ----- 3. 命令検査 ----- */
+    /* ----- 3-1. 命令検査 ----- */
+    wire        check_accept;
     wire [31:0] check_pc, check_imm;
     wire [11:0] check_csr;
     wire [16:0] check_opcode;
@@ -146,6 +147,7 @@ module main
         .IMM            (pool_imm),
 
         // 後段との接続
+        .CHECK_ACCEPT   (check_accept),
         .CHECK_PC       (check_pc),
         .CHECK_OPCODE   (check_opcode),
         .CHECK_RD       (check_rd),
@@ -153,6 +155,50 @@ module main
         .CHECK_RS2      (check_rs2),
         .CHECK_CSR      (check_csr),
         .CHECK_IMM      (check_imm)
+    );
+
+    /* ----- 3-2. コプロセッサ ----- */
+    wire        cop_accept;
+    wire [31:0] cop_pc;
+    wire [4:0]  cop_rd, cop_rs1, cop_rs2;
+
+    sasanqua_cop sasanqua_cop (
+        // 制御
+        .CLK                (CLK),
+        .RST                (RST),
+
+        // Check 接続
+        .PC                 (pool_pc),
+        .OPCODE             (pool_opcode),
+        .RD                 (pool_rd),
+        .RS1                (pool_rs1),
+        .RS2                (pool_rs2),
+        .IMM                (pool_imm),
+        .COP_C_ACCEPT       (cop_accept),
+        .COP_C_PC           (cop_pc),
+        .COP_C_RD           (cop_rd),
+        .COP_C_RS1          (cop_rs1),
+        .COP_C_RS2          (cop_rs2)
+
+        // Exec 接続
+        // .DO_EXEC            (),
+        // .RS1_DATA           (),
+        // .RS2_DATA           (),
+        // .COP_E_PC           (),
+        // .COP_E_REG_W_EN     (),
+        // .COP_E_REG_W_RD     (),
+        // .COP_E_REG_W_DATA   (),
+        // .COP_E_MEM_R_EN     (),
+        // .COP_E_MEM_R_RD     (),
+        // .COP_E_MEM_R_ADDR   (),
+        // .COP_E_MEM_R_STRB   (),
+        // .COP_E_MEM_R_SIGNED (),
+        // .COP_E_MEM_W_EN     (),
+        // .COP_E_MEM_W_ADDR   (),
+        // .COP_E_MEM_W_STRB   (),
+        // .COP_E_MEM_W_DATA   (),
+        // .COP_E_EXC_EN       (),
+        // .COP_E_EXC_CODE     ()
     );
 
     /* ----- 4-1. スケジューリング ----- */
@@ -170,16 +216,26 @@ module main
         .MEM_WAIT           (MEM_WAIT),
 
         // 前段との接続
-        .PC                 (check_pc),
-        .OPCODE             (check_opcode),
-        .RD                 (check_rd),
-        .CSR                (check_csr),
-        .IMM                (check_imm),
+        .A_ACCEPT           (check_accept),
+        .A_PC               (check_pc),
+        .A_OPCODE           (check_opcode),
+        .A_RD               (check_rd),
+        .A_RS1              (check_rs1),
+        .A_RS2              (check_rs2),
+        .A_CSR              (check_csr),
+        .A_IMM              (check_imm),
+        .B_ACCEPT           (cop_accept),
+        .B_PC               (cop_pc),
+        .B_RD               (cop_rd),
+        .B_RS1              (cop_rs1),
+        .B_RS2              (cop_rs2),
 
         // 後段との接続
         .SCHEDULE_PC        (schedule_pc),
         .SCHEDULE_OPCODE    (schedule_opcode),
         .SCHEDULE_RD        (schedule_rd),
+        .SCHEDULE_RS1       (schedule_rs1),
+        .SCHEDULE_RS2       (schedule_rs2),
         .SCHEDULE_CSR       (schedule_csr),
         .SCHEDULE_IMM       (schedule_imm)
     );
@@ -191,7 +247,6 @@ module main
     wire        int_allow;
 
     wire [31:0] reg_csr_data;
-    wire [11:0] reg_csr_addr;
     wire        reg_csr_valid;
 
     reg_std_csr reg_std_csr_0 (
@@ -209,9 +264,8 @@ module main
         .INT_ALLOW          (int_allow),
 
         // レジスタアクセス
-        .RIADDR             (check_csr),
+        .RADDR              (check_csr),
         .RVALID             (reg_csr_valid),
-        .ROADDR             (reg_csr_addr),
         .RDATA              (reg_csr_data),
         .WREN               (memr_csr_w_en),
         .WADDR              (memr_csr_w_addr),
@@ -229,7 +283,6 @@ module main
 
     // RV32I
     wire [31:0] reg_rs1_data, reg_rs2_data;
-    wire [4:0]  reg_rs1_addr, reg_rs2_addr;
     wire        reg_rs1_valid, reg_rs2_valid;
 
     reg_std_rv32i reg_std_rv32i_0 (
@@ -241,13 +294,11 @@ module main
         .MEM_WAIT           (MEM_WAIT),
 
         // レジスタアクセス
-        .A_RIADDR           (check_rs1),
+        .A_RADDR            (check_rs1),
         .A_RVALID           (reg_rs1_valid),
-        .A_ROADDR           (reg_rs1_addr),
         .A_RDATA            (reg_rs1_data),
-        .B_RIADDR           (check_rs2),
+        .B_RADDR            (check_rs2),
         .B_RVALID           (reg_rs2_valid),
-        .B_ROADDR           (reg_rs2_addr),
         .B_RDATA            (reg_rs2_data),
         .WADDR              (memr_reg_w_rd),
         .WDATA              (memr_reg_w_data),
@@ -281,11 +332,11 @@ module main
         .PC                 (schedule_pc),
         .OPCODE             (schedule_opcode),
         .RD_ADDR            (schedule_rd),
-        .RS1_ADDR           (reg_rs1_addr),
+        .RS1_ADDR           (schedule_rs1),
         .RS1_DATA           (reg_rs1_data),
-        .RS2_ADDR           (reg_rs2_addr),
+        .RS2_ADDR           (schedule_rs2),
         .RS2_DATA           (reg_rs2_data),
-        .CSR_ADDR           (reg_csr_addr),
+        .CSR_ADDR           (schedule_csr),
         .CSR_DATA           (reg_csr_data),
         .IMM                (schedule_imm),
 

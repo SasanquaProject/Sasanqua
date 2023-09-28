@@ -1,5 +1,5 @@
 # compile verilog/system verilog design source files
-verilog xil_defaultlib  --include "../../../../../../design/tb" --include "../../../../../../design/tb/axi" \
+verilog xil_defaultlib  --include "../../../../../../design/tb/axi" --include "../../../../../../design/tb" \
 "../../../../../../design/tb/axi/axi_slave_BFM.v" \
 "../../../../../../design/src/sasanqua/mem/axi/cache.v" \
 "../../../../../../design/src/sasanqua/core/components/pipeline/check.v" \
@@ -18,6 +18,7 @@ verilog xil_defaultlib  --include "../../../../../../design/tb" --include "../..
 "../../../../../../design/src/sasanqua/mem/utils/ram/ram_dualport.v" \
 "../../../../../../design/src/sasanqua/mem/utils/rom/rom_dualport.v" \
 "../../../../../../design/src/sasanqua/sasanqua.v" \
+"../../../../../../design/src/sasanqua_cop/sasanqua_cop.v" \
 "../../../../../../design/src/sasanqua/core/components/pipeline/schedule.v" \
 "../../../../../../design/src/sasanqua/core/components/pipeline/register/std_csr.v" \
 "../../../../../../design/src/sasanqua/core/components/pipeline/register/std_rv32i.v" \

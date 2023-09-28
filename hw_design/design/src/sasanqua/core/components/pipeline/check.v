@@ -16,6 +16,7 @@ module check
         input wire [31:0]   IMM,
 
         /* ----- スケジューラ1との接続 ----- */
+        output wire         CHECK_ACCEPT,
         output wire [31:0]  CHECK_PC,
         output wire [16:0]  CHECK_OPCODE,
         output wire [4:0]   CHECK_RD,
@@ -53,14 +54,13 @@ module check
     end
 
     /* ----- デコード ----- */
-    wire is_unimp = imm == 32'hffff_ffff;
-
+    assign CHECK_ACCEPT = imm != 32'hffff_ffff;
     assign CHECK_PC     = pc;
-    assign CHECK_OPCODE = is_unimp ? 7'b1101111 : opcode;
-    assign CHECK_RD     = is_unimp ? 5'b0 : rd;
-    assign CHECK_RS1    = is_unimp ? 5'b0 : rs1;
-    assign CHECK_RS2    = is_unimp ? 5'b0 : rs2;
-    assign CHECK_CSR    = is_unimp ? 5'b0 : imm[11:0];
-    assign CHECK_IMM    = is_unimp ? 32'b0 : imm;
+    assign CHECK_OPCODE = opcode;
+    assign CHECK_RD     = rd;
+    assign CHECK_RS1    = rs1;
+    assign CHECK_RS2    = rs2;
+    assign CHECK_CSR    = imm[11:0];
+    assign CHECK_IMM    = imm;
 
 endmodule

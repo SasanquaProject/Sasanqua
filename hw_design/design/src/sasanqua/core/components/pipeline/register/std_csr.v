@@ -22,9 +22,8 @@ module reg_std_csr
 
         /* ----- レジスタアクセス ----- */
         // 読み
-        input wire  [11:0]  RIADDR,
+        input wire  [11:0]  RADDR,
         output reg          RVALID,
-        output wire [11:0]  ROADDR,
         output reg  [31:0]  RDATA,
 
         // 書き
@@ -50,13 +49,13 @@ module reg_std_csr
     assign INT_ALLOW     = mstatus[3];
 
     /* ----- 入力取り込み ----- */
-    reg  [11:0] riaddr, waddr, fwd_csr_addr, fwd_exec_addr, fwd_cushion_addr;
+    reg  [11:0] raddr, waddr, fwd_csr_addr, fwd_exec_addr, fwd_cushion_addr;
     reg  [31:0] wdata, fwd_exec_data, fwd_cushion_data;
     reg         fwd_exec_en, fwd_cushion_en;
 
     always @ (posedge CLK) begin
         if (RST || FLUSH) begin
-            riaddr <= 12'b0;
+            raddr <= 12'b0;
             waddr <= 12'b0;
             wdata <= 32'b0;
             fwd_csr_addr <= 12'b0;
@@ -80,7 +79,7 @@ module reg_std_csr
             // do nothing
         end
         else begin
-            riaddr <= RIADDR;
+            raddr <= RADDR;
             waddr <= WADDR;
             wdata <= WDATA;
             fwd_csr_addr <= FWD_CSR_ADDR;
@@ -98,10 +97,8 @@ module reg_std_csr
     reg [31:0] mstatus, mtvec, mscratch, mepc, mcause;
 
     // 読み
-    assign ROADDR = riaddr;
-
     always @* begin
-        case (riaddr)
+        case (raddr)
             12'b0:              RVALID <= 1'b1;
             fwd_csr_addr:       RVALID <= 1'b0;
             fwd_exec_addr:      RVALID <= fwd_exec_en;
@@ -111,7 +108,7 @@ module reg_std_csr
     end
 
     always @* begin
-        case (riaddr)
+        case (raddr)
             // Fowarding
             12'b0:              RDATA <= 32'b0;
             fwd_exec_addr:      RDATA <= fwd_exec_data;
