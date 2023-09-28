@@ -14,49 +14,33 @@ module mread
         input wire  [31:0]  DATA_RDATA,
 
         /* ----- 待機部との接続 ----- */
-        // レジスタ(rv32i:W)
         input wire  [4:0]   REG_W_RD,
         input wire  [31:0]  REG_W_DATA,
-
-        // レジスタ(csrs:W)
         input wire          CSR_W_EN,
         input wire  [11:0]  CSR_W_ADDR,
         input wire  [31:0]  CSR_W_DATA,
-
-        // メモリ(R)
         input wire          MEM_R_EN,
         input wire  [4:0]   MEM_R_RD,
         input wire  [31:0]  MEM_R_ADDR,
         input wire  [3:0]   MEM_R_STRB,
         input wire          MEM_R_SIGNED,
-
-        // メモリ(W)
         input wire          MEM_W_EN,
         input wire  [31:0]  MEM_W_ADDR,
         input wire  [3:0]   MEM_W_STRB,
         input wire  [31:0]  MEM_W_DATA,
-
-        // PC更新
         input wire          JMP_DO,
         input wire  [31:0]  JMP_PC,
 
         /* ----- メモリアクセス(w)部との接続 ----- */
-        // レジスタ(rv32i:W)
         output wire [4:0]   MEMR_REG_W_RD,
         output wire [31:0]  MEMR_REG_W_DATA,
-
-        // レジスタ(csrs:W)
         output wire         MEMR_CSR_W_EN,
         output wire [11:0]  MEMR_CSR_W_ADDR,
         output wire [31:0]  MEMR_CSR_W_DATA,
-
-        // メモリ(W)
         output wire         MEMR_MEM_W_EN,
         output wire [3:0]   MEMR_MEM_W_STRB,
         output wire [31:0]  MEMR_MEM_W_ADDR,
         output wire [31:0]  MEMR_MEM_W_DATA,
-
-        // PC更新
         output wire         MEMR_JMP_DO,
         output wire [31:0]  MEMR_JMP_PC
     );

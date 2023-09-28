@@ -20,37 +20,24 @@ module exec_std_rv32i_s
         input wire  [31:0]  IMM,
 
         /* ----- 後段との接続 ----- */
-        // PC
         output wire [31:0]  EXEC_PC,
-
-        // レジスタ(rv32i:W)
         output reg          EXEC_REG_W_EN,
         output reg  [4:0]   EXEC_REG_W_RD,
         output reg  [31:0]  EXEC_REG_W_DATA,
-
-        // レジスタ(csrs:W)
         output reg          EXEC_CSR_W_EN,
         output reg  [11:0]  EXEC_CSR_W_ADDR,
         output reg  [31:0]  EXEC_CSR_W_DATA,
-
-        // メモリ(R)
         output reg          EXEC_MEM_R_EN,
         output reg  [4:0]   EXEC_MEM_R_RD,
         output reg  [31:0]  EXEC_MEM_R_ADDR,
         output reg  [3:0]   EXEC_MEM_R_STRB,
         output reg          EXEC_MEM_R_SIGNED,
-
-        // メモリ(W)
         output reg          EXEC_MEM_W_EN,
         output reg  [31:0]  EXEC_MEM_W_ADDR,
         output reg  [3:0]   EXEC_MEM_W_STRB,
         output reg  [31:0]  EXEC_MEM_W_DATA,
-
-        // PC更新
         output reg          EXEC_JMP_DO,
         output reg  [31:0]  EXEC_JMP_PC,
-
-        // 例外
         output reg          EXEC_EXC_EN,
         output reg  [3:0]   EXEC_EXC_CODE
     );
