@@ -11,6 +11,7 @@ module cushion
 
         /* ----- 前段との接続 ----- */
         // A (main stream)
+        input wire          A_VALID,
         input wire  [31:0]  A_PC,
         input wire          A_REG_W_EN,
         input wire  [4:0]   A_REG_W_RD,
@@ -33,6 +34,7 @@ module cushion
         input wire  [3:0]   A_EXC_CODE,
 
         // B (cop)
+        input wire          B_VALID,
         input wire  [31:0]  B_PC,
         input wire          B_REG_W_EN,
         input wire  [4:0]   B_REG_W_RD,
@@ -66,20 +68,21 @@ module cushion
 
     /* ----- 入力取り込み ----- */
     // A (main stream)
-    reg         a_reg_w_en, a_csr_w_en, a_mem_r_en, a_mem_r_signed, a_mem_w_en, a_jmp_do, a_exc_en;
+    reg         a_valid, a_reg_w_en, a_csr_w_en, a_mem_r_en, a_mem_r_signed, a_mem_w_en, a_jmp_do, a_exc_en;
     reg [31:0]  a_pc, a_reg_w_data, a_csr_w_data, a_mem_r_addr, a_mem_w_addr, a_mem_w_data, a_jmp_pc;
     reg [11:0]  a_csr_w_addr;
     reg [4:0]   a_reg_w_rd, a_mem_r_rd;
     reg [3:0]   a_mem_r_strb, a_mem_w_strb, a_exc_code;
 
     // B (cop)
-    reg         b_reg_w_en, b_exc_en;
+    reg         b_valid, b_reg_w_en, b_exc_en;
     reg [31:0]  b_pc, b_reg_w_data;
     reg [4:0]   b_reg_w_rd;
     reg [3:0]   b_exc_code;
 
     always @ (posedge CLK) begin
         if (RST || FLUSH) begin
+            a_valid <= 1'b0;
             a_pc <= 32'b0;
             a_reg_w_en <= 1'b0;
             a_reg_w_rd <= 5'b0;
@@ -100,6 +103,7 @@ module cushion
             a_jmp_pc <= 32'b0;
             a_exc_en <= 1'b0;
             a_exc_code <= 4'b0;
+            b_valid <= 1'b0;
             b_pc <= 32'b0;
             b_reg_w_en <= 1'b0;
             b_reg_w_rd <= 5'b0;
@@ -111,6 +115,7 @@ module cushion
             // do nothing
         end
         else begin
+            a_valid <= A_VALID;
             a_pc <= A_PC;
             a_reg_w_en <= A_REG_W_EN;
             a_reg_w_rd <= A_REG_W_RD;
@@ -131,6 +136,7 @@ module cushion
             a_jmp_pc <= A_JMP_PC;
             a_exc_en <= A_EXC_EN;
             a_exc_code <= A_EXC_CODE;
+            b_valid <= B_VALID;
             b_pc <= B_PC;
             b_reg_w_en <= B_REG_W_EN;
             b_reg_w_rd <= B_REG_W_RD;

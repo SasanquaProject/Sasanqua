@@ -30,6 +30,7 @@ module sasanqua_cop
         input wire  [31:0]  RS2_DATA,
 
         // Cop -> Core
+        output wire         COP_E_VALID,
         output wire [31:0]  COP_E_PC,
         output wire         COP_E_REG_W_EN,
         output wire [4:0]   COP_E_REG_W_RD,
@@ -78,11 +79,11 @@ module sasanqua_cop
     end
 
     // 接続
-    assign COP_C_PC  = pc[0];
-    assign COP_C_RD  = rd[0];
-    assign COP_C_RS1 = rs1[0];
-    assign COP_C_RS2 = rs2[0];
-    assign COP_E_PC  = pc[2];
+    assign COP_C_PC    = pc[0];
+    assign COP_C_RD    = rd[0];
+    assign COP_C_RS1   = rs1[0];
+    assign COP_C_RS2   = rs2[0];
+    assign COP_E_PC    = pc[2];
 
     cop_rv32i_mini cop1 (
         // 制御
@@ -109,6 +110,7 @@ module sasanqua_cop
         .E_RS2          (rs2[2]),
         .E_RS2_DATA     (rs2_data),
         .E_IMM          (imm[2]),
+        .E_VALID        (COP_E_VALID),
         .E_REG_W_EN     (COP_E_REG_W_EN),
         .E_REG_W_RD     (COP_E_REG_W_RD),
         .E_REG_W_DATA   (COP_E_REG_W_DATA),

@@ -21,6 +21,7 @@ module exec
         input wire  [31:0]  IMM,
 
         /* ----- 後段との接続 ----- */
+        output wire         EXEC_VALID,
         output wire [31:0]  EXEC_PC,
         output reg          EXEC_REG_W_EN,
         output reg  [4:0]   EXEC_REG_W_RD,
@@ -84,7 +85,7 @@ module exec
         end
         else begin
             pc <= PC;
-            opcode <= ALLOW ? OPCODE : 7'b1101111;
+            opcode <= ALLOW ? OPCODE : 17'b0;
             rd_addr <= ALLOW ? RD_ADDR : 5'b0;
             rs1_addr <= ALLOW ? RS1_ADDR : 5'b0;
             rs1_data <= ALLOW ? RS1_DATA : 32'b0;
@@ -97,7 +98,8 @@ module exec
     end
 
     /* ----- 実行 ----- */
-    assign EXEC_PC = pc;
+    assign EXEC_VALID = 1'b1;
+    assign EXEC_PC    = pc;
 
     // 整数演算
     always @* begin

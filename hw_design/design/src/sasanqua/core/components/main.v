@@ -163,7 +163,7 @@ module main
     wire        cop_c_accept;
     wire [31:0] cop_c_pc;
     wire [4:0]  cop_c_rd, cop_c_rs1, cop_c_rs2;
-    wire        cop_e_reg_w_en, cop_e_exc_en;
+    wire        cop_e_valid, cop_e_reg_w_en, cop_e_exc_en;
     wire [31:0] cop_e_pc, cop_e_reg_w_data;
     wire [4:0]  cop_e_reg_w_rd;
     wire [3:0]  cop_e_exc_code;
@@ -193,6 +193,7 @@ module main
         .ALLOW              (schedule_b_allow),
         .RS1_DATA           (schedule_b_rs1_data),
         .RS2_DATA           (schedule_b_rs2_data),
+        .COP_E_VALID        (cop_e_valid),
         .COP_E_PC           (cop_e_pc),
         .COP_E_REG_W_EN     (cop_e_reg_w_en),
         .COP_E_REG_W_RD     (cop_e_reg_w_rd),
@@ -325,7 +326,7 @@ module main
     );
 
     /* ----- 5. 実行 ----- */
-    wire        exec_reg_w_en, exec_mem_r_en, exec_mem_r_signed, exec_csr_w_en, exec_mem_w_en, exec_jmp_do, exec_exc_en;
+    wire        exec_valid, exec_reg_w_en, exec_mem_r_en, exec_mem_r_signed, exec_csr_w_en, exec_mem_w_en, exec_jmp_do, exec_exc_en;
     wire [31:0] exec_pc, exec_reg_w_data, exec_csr_w_data, exec_mem_r_addr, exec_mem_w_addr, exec_mem_w_data, exec_jmp_pc;
     wire [11:0] exec_csr_w_addr;
     wire [4:0]  exec_reg_w_rd, exec_mem_r_rd;
@@ -353,6 +354,7 @@ module main
         .IMM                (schedule_a_imm),
 
         // 後段との接続
+        .EXEC_VALID         (exec_valid),
         .EXEC_PC            (exec_pc),
         .EXEC_REG_W_EN      (exec_reg_w_en),
         .EXEC_REG_W_RD      (exec_reg_w_rd),
@@ -390,6 +392,7 @@ module main
         .MEM_WAIT               (MEM_WAIT),
 
         // 前段との接続
+        .A_VALID                (exec_valid),
         .A_PC                   (exec_pc),
         .A_REG_W_EN             (exec_reg_w_en),
         .A_REG_W_RD             (exec_reg_w_rd),
@@ -410,6 +413,7 @@ module main
         .A_JMP_PC               (exec_jmp_pc),
         .A_EXC_EN               (exec_exc_en),
         .A_EXC_CODE             (exec_exc_code),
+        .B_VALID                (cop_e_valid),
         .B_PC                   (cop_e_pc),
         .B_REG_W_EN             (cop_e_reg_w_en),
         .B_REG_W_RD             (cop_e_reg_w_rd),

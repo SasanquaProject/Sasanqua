@@ -24,11 +24,12 @@ module cop_rv32i_mini
         input wire  [4:0]   E_RS2,
         input wire  [31:0]  E_RS2_DATA,
         input wire  [31:0]  E_IMM,
+        output wire         E_VALID,
         output wire         E_REG_W_EN,
         output wire [4:0]   E_REG_W_RD,
         output wire [31:0]  E_REG_W_DATA,
         output wire         E_EXC_EN,
-        output wire         E_EXC_CODE
+        output wire [3:0]   E_EXC_CODE
     );
 
     /* ----- Check ----- */
@@ -38,6 +39,7 @@ module cop_rv32i_mini
     // do nothing...
 
     /* ----- Exec ----- */
+    assign E_VALID      = 1'b1;
     assign E_REG_W_EN   = 1'b0;
     assign E_REG_W_RD   = 5'b0;
     assign E_REG_W_DATA = 32'b0;
