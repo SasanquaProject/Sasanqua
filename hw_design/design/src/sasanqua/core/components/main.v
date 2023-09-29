@@ -172,6 +172,9 @@ module main
         // 制御
         .CLK                (CLK),
         .RST                (RST),
+        .FLUSH              (flush),
+        .STALL              (stall),
+        .MEM_WAIT           (MEM_WAIT),
 
         // Check 接続
         .PC                 (pool_pc),

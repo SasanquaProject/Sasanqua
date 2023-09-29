@@ -1,8 +1,11 @@
 module sasanqua_cop
     (
-        /* ----- クロック・リセット ----- */
+        /* ----- 制御 ----- */
         input wire          CLK,
         input wire          RST,
+        input wire          FLUSH,
+        input wire          STALL,
+        input wire          MEM_WAIT,
 
         /* ----- Check 接続 ----- */
         // Core -> Cop
@@ -47,15 +50,31 @@ module sasanqua_cop
     reg [31:0] imm      [0:2];
 
     always @ (posedge CLK) begin
-        allow <= ALLOW;
-        rs1_data <= RS1_DATA;
-        rs2_data <= RS2_DATA;
-        pc[2] <= pc[1];         pc[1] <= pc[0];         pc[0] <= PC;
-        rd[2] <= rd[1];         rd[1] <= rd[0];         rd[0] <= RD;
-        rs1[2] <= rs1[1];       rs1[1] <= rs1[0];       rs1[0] <= RS1;
-        rs2[2] <= rs2[1];       rs2[1] <= rs2[0];       rs2[0] <= RS2;
-        imm[2] <= imm[1];       imm[1] <= imm[0];       imm[0] <= IMM;
-        opcode[2] <= opcode[1]; opcode[1] <= opcode[0]; opcode[0] <= OPCODE;
+        if (RST || FLUSH) begin
+            allow <= 1'b0;
+            rs1_data <= 32'b0;
+            rs2_data <= 32'b0;
+            pc[2] <= 32'b0;     pc[1] <= 32'b0;    pc[0] <= 32'b0;
+            rd[2] <= 5'b0;      rd[1] <= 5'b0;     rd[0] <= 5'b0;
+            rs1[2] <= 5'b0;     rs1[1] <= 5'b0;    rs1[0] <= 5'b0;
+            rs2[2] <= 5'b0;     rs2[1] <= 5'b0;    rs2[0] <= 5'b0;
+            imm[2] <= 32'b0;    imm[1] <= 32'b0;   imm[0] <= 32'b0;
+            opcode[2] <= 17'b0; opcode[1] <= 17'b0; opcode[0] <= 17'b0;
+        end
+        else if (STALL || MEM_WAIT) begin
+            // do nothing
+        end
+        else begin
+            allow <= ALLOW;
+            rs1_data <= RS1_DATA;
+            rs2_data <= RS2_DATA;
+            pc[2] <= pc[1];         pc[1] <= pc[0];         pc[0] <= PC;
+            rd[2] <= rd[1];         rd[1] <= rd[0];         rd[0] <= RD;
+            rs1[2] <= rs1[1];       rs1[1] <= rs1[0];       rs1[0] <= RS1;
+            rs2[2] <= rs2[1];       rs2[1] <= rs2[0];       rs2[0] <= RS2;
+            imm[2] <= imm[1];       imm[1] <= imm[0];       imm[0] <= IMM;
+            opcode[2] <= opcode[1]; opcode[1] <= opcode[0]; opcode[0] <= OPCODE;
+        end
     end
 
     // 接続
