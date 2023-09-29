@@ -60,19 +60,19 @@ wire [11:0] CHECK_CSR               = sasanqua.core.main.check_csr;
 wire [31:0] CHECK_IMM               = sasanqua.core.main.check_imm;
 
 // Core: Schedule, Register(r)
-wire [31:0] SCHEDULE_PC             = sasanqua.core.main.schedule_pc;
-wire [6:0]  SCHEDULE_OPCODE         = sasanqua.core.main.schedule_opcode;
-wire [4:0]  SCHEDULE_RD_ADDR        = sasanqua.core.main.schedule_rd;
-wire        SCHEDULE_RS1_VALID      = sasanqua.core.main.reg_rs1_valid;
-wire [4:0]  SCHEDULE_RS1_ADDR       = sasanqua.core.main.schedule_rs1;
-wire [31:0] SCHEDULE_RS1_DATA       = sasanqua.core.main.reg_rs1_data;
-wire        SCHEDULE_RS2_VALID      = sasanqua.core.main.reg_rs2_valid;
-wire [4:0]  SCHEDULE_RS2_ADDR       = sasanqua.core.main.schedule_rs2;
-wire [31:0] SCHEDULE_RS2_DATA       = sasanqua.core.main.reg_rs2_data;
-wire        SCHEDULE_CSR_VALID      = sasanqua.core.main.reg_csr_valid;
-wire [11:0] SCHEDULE_CSR_ADDR       = sasanqua.core.main.schedule_csr;
-wire [31:0] SCHEDULE_CSR_DATA       = sasanqua.core.main.reg_csr_data;
-wire [31:0] SCHEDULE_IMM            = sasanqua.core.main.schedule_imm;
+wire [31:0] SCHEDULE_PC             = sasanqua.core.main.schedule_a_pc;
+wire [6:0]  SCHEDULE_OPCODE         = sasanqua.core.main.schedule_a_opcode;
+wire [4:0]  SCHEDULE_RD_ADDR        = sasanqua.core.main.schedule_a_rd;
+wire        SCHEDULE_RS1_VALID      = sasanqua.core.main.schedule_a_rs1_valid;
+wire [4:0]  SCHEDULE_RS1_ADDR       = sasanqua.core.main.schedule_a_rs1;
+wire [31:0] SCHEDULE_RS1_DATA       = sasanqua.core.main.schedule_a_rs1_data;
+wire        SCHEDULE_RS2_VALID      = sasanqua.core.main.schedule_a_rs2_valid;
+wire [4:0]  SCHEDULE_RS2_ADDR       = sasanqua.core.main.schedule_a_rs2;
+wire [31:0] SCHEDULE_RS2_DATA       = sasanqua.core.main.schedule_a_rs2_data;
+wire        SCHEDULE_CSR_VALID      = sasanqua.core.main.schedule_a_csr_valid;
+wire [11:0] SCHEDULE_CSR_ADDR       = sasanqua.core.main.schedule_a_csr;
+wire [31:0] SCHEDULE_CSR_DATA       = sasanqua.core.main.schedule_a_csr_data;
+wire [31:0] SCHEDULE_IMM            = sasanqua.core.main.schedule_a_imm;
 
 // Core: Exec
 wire [31:0] EXEC_PC                 = sasanqua.core.main.exec_pc;

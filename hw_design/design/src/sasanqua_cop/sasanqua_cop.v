@@ -22,7 +22,7 @@ module sasanqua_cop
 
         /* ----- Exec 接続 ----- */
         // Core -> Cop
-        input wire          DO_EXEC,
+        input wire          ALLOW,
         input wire  [31:0]  RS1_DATA,
         input wire  [31:0]  RS2_DATA,
 

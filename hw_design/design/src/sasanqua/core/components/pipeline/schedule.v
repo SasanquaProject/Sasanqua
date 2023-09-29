@@ -26,13 +26,18 @@ module schedule
         input wire  [4:0]   B_RS2,
 
         /* ----- 後段との接続 ----- */
-        output wire [31:0]  SCHEDULE_PC,
-        output wire [16:0]  SCHEDULE_OPCODE,
-        output wire [4:0]   SCHEDULE_RD,
-        output wire [4:0]   SCHEDULE_RS1,
-        output wire [4:0]   SCHEDULE_RS2,
-        output wire [11:0]  SCHEDULE_CSR,
-        output wire [31:0]  SCHEDULE_IMM
+        // A (main stream)
+        output wire         SCHEDULE_A_ALLOW,
+        output wire [31:0]  SCHEDULE_A_PC,
+        output wire [16:0]  SCHEDULE_A_OPCODE,
+        output wire [4:0]   SCHEDULE_A_RD,
+        output wire [4:0]   SCHEDULE_A_RS1,
+        output wire [4:0]   SCHEDULE_A_RS2,
+        output wire [11:0]  SCHEDULE_A_CSR,
+        output wire [31:0]  SCHEDULE_A_IMM,
+
+        // B (cop)
+        output wire         SCHEDULE_B_ALLOW
     );
 
     /* ----- 入力取り込み ----- */
@@ -69,12 +74,17 @@ module schedule
     end
 
     /* ----- 出力(仮) ----- */
-    assign SCHEDULE_PC      = a_pc;
-    assign SCHEDULE_OPCODE  = a_accept ? a_opcode : 7'b1101111;
-    assign SCHEDULE_RD      = a_accept ? a_rd : 5'b0;
-    assign SCHEDULE_RS1     = a_accept ? a_rs1 : 5'b0;
-    assign SCHEDULE_RS2     = a_accept ? a_rs2 : 5'b0;
-    assign SCHEDULE_CSR     = a_accept ? a_csr : 5'b0;
-    assign SCHEDULE_IMM     = a_accept ? a_imm : 32'b00;
+    // A (main stream)
+    assign SCHEDULE_A_ALLOW     = a_accept;
+    assign SCHEDULE_A_PC        = a_pc;
+    assign SCHEDULE_A_OPCODE    = a_opcode;
+    assign SCHEDULE_A_RD        = a_rd;
+    assign SCHEDULE_A_RS1       = a_rs1;
+    assign SCHEDULE_A_RS2       = a_rs2;
+    assign SCHEDULE_A_CSR       = a_csr;
+    assign SCHEDULE_A_IMM       = a_imm;
+
+    // B (cop)
+    assign SCHEDULE_B_ALLOW     = 1'b0;
 
 endmodule

@@ -8,6 +8,7 @@ module exec_std_rv32i_s
         input wire          MEM_WAIT,
 
         /* ----- 前段との接続 ----- */
+        input wire          ALLOW,
         input wire  [31:0]  PC,
         input wire  [16:0]  OPCODE,
         input wire  [4:0]   RD_ADDR,
@@ -83,15 +84,15 @@ module exec_std_rv32i_s
         end
         else begin
             pc <= PC;
-            opcode <= OPCODE;
-            rd_addr <= RD_ADDR;
-            rs1_addr <= RS1_ADDR;
-            rs1_data <= RS1_DATA;
-            rs2_addr <= RS2_ADDR;
-            rs2_data <= RS2_DATA;
-            csr_addr <= CSR_ADDR;
-            csr_data <= CSR_DATA;
-            imm <= IMM;
+            opcode <= ALLOW ? OPCODE : 7'b1101111;
+            rd_addr <= ALLOW ? RD_ADDR : 5'b0;
+            rs1_addr <= ALLOW ? RS1_ADDR : 5'b0;
+            rs1_data <= ALLOW ? RS1_DATA : 32'b0;
+            rs2_addr <= ALLOW ? RS2_ADDR : 5'b0;
+            rs2_data <= ALLOW ? RS2_DATA : 32'b0;
+            csr_addr <= ALLOW ? CSR_ADDR : 12'b0;
+            csr_data <= ALLOW ? CSR_DATA : 32'b0;
+            imm <= ALLOW ? IMM : 32'b0;
         end
     end
 

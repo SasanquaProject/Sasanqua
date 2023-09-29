@@ -37,7 +37,7 @@ module main
     /* ----- パイプライン制御 ----- */
     wire        flush    = trap_en || memr_jmp_do;
     wire [31:0] flush_pc = trap_en ? trap_jmp_to : memr_jmp_pc;
-    wire        stall    = !reg_rs1_valid || !reg_rs2_valid || !reg_csr_valid;
+    wire        stall    = !schedule_a_rs1_valid || !schedule_a_rs2_valid || !schedule_a_csr_valid;
 
     /* ----- 1. 命令フェッチ ----- */
     wire [31:0] fetch_pc, fetch_inst;
@@ -178,10 +178,10 @@ module main
         .COP_C_PC           (cop_pc),
         .COP_C_RD           (cop_rd),
         .COP_C_RS1          (cop_rs1),
-        .COP_C_RS2          (cop_rs2)
+        .COP_C_RS2          (cop_rs2),
 
         // Exec 接続
-        // .DO_EXEC            (),
+        .ALLOW              (schedule_b_allow)
         // .RS1_DATA           (),
         // .RS2_DATA           (),
         // .COP_E_PC           (),
@@ -202,10 +202,11 @@ module main
     );
 
     /* ----- 4-1. スケジューリング ----- */
-    wire [31:0] schedule_pc, schedule_imm;
-    wire [11:0] schedule_csr;
-    wire [16:0] schedule_opcode;
-    wire [4:0]  schedule_rd, schedule_rs1, schedule_rs2;
+    wire        schedule_a_allow, schedule_b_allow;
+    wire [31:0] schedule_a_pc, schedule_a_imm;
+    wire [11:0] schedule_a_csr;
+    wire [16:0] schedule_a_opcode;
+    wire [4:0]  schedule_a_rd, schedule_a_rs1, schedule_a_rs2;
 
     schedule schedule (
         // 制御
@@ -231,13 +232,15 @@ module main
         .B_RS2              (cop_rs2),
 
         // 後段との接続
-        .SCHEDULE_PC        (schedule_pc),
-        .SCHEDULE_OPCODE    (schedule_opcode),
-        .SCHEDULE_RD        (schedule_rd),
-        .SCHEDULE_RS1       (schedule_rs1),
-        .SCHEDULE_RS2       (schedule_rs2),
-        .SCHEDULE_CSR       (schedule_csr),
-        .SCHEDULE_IMM       (schedule_imm)
+        .SCHEDULE_A_ALLOW   (schedule_a_allow),
+        .SCHEDULE_A_PC      (schedule_a_pc),
+        .SCHEDULE_A_OPCODE  (schedule_a_opcode),
+        .SCHEDULE_A_RD      (schedule_a_rd),
+        .SCHEDULE_A_RS1     (schedule_a_rs1),
+        .SCHEDULE_A_RS2     (schedule_a_rs2),
+        .SCHEDULE_A_CSR     (schedule_a_csr),
+        .SCHEDULE_A_IMM     (schedule_a_imm),
+        .SCHEDULE_B_ALLOW   (schedule_b_allow)
     );
 
     /* ----- 4-2. レジスタアクセス ----- */
@@ -246,8 +249,8 @@ module main
     wire [31:0] trap_vec_base;
     wire        int_allow;
 
-    wire [31:0] reg_csr_data;
-    wire        reg_csr_valid;
+    wire [31:0] schedule_a_csr_data;
+    wire        schedule_a_csr_valid;
 
     reg_std_csr reg_std_csr_0 (
         // 制御
@@ -265,14 +268,14 @@ module main
 
         // レジスタアクセス
         .RADDR              (check_csr),
-        .RVALID             (reg_csr_valid),
-        .RDATA              (reg_csr_data),
+        .RVALID             (schedule_a_csr_valid),
+        .RDATA              (schedule_a_csr_data),
         .WREN               (memr_csr_w_en),
         .WADDR              (memr_csr_w_addr),
         .WDATA              (memr_csr_w_data),
 
         // フォワーディング
-        .FWD_CSR_ADDR       (schedule_csr),
+        .FWD_CSR_ADDR       (schedule_a_csr),
         .FWD_EXEC_EN        (exec_csr_w_en),
         .FWD_EXEC_ADDR      (exec_csr_w_addr),
         .FWD_EXEC_DATA      (exec_csr_w_data),
@@ -282,8 +285,8 @@ module main
     );
 
     // RV32I
-    wire [31:0] reg_rs1_data, reg_rs2_data;
-    wire        reg_rs1_valid, reg_rs2_valid;
+    wire [31:0] schedule_a_rs1_data, schedule_a_rs2_data;
+    wire        schedule_a_rs1_valid, schedule_a_rs2_valid;
 
     reg_std_rv32i reg_std_rv32i_0 (
         // 制御
@@ -295,16 +298,16 @@ module main
 
         // レジスタアクセス
         .A_RADDR            (check_rs1),
-        .A_RVALID           (reg_rs1_valid),
-        .A_RDATA            (reg_rs1_data),
+        .A_RVALID           (schedule_a_rs1_valid),
+        .A_RDATA            (schedule_a_rs1_data),
         .B_RADDR            (check_rs2),
-        .B_RVALID           (reg_rs2_valid),
-        .B_RDATA            (reg_rs2_data),
+        .B_RVALID           (schedule_a_rs2_valid),
+        .B_RDATA            (schedule_a_rs2_data),
         .WADDR              (memr_reg_w_rd),
         .WDATA              (memr_reg_w_data),
 
         // フォワーディング
-        .FWD_REG_ADDR       (schedule_rd),
+        .FWD_REG_ADDR       (schedule_a_rd),
         .FWD_EXEC_EN        (exec_reg_w_en),
         .FWD_EXEC_ADDR      (exec_reg_w_rd),
         .FWD_EXEC_DATA      (exec_reg_w_data),
@@ -329,16 +332,17 @@ module main
         .MEM_WAIT           (MEM_WAIT),
 
         // 前段との接続
-        .PC                 (schedule_pc),
-        .OPCODE             (schedule_opcode),
-        .RD_ADDR            (schedule_rd),
-        .RS1_ADDR           (schedule_rs1),
-        .RS1_DATA           (reg_rs1_data),
-        .RS2_ADDR           (schedule_rs2),
-        .RS2_DATA           (reg_rs2_data),
-        .CSR_ADDR           (schedule_csr),
-        .CSR_DATA           (reg_csr_data),
-        .IMM                (schedule_imm),
+        .ALLOW              (schedule_a_allow),
+        .PC                 (schedule_a_pc),
+        .OPCODE             (schedule_a_opcode),
+        .RD_ADDR            (schedule_a_rd),
+        .RS1_ADDR           (schedule_a_rs1),
+        .RS1_DATA           (schedule_a_rs1_data),
+        .RS2_ADDR           (schedule_a_rs2),
+        .RS2_DATA           (schedule_a_rs2_data),
+        .CSR_ADDR           (schedule_a_csr),
+        .CSR_DATA           (schedule_a_csr_data),
+        .IMM                (schedule_a_imm),
 
         // 後段との接続
         .EXEC_PC            (exec_pc),
@@ -503,7 +507,7 @@ module main
         .FETCH_PC           (fetch_pc),
         .DECODE_PC          (decode_pc),
         .CHECK_PC           (check_pc),
-        .SCHEDULE_PC        (schedule_pc),
+        .SCHEDULE_PC        (schedule_a_pc),
         .EXEC_PC            (exec_pc),
         .CUSHION_PC         (cushion_pc),
         .CUSHION_EXC_EN     (cushion_exc_en),
