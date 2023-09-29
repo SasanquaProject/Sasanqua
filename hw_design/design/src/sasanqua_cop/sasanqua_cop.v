@@ -31,15 +31,6 @@ module sasanqua_cop
         output wire         COP_E_REG_W_EN,
         output wire [4:0]   COP_E_REG_W_RD,
         output wire [31:0]  COP_E_REG_W_DATA,
-        output wire         COP_E_MEM_R_EN,
-        output wire [4:0]   COP_E_MEM_R_RD,
-        output wire [31:0]  COP_E_MEM_R_ADDR,
-        output wire [3:0]   COP_E_MEM_R_STRB,
-        output wire         COP_E_MEM_R_SIGNED,
-        output wire         COP_E_MEM_W_EN,
-        output wire [31:0]  COP_E_MEM_W_ADDR,
-        output wire [3:0]   COP_E_MEM_W_STRB,
-        output wire [31:0]  COP_E_MEM_W_DATA,
         output wire         COP_E_EXC_EN,
         output wire [3:0]   COP_E_EXC_CODE
     );
@@ -60,17 +51,6 @@ module sasanqua_cop
     assign COP_E_REG_W_EN     = 1'b0;
     assign COP_E_REG_W_RD     = 5'b0;
     assign COP_E_REG_W_DATA   = 32'b0;
-
-    assign COP_E_MEM_R_EN     = 1'b0;
-    assign COP_E_MEM_R_RD     = 5'b0;
-    assign COP_E_MEM_R_ADDR   = 32'b0;
-    assign COP_E_MEM_R_STRB   = 4'b0;
-    assign COP_E_MEM_R_SIGNED = 1'b0;
-
-    assign COP_E_MEM_W_EN     = 1'b0;
-    assign COP_E_MEM_W_ADDR   = 32'b0;
-    assign COP_E_MEM_W_STRB   = 4'b0;
-    assign COP_E_MEM_W_DATA   = 32'b0;
 
     assign COP_E_EXC_EN       = 1'b0;
     assign COP_E_EXC_CODE     = 4'b0;

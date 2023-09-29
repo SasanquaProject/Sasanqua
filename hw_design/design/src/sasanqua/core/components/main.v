@@ -160,9 +160,13 @@ module main
     );
 
     /* ----- 3-2. コプロセッサ ----- */
-    wire        cop_accept;
-    wire [31:0] cop_pc;
-    wire [4:0]  cop_rd, cop_rs1, cop_rs2;
+    wire        cop_c_accept;
+    wire [31:0] cop_c_pc;
+    wire [4:0]  cop_c_rd, cop_c_rs1, cop_c_rs2;
+    wire        cop_e_reg_w_en, cop_e_exc_en;
+    wire [31:0] cop_e_pc, cop_e_reg_w_data;
+    wire [4:0]  cop_e_reg_w_rd;
+    wire [3:0]  cop_e_exc_code;
 
     sasanqua_cop sasanqua_cop (
         // 制御
@@ -176,31 +180,22 @@ module main
         .RS1                (pool_rs1),
         .RS2                (pool_rs2),
         .IMM                (pool_imm),
-        .COP_C_ACCEPT       (cop_accept),
-        .COP_C_PC           (cop_pc),
-        .COP_C_RD           (cop_rd),
-        .COP_C_RS1          (cop_rs1),
-        .COP_C_RS2          (cop_rs2),
+        .COP_C_ACCEPT       (cop_c_accept),
+        .COP_C_PC           (cop_c_pc),
+        .COP_C_RD           (cop_c_rd),
+        .COP_C_RS1          (cop_c_rs1),
+        .COP_C_RS2          (cop_c_rs2),
 
         // Exec 接続
         .ALLOW              (schedule_b_allow),
         .RS1_DATA           (schedule_b_rs1_data),
-        .RS2_DATA           (schedule_b_rs2_data)
-        // .COP_E_PC           (),
-        // .COP_E_REG_W_EN     (),
-        // .COP_E_REG_W_RD     (),
-        // .COP_E_REG_W_DATA   (),
-        // .COP_E_MEM_R_EN     (),
-        // .COP_E_MEM_R_RD     (),
-        // .COP_E_MEM_R_ADDR   (),
-        // .COP_E_MEM_R_STRB   (),
-        // .COP_E_MEM_R_SIGNED (),
-        // .COP_E_MEM_W_EN     (),
-        // .COP_E_MEM_W_ADDR   (),
-        // .COP_E_MEM_W_STRB   (),
-        // .COP_E_MEM_W_DATA   (),
-        // .COP_E_EXC_EN       (),
-        // .COP_E_EXC_CODE     ()
+        .RS2_DATA           (schedule_b_rs2_data),
+        .COP_E_PC           (cop_e_pc),
+        .COP_E_REG_W_EN     (cop_e_reg_w_en),
+        .COP_E_REG_W_RD     (cop_e_reg_w_rd),
+        .COP_E_REG_W_DATA   (cop_e_reg_w_data),
+        .COP_E_EXC_EN       (cop_e_exc_en),
+        .COP_E_EXC_CODE     (cop_e_exc_code)
     );
 
     /* ----- 4-1. スケジューリング ----- */
@@ -227,11 +222,11 @@ module main
         .A_RS2              (check_rs2),
         .A_CSR              (check_csr),
         .A_IMM              (check_imm),
-        .B_ACCEPT           (cop_accept),
-        .B_PC               (cop_pc),
-        .B_RD               (cop_rd),
-        .B_RS1              (cop_rs1),
-        .B_RS2              (cop_rs2),
+        .B_ACCEPT           (cop_c_accept),
+        .B_PC               (cop_c_pc),
+        .B_RD               (cop_c_rd),
+        .B_RS1              (cop_c_rs1),
+        .B_RS2              (cop_c_rs2),
 
         // 後段との接続
         .SCHEDULE_A_ALLOW   (schedule_a_allow),
@@ -307,10 +302,10 @@ module main
         .B_RADDR            (check_rs2),
         .B_RVALID           (schedule_a_rs2_valid),
         .B_RDATA            (schedule_a_rs2_data),
-        .C_RADDR            (cop_rs1),
+        .C_RADDR            (cop_c_rs1),
         .C_RVALID           (schedule_b_rs1_valid),
         .C_RDATA            (schedule_b_rs1_data),
-        .D_RADDR            (cop_rs2),
+        .D_RADDR            (cop_c_rs2),
         .D_RVALID           (schedule_b_rs2_valid),
         .D_RDATA            (schedule_b_rs2_data),
         .WADDR              (memr_reg_w_rd),
@@ -392,26 +387,32 @@ module main
         .MEM_WAIT               (MEM_WAIT),
 
         // 前段との接続
-        .PC                     (exec_pc),
-        .REG_W_EN               (exec_reg_w_en),
-        .REG_W_RD               (exec_reg_w_rd),
-        .REG_W_DATA             (exec_reg_w_data),
-        .CSR_W_EN               (exec_csr_w_en),
-        .CSR_W_ADDR             (exec_csr_w_addr),
-        .CSR_W_DATA             (exec_csr_w_data),
-        .MEM_R_EN               (exec_mem_r_en),
-        .MEM_R_RD               (exec_mem_r_rd),
-        .MEM_R_ADDR             (exec_mem_r_addr),
-        .MEM_R_STRB             (exec_mem_r_strb),
-        .MEM_R_SIGNED           (exec_mem_r_signed),
-        .MEM_W_EN               (exec_mem_w_en),
-        .MEM_W_ADDR             (exec_mem_w_addr),
-        .MEM_W_STRB             (exec_mem_w_strb),
-        .MEM_W_DATA             (exec_mem_w_data),
-        .JMP_DO                 (exec_jmp_do),
-        .JMP_PC                 (exec_jmp_pc),
-        .EXC_EN                 (exec_exc_en),
-        .EXC_CODE               (exec_exc_code),
+        .A_PC                   (exec_pc),
+        .A_REG_W_EN             (exec_reg_w_en),
+        .A_REG_W_RD             (exec_reg_w_rd),
+        .A_REG_W_DATA           (exec_reg_w_data),
+        .A_CSR_W_EN             (exec_csr_w_en),
+        .A_CSR_W_ADDR           (exec_csr_w_addr),
+        .A_CSR_W_DATA           (exec_csr_w_data),
+        .A_MEM_R_EN             (exec_mem_r_en),
+        .A_MEM_R_RD             (exec_mem_r_rd),
+        .A_MEM_R_ADDR           (exec_mem_r_addr),
+        .A_MEM_R_STRB           (exec_mem_r_strb),
+        .A_MEM_R_SIGNED         (exec_mem_r_signed),
+        .A_MEM_W_EN             (exec_mem_w_en),
+        .A_MEM_W_ADDR           (exec_mem_w_addr),
+        .A_MEM_W_STRB           (exec_mem_w_strb),
+        .A_MEM_W_DATA           (exec_mem_w_data),
+        .A_JMP_DO               (exec_jmp_do),
+        .A_JMP_PC               (exec_jmp_pc),
+        .A_EXC_EN               (exec_exc_en),
+        .A_EXC_CODE             (exec_exc_code),
+        .B_PC                   (cop_e_pc),
+        .B_REG_W_EN             (cop_e_reg_w_en),
+        .B_REG_W_RD             (cop_e_reg_w_rd),
+        .B_REG_W_DATA           (cop_e_reg_w_data),
+        .B_EXC_EN               (cop_e_exc_en),
+        .B_EXC_CODE             (cop_e_exc_code),
 
         // 後段との接続
         .CUSHION_PC             (cushion_pc),
