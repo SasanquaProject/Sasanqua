@@ -37,7 +37,9 @@ module main
     /* ----- パイプライン制御 ----- */
     wire        flush    = trap_en || memr_jmp_do;
     wire [31:0] flush_pc = trap_en ? trap_jmp_to : memr_jmp_pc;
-    wire        stall    = !schedule_a_rs1_valid || !schedule_a_rs2_valid || !schedule_a_csr_valid;
+    wire        stall    = !schedule_a_rs1_valid || !schedule_a_rs2_valid ||
+                           !schedule_b_rs1_valid || !schedule_b_rs2_valid ||
+                           !schedule_a_csr_valid;
 
     /* ----- 1. 命令フェッチ ----- */
     wire [31:0] fetch_pc, fetch_inst;
@@ -181,9 +183,9 @@ module main
         .COP_C_RS2          (cop_rs2),
 
         // Exec 接続
-        .ALLOW              (schedule_b_allow)
-        // .RS1_DATA           (),
-        // .RS2_DATA           (),
+        .ALLOW              (schedule_b_allow),
+        .RS1_DATA           (schedule_b_rs1_data),
+        .RS2_DATA           (schedule_b_rs2_data)
         // .COP_E_PC           (),
         // .COP_E_REG_W_EN     (),
         // .COP_E_REG_W_RD     (),
@@ -287,6 +289,8 @@ module main
     // RV32I
     wire [31:0] schedule_a_rs1_data, schedule_a_rs2_data;
     wire        schedule_a_rs1_valid, schedule_a_rs2_valid;
+    wire [31:0] schedule_b_rs1_data, schedule_b_rs2_data;
+    wire        schedule_b_rs1_valid, schedule_b_rs2_valid;
 
     reg_std_rv32i reg_std_rv32i_0 (
         // 制御
@@ -303,6 +307,12 @@ module main
         .B_RADDR            (check_rs2),
         .B_RVALID           (schedule_a_rs2_valid),
         .B_RDATA            (schedule_a_rs2_data),
+        .C_RADDR            (cop_rs1),
+        .C_RVALID           (schedule_b_rs1_valid),
+        .C_RDATA            (schedule_b_rs1_data),
+        .D_RADDR            (cop_rs2),
+        .D_RVALID           (schedule_b_rs2_valid),
+        .D_RDATA            (schedule_b_rs2_data),
         .WADDR              (memr_reg_w_rd),
         .WDATA              (memr_reg_w_data),
 

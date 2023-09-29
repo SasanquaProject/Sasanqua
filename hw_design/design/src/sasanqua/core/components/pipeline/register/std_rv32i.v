@@ -17,6 +17,14 @@ module reg_std_rv32i
         output wire         B_RVALID,
         output wire [31:0]  B_RDATA,
 
+        input wire  [4:0]   C_RADDR,
+        output wire         C_RVALID,
+        output wire [31:0]  C_RDATA,
+
+        input wire  [4:0]   D_RADDR,
+        output wire         D_RVALID,
+        output wire [31:0]  D_RDATA,
+
         // 書き
         input wire  [4:0]   WADDR,
         input wire  [31:0]  WDATA,
@@ -34,7 +42,8 @@ module reg_std_rv32i
     );
 
     /* ----- 入力取り込み ----- */
-    reg  [4:0]  a_raddr, b_raddr, waddr, fwd_reg_addr, fwd_exec_addr, fwd_cushion_addr;
+    reg  [4:0]  a_raddr, b_raddr, c_raddr, d_raddr;
+    reg  [4:0]  waddr, fwd_reg_addr, fwd_exec_addr, fwd_cushion_addr;
     reg  [31:0] wdata, fwd_exec_data, fwd_cushion_data;
     reg         fwd_exec_en, fwd_cushion_en;
 
@@ -42,6 +51,8 @@ module reg_std_rv32i
         if (RST || FLUSH) begin
             a_raddr <= 5'b0;
             b_raddr <= 5'b0;
+            c_raddr <= 5'b0;
+            d_raddr <= 5'b0;
             waddr <= 5'b0;
             wdata <= 32'b0;
             fwd_reg_addr <= 5'b0;
@@ -67,6 +78,8 @@ module reg_std_rv32i
         else begin
             a_raddr <= A_RADDR;
             b_raddr <= B_RADDR;
+            c_raddr <= C_RADDR;
+            d_raddr <= D_RADDR;
             waddr <= WADDR;
             wdata <= WDATA;
             fwd_reg_addr <= FWD_REG_ADDR;
@@ -88,6 +101,12 @@ module reg_std_rv32i
 
     assign B_RVALID = forwarding_check(b_raddr, fwd_reg_addr, fwd_exec_addr, fwd_exec_en, fwd_cushion_addr, fwd_cushion_en);
     assign B_RDATA  = forwarding(b_raddr, registers[b_raddr], fwd_exec_addr, fwd_exec_data, fwd_cushion_addr, fwd_cushion_data, waddr, wdata);
+
+    assign C_RVALID = forwarding_check(c_raddr, fwd_reg_addr, fwd_exec_addr, fwd_exec_en, fwd_cushion_addr, fwd_cushion_en);
+    assign C_RDATA  = forwarding(c_raddr, registers[c_raddr], fwd_exec_addr, fwd_exec_data, fwd_cushion_addr, fwd_cushion_data, waddr, wdata);
+
+    assign D_RVALID = forwarding_check(d_raddr, fwd_reg_addr, fwd_exec_addr, fwd_exec_en, fwd_cushion_addr, fwd_cushion_en);
+    assign D_RDATA  = forwarding(d_raddr, registers[d_raddr], fwd_exec_addr, fwd_exec_data, fwd_cushion_addr, fwd_cushion_data, waddr, wdata);
 
     function forwarding_check;
         input [4:0]     target_addr;

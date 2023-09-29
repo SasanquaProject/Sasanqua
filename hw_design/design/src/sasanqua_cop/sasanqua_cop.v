@@ -45,34 +45,34 @@ module sasanqua_cop
     );
 
     /* ----- Check ----- */
-    assign COP_ACCEPT       = 1'b0;
-    assign COP_PC           = 32'b0;
-    assign COP_RD           = 5'b0;
-    assign COP_RS1          = 5'b0;
-    assign COP_RS2          = 5'b0;
+    assign COP_C_ACCEPT     = 1'b0;
+    assign COP_C_PC         = 32'b0;
+    assign COP_C_RD         = 5'b0;
+    assign COP_C_RS1        = 5'b0;
+    assign COP_C_RS2        = 5'b0;
 
     /* ----- Ready ----- */
     // ...
 
     /* ----- Exec ----- */
-    assign COP_PC           = 32'b0;
+    assign COP_E_PC           = 32'b0;
 
-    assign COP_REG_W_EN     = 1'b0;
-    assign COP_REG_W_RD     = 5'b0;
-    assign COP_REG_W_DATA   = 32'b0;
+    assign COP_E_REG_W_EN     = 1'b0;
+    assign COP_E_REG_W_RD     = 5'b0;
+    assign COP_E_REG_W_DATA   = 32'b0;
 
-    assign COP_MEM_R_EN     = 1'b0;
-    assign COP_MEM_R_RD     = 5'b0;
-    assign COP_MEM_R_ADDR   = 32'b0;
-    assign COP_MEM_R_STRB   = 4'b0;
-    assign COP_MEM_R_SIGNED = 1'b0;
+    assign COP_E_MEM_R_EN     = 1'b0;
+    assign COP_E_MEM_R_RD     = 5'b0;
+    assign COP_E_MEM_R_ADDR   = 32'b0;
+    assign COP_E_MEM_R_STRB   = 4'b0;
+    assign COP_E_MEM_R_SIGNED = 1'b0;
 
-    assign COP_MEM_W_EN     = 1'b0;
-    assign COP_MEM_W_ADDR   = 32'b0;
-    assign COP_MEM_W_STRB   = 4'b0;
-    assign COP_MEM_W_DATA   = 32'b0;
+    assign COP_E_MEM_W_EN     = 1'b0;
+    assign COP_E_MEM_W_ADDR   = 32'b0;
+    assign COP_E_MEM_W_STRB   = 4'b0;
+    assign COP_E_MEM_W_DATA   = 32'b0;
 
-    assign COP_EXC_EN       = 1'b0;
-    assign COP_EXC_CODE     = 4'b0;
+    assign COP_E_EXC_EN       = 1'b0;
+    assign COP_E_EXC_CODE     = 4'b0;
 
 endmodule
