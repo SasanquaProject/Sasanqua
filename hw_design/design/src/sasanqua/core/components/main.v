@@ -328,7 +328,7 @@ module main
     wire [4:0]  exec_reg_w_rd, exec_mem_r_rd;
     wire [3:0]  exec_mem_r_strb, exec_mem_w_strb, exec_exc_code;
 
-    exec_std_rv32i_s exec_std_rv32i_s_0 (
+    exec exec (
         // 制御
         .CLK                (CLK),
         .RST                (RST),
