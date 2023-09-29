@@ -18,6 +18,7 @@ verilog xil_defaultlib  --include "../../../../../../design/tb/axi" --include ".
 "../../../../../../design/src/sasanqua/core/components/pipeline/pool.v" \
 "../../../../../../design/src/sasanqua/mem/utils/ram/ram_dualport.v" \
 "../../../../../../design/src/sasanqua/mem/utils/rom/rom_dualport.v" \
+"../../../../../../design/src/sasanqua_cop/impl/rv32i_mini.v" \
 "../../../../../../design/src/sasanqua/sasanqua.v" \
 "../../../../../../design/src/sasanqua_cop/sasanqua_cop.v" \
 "../../../../../../design/src/sasanqua/core/components/pipeline/schedule.v" \

@@ -35,24 +35,66 @@ module sasanqua_cop
         output wire [3:0]   COP_E_EXC_CODE
     );
 
-    /* ----- Check ----- */
-    assign COP_C_ACCEPT     = 1'b0;
-    assign COP_C_PC         = 32'b0;
-    assign COP_C_RD         = 5'b0;
-    assign COP_C_RS1        = 5'b0;
-    assign COP_C_RS2        = 5'b0;
+    /* ----- Cop #1 (rv32i_mini) ----- */
+    // 入力取り込み
+    reg        allow;
+    reg [31:0] rs1_data, rs2_data;
+    reg [31:0] pc       [0:2];
+    reg [16:0] opcode   [0:2];
+    reg [4:0]  rd       [0:2];
+    reg [4:0]  rs1      [0:2];
+    reg [4:0]  rs2      [0:2];
+    reg [31:0] imm      [0:2];
 
-    /* ----- Ready ----- */
-    // ...
+    always @ (posedge CLK) begin
+        allow <= ALLOW;
+        rs1_data <= RS1_DATA;
+        rs2_data <= RS2_DATA;
+        pc[2] <= pc[1];         pc[1] <= pc[0];         pc[0] <= PC;
+        rd[2] <= rd[1];         rd[1] <= rd[0];         rd[0] <= RD;
+        rs1[2] <= rs1[1];       rs1[1] <= rs1[0];       rs1[0] <= RS1;
+        rs2[2] <= rs2[1];       rs2[1] <= rs2[0];       rs2[0] <= RS2;
+        imm[2] <= imm[1];       imm[1] <= imm[0];       imm[0] <= IMM;
+        opcode[2] <= opcode[1]; opcode[1] <= opcode[0]; opcode[0] <= OPCODE;
+    end
 
-    /* ----- Exec ----- */
-    assign COP_E_PC           = 32'b0;
+    // 接続
+    assign COP_C_PC  = pc[0];
+    assign COP_C_RD  = rd[0];
+    assign COP_C_RS1 = rs1[0];
+    assign COP_C_RS2 = rs2[0];
+    assign COP_E_PC  = pc[2];
 
-    assign COP_E_REG_W_EN     = 1'b0;
-    assign COP_E_REG_W_RD     = 5'b0;
-    assign COP_E_REG_W_DATA   = 32'b0;
+    cop_rv32i_mini cop1 (
+        // 制御
+        .CLK            (CLK),
+        .RST            (RST),
 
-    assign COP_E_EXC_EN       = 1'b0;
-    assign COP_E_EXC_CODE     = 4'b0;
+        // Check 接続
+        .C_OPCODE       (opcode[0]),
+        .C_ACCEPT       (COP_C_ACCEPT),
+
+        // Ready 接続
+        .R_OPCODE       (opcode[1]),
+        .R_RD           (rd[1]),
+        .R_RS1          (rs1[1]),
+        .R_RS2          (rs2[1]),
+        .R_IMM          (imm[1]),
+
+        // Exec 接続
+        .E_ALLOW        (allow),
+        .E_OPCODE       (opcode[2]),
+        .E_RD           (rd[2]),
+        .E_RS1          (rs1[2]),
+        .E_RS1_DATA     (rs1_data),
+        .E_RS2          (rs2[2]),
+        .E_RS2_DATA     (rs2_data),
+        .E_IMM          (imm[2]),
+        .E_REG_W_EN     (COP_E_REG_W_EN),
+        .E_REG_W_RD     (COP_E_REG_W_RD),
+        .E_REG_W_DATA   (COP_E_REG_W_DATA),
+        .E_EXC_EN       (COP_E_EXC_EN),
+        .E_EXC_CODE     (COP_E_EXC_CODE)
+    );
 
 endmodule
