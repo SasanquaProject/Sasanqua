@@ -47,6 +47,10 @@ module schedule
     reg  [16:0] a_opcode;
     reg  [4:0]  a_rd, a_rs1, a_rs2;
 
+    reg         b_accept;
+    reg  [31:0] b_pc;
+    reg  [4:0]  b_rd, b_rs1, b_rs2;
+
     always @ (posedge CLK) begin
         if (RST || FLUSH) begin
             a_accept <= 1'b0;
@@ -57,6 +61,11 @@ module schedule
             a_rs2 <= 5'b0;
             a_csr <= 12'b0;
             a_imm <= 32'b0;
+            b_accept <= 1'b0;
+            b_pc <= 32'b0;
+            b_rd <= 5'b0;
+            b_rs1 <= 5'b0;
+            b_rs2 <= 5'b0;
         end
         else if (STALL || MEM_WAIT) begin
             // do nothing
@@ -70,12 +79,17 @@ module schedule
             a_rs2 <= A_RS2;
             a_csr <= A_CSR;
             a_imm <= A_IMM;
+            b_accept <= B_ACCEPT;
+            b_pc <= B_PC;
+            b_rd <= B_RD;
+            b_rs1 <= B_RS1;
+            b_rs2 <= B_RS2;
         end
     end
 
     /* ----- 出力(仮) ----- */
     // A (main stream)
-    assign SCHEDULE_A_ALLOW     = a_accept;
+    assign SCHEDULE_A_ALLOW     = !b_accept && a_accept;
     assign SCHEDULE_A_PC        = a_pc;
     assign SCHEDULE_A_OPCODE    = a_opcode;
     assign SCHEDULE_A_RD        = a_rd;
@@ -85,6 +99,6 @@ module schedule
     assign SCHEDULE_A_IMM       = a_imm;
 
     // B (cop)
-    assign SCHEDULE_B_ALLOW     = 1'b0;
+    assign SCHEDULE_B_ALLOW     = b_accept;
 
 endmodule

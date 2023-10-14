@@ -66,7 +66,6 @@ wire [1:0]  SCHEDULE_ALLOW          = {
 };
 
 wire [31:0] SCHEDULE_A_PC           = sasanqua.core.main.schedule_a_pc;
-wire [6:0]  SCHEDULE_A_OPCODE       = sasanqua.core.main.schedule_a_opcode;
 wire [4:0]  SCHEDULE_A_RD_ADDR      = sasanqua.core.main.schedule_a_rd;
 wire        SCHEDULE_A_RS1_VALID    = sasanqua.core.main.schedule_a_rs1_valid;
 wire [4:0]  SCHEDULE_A_RS1_ADDR     = sasanqua.core.main.schedule_a_rs1;
@@ -80,7 +79,6 @@ wire [31:0] SCHEDULE_A_CSR_DATA     = sasanqua.core.main.schedule_a_csr_data;
 wire [31:0] SCHEDULE_A_IMM          = sasanqua.core.main.schedule_a_imm;
 
 wire [31:0] SCHEDULE_B_PC           = sasanqua.core.main.sasanqua_cop.pc[1];
-wire [6:0]  SCHEDULE_B_OPCODE       = sasanqua.core.main.sasanqua_cop.opcode[1];
 wire [4:0]  SCHEDULE_B_RD_ADDR      = sasanqua.core.main.sasanqua_cop.rd[1];
 wire        SCHEDULE_B_RS1_VALID    = sasanqua.core.main.schedule_b_rs1_valid;
 wire [4:0]  SCHEDULE_B_RS1_ADDR     = sasanqua.core.main.cop_c_rs1;
@@ -91,6 +89,7 @@ wire [31:0] SCHEDULE_B_RS2_DATA     = sasanqua.core.main.schedule_b_rs2_data;
 wire [31:0] SCHEDULE_B_IMM          = sasanqua.core.main.sasanqua_cop.imm[1];
 
 // Core: Exec
+wire        EXEC_A_ALLOW            = sasanqua.core.main.exec_allow;
 wire        EXEC_A_VALID            = sasanqua.core.main.exec_valid;
 wire [31:0] EXEC_A_PC               = sasanqua.core.main.exec_pc;
 wire        EXEC_A_REG_W_EN         = sasanqua.core.main.exec_reg_w_en;
@@ -112,6 +111,7 @@ wire [31:0] EXEC_A_JMP_PC           = sasanqua.core.main.exec_jmp_pc;
 wire        EXEC_A_EXC_EN           = sasanqua.core.main.exec_exc_en;
 wire [3:0]  EXEC_A_EXC_CODE         = sasanqua.core.main.exec_exc_code;
 
+wire        EXEC_B_ALLOW            = sasanqua.core.main.cop_e_allow;
 wire        EXEC_B_VALID            = sasanqua.core.main.cop_e_valid;
 wire [31:0] EXEC_B_PC               = sasanqua.core.main.cop_e_pc;
 wire        EXEC_B_REG_W_EN         = sasanqua.core.main.cop_e_reg_w_en;

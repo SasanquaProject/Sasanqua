@@ -45,7 +45,7 @@ module sasanqua_cop
     reg        allow;
     reg [31:0] rs1_data, rs2_data;
     reg [31:0] pc       [0:2];
-    reg [16:0] opcode   [0:2];
+    reg [31:0] inst     [0:2];
     reg [4:0]  rd       [0:2];
     reg [4:0]  rs1      [0:2];
     reg [4:0]  rs2      [0:2];
@@ -61,7 +61,7 @@ module sasanqua_cop
             rs1[2] <= 5'b0;     rs1[1] <= 5'b0;    rs1[0] <= 5'b0;
             rs2[2] <= 5'b0;     rs2[1] <= 5'b0;    rs2[0] <= 5'b0;
             imm[2] <= 32'b0;    imm[1] <= 32'b0;   imm[0] <= 32'b0;
-            opcode[2] <= 17'b0; opcode[1] <= 17'b0; opcode[0] <= 17'b0;
+            inst[2] <= 32'b0;   inst[1] <= 32'b0;  inst[0] <= 32'b0;
         end
         else if (STALL || MEM_WAIT) begin
             // do nothing
@@ -70,22 +70,25 @@ module sasanqua_cop
             allow <= ALLOW;
             rs1_data <= RS1_DATA;
             rs2_data <= RS2_DATA;
-            pc[2] <= pc[1];         pc[1] <= pc[0];         pc[0] <= PC;
-            rd[2] <= rd[1];         rd[1] <= rd[0];         rd[0] <= RD;
-            rs1[2] <= rs1[1];       rs1[1] <= rs1[0];       rs1[0] <= RS1;
-            rs2[2] <= rs2[1];       rs2[1] <= rs2[0];       rs2[0] <= RS2;
-            imm[2] <= imm[1];       imm[1] <= imm[0];       imm[0] <= IMM;
-            opcode[2] <= opcode[1]; opcode[1] <= opcode[0]; opcode[0] <= OPCODE;
+            pc[2] <= pc[1];     pc[1] <= pc[0];      pc[0] <= PC;
+            rd[2] <= rd[1];     rd[1] <= rd[0];      rd[0] <= RD;
+            rs1[2] <= rs1[1];   rs1[1] <= rs1[0];    rs1[0] <= RS1;
+            rs2[2] <= rs2[1];   rs2[1] <= rs2[0];    rs2[0] <= RS2;
+            imm[2] <= imm[1];   imm[1] <= imm[0];    imm[0] <= IMM;
+            inst[2] <= inst[1]; inst[1] <= c_accept; inst[0] <= { 15'b0, OPCODE };
         end
     end
 
     // 接続
-    assign COP_C_PC    = pc[0];
-    assign COP_C_RD    = rd[0];
-    assign COP_C_RS1   = rs1[0];
-    assign COP_C_RS2   = rs2[0];
-    assign COP_E_ALLOW = allow;
-    assign COP_E_PC    = pc[2];
+    wire [31:0] c_accept;
+
+    assign COP_C_ACCEPT = c_accept != 32'b0;
+    assign COP_C_PC     = pc[0];
+    assign COP_C_RD     = rd[0];
+    assign COP_C_RS1    = rs1[0];
+    assign COP_C_RS2    = rs2[0];
+    assign COP_E_ALLOW  = allow;
+    assign COP_E_PC     = pc[2];
 
     cop_rv32i_mini cop1 (
         // 制御
@@ -93,11 +96,11 @@ module sasanqua_cop
         .RST            (RST),
 
         // Check 接続
-        .C_OPCODE       (opcode[0]),
-        .C_ACCEPT       (COP_C_ACCEPT),
+        .C_OPCODE       (inst[0][16:0]),
+        .C_ACCEPT       (c_accept),
 
         // Ready 接続
-        .R_OPCODE       (opcode[1]),
+        .R_INST         (inst[1]),
         .R_RD           (rd[1]),
         .R_RS1          (rs1[1]),
         .R_RS2          (rs2[1]),
@@ -106,7 +109,7 @@ module sasanqua_cop
         // Exec 接続
         .E_ALLOW        (allow),
         .E_PC           (pc[2]),
-        .E_OPCODE       (opcode[2]),
+        .E_INST         (inst[2]),
         .E_RD           (rd[2]),
         .E_RS1          (rs1[2]),
         .E_RS1_DATA     (rs1_data),
