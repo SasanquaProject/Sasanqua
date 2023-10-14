@@ -6,12 +6,16 @@ HW記述
 
 ### design/
 
-Sasanqua-CPU 本体
+回路記述
 
-### sim_prj/
+### tools/
+
+ツール群
+
+### sim/
 
 シミュレーション用プロジェクト
 
-### test_proj/
+### test/
 
 実機テスト用プロジェクト
