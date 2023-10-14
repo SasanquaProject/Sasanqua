@@ -178,30 +178,30 @@ module main
         .MEM_WAIT           (MEM_WAIT),
 
         // Check 接続
-        .PC                 (pool_pc),
-        .OPCODE             (pool_opcode),
-        .RD                 (pool_rd),
-        .RS1                (pool_rs1),
-        .RS2                (pool_rs2),
-        .IMM                (pool_imm),
-        .COP_C_ACCEPT       (cop_c_accept),
-        .COP_C_PC           (cop_c_pc),
-        .COP_C_RD           (cop_c_rd),
-        .COP_C_RS1          (cop_c_rs1),
-        .COP_C_RS2          (cop_c_rs2),
+        .C_I_PC             (pool_pc),
+        .C_I_OPCODE         (pool_opcode),
+        .C_I_RD             (pool_rd),
+        .C_I_RS1            (pool_rs1),
+        .C_I_RS2            (pool_rs2),
+        .C_I_IMM            (pool_imm),
+        .C_O_ACCEPT         (cop_c_accept),
+        .C_O_PC             (cop_c_pc),
+        .C_O_RD             (cop_c_rd),
+        .C_O_RS1            (cop_c_rs1),
+        .C_O_RS2            (cop_c_rs2),
 
         // Exec 接続
-        .ALLOW              (schedule_b_allow),
-        .RS1_DATA           (schedule_b_rs1_data),
-        .RS2_DATA           (schedule_b_rs2_data),
-        .COP_E_ALLOW        (cop_e_allow),
-        .COP_E_VALID        (cop_e_valid),
-        .COP_E_PC           (cop_e_pc),
-        .COP_E_REG_W_EN     (cop_e_reg_w_en),
-        .COP_E_REG_W_RD     (cop_e_reg_w_rd),
-        .COP_E_REG_W_DATA   (cop_e_reg_w_data),
-        .COP_E_EXC_EN       (cop_e_exc_en),
-        .COP_E_EXC_CODE     (cop_e_exc_code)
+        .E_I_ALLOW          (schedule_b_allow),
+        .E_I_RS1_DATA       (schedule_b_rs1_data),
+        .E_I_RS2_DATA       (schedule_b_rs2_data),
+        .E_O_ALLOW          (cop_e_allow),
+        .E_O_VALID          (cop_e_valid),
+        .E_O_PC             (cop_e_pc),
+        .E_O_REG_W_EN       (cop_e_reg_w_en),
+        .E_O_REG_W_RD       (cop_e_reg_w_rd),
+        .E_O_REG_W_DATA     (cop_e_reg_w_data),
+        .E_O_EXC_EN         (cop_e_exc_en),
+        .E_O_EXC_CODE       (cop_e_exc_code)
     );
 
     /* ----- 4-1. スケジューリング ----- */
