@@ -103,6 +103,7 @@ module sasanqua_cop
 
         // Exec 接続
         .E_ALLOW        (allow),
+        .E_PC           (pc[2]),
         .E_OPCODE       (opcode[2]),
         .E_RD           (rd[2]),
         .E_RS1          (rs1[2]),
