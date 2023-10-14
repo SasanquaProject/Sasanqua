@@ -1,5 +1,6 @@
 /* ----- Sasanqua ----- */
-wire [31:0]                     STAT;
+wire [31:0]                     GP;
+wire [3:0]                      STAT;
 
 /* ----- AXIバス接続用 ----- */
 // リセット
@@ -64,6 +65,7 @@ sasanqua # (
     // 制御
     .CLK            (CLK),
     .RST            (RST),
+    .GP             (GP),
     .STAT           (STAT),
 
     // AXIバス
