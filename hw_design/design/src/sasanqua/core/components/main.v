@@ -39,7 +39,8 @@ module main
     wire [31:0] flush_pc = trap_en ? trap_jmp_to : memr_jmp_pc;
     wire        stall    = !schedule_a_rs1_valid || !schedule_a_rs2_valid ||
                            !schedule_b_rs1_valid || !schedule_b_rs2_valid ||
-                           !schedule_a_csr_valid;
+                           !schedule_a_csr_valid ||
+                           !cushion_valid;
 
     /* ----- 1. 命令フェッチ ----- */
     wire [31:0] fetch_pc, fetch_inst;
@@ -163,7 +164,7 @@ module main
     wire        cop_c_accept;
     wire [31:0] cop_c_pc;
     wire [4:0]  cop_c_rd, cop_c_rs1, cop_c_rs2;
-    wire        cop_e_valid, cop_e_reg_w_en, cop_e_exc_en;
+    wire        cop_e_allow, cop_e_valid, cop_e_reg_w_en, cop_e_exc_en;
     wire [31:0] cop_e_pc, cop_e_reg_w_data;
     wire [4:0]  cop_e_reg_w_rd;
     wire [3:0]  cop_e_exc_code;
@@ -193,6 +194,7 @@ module main
         .ALLOW              (schedule_b_allow),
         .RS1_DATA           (schedule_b_rs1_data),
         .RS2_DATA           (schedule_b_rs2_data),
+        .COP_E_ALLOW        (cop_e_allow),
         .COP_E_VALID        (cop_e_valid),
         .COP_E_PC           (cop_e_pc),
         .COP_E_REG_W_EN     (cop_e_reg_w_en),
@@ -325,8 +327,8 @@ module main
         .FWD_CUSHION_DATA   (cushion_reg_w_data)
     );
 
-    /* ----- 5. 実行 ----- */
-    wire        exec_valid, exec_reg_w_en, exec_mem_r_en, exec_mem_r_signed, exec_csr_w_en, exec_mem_w_en, exec_jmp_do, exec_exc_en;
+    /* ----- 5. 実行(rv32i:core) ----- */
+    wire        exec_allow, exec_valid, exec_reg_w_en, exec_mem_r_en, exec_mem_r_signed, exec_csr_w_en, exec_mem_w_en, exec_jmp_do, exec_exc_en;
     wire [31:0] exec_pc, exec_reg_w_data, exec_csr_w_data, exec_mem_r_addr, exec_mem_w_addr, exec_mem_w_data, exec_jmp_pc;
     wire [11:0] exec_csr_w_addr;
     wire [4:0]  exec_reg_w_rd, exec_mem_r_rd;
@@ -354,6 +356,7 @@ module main
         .IMM                (schedule_a_imm),
 
         // 後段との接続
+        .EXEC_ALLOW         (exec_allow),
         .EXEC_VALID         (exec_valid),
         .EXEC_PC            (exec_pc),
         .EXEC_REG_W_EN      (exec_reg_w_en),
@@ -378,7 +381,7 @@ module main
     );
 
     /* ----- 6. 実行部待機 ------ */
-    wire        cushion_reg_w_en, cushion_mem_r_en, cushion_mem_r_signed, cushion_csr_w_en, cushion_mem_w_en, cushion_jmp_do, cushion_exc_en;
+    wire        cushion_valid, cushion_reg_w_en, cushion_mem_r_en, cushion_mem_r_signed, cushion_csr_w_en, cushion_mem_w_en, cushion_jmp_do, cushion_exc_en;
     wire [31:0] cushion_pc, cushion_reg_w_data, cushion_csr_w_data, cushion_mem_r_addr, cushion_mem_w_addr, cushion_mem_w_data, cushion_jmp_pc;
     wire [11:0] cushion_csr_w_addr;
     wire [4:0]  cushion_reg_w_rd, cushion_mem_r_rd;
@@ -392,6 +395,7 @@ module main
         .MEM_WAIT               (MEM_WAIT),
 
         // 前段との接続
+        .A_ALLOW                (exec_allow),
         .A_VALID                (exec_valid),
         .A_PC                   (exec_pc),
         .A_REG_W_EN             (exec_reg_w_en),
@@ -413,6 +417,7 @@ module main
         .A_JMP_PC               (exec_jmp_pc),
         .A_EXC_EN               (exec_exc_en),
         .A_EXC_CODE             (exec_exc_code),
+        .B_ALLOW                (cop_e_allow),
         .B_VALID                (cop_e_valid),
         .B_PC                   (cop_e_pc),
         .B_REG_W_EN             (cop_e_reg_w_en),
@@ -422,6 +427,7 @@ module main
         .B_EXC_CODE             (cop_e_exc_code),
 
         // 後段との接続
+        .CUSHION_VALID          (cushion_valid),
         .CUSHION_PC             (cushion_pc),
         .CUSHION_REG_W_EN       (cushion_reg_w_en),
         .CUSHION_REG_W_RD       (cushion_reg_w_rd),

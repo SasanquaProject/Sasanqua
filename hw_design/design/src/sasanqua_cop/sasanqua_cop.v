@@ -30,6 +30,7 @@ module sasanqua_cop
         input wire  [31:0]  RS2_DATA,
 
         // Cop -> Core
+        output wire         COP_E_ALLOW,
         output wire         COP_E_VALID,
         output wire [31:0]  COP_E_PC,
         output wire         COP_E_REG_W_EN,
@@ -83,6 +84,7 @@ module sasanqua_cop
     assign COP_C_RD    = rd[0];
     assign COP_C_RS1   = rs1[0];
     assign COP_C_RS2   = rs2[0];
+    assign COP_E_ALLOW = allow;
     assign COP_E_PC    = pc[2];
 
     cop_rv32i_mini cop1 (

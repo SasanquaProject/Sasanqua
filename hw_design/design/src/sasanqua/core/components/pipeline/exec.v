@@ -21,6 +21,7 @@ module exec
         input wire  [31:0]  IMM,
 
         /* ----- 後段との接続 ----- */
+        output wire         EXEC_ALLOW,
         output wire         EXEC_VALID,
         output wire [31:0]  EXEC_PC,
         output reg          EXEC_REG_W_EN,
@@ -49,6 +50,7 @@ module exec
     reg         [11:0] csr_addr;
     reg         [16:0] opcode;
     reg         [4:0]  rd_addr, rs1_addr, rs2_addr;
+    reg                allow;
 
     wire signed [31:0] rs1_data_s, rs2_data_s;
 
@@ -57,6 +59,7 @@ module exec
 
     always @ (posedge CLK) begin
         if (RST || FLUSH) begin
+            allow <= 1'b0;
             pc <= 32'b0;
             opcode <= 17'b0;
             rd_addr <= 5'b0;
@@ -72,6 +75,7 @@ module exec
             // do nothing
         end
         else if (STALL) begin
+            allow <= 1'b0;
             pc <= 32'b0;
             opcode <= 17'b0;
             rd_addr <= 5'b0;
@@ -84,21 +88,23 @@ module exec
             imm <= 32'b0;
         end
         else begin
+            allow <= ALLOW;
             pc <= PC;
-            opcode <= ALLOW ? OPCODE : 17'b0;
-            rd_addr <= ALLOW ? RD_ADDR : 5'b0;
-            rs1_addr <= ALLOW ? RS1_ADDR : 5'b0;
-            rs1_data <= ALLOW ? RS1_DATA : 32'b0;
-            rs2_addr <= ALLOW ? RS2_ADDR : 5'b0;
-            rs2_data <= ALLOW ? RS2_DATA : 32'b0;
-            csr_addr <= ALLOW ? CSR_ADDR : 12'b0;
-            csr_data <= ALLOW ? CSR_DATA : 32'b0;
-            imm <= ALLOW ? IMM : 32'b0;
+            opcode <= OPCODE;
+            rd_addr <= RD_ADDR;
+            rs1_addr <= RS1_ADDR;
+            rs1_data <= RS1_DATA;
+            rs2_addr <= RS2_ADDR;
+            rs2_data <= RS2_DATA;
+            csr_addr <= CSR_ADDR;
+            csr_data <= CSR_DATA;
+            imm <= IMM;
         end
     end
 
     /* ----- 実行 ----- */
-    assign EXEC_VALID = 1'b1;
+    assign EXEC_ALLOW = allow;
+    assign EXEC_VALID = allow;
     assign EXEC_PC    = pc;
 
     // 整数演算
