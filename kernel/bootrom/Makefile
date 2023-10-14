@@ -3,7 +3,7 @@ SHELL := /bin/bash
 IMAGE := riscv/devenv
 
 AS_OPTS := -march=rv32i_zicsr -mabi=ilp32
-GCC_OPTS := -O0 -march=rv32i_zicsr -mabi=ilp32
+GCC_OPTS := -O1 -march=rv32i_zicsr -mabi=ilp32
 LD_OPTS := -T link.ld -b elf32-littleriscv
 
 devenv:
@@ -17,6 +17,7 @@ bootrom.mem: boot.S src/*.c src/peripherals/*.c
 	riscv64-unknown-elf-gcc $(GCC_OPTS) -c -o uart.o src/peripherals/uart.c
 	riscv64-unknown-elf-gcc $(GCC_OPTS) -c -o spi.o src/peripherals/spi.c
 	riscv64-unknown-elf-gcc $(GCC_OPTS) -c -o seg7.o src/peripherals/seg7.c
+	riscv64-unknown-elf-gcc $(GCC_OPTS) -c -o gpio.o src/peripherals/gpio.c
 	riscv64-unknown-elf-ld $(LD_OPTS) -o bootrom *.o
 	riscv64-unknown-elf-objcopy -O binary bootrom bootrom.bin
 	riscv64-unknown-elf-objdump -d bootrom &> bootrom.dump
