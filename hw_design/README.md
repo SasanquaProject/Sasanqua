@@ -4,11 +4,11 @@ HW記述
 
 ## ディレクトリ構成
 
-### design/
+### design/{core, cop}
 
 回路記述
 
-### tools/
+### design/tools
 
 ツール群
 
