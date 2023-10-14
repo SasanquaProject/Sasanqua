@@ -1,5 +1,5 @@
 [package]
-name = "sasanqua_cop"
+name = "cop_ip"
 version = "0.1.0"
 edition = "2021"
 
