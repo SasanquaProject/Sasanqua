@@ -7,35 +7,74 @@ pub fn gen_ip_xact_xml(ipinfo: &IPInfo) -> String {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "spirit:component")]
+#[serde(rename = "ipxact:component")]
 struct IPXact {
-    // 固定値
-    #[serde(rename = "spirit:vendor")]
+    // IP Overview
+    #[serde(rename = "ipxact:vendor")]
     vendor: String,
-    #[serde(rename = "spirit:library")]
+    #[serde(rename = "ipxact:library")]
     library: String,
-
-    // ユーザ設定値
-    #[serde(rename = "spirit:user")]
+    #[serde(rename = "ipxact:user")]
     user: String,
-    #[serde(rename = "spirit:version")]
+    #[serde(rename = "ipxact:version")]
     version: String,
-    // TODO: spirit:busInterfaces
-    // TODO: spirit:addressSpaces
-    // TODO: spirit:model
-    // TODO: spirit:fileSets
-    // TODO: spirit:description
-    // TODO: spirit:parameters
-    // TODO: spirit:vendorExtensions
+    #[serde(rename = "ipxact:description")]
+    description: String,
+
+    // BusInterfaces
+    #[serde(rename = "ipxact:busInterfaces")]
+    bus_interfaces: Vec<IPXActBusInterface>,
+
+    // AddressSpace
+    #[serde(rename = "ipxact:addressSpaces")]
+    addr_spaces: Vec<IPXActAddrSpace>,
+
+    // Model
+    #[serde(rename = "ipxact:model")]
+    model: IPXActModel,
+
+    // FileSets
+    #[serde(rename = "ipxact:fileSets")]
+    file_sets: Vec<IPXActFileSet>,
+
+    // Parameters
+    #[serde(rename = "ipxact:parameters")]
+    parameters: Vec<IPXActParameter>,
 }
 
 impl From<&IPInfo> for IPXact {
-    fn from(_ipinfo: &IPInfo) -> Self {
+    fn from(ipinfo: &IPInfo) -> Self {
         IPXact {
-            vendor: "YNakagami".to_string(),
+            vendor: "Sasanqua Project".to_string(),
             library: "user".to_string(),
-            user: String::default(),
-            version: String::default(),
+            user: ipinfo.name.clone(),
+            version: ipinfo.version.clone(),
+            description: "".to_string(),
+            bus_interfaces: vec![],
+            addr_spaces: vec![],
+            model: IPXActModel::default(),
+            file_sets: vec![],
+            parameters: vec![],
         }
     }
 }
+
+#[derive(Serialize, Default)]
+#[serde(rename = "ipxact:busInterface")]
+struct IPXActBusInterface {}
+
+#[derive(Serialize, Default)]
+#[serde(rename = "ipxact:addressSpace")]
+struct IPXActAddrSpace {}
+
+#[derive(Serialize, Default)]
+#[serde(rename = "ipxact:model")]
+struct IPXActModel {}
+
+#[derive(Serialize, Default)]
+#[serde(rename = "ipxact:fileSet")]
+struct IPXActFileSet {}
+
+#[derive(Serialize, Default)]
+#[serde(rename = "ipxact:parameter")]
+struct IPXActParameter {}
