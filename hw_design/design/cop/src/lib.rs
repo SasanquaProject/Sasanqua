@@ -6,15 +6,12 @@ pub mod template;
 use inst::OpCode;
 use template::CopImpl;
 
+#[derive(Default)]
 pub struct CopPkg {
     profiles: Vec<Box<dyn CopProfile>>,
 }
 
 impl CopPkg {
-    pub fn new() -> Self {
-        CopPkg { profiles: vec![] }
-    }
-
     pub fn add_cop<C>(mut self, cop_profile: C) -> Self
     where
         C: CopProfile + 'static,
@@ -38,9 +35,9 @@ pub trait CopProfile {
 
 #[cfg(test)]
 mod tests {
-    use crate::{CopPkg, CopProfile};
     use crate::inst::OpCode;
-    use crate::template::{CopImplTemplate, CopImpl};
+    use crate::template::{CopImpl, CopImplTemplate};
+    use crate::{CopPkg, CopProfile};
 
     pub struct TestCop;
 
@@ -66,6 +63,6 @@ mod tests {
 
     #[test]
     fn simple() {
-        let _cop_pkg = CopPkg::new().add_cop(TestCop);
+        let _cop_pkg = CopPkg::default().add_cop(TestCop);
     }
 }

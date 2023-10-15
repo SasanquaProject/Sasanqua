@@ -96,14 +96,14 @@ impl CopImplTemplateStatus for AllFilled {}
 
 impl CopImplTemplate<AllFilled> {
     pub(crate) fn gen(self) -> String {
-        "".to_string()  // TODO
+        "".to_string() // TODO
     }
 }
 
 #[cfg(test)]
 mod tests {
+    use crate::template::{CopImpl, CopImplTemplate};
     use crate::{CopProfile, OpCode};
-    use crate::template::{CopImplTemplate, CopImpl};
 
     pub struct TestCop;
 
