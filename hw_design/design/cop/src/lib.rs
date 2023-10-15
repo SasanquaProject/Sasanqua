@@ -1,4 +1,5 @@
 mod check;
+mod gen;
 pub mod template;
 
 use template::CopImpl;
@@ -21,7 +22,8 @@ impl CopPkg {
     }
 
     pub fn gen(self) -> anyhow::Result<()> {
-        check::check_pkg(self)?;
+        check::check_pkg(&self)?;
+        gen::gen_pkg(self);
         Ok(())
     }
 }

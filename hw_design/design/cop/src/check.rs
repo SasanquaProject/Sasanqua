@@ -1,6 +1,6 @@
 use crate::{CopPkg, CopProfile};
 
-pub(crate) fn check_pkg(cop_pkg: CopPkg) -> anyhow::Result<()> {
+pub(crate) fn check_pkg(cop_pkg: &CopPkg) -> anyhow::Result<()> {
     for profile in cop_pkg.profiles.iter() {
         check_profile(profile)?;
     }
