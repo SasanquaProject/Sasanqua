@@ -1,3 +1,7 @@
+pub mod gen;
+
+use gen::CopImpl;
+
 pub struct CopPkg {
     profiles: Vec<Box<dyn CopProfile>>,
 }
@@ -18,7 +22,8 @@ impl CopPkg {
 
 pub trait CopProfile {
     fn name(&self) -> String;
-    fn opcodes(&self) -> Vec<OpCode>;
+    fn opcodes(&self) -> Vec<(&'static str, OpCode)>;
+    fn body(&self) -> CopImpl;
 }
 
 pub struct OpCode {
@@ -40,6 +45,7 @@ impl OpCode {
 #[cfg(test)]
 mod tests {
     use crate::{CopPkg, CopProfile, OpCode};
+    use crate::gen::{CopImplTemplate, CopImpl};
 
     pub struct TestCop;
 
@@ -48,12 +54,18 @@ mod tests {
             "test".to_string()
         }
 
-        fn opcodes(&self) -> Vec<OpCode> {
+        fn opcodes(&self) -> Vec<(&'static str, OpCode)> {
             vec![
-                OpCode::new(0b0000001, 0b000, 0b0000000),
-                OpCode::new(0b0000011, 0b000, 0b0000000),
-                OpCode::new(0b0000111, 0b000, 0b0000000),
+                ("INST0", OpCode::new(0b0000001, 0b000, 0b0000000)),
+                ("INST1", OpCode::new(0b0000011, 0b000, 0b0000000)),
+                ("INST2", OpCode::new(0b0000111, 0b000, 0b0000000)),
             ]
+        }
+
+        fn body(&self) -> CopImpl {
+            CopImplTemplate::from(&TestCop)
+                .set_ready("Ready")
+                .set_exec("Exec")
         }
     }
 
