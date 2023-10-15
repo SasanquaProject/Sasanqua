@@ -1,6 +1,7 @@
-pub mod gen;
+mod check;
+pub mod template;
 
-use gen::CopImpl;
+use template::CopImpl;
 
 pub struct CopPkg {
     profiles: Vec<Box<dyn CopProfile>>,
@@ -45,7 +46,7 @@ impl OpCode {
 #[cfg(test)]
 mod tests {
     use crate::{CopPkg, CopProfile, OpCode};
-    use crate::gen::{CopImplTemplate, CopImpl};
+    use crate::template::{CopImplTemplate, CopImpl};
 
     pub struct TestCop;
 

@@ -103,7 +103,7 @@ impl CopImplTemplate<AllFilled> {
 #[cfg(test)]
 mod tests {
     use crate::{CopProfile, OpCode};
-    use crate::gen::{CopImplTemplate, CopImpl};
+    use crate::template::{CopImplTemplate, CopImpl};
 
     pub struct TestCop;
 
