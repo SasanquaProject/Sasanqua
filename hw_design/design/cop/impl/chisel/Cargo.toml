@@ -1,5 +1,5 @@
 [package]
-name = "cop_ip_verilog"
+name = "chisel"
 version = "0.1.0"
 edition = "2021"
 

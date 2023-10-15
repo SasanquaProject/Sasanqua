@@ -1,0 +1,16 @@
+[package]
+name = "cop_ip"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+std_cops = { package = "std", path = "impl/std" }
+chisel_cops = { package = "chisel", path = "impl/chisel" }
+verilog_cops = { package = "verilog", path = "impl/verilog" }
+
+[workspace]
+members = [
+    "impl/std",
+    "impl/chisel",
+    "impl/verilog",
+]

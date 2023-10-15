@@ -3,5 +3,5 @@
 version = 3
 
 [[package]]
-name = "sasanqua_cop"
+name = "cop_ip_chisel"
 version = "0.1.0"
