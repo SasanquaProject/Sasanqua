@@ -1,7 +1,9 @@
 mod check;
 mod gen;
+pub mod inst;
 pub mod template;
 
+use inst::OpCode;
 use template::CopImpl;
 
 pub struct CopPkg {
@@ -34,25 +36,10 @@ pub trait CopProfile {
     fn body(&self) -> CopImpl;
 }
 
-pub struct OpCode {
-    pub opcode: u16,
-    pub funct3: u8,
-    pub funct7: u8,
-}
-
-impl OpCode {
-    pub fn new(opcode: u16, funct3: u8, funct7: u8) -> Self {
-        OpCode {
-            opcode,
-            funct3,
-            funct7,
-        }
-    }
-}
-
 #[cfg(test)]
 mod tests {
-    use crate::{CopPkg, CopProfile, OpCode};
+    use crate::{CopPkg, CopProfile};
+    use crate::inst::OpCode;
     use crate::template::{CopImplTemplate, CopImpl};
 
     pub struct TestCop;
