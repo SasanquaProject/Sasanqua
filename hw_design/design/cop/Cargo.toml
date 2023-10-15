@@ -4,6 +4,8 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+anyhow = "1.0"
+thiserror = "1.0"
 std_cops = { package = "std", path = "impl/std" }
 chisel_cops = { package = "chisel", path = "impl/chisel" }
 verilog_cops = { package = "verilog", path = "impl/verilog" }

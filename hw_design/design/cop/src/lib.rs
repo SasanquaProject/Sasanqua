@@ -19,6 +19,11 @@ impl CopPkg {
         self.profiles.push(Box::new(cop_profile));
         self
     }
+
+    pub fn gen(self) -> anyhow::Result<()> {
+        check::check_pkg(self)?;
+        Ok(())
+    }
 }
 
 pub trait CopProfile {
