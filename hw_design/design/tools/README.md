@@ -1,11 +1,5 @@
 # HW Design - Tools
 
-## ツール一覧
-
-### cop_profile
-
-コプロセッサパッケージ管理用
-
-### ipgen
+## ipgen
 
 IP生成用
