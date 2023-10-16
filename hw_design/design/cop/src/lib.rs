@@ -39,7 +39,7 @@ fn gen0<V: Vendor>(mut vfs: VfsPath, cop_pkg: CopPkg) -> anyhow::Result<VfsPath>
                 .unwrap();
         });
 
-    IPInfo::new("aaa", "0.0.0", src_fs).gen::<V>(&mut vfs)?;
+    IPInfo::new(cop_pkg.name, cop_pkg.version, src_fs).gen::<V>(&mut vfs)?;
 
     Ok(vfs)
 }
@@ -74,7 +74,7 @@ mod tests {
 
     #[test]
     fn pkggen() {
-        let cop_pkg = CopPkg::default()
+        let cop_pkg = CopPkg::new("Test", "0.1.0")
             .add_cop(TestCop)
             .add_cop(TestCop);
         let memfs = gen_memfs::<Any>(cop_pkg).unwrap();
