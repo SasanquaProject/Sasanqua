@@ -3,7 +3,7 @@ mod inst;
 mod gen;
 
 pub use cop_impl::{CopImpl, CopImplTemplate};
-pub(crate) use gen::gen;
+pub(crate) use gen::gen_impl_vs;
 pub use inst::OpCode;
 
 pub trait CopProfile {

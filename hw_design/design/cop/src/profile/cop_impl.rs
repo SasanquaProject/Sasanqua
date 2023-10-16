@@ -8,9 +8,9 @@ pub type CopImpl = CopImplTemplate<AllFilled>;
 
 pub struct CopImplTemplate<S: CopImplTemplateStatus> {
     status: PhantomData<S>,
-    check: String,
-    ready: String,
-    exec: String,
+    pub check: String,
+    pub ready: String,
+    pub exec: String,
 }
 
 pub struct Init;

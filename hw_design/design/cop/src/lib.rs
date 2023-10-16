@@ -6,7 +6,7 @@ use pkg::CopPkg;
 
 pub fn gen(cop_pkg: CopPkg) -> anyhow::Result<String> {
     // cop_impl_*.v
-    let _cop_impls_v = profile::gen(&cop_pkg.profiles)?;
+    let _cop_impls_v = profile::gen_impl_vs(&cop_pkg.profiles)?;
 
     // cop.v
     let cop_v = cop_pkg.gen()?;
