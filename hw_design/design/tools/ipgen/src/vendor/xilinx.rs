@@ -3,7 +3,7 @@ mod xgui;
 
 use vfs::VfsPath;
 
-// use crate::utils::vfs::merge_vfs;
+use crate::utils::vfs::merge_vfs;
 use crate::utils::ip_xact::gen_ip_xact_xml;
 use crate::vendor::Vendor;
 use crate::IPInfo;
@@ -11,9 +11,10 @@ use crate::IPInfo;
 pub struct Xilinx;
 
 impl Vendor for Xilinx {
-    fn gen(ipinfo: &IPInfo, root: &mut VfsPath) -> anyhow::Result<()> {
-        root.join("src")?.create_dir()?;
-        // merge_vfs(root, "src", ipinfo.sasanqua.gen()?)?;
+    fn gen(ipinfo: IPInfo, root: &mut VfsPath) -> anyhow::Result<()> {
+        root.join("component.xml")?
+            .create_file()?
+            .write_all(gen_ip_xact_xml(&ipinfo).as_bytes())?;
 
         root.join("bd")?.create_dir()?;
         root.join("bd/bd.tcl")?
@@ -25,9 +26,8 @@ impl Vendor for Xilinx {
             .create_file()?
             .write_all(xgui::XGUI_TCL)?;
 
-        root.join("component.xml")?
-            .create_file()?
-            .write_all(gen_ip_xact_xml(ipinfo).as_bytes())?;
+        root.join("src")?.create_dir()?;
+        merge_vfs(root, "src", ipinfo.src_fs)?;
 
         Ok(())
     }

@@ -21,7 +21,7 @@ impl IPInfo {
         }
     }
 
-    pub fn gen<V: Vendor>(&self, root: &mut VfsPath) -> anyhow::Result<()> {
+    pub fn gen<V: Vendor>(self, root: &mut VfsPath) -> anyhow::Result<()> {
         V::gen(self, root)
     }
 }

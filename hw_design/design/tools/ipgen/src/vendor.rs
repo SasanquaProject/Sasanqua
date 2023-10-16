@@ -8,5 +8,5 @@ pub use any::Any;
 pub use xilinx::Xilinx;
 
 pub trait Vendor {
-    fn gen(info: &IPInfo, root: &mut VfsPath) -> anyhow::Result<()>;
+    fn gen(info: IPInfo, root: &mut VfsPath) -> anyhow::Result<()>;
 }
