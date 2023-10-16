@@ -44,7 +44,7 @@ mod test {
     #[test]
     fn check_req_files() {
         let mut root = MemoryFS::new().into();
-        IPInfo::new("test", "0.1.0")
+        IPInfo::new("test", "0.1.0", vec![])
             .gen::<Xilinx>(&mut root)
             .unwrap();
 
