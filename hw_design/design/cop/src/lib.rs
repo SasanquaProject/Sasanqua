@@ -1,42 +1,23 @@
-mod check;
-mod gen;
-pub mod inst;
-pub mod cop_impl;
+pub mod pkg;
+pub mod profile;
 
-use cop_impl::CopImpl;
-use inst::OpCode;
+use pkg::CopPkg;
 
-#[derive(Default)]
-pub struct CopPkg {
-    profiles: Vec<Box<dyn CopProfile>>,
-}
+pub fn gen(cop_pkg: CopPkg) -> anyhow::Result<String> {
+    // cop_impl_*.v
+    let _cop_impls_v = profile::gen(&cop_pkg.profiles)?;
 
-impl CopPkg {
-    pub fn add_cop<C>(mut self, cop_profile: C) -> Self
-    where
-        C: CopProfile + 'static,
-    {
-        self.profiles.push(Box::new(cop_profile));
-        self
-    }
+    // cop.v
+    let cop_v = cop_pkg.gen()?;
 
-    pub fn gen(self) -> anyhow::Result<String> {
-        check::check_pkg(&self)?;
-        gen::gen_pkg(self)
-    }
-}
-
-pub trait CopProfile {
-    fn name(&self) -> String;
-    fn opcodes(&self) -> Vec<(&'static str, OpCode)>;
-    fn body(&self) -> CopImpl;
+    Ok(cop_v)
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::cop_impl::{CopImpl, CopImplTemplate};
-    use crate::inst::OpCode;
-    use crate::{CopPkg, CopProfile};
+    use crate::gen;
+    use crate::pkg::CopPkg;
+    use crate::profile::{CopImpl, CopImplTemplate, CopProfile, OpCode};
 
     pub struct TestCop;
 
@@ -62,6 +43,7 @@ mod tests {
 
     #[test]
     fn pkggen() {
-        CopPkg::default().add_cop(TestCop).gen().unwrap();
+        let cop_pkg = CopPkg::default().add_cop(TestCop);
+        gen(cop_pkg).unwrap();
     }
 }

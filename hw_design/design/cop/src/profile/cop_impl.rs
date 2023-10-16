@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 
-use crate::CopProfile;
+use crate::profile::CopProfile;
 
 pub trait CopImplTemplateStatus {}
 
@@ -95,15 +95,12 @@ pub struct AllFilled;
 impl CopImplTemplateStatus for AllFilled {}
 
 impl CopImplTemplate<AllFilled> {
-    pub(crate) fn gen(self) -> String {
-        "".to_string() // TODO
-    }
+    // ...
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::cop_impl::{CopImpl, CopImplTemplate};
-    use crate::{CopProfile, OpCode};
+    use crate::profile::{CopImpl, CopImplTemplate, CopProfile, OpCode};
 
     pub struct TestCop;
 
@@ -139,13 +136,5 @@ mod tests {
             .set_ready("Ready");
         assert_eq!(template.ready, "Ready");
         assert_eq!(template.exec, "Exec");
-    }
-
-    #[test]
-    fn fill_template_3() {
-        CopImplTemplate::from(&TestCop)
-            .set_ready("Ready")
-            .set_exec("Exec")
-            .gen();
     }
 }

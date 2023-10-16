@@ -1,4 +1,5 @@
-use crate::{CopPkg, CopProfile};
+use crate::pkg::CopPkg;
+use crate::profile::CopProfile;
 
 pub(crate) fn check_pkg(cop_pkg: &CopPkg) -> anyhow::Result<()> {
     for profile in cop_pkg.profiles.iter() {
