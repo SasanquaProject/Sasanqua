@@ -1,0 +1,12 @@
+[package]
+name = "copgen_cui"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = "1.0"
+thiserror = "1.0"
+vfs = "0.9"
+std_cops = { package = "std", path = "../../impl/std" }
+verilog_cops = { package = "verilog", path = "../../impl/verilog" }
+chisel_cops = { package = "chisel", path = "../../impl/chisel" }

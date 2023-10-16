@@ -13,7 +13,7 @@ name = "chisel"
 version = "0.1.0"
 
 [[package]]
-name = "cop_ip"
+name = "copgen"
 version = "0.1.0"
 dependencies = [
  "anyhow",
@@ -21,6 +21,18 @@ dependencies = [
  "serde",
  "thiserror",
  "tinytemplate",
+ "vfs",
+]
+
+[[package]]
+name = "copgen_cui"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "chisel",
+ "std",
+ "thiserror",
+ "verilog",
  "vfs",
 ]
 
@@ -118,7 +130,7 @@ dependencies = [
 name = "std"
 version = "0.1.0"
 dependencies = [
- "cop_ip",
+ "copgen",
 ]
 
 [[package]]
@@ -172,7 +184,7 @@ checksum = "3354b9ac3fae1ff6755cb6db53683adb661634f67557942dea4facebec0fee4b"
 name = "verilog"
 version = "0.1.0"
 dependencies = [
- "cop_ip",
+ "copgen",
 ]
 
 [[package]]

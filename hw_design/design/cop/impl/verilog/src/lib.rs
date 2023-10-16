@@ -1,4 +1,4 @@
-use cop_ip::profile::{CopProfile, CopImpl, CopImplTemplate, OpCode};
+use copgen::profile::{CopProfile, CopImpl, CopImplTemplate, OpCode};
 
 pub struct Void;
 

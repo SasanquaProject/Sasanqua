@@ -1,9 +1,9 @@
-use cop_ip::profile::{CopProfile, CopImpl, CopImplTemplate, OpCode};
+use copgen::profile::{CopProfile, CopImpl, CopImplTemplate, OpCode};
 
 pub struct Rv32iMini;
 
 impl CopProfile for Rv32iMini {
-    fn opcodes(&self) -> Vec<(&'static str, cop_ip::profile::OpCode)> {
+    fn opcodes(&self) -> Vec<(&'static str, OpCode)> {
         vec![
             ("INST_ADD", OpCode::new(0b0110011, 0b000, 0b0000000)),
             ("INST_ADDI", OpCode::new(0b0010011, 0b000, 0b0000000)),
