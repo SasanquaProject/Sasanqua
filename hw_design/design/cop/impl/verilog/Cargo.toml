@@ -4,3 +4,4 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+cop_ip = { package = "cop_ip", path = "../../" }

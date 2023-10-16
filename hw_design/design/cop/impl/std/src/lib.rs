@@ -30,22 +30,8 @@ impl CopProfile for Rv32iMini {
     }
 
     fn body(&self) -> CopImpl {
-        CopImplTemplate::from(&Void)
+        CopImplTemplate::from(&Rv32iMini)
             .set_ready("")
             .set_exec(include_str!("../hw/src/rv32i_mini/exec.v"))
-    }
-}
-
-pub struct Void;
-
-impl CopProfile for Void {
-    fn opcodes(&self) -> Vec<(&'static str, cop_ip::profile::OpCode)> {
-        vec![]
-    }
-
-    fn body(&self) -> CopImpl {
-        CopImplTemplate::from(&Void)
-            .set_ready("")
-            .set_exec(include_str!("../hw/src/void/exec.v"))
     }
 }
