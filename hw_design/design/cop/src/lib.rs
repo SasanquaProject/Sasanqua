@@ -1,10 +1,10 @@
 mod check;
 mod gen;
 pub mod inst;
-pub mod template;
+pub mod cop_impl;
 
+use cop_impl::CopImpl;
 use inst::OpCode;
-use template::CopImpl;
 
 #[derive(Default)]
 pub struct CopPkg {
@@ -34,8 +34,8 @@ pub trait CopProfile {
 
 #[cfg(test)]
 mod tests {
+    use crate::cop_impl::{CopImpl, CopImplTemplate};
     use crate::inst::OpCode;
-    use crate::template::{CopImpl, CopImplTemplate};
     use crate::{CopPkg, CopProfile};
 
     pub struct TestCop;
@@ -62,9 +62,6 @@ mod tests {
 
     #[test]
     fn pkggen() {
-        CopPkg::default()
-            .add_cop(TestCop)
-            .gen()
-            .unwrap();
+        CopPkg::default().add_cop(TestCop).gen().unwrap();
     }
 }
