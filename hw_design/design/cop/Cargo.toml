@@ -7,6 +7,7 @@ edition = "2021"
 anyhow = "1.0"
 thiserror = "1.0"
 serde = { version = "1.0", features = ["derive"] }
+vfs = "0.9"
 tinytemplate = "1.1"
 ipgen = { package = "ipgen", path = "../tools/ipgen" }
 std_cops = { package = "std", path = "impl/std" }

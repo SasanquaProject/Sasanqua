@@ -24,6 +24,7 @@ dependencies = [
  "thiserror",
  "tinytemplate",
  "verilog",
+ "vfs",
 ]
 
 [[package]]

@@ -50,8 +50,6 @@ impl TextGeneratable for DeclareModuleTemplate {}
 
 impl From<usize> for DeclareModuleTemplate {
     fn from(id: usize) -> Self {
-        DeclareModuleTemplate {
-            DEC_ID: id as i32,
-        }
+        DeclareModuleTemplate { DEC_ID: id as i32 }
     }
 }
