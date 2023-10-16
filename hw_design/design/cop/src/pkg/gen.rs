@@ -1,7 +1,6 @@
 use serde::Serialize;
 
 use crate::pkg::CopPkg;
-use crate::profile::CopProfile;
 use crate::utils::TextGeneratable;
 
 const COP_V: &'static str = include_str!("../../template/src/cop.v");
@@ -12,7 +11,7 @@ pub(crate) fn gen_pkg(cop_pkg: CopPkg) -> anyhow::Result<String> {
         .profiles
         .into_iter()
         .enumerate()
-        .map(|item| DeclareModuleTemplate::from(item).gen(COP_DEC_MODULE_V))
+        .map(|(id, _)| DeclareModuleTemplate::from(id).gen(COP_DEC_MODULE_V))
         .collect::<anyhow::Result<Vec<String>>>()?;
 
     TopTemplate::from(module_declares).gen(COP_V)
@@ -45,16 +44,14 @@ impl From<Vec<String>> for TopTemplate {
 #[derive(Serialize)]
 struct DeclareModuleTemplate {
     DEC_ID: i32,
-    DEC_NAME: String,
 }
 
 impl TextGeneratable for DeclareModuleTemplate {}
 
-impl From<(usize, Box<dyn CopProfile>)> for DeclareModuleTemplate {
-    fn from((id, profile): (usize, Box<dyn CopProfile>)) -> Self {
+impl From<usize> for DeclareModuleTemplate {
+    fn from(id: usize) -> Self {
         DeclareModuleTemplate {
             DEC_ID: id as i32,
-            DEC_NAME: profile.name(),
         }
     }
 }

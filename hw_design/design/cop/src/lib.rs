@@ -23,10 +23,6 @@ mod tests {
     pub struct TestCop;
 
     impl CopProfile for TestCop {
-        fn name(&self) -> String {
-            "test".to_string()
-        }
-
         fn opcodes(&self) -> Vec<(&'static str, OpCode)> {
             vec![
                 ("INST0", OpCode::new(0b0000001, 0b000, 0b0000000)),

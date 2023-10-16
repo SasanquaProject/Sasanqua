@@ -7,7 +7,6 @@ pub(crate) use gen::gen_impl_vs;
 pub use inst::OpCode;
 
 pub trait CopProfile {
-    fn name(&self) -> String;
     fn opcodes(&self) -> Vec<(&'static str, OpCode)>;
     fn body(&self) -> CopImpl;
 }

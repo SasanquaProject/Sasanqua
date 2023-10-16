@@ -105,10 +105,6 @@ mod tests {
     pub struct TestCop;
 
     impl CopProfile for TestCop {
-        fn name(&self) -> String {
-            "test".to_string()
-        }
-
         fn opcodes(&self) -> Vec<(&'static str, OpCode)> {
             vec![]
         }

@@ -48,7 +48,7 @@ assign C_O_RS2    = rs2_{DEC_ID}[0];
 assign E_O_ALLOW  = allow_{DEC_ID};
 assign E_O_PC     = pc_{DEC_ID}[2];
 
-{DEC_NAME} cop_{DEC_ID} (
+cop_{DEC_ID} cop_{DEC_ID} (
     // 制御
     .CLK            (CLK),
     .RST            (RST),
