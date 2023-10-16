@@ -10,9 +10,9 @@ serde = { version = "1.0", features = ["derive"] }
 vfs = "0.9"
 tinytemplate = "1.1"
 ipgen = { package = "ipgen", path = "../tools/ipgen" }
-std_cops = { package = "std", path = "impl/std" }
-chisel_cops = { package = "chisel", path = "impl/chisel" }
-verilog_cops = { package = "verilog", path = "impl/verilog" }
+# std_cops = { package = "std", path = "impl/std" }
+# chisel_cops = { package = "chisel", path = "impl/chisel" }
+# verilog_cops = { package = "verilog", path = "impl/verilog" }
 
 [workspace]
 members = [

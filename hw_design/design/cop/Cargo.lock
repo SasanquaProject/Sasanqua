@@ -17,13 +17,10 @@ name = "cop_ip"
 version = "0.1.0"
 dependencies = [
  "anyhow",
- "chisel",
  "ipgen",
  "serde",
- "std",
  "thiserror",
  "tinytemplate",
- "verilog",
  "vfs",
 ]
 
@@ -120,6 +117,9 @@ dependencies = [
 [[package]]
 name = "std"
 version = "0.1.0"
+dependencies = [
+ "cop_ip",
+]
 
 [[package]]
 name = "syn"
