@@ -1,8 +1,8 @@
 use serde::Serialize;
-use tinytemplate::{format_unescaped, TinyTemplate};
 
 use crate::pkg::CopPkg;
 use crate::profile::CopProfile;
+use crate::utils::TextGeneratable;
 
 const COP_V: &'static str = include_str!("../../hw/src/cop.v");
 const COP_DEC_MODULE_V: &'static str = include_str!("../../hw/src/cop_dec_module.v");
@@ -16,18 +16,6 @@ pub(crate) fn gen_pkg(cop_pkg: CopPkg) -> anyhow::Result<String> {
         .collect::<anyhow::Result<Vec<String>>>()?;
 
     TopTemplate::from(module_declares).gen(COP_V)
-}
-
-trait TextGeneratable
-where
-    Self: Serialize + Sized,
-{
-    fn gen(self, template: &'static str) -> anyhow::Result<String> {
-        let mut tt = TinyTemplate::new();
-        tt.set_default_formatter(&format_unescaped);
-        tt.add_template("Template", template)?;
-        Ok(tt.render("Template", &self)?)
-    }
 }
 
 #[allow(non_snake_case)]

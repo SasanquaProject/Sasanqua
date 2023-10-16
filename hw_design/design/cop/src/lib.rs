@@ -1,5 +1,6 @@
 pub mod pkg;
 pub mod profile;
+mod utils;
 
 use pkg::CopPkg;
 
