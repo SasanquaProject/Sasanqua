@@ -8,6 +8,7 @@ anyhow = "1.0"
 thiserror = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 tinytemplate = "1.1"
+ipgen = { package = "ipgen", path = "../tools/ipgen" }
 std_cops = { package = "std", path = "impl/std" }
 chisel_cops = { package = "chisel", path = "impl/chisel" }
 verilog_cops = { package = "verilog", path = "impl/verilog" }
