@@ -20,10 +20,9 @@ impl CopPkg {
         self
     }
 
-    pub fn gen(self) -> anyhow::Result<()> {
+    pub fn gen(self) -> anyhow::Result<String> {
         check::check_pkg(&self)?;
-        gen::gen_pkg(self);
-        Ok(())
+        gen::gen_pkg(self)
     }
 }
 
@@ -62,7 +61,10 @@ mod tests {
     }
 
     #[test]
-    fn simple() {
-        let _cop_pkg = CopPkg::default().add_cop(TestCop);
+    fn pkggen() {
+        CopPkg::default()
+            .add_cop(TestCop)
+            .gen()
+            .unwrap();
     }
 }

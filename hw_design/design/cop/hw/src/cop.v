@@ -40,6 +40,6 @@ module sasanqua_cop
         output wire [3:0]   E_O_EXC_CODE
     );
 
-    {%COP_DECLARE_MODULES%}
+    {MODULE_DECLARES}
 
 endmodule
