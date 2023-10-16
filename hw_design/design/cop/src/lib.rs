@@ -4,14 +4,23 @@ mod utils;
 
 use pkg::CopPkg;
 
-pub fn gen(cop_pkg: CopPkg) -> anyhow::Result<String> {
-    // cop_impl_*.v
-    let _cop_impls_v = profile::gen_impl_vs(&cop_pkg.profiles)?;
+pub fn gen(cop_pkg: CopPkg) -> anyhow::Result<()> {
+    let cop_impls_v = profile::gen_impl_vs(&cop_pkg.profiles)?;
+    let cop_impls_v = cop_impls_v
+        .into_iter()
+        .enumerate()
+        .map(|(idx, s)| (format!("cop_impl_{}.v", idx), s))
+        .collect::<Vec<(String, String)>>();
 
-    // cop.v
     let cop_v = cop_pkg.gen()?;
+    let cop_v = vec![("cop.v".to_string(), cop_v)];
 
-    Ok(cop_v)
+    let _dep_files = vec![cop_impls_v, cop_v]
+        .into_iter()
+        .flatten()
+        .collect::<Vec<(String, String)>>();
+
+    Ok(())
 }
 
 #[cfg(test)]

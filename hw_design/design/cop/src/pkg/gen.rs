@@ -6,10 +6,10 @@ use crate::utils::TextGeneratable;
 const COP_V: &'static str = include_str!("../../template/src/cop.v");
 const COP_DEC_MODULE_V: &'static str = include_str!("../../template/src/cop_dec_module.v");
 
-pub(crate) fn gen_pkg(cop_pkg: CopPkg) -> anyhow::Result<String> {
+pub(crate) fn gen_pkg(cop_pkg: &CopPkg) -> anyhow::Result<String> {
     let module_declares = cop_pkg
         .profiles
-        .into_iter()
+        .iter()
         .enumerate()
         .map(|(id, _)| DeclareModuleTemplate::from(id).gen(COP_DEC_MODULE_V))
         .collect::<anyhow::Result<Vec<String>>>()?;

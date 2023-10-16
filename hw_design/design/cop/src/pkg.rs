@@ -17,8 +17,8 @@ impl CopPkg {
         self
     }
 
-    pub(crate) fn gen(self) -> anyhow::Result<String> {
+    pub(crate) fn gen(&self) -> anyhow::Result<String> {
         check::check_pkg(&self)?;
-        gen::gen_pkg(self)
+        gen::gen_pkg(&self)
     }
 }
