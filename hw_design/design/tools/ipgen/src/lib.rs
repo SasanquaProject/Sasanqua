@@ -6,22 +6,18 @@ use vfs::VfsPath;
 use vendor::Vendor;
 
 #[derive(Debug)]
-pub struct IPInfo<'a> {
+pub struct IPInfo {
     pub name: String,
     pub version: String,
-    pub files: Vec<(&'a str, &'a str)>, // name, body
+    pub src_fs: VfsPath,
 }
 
-impl<'a> IPInfo<'a> {
-    pub fn new(
-        name: impl Into<String>,
-        version: impl Into<String>,
-        files: Vec<(&'a str, &'a str)>,
-    ) -> IPInfo<'a> {
+impl IPInfo {
+    pub fn new(name: impl Into<String>, version: impl Into<String>, src_fs: VfsPath) -> IPInfo {
         IPInfo {
             name: name.into(),
             version: version.into(),
-            files,
+            src_fs,
         }
     }
 
@@ -40,7 +36,7 @@ mod test {
     #[test]
     fn ipgen_xilinx() {
         let mut fs = MemoryFS::new().into();
-        let res = IPInfo::new("Sasanqua", "0.1.0", vec![])
+        let res = IPInfo::new("Sasanqua", "0.1.0", MemoryFS::new().into())
             .gen::<Xilinx>(&mut fs)
             .is_ok();
         assert!(res);

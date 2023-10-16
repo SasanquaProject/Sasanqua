@@ -42,8 +42,8 @@ struct IPXact {
     parameters: Vec<IPXActParameter>,
 }
 
-impl<'a> From<&IPInfo<'a>> for IPXact {
-    fn from(ipinfo: &IPInfo<'a>) -> Self {
+impl<'a> From<&IPInfo> for IPXact {
+    fn from(ipinfo: &IPInfo) -> Self {
         IPXact {
             vendor: "Sasanqua Project".to_string(),
             library: "user".to_string(),

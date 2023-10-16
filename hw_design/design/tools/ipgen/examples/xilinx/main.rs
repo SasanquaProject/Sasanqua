@@ -1,4 +1,4 @@
-use vfs::PhysicalFS;
+use vfs::{MemoryFS, PhysicalFS};
 
 use ipgen::vendor::Xilinx;
 use ipgen::IPInfo;
@@ -9,6 +9,6 @@ fn main() -> anyhow::Result<()> {
     std::fs::create_dir(dst_dir)?;
     let mut fs = PhysicalFS::new(dst_dir).into();
 
-    let ipinfo = IPInfo::new("Example", "0.1.0", vec![]);
+    let ipinfo = IPInfo::new("Example", "0.1.0", MemoryFS::new().into());
     ipinfo.gen::<Xilinx>(&mut fs)
 }
