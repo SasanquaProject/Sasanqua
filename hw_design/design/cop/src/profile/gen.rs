@@ -3,7 +3,7 @@ use serde::Serialize;
 use crate::profile::CopProfile;
 use crate::utils::TextGeneratable;
 
-const COP_IMPL_V: &'static str = include_str!("../../hw/src/cop_impl.v");
+const COP_IMPL_V: &'static str = include_str!("../../template/src/cop_impl.v");
 
 pub fn gen_impl_vs(profiles: &Vec<Box<dyn CopProfile>>) -> anyhow::Result<Vec<String>> {
     profiles

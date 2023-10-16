@@ -4,8 +4,8 @@ use crate::pkg::CopPkg;
 use crate::profile::CopProfile;
 use crate::utils::TextGeneratable;
 
-const COP_V: &'static str = include_str!("../../hw/src/cop.v");
-const COP_DEC_MODULE_V: &'static str = include_str!("../../hw/src/cop_dec_module.v");
+const COP_V: &'static str = include_str!("../../template/src/cop.v");
+const COP_DEC_MODULE_V: &'static str = include_str!("../../template/src/cop_dec_module.v");
 
 pub(crate) fn gen_pkg(cop_pkg: CopPkg) -> anyhow::Result<String> {
     let module_declares = cop_pkg
