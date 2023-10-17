@@ -2,14 +2,31 @@ pub mod pkg;
 pub mod profile;
 mod utils;
 
-use vfs::{MemoryFS, VfsPath};
+use std::fs::create_dir;
+
+use vfs::{MemoryFS, VfsPath, PhysicalFS};
 
 use ipgen::vendor::Vendor;
 use ipgen::IPInfo;
 
 use pkg::CopPkg;
 
-pub fn gen_memfs<V: Vendor>(cop_pkg: CopPkg) -> anyhow::Result<VfsPath> {
+pub fn gen_physfs<V, S>(cop_pkg: CopPkg, dir: S) -> anyhow::Result<VfsPath>
+where
+    V: Vendor,
+    S: Into<String>,
+{
+    let dir = dir.into();
+
+    create_dir(&dir)?;
+    let fs = PhysicalFS::new(dir).into();
+    gen0::<V>(fs, cop_pkg)
+}
+
+pub fn gen_memfs<V>(cop_pkg: CopPkg) -> anyhow::Result<VfsPath>
+where
+    V: Vendor,
+{
     let fs = MemoryFS::new().into();
     gen0::<V>(fs, cop_pkg)
 }

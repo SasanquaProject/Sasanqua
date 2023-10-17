@@ -11,6 +11,7 @@ impl Executable for Help {
         println!("{}: Reset a package context", Color::Green.paint("new"));
         println!("{}: Add a cop-impl to package", Color::Green.paint("add"));
         println!("{}: Print package information", Color::Green.paint("status"));
+        println!("{}: Generate a cop-ip", Color::Green.paint("generate"));
         println!("{}: Print available cop-impls", Color::Green.paint("list"));
         println!("{}: Print help information", Color::Green.paint("help"));
         println!("{}: Exit this interactive terminal", Color::Green.paint("exit"));
