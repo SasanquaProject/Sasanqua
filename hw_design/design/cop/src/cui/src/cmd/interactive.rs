@@ -1,3 +1,4 @@
+mod add;
 mod new;
 mod status;
 mod not_found;
@@ -45,6 +46,7 @@ fn parse_stdin() -> anyhow::Result<Option<(Box<dyn Executable>, Vec<String>)>> {
 
     match args[0].as_str() {
         "new" => Ok(Some((Box::new(new::New), args))),
+        "add" => Ok(Some((Box::new(add::Add), args))),
         "status" => Ok(Some((Box::new(status::Status), args))),
         "list" => Ok(Some((Box::new(list::List), args))),
         "help" => Ok(Some((Box::new(help::Help), args))),
