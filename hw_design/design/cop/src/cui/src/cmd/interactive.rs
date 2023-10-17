@@ -1,9 +1,10 @@
+mod new;
 mod not_found;
 mod help;
 mod list;
 
-use std::io::{stdin, stdout};
 use std::io::Write;
+use std::io::{stdin, stdout};
 
 use clap::Parser;
 
@@ -19,7 +20,7 @@ impl InteractiveCmd {
             if let Some((cmd, args)) = parse_stdin()? {
                 context = cmd.exec(context, args)?;
                 println!("");
-                continue
+                continue;
             }
             return Ok(());
         }
@@ -28,7 +29,7 @@ impl InteractiveCmd {
 
 pub(super) trait Executable
 where
-    Self: 'static
+    Self: 'static,
 {
     fn exec(&self, context: Option<CopPkg>, args: Vec<String>) -> anyhow::Result<Option<CopPkg>>;
 }
@@ -42,6 +43,7 @@ fn parse_stdin() -> anyhow::Result<Option<(Box<dyn Executable>, Vec<String>)>> {
     let args: Vec<String> = input.trim().split(" ").map(|s| s.to_string()).collect();
 
     match args[0].as_str() {
+        "new" => Ok(Some((Box::new(new::New), args))),
         "list" => Ok(Some((Box::new(list::List), args))),
         "help" => Ok(Some((Box::new(help::Help), args))),
         "exit" => Ok(None),

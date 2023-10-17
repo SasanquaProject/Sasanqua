@@ -24,7 +24,7 @@ impl App {
         };
         match result {
             Ok(_) => Ok(()),
-            err@Err(_) => err,
+            err @ Err(_) => err,
         }
     }
 }
