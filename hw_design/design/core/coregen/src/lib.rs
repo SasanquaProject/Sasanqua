@@ -26,23 +26,11 @@ mod test {
         let sasanqua = Sasanqua::new(AXI4);
         let hw_vfs = gen(&sasanqua).unwrap();
 
-        // assert!(open_file(&hw_vfs, "sasanqua.v").is_ok());
-        // assert!(open_file(&hw_vfs, "core/core.v").is_ok());
-        // assert!(open_file(&hw_vfs, "core/pipeline/check.v").is_ok());
-        // assert!(open_file(&hw_vfs, "core/pipeline/cushion.v").is_ok());
-        // assert!(open_file(&hw_vfs, "core/pipeline/decode.v").is_ok());
-        // assert!(open_file(&hw_vfs, "core/pipeline/fetch.v").is_ok());
-        // assert!(open_file(&hw_vfs, "core/pipeline/mread.v").is_ok());
-        // assert!(open_file(&hw_vfs, "core/pipeline/schedule_1st.v").is_ok());
-        // assert!(open_file(&hw_vfs, "core/pipeline/exec/std_rv32i_s.v").is_ok());
-        // assert!(open_file(&hw_vfs, "core/pipeline/register/std_csr.v").is_ok());
-        // assert!(open_file(&hw_vfs, "core/pipeline/register/std_rv32i.v").is_ok());
-        // assert!(open_file(&hw_vfs, "mmu/axi/cache.v").is_ok());
-        // assert!(open_file(&hw_vfs, "mmu/axi/interconnect.v").is_ok());
-        // assert!(open_file(&hw_vfs, "mmu/axi/mmu.v").is_ok());
-        // assert!(open_file(&hw_vfs, "mmu/axi/translate.v").is_ok());
-        // assert!(open_file(&hw_vfs, "mmu/utils/ram/ram_dualport.v").is_ok());
-        // assert!(open_file(&hw_vfs, "mmu/utils/rom/rom_dualport.v").is_ok());
+        assert!(open_file(&hw_vfs, "sasanqua.v").is_ok());
+        assert!(open_file(&hw_vfs, "core/core.v").is_ok());
+        assert!(open_file(&hw_vfs, "mem/axi/mem.v").is_ok());
+        assert!(open_file(&hw_vfs, "mem/utils/ram/ram_dualport.v").is_ok());
+        assert!(open_file(&hw_vfs, "peripherals/clint.v").is_ok());
     }
 
     fn open_file(root: &VfsPath, path: &str) -> anyhow::Result<VfsPath> {
