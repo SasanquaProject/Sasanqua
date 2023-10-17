@@ -54,6 +54,7 @@ mod tests {
     use crate::pkg::CopPkg;
     use crate::profile::{CopImpl, CopImplTemplate, CopProfile, OpCode};
 
+    #[derive(Debug)]
     pub struct TestCop;
 
     impl CopProfile for TestCop {

@@ -102,6 +102,7 @@ impl CopImplTemplate<AllFilled> {
 mod tests {
     use crate::profile::{CopImpl, CopImplTemplate, CopProfile, OpCode};
 
+    #[derive(Debug)]
     pub struct TestCop;
 
     impl CopProfile for TestCop {

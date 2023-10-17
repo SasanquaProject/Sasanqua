@@ -1,5 +1,6 @@
 use copgen::profile::{CopProfile, CopImpl, CopImplTemplate, OpCode};
 
+#[derive(Debug)]
 pub struct Rv32iMini;
 
 impl CopProfile for Rv32iMini {
