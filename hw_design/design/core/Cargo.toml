@@ -1,6 +1,6 @@
-[package]
-name = "core_ip"
-version = "0.1.0"
-edition = "2021"
-
-[dependencies]
+[workspace]
+members = [
+    "src/cui",
+    # "src/gui",
+    "coregen",
+]

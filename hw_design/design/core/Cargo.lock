@@ -3,5 +3,9 @@
 version = 3
 
 [[package]]
-name = "sasanqua"
+name = "coregen"
+version = "0.1.0"
+
+[[package]]
+name = "coregen_cui"
 version = "0.1.0"
