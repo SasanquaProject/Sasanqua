@@ -1,3 +1,5 @@
-fn main() {
-    println!("Hello, CopGen-CUI!");
+mod cmd;
+
+fn main() -> anyhow::Result<()> {
+    cmd::App::run()
 }
