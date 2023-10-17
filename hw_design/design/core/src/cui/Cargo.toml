@@ -4,3 +4,9 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+anyhow = "1.0"
+thiserror = "1.0"
+vfs = "0.9"
+clap = { version = "3.1", features = ["derive"] }
+ansi_term = "0.12"
+coregen = { package = "coregen", path = "../../coregen" }

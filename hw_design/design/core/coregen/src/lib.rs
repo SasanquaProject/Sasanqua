@@ -1,15 +1,29 @@
 mod factory;
 pub mod sasanqua;
 
-use vfs::{MemoryFS, VfsPath};
+use std::fs::create_dir;
+
+use vfs::{PhysicalFS, MemoryFS, VfsPath};
 
 use factory::{Factory, HwMakable};
 use sasanqua::Sasanqua;
 
-pub fn gen(sasanqua: &Sasanqua) -> anyhow::Result<VfsPath> {
-    let mut root = MemoryFS::new().into();
-    Factory::make(sasanqua, &mut root)?;
-    Ok(root)
+pub fn gen_physfs<S: Into<String>>(sasanqua: &Sasanqua, dir: S) -> anyhow::Result<VfsPath> {
+    let dir = dir.into();
+
+    create_dir(&dir)?;
+    let fs = PhysicalFS::new(dir).into();
+    gen0(fs, sasanqua)
+}
+
+pub fn gen_memfs(sasanqua: &Sasanqua) -> anyhow::Result<VfsPath> {
+    let fs = MemoryFS::new().into();
+    gen0(fs, sasanqua)
+}
+
+fn gen0(mut vfs: VfsPath, sasanqua: &Sasanqua) -> anyhow::Result<VfsPath> {
+    Factory::make(sasanqua, &mut vfs)?;
+    Ok(vfs)
 }
 
 #[cfg(test)]
@@ -17,14 +31,14 @@ mod test {
     use thiserror::Error;
     use vfs::VfsPath;
 
-    use crate::gen;
+    use crate::gen_memfs;
     use crate::sasanqua::Sasanqua;
     use crate::sasanqua::bus::AXI4;
 
     #[test]
     fn check_req_files() {
         let sasanqua = Sasanqua::new(AXI4);
-        let hw_vfs = gen(&sasanqua).unwrap();
+        let hw_vfs = gen_memfs(&sasanqua).unwrap();
 
         assert!(open_file(&hw_vfs, "sasanqua.v").is_ok());
         assert!(open_file(&hw_vfs, "core/core.v").is_ok());
