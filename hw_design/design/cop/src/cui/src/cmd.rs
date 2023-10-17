@@ -1,3 +1,5 @@
+mod interactive;
+
 use clap::{AppSettings, Parser, Subcommand};
 
 /// Cop-IP Generator - CUI
@@ -12,13 +14,13 @@ pub struct App {
 #[derive(Subcommand)]
 #[allow(non_camel_case_types)]
 enum AppSub {
-    Tmp,
+    Interactive(interactive::InteractiveCmd),
 }
 
 impl App {
     pub fn run() -> anyhow::Result<()> {
         let result: anyhow::Result<()> = match App::parse().sub {
-            _ => Ok(()),
+            AppSub::Interactive(cmd) => cmd.run(),
         };
         match result {
             Ok(_) => Ok(()),
