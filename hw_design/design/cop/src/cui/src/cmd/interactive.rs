@@ -1,5 +1,6 @@
 mod not_found;
 mod help;
+mod list;
 
 use std::io::{stdin, stdout};
 use std::io::Write;
@@ -38,6 +39,7 @@ fn parse_stdin() -> anyhow::Result<Option<(Box<dyn Executable>, Vec<String>)>> {
     let args: Vec<String> = input.trim().split(" ").map(|s| s.to_string()).collect();
 
     match args[0].as_str() {
+        "list" => Ok(Some((Box::new(list::List), args))),
         "help" => Ok(Some((Box::new(help::Help), args))),
         "exit" => Ok(None),
         _ => Ok(Some((Box::new(not_found::NotFound), args))),
