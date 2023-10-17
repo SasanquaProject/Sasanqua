@@ -103,6 +103,7 @@ dependencies = [
  "anyhow",
  "chisel",
  "clap",
+ "copgen",
  "std",
  "thiserror",
  "verilog",

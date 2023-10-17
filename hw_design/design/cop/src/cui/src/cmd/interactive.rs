@@ -7,14 +7,17 @@ use std::io::Write;
 
 use clap::Parser;
 
+use copgen::pkg::CopPkg;
+
 #[derive(Parser)]
 pub struct InteractiveCmd;
 
 impl InteractiveCmd {
     pub fn run(&self) -> anyhow::Result<()> {
+        let mut context: Option<CopPkg> = None;
         loop {
             if let Some((cmd, args)) = parse_stdin()? {
-                cmd.exec(args)?;
+                context = cmd.exec(context, args)?;
                 println!("");
                 continue
             }
@@ -27,7 +30,7 @@ pub(super) trait Executable
 where
     Self: 'static
 {
-    fn exec(&self, ext_args: Vec<String>) -> anyhow::Result<()>;
+    fn exec(&self, context: Option<CopPkg>, args: Vec<String>) -> anyhow::Result<Option<CopPkg>>;
 }
 
 fn parse_stdin() -> anyhow::Result<Option<(Box<dyn Executable>, Vec<String>)>> {

@@ -9,6 +9,7 @@ thiserror = "1.0"
 vfs = "0.9"
 clap = { version = "3.1", features = ["derive"] }
 ansi_term = "0.12"
+copgen = { package = "copgen", path = "../../copgen" }
 std_cops = { package = "std", path = "../../impl/std" }
 verilog_cops = { package = "verilog", path = "../../impl/verilog" }
 chisel_cops = { package = "chisel", path = "../../impl/chisel" }
