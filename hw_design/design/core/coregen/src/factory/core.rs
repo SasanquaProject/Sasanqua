@@ -1,13 +1,12 @@
 use vfs::VfsPath;
 
-use super::HwFactory;
-use crate::sasanqua::bus::AXI4;
+use super::HwMakable;
 use crate::Sasanqua;
 
 pub struct CoreFactory;
 
-impl HwFactory<AXI4> for CoreFactory {
-    fn make(_: &Sasanqua<AXI4>, root: &mut VfsPath) -> anyhow::Result<()> {
+impl HwMakable for CoreFactory {
+    fn make(_: &Sasanqua, root: &mut VfsPath) -> anyhow::Result<()> {
         // core
         root.join("core")?.create_dir()?;
 
@@ -25,7 +24,6 @@ impl HwFactory<AXI4> for CoreFactory {
         root.join("core/components/mmu.v")?
             .create_file()?
             .write_all(include_bytes!("../../hw_parts/src/core/components/mmu.v"))?;
-
 
         // core/components/pipeline
         root.join("core/components/pipeline")?.create_dir()?;

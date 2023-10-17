@@ -1,19 +1,20 @@
 pub mod bus;
 
-use std::marker::PhantomData;
-
 use bus::BusInterface;
 
 #[derive(Debug)]
-pub struct Sasanqua<B: BusInterface> {
-    pub bus_if: PhantomData<B>,
+pub struct Sasanqua {
+    pub bus_if: Box<dyn BusInterface>,
 }
 
-impl<B: BusInterface> Sasanqua<B> {
+impl Sasanqua {
     #[allow(unused_variables)]
-    pub fn new(bus_if: B) -> Sasanqua<B> {
+    pub fn new<B>(bus_if: B) -> Sasanqua
+    where
+        B: BusInterface + 'static,
+    {
         Sasanqua {
-            bus_if: PhantomData,
+            bus_if: Box::new(bus_if),
         }
     }
 }

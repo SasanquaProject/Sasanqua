@@ -1,13 +1,12 @@
 use vfs::VfsPath;
 
-use super::HwFactory;
-use crate::sasanqua::bus::AXI4;
+use super::HwMakable;
 use crate::Sasanqua;
 
 pub struct MemFactory;
 
-impl HwFactory<AXI4> for MemFactory {
-    fn make(_: &Sasanqua<AXI4>, root: &mut VfsPath) -> anyhow::Result<()> {
+impl HwMakable for MemFactory {
+    fn make(_: &Sasanqua, root: &mut VfsPath) -> anyhow::Result<()> {
         // mem
         root.join("mem")?.create_dir()?;
 

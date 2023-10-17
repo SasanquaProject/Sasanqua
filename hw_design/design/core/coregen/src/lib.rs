@@ -3,12 +3,12 @@ pub mod sasanqua;
 
 use vfs::{MemoryFS, VfsPath};
 
+use factory::{Factory, HwMakable};
 use sasanqua::Sasanqua;
-use sasanqua::bus::AXI4;
 
-pub fn gen(sasanqua: &Sasanqua<AXI4>) -> anyhow::Result<VfsPath> {
+pub fn gen(sasanqua: &Sasanqua) -> anyhow::Result<VfsPath> {
     let mut root = MemoryFS::new().into();
-    factory::make(sasanqua, &mut root)?;
+    Factory::make(sasanqua, &mut root)?;
     Ok(root)
 }
 

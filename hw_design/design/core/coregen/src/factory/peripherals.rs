@@ -1,13 +1,12 @@
 use vfs::VfsPath;
 
-use super::HwFactory;
-use crate::sasanqua::bus::AXI4;
+use super::HwMakable;
 use crate::Sasanqua;
 
 pub struct PeripheralsFactory;
 
-impl HwFactory<AXI4> for PeripheralsFactory {
-    fn make(_: &Sasanqua<AXI4>, root: &mut VfsPath) -> anyhow::Result<()> {
+impl HwMakable for PeripheralsFactory {
+    fn make(_: &Sasanqua, root: &mut VfsPath) -> anyhow::Result<()> {
         // peripherals
         root.join("peripherals")?.create_dir()?;
 
