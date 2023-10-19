@@ -2,15 +2,25 @@
 
 HW記述
 
+## コマンド
+
+```
+$ make build
+
+// Core
+$ make core.new
+$ make core.gen
+
+// Cop
+$ make cop.new
+$ make cop.gen
+```
+
 ## ディレクトリ構成
 
-### design/{core, cop}
+### design/
 
 回路記述
-
-### design/tools
-
-ツール群
 
 ### sim/
 
