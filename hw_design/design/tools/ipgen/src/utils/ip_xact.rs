@@ -3,56 +3,25 @@ use serde::{Serialize, Deserialize};
 use crate::IPInfo;
 
 pub fn gen_ip_xact_xml(ipinfo: &IPInfo) -> String {
-    quick_xml::se::to_string(&IPXact::from(ipinfo)).unwrap()
+    quick_xml::se::to_string(&IPXact::default()).unwrap()
 }
 
-#[derive(Serialize)]
+#[derive(Debug, Default, Serialize, Deserialize)]
 #[serde(rename = "component", rename_all = "camelCase")]
 struct IPXact {
-    // IP Overview
-    #[serde(rename = "vendor")]
     vendor: String,
-    #[serde(rename = "library")]
     library: String,
-    #[serde(rename = "user")]
     user: String,
-    #[serde(rename = "version")]
     version: String,
-    #[serde(rename = "description")]
     description: String,
+    bus_interfaces: BusInterfaces,
+    address_spaces: AddressSpaces,
+    file_sets: FileSets,
+    parameters: Parameters,
 
-    // BusInterfaces
-    bus_interfaces: Vec<BusInterface>,
-
-    // AddressSpace
-    address_spaces: Vec<AddressSpace>,
-
-    // Model
+    // TODO
     #[serde(rename = "model")]
     model: IPXActModel,
-
-    // FileSets
-    file_sets: Vec<FileSet>,
-
-    // Parameters
-    parameters: Vec<Parameter>,
-}
-
-impl<'a> From<&IPInfo> for IPXact {
-    fn from(ipinfo: &IPInfo) -> Self {
-        IPXact {
-            vendor: "Sasanqua Project".to_string(),
-            library: "user".to_string(),
-            user: ipinfo.name.clone(),
-            version: ipinfo.version.clone(),
-            description: "".to_string(),
-            bus_interfaces: vec![],
-            address_spaces: vec![],
-            model: IPXActModel::default(),
-            file_sets: vec![],
-            parameters: vec![],
-        }
-    }
 }
 
 #[derive(Debug, Default, Serialize, Deserialize)]
@@ -65,9 +34,9 @@ pub struct BusInterfaces {
 #[serde(rename_all = "camelCase")]
 pub struct BusInterface {
     pub name: String,
-    pub bus_type: (),
-    pub abstraction_type: (),
-    pub master: Option<()>,
+    pub bus_type: (), // TODO: attributes
+    pub abstraction_type: (), // TODO: attributes
+    pub master: Option<()>, // TODO: elements
     pub slave: Option<()>,
     pub port_maps: PortMaps,
     pub parameters: Option<Parameters>,
@@ -113,7 +82,7 @@ pub struct AddressSpace {
     pub width: u32,
 }
 
-#[derive(Serialize, Default)]
+#[derive(Debug, Default, Serialize, Deserialize)]
 #[serde(rename = "model")]
 struct IPXActModel {}
 
