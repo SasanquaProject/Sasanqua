@@ -22,8 +22,7 @@ struct IPXact {
     description: String,
 
     // BusInterfaces
-    #[serde(rename = "busInterfaces")]
-    bus_interfaces: Vec<IPXActBusInterface>,
+    bus_interfaces: Vec<BusInterface>,
 
     // AddressSpace
     address_spaces: Vec<AddressSpace>,
@@ -56,13 +55,58 @@ impl<'a> From<&IPInfo> for IPXact {
     }
 }
 
-#[derive(Serialize, Default)]
-#[serde(rename = "busInterface")]
-struct IPXActBusInterface {}
+#[derive(Debug, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct BusInterfaces {
+    pub bus_interface: Vec<BusInterface>,
+}
 
 #[derive(Debug, Default, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-struct AddressSpace {
+pub struct BusInterface {
+    pub name: String,
+    pub bus_type: (),
+    pub abstraction_type: (),
+    pub master: Option<()>,
+    pub slave: Option<()>,
+    pub port_maps: PortMaps,
+    pub parameters: Option<Parameters>,
+}
+
+#[derive(Debug, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PortMaps {
+    pub port_map: Vec<PortMap>,
+}
+
+#[derive(Debug, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PortMap {
+    pub logical_port: LogicalPort,
+    pub physical_port: PhysicalPort,
+}
+
+#[derive(Debug, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct LogicalPort {
+    pub name: String,
+}
+
+#[derive(Debug, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct PhysicalPort {
+    pub name: String,
+}
+
+#[derive(Debug, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct AddressSpaces {
+    pub address_space: AddressSpace,
+}
+
+#[derive(Debug, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct AddressSpace {
     pub name: String,
     pub display_name: String,
     pub range: String,
@@ -72,6 +116,12 @@ struct AddressSpace {
 #[derive(Serialize, Default)]
 #[serde(rename = "model")]
 struct IPXActModel {}
+
+#[derive(Debug, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct FileSets {
+    pub file_set: Vec<FileSet>,
+}
 
 #[derive(Debug, Default, Serialize, Deserialize)]
 pub struct FileSet {
@@ -87,6 +137,11 @@ pub struct File {
 }
 
 #[derive(Debug, Default, Serialize, Deserialize)]
+pub struct Parameters {
+    pub parameter: Vec<Parameter>,
+}
+
+#[derive(Debug, Default, Serialize, Deserialize)]
 pub struct Parameter {
     pub name: String,
     pub value: String,  // TODO: attributes
@@ -96,9 +151,66 @@ pub struct Parameter {
 mod tests {
     use std::fmt::Debug;
 
-    use serde::{Serialize, Deserialize};
+    use serde::Deserialize;
 
-    use super::{AddressSpace, FileSet, Parameter};
+    use super::{BusInterfaces, AddressSpaces, FileSets, Parameters};
+
+    #[test]
+    fn de_bus_interfaces() {
+        let sample = r#"
+            <?xml version="1.0" encoding="UTF-8"?>
+            <spirit:busInterfaces>
+                <spirit:busInterface>
+                    <spirit:name>RST</spirit:name>
+                    <spirit:busType spirit:vendor="xilinx.com" spirit:library="signal" spirit:name="reset" spirit:version="1.0"/>
+                    <spirit:abstractionType spirit:vendor="xilinx.com" spirit:library="signal" spirit:name="reset_rtl" spirit:version="1.0"/>
+                    <spirit:slave/>
+                    <spirit:portMaps>
+                        <spirit:portMap>
+                            <spirit:logicalPort>
+                                <spirit:name>RST</spirit:name>
+                            </spirit:logicalPort>
+                            <spirit:physicalPort>
+                                <spirit:name>RST</spirit:name>
+                            </spirit:physicalPort>
+                        </spirit:portMap>
+                    </spirit:portMaps>
+                </spirit:busInterface>
+                <spirit:busInterface>
+                    <spirit:name>CLK</spirit:name>
+                    <spirit:busType spirit:vendor="xilinx.com" spirit:library="signal" spirit:name="clock" spirit:version="1.0"/>
+                    <spirit:abstractionType spirit:vendor="xilinx.com" spirit:library="signal" spirit:name="clock_rtl" spirit:version="1.0"/>
+                    <spirit:slave/>
+                    <spirit:portMaps>
+                        <spirit:portMap>
+                            <spirit:logicalPort>
+                                <spirit:name>CLK</spirit:name>
+                            </spirit:logicalPort>
+                            <spirit:physicalPort>
+                                <spirit:name>CLK</spirit:name>
+                            </spirit:physicalPort>
+                        </spirit:portMap>
+                    </spirit:portMaps>
+                    <spirit:parameters>
+                        <spirit:parameter>
+                            <spirit:name>ASSOCIATED_RESET</spirit:name>
+                            <spirit:value spirit:id="BUSIFPARAM_VALUE.CLK.ASSOCIATED_RESET">RST</spirit:value>
+                        </spirit:parameter>
+                        <spirit:parameter>
+                            <spirit:name>ASSOCIATED_PORT</spirit:name>
+                            <spirit:value spirit:id="BUSIFPARAM_VALUE.CLK.ASSOCIATED_PORT">STAT</spirit:value>
+                        </spirit:parameter>
+                        <spirit:parameter>
+                            <spirit:name>ASSOCIATED_BUSIF</spirit:name>
+                            <spirit:value spirit:id="BUSIFPARAM_VALUE.CLK.ASSOCIATED_BUSIF">M_AXI</spirit:value>
+                        </spirit:parameter>
+                    </spirit:parameters>
+                </spirit:busInterface>
+            </spirit:busInterfaces>
+        "#;
+
+        check::<BusInterfaces>(sample);
+    }
 
     #[test]
     fn de_address_spaces() {
@@ -113,12 +225,6 @@ mod tests {
                 </spirit:addressSpace>
             </spirit:addressSpaces>
         "#;
-
-        #[derive(Debug, Serialize, Deserialize)]
-        #[serde(rename_all = "camelCase")]
-        struct AddressSpaces {
-            address_space: Vec<AddressSpace>,
-        }
 
         check::<AddressSpaces>(sample);
     }
@@ -153,12 +259,6 @@ mod tests {
             </spirit:fileSets>
         "#;
 
-        #[derive(Debug, Serialize, Deserialize)]
-        #[serde(rename_all = "camelCase")]
-        struct FileSets {
-            file_set: Vec<FileSet>,
-        }
-
         check::<FileSets>(sample);
     }
 
@@ -177,12 +277,6 @@ mod tests {
                 </spirit:parameter>
             </spirit:parameters>
         "#;
-
-        #[derive(Debug, Serialize, Deserialize)]
-        #[serde(rename_all = "camelCase")]
-        struct Parameters {
-            parameter: Vec<Parameter>,
-        }
 
         check::<Parameters>(sample);
     }
