@@ -3,8 +3,12 @@
 ## コマンド
 
 ```
-// CUI
-$ cargo run --bin copgen_cui
+// Build (once)
+$ make build
+
+// Generate a Core-IP
+$ make new
+$ make gen
 ```
 
 ## クレート

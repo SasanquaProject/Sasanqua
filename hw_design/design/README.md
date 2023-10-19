@@ -1,19 +1,5 @@
 # HW Design - design
 
-## コマンド
-
-```
-$ make build
-
-// Core
-$ make core.new
-$ make core.gen
-
-// Cop
-$ make cop.new
-$ make cop.gen
-```
-
 ## ディレクトリ構成
 
 ### cop/
