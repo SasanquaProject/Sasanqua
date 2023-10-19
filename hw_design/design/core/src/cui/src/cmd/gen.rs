@@ -39,21 +39,21 @@ impl GenCmd {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-struct IpConf {
-    ip: IP,
-    core: Core,
+pub(crate) struct IpConf {
+    pub ip: IP,
+    pub core: Core,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-struct IP {
-    name: String,
-    version: String,
+pub(crate) struct IP {
+    pub name: String,
+    pub version: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-struct Core {
-    bus_if: String,
-    vendor: String,
+pub(crate) struct Core {
+    pub bus_if: String,
+    pub vendor: String,
 }
 
 #[derive(Debug, Error)]

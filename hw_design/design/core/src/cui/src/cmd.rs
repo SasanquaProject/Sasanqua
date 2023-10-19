@@ -1,4 +1,5 @@
 mod gen;
+mod new;
 mod interactive;
 
 use clap::{AppSettings, Parser, Subcommand};
@@ -15,6 +16,9 @@ pub struct App {
 #[derive(Subcommand)]
 #[allow(non_camel_case_types)]
 enum AppSub {
+    /// Output a configure template
+    New(new::NewCmd),
+
     /// Generate Core-IP
     Gen(gen::GenCmd),
 
@@ -25,6 +29,7 @@ enum AppSub {
 impl App {
     pub fn run() -> anyhow::Result<()> {
         let result: anyhow::Result<()> = match App::parse().sub {
+            AppSub::New(cmd) => cmd.run(),
             AppSub::Interactive(cmd) => cmd.run(),
             AppSub::Gen(cmd) => cmd.run(),
         };
