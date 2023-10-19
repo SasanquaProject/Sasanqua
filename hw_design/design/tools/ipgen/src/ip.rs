@@ -30,3 +30,15 @@ pub struct IPInfo {
     pub(crate) file_sets: FileSets,
     pub(crate) parameters: Parameters,
 }
+
+impl IPInfo {
+    pub fn new_mini<S: Into<String>>(name: S, version: S) -> Self {
+        let mut ipinfo = IPInfo::default();
+        ipinfo.vendor = "Sasanqua Project".to_string();
+        ipinfo.library = "user".to_string();
+        ipinfo.name = name.into();
+        ipinfo.version = version.into();
+
+        ipinfo
+    }
+}
