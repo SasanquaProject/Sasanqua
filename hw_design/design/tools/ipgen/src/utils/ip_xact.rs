@@ -1,44 +1,44 @@
-use serde::Serialize;
+use serde::{Serialize, Deserialize};
 
 use crate::IPInfo;
 
 pub fn gen_ip_xact_xml(ipinfo: &IPInfo) -> String {
-    serde_xml_rs::to_string(&IPXact::from(ipinfo)).unwrap()
+    quick_xml::se::to_string(&IPXact::from(ipinfo)).unwrap()
 }
 
 #[derive(Serialize)]
-#[serde(rename = "ipxact:component")]
+#[serde(rename = "component")]
 struct IPXact {
     // IP Overview
-    #[serde(rename = "ipxact:vendor")]
+    #[serde(rename = "vendor")]
     vendor: String,
-    #[serde(rename = "ipxact:library")]
+    #[serde(rename = "library")]
     library: String,
-    #[serde(rename = "ipxact:user")]
+    #[serde(rename = "user")]
     user: String,
-    #[serde(rename = "ipxact:version")]
+    #[serde(rename = "version")]
     version: String,
-    #[serde(rename = "ipxact:description")]
+    #[serde(rename = "description")]
     description: String,
 
     // BusInterfaces
-    #[serde(rename = "ipxact:busInterfaces")]
+    #[serde(rename = "busInterfaces")]
     bus_interfaces: Vec<IPXActBusInterface>,
 
     // AddressSpace
-    #[serde(rename = "ipxact:addressSpaces")]
+    #[serde(rename = "addressSpaces")]
     addr_spaces: Vec<IPXActAddrSpace>,
 
     // Model
-    #[serde(rename = "ipxact:model")]
+    #[serde(rename = "model")]
     model: IPXActModel,
 
     // FileSets
-    #[serde(rename = "ipxact:fileSets")]
+    #[serde(rename = "fileSets")]
     file_sets: Vec<IPXActFileSet>,
 
     // Parameters
-    #[serde(rename = "ipxact:parameters")]
+    #[serde(rename = "parameters")]
     parameters: Vec<IPXActParameter>,
 }
 
@@ -60,21 +60,59 @@ impl<'a> From<&IPInfo> for IPXact {
 }
 
 #[derive(Serialize, Default)]
-#[serde(rename = "ipxact:busInterface")]
+#[serde(rename = "busInterface")]
 struct IPXActBusInterface {}
 
 #[derive(Serialize, Default)]
-#[serde(rename = "ipxact:addressSpace")]
+#[serde(rename = "addressSpace")]
 struct IPXActAddrSpace {}
 
 #[derive(Serialize, Default)]
-#[serde(rename = "ipxact:model")]
+#[serde(rename = "model")]
 struct IPXActModel {}
 
 #[derive(Serialize, Default)]
-#[serde(rename = "ipxact:fileSet")]
+#[serde(rename = "fileSet")]
 struct IPXActFileSet {}
 
-#[derive(Serialize, Default)]
-#[serde(rename = "ipxact:parameter")]
-struct IPXActParameter {}
+#[derive(Debug, Serialize, Deserialize, Default)]
+pub struct IPXActParameter {
+    pub name: String,
+    pub value: String,  // TODO: attributes
+}
+
+#[cfg(test)]
+mod tests {
+    use serde::{Serialize, Deserialize};
+
+    use super::{IPXActParameter};
+
+    #[test]
+    fn de_parameters() {
+        #[derive(Debug, Serialize, Deserialize)]
+        #[serde(rename = "parameters")]
+        struct Test {
+            parameter: Vec<IPXActParameter>,
+        }
+
+        let sample = r#"
+<?xml version="1.0" encoding="UTF-8"?>
+<spirit:parameters>
+    <spirit:parameter>
+        <spirit:name>Component_Name</spirit:name>
+        <spirit:value spirit:resolve="user" spirit:id="PARAM_VALUE.Component_Name" spirit:order="1">sasanqua_v1_0</spirit:value>
+    </spirit:parameter>
+    <spirit:parameter>
+        <spirit:name>START_ADDR</spirit:name>
+        <spirit:value spirit:format="bitString" spirit:resolve="user" spirit:id="PARAM_VALUE.START_ADDR" spirit:bitStringLength="32">0x00000000</spirit:value>
+    </spirit:parameter>
+</spirit:parameters>
+        "#;
+
+        check::<Test>(sample);
+    }
+
+    fn check<'a, T: Deserialize<'a>>(s: &'static str) {
+        assert!(quick_xml::de::from_str::<T>(s).is_ok())
+    }
+}
