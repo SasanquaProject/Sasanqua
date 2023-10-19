@@ -1,7 +1,7 @@
 // 入力取り込み
 reg        allow_{DEC_ID};
 reg [31:0] rs1_data_{DEC_ID};
-reg [31:0] s2_data_{DEC_ID};
+reg [31:0] rs2_data_{DEC_ID};
 reg [31:0] pc_{DEC_ID}   [0:2];
 reg [31:0] inst_{DEC_ID} [0:2];
 reg [4:0]  rd_{DEC_ID}   [0:2];
@@ -28,12 +28,12 @@ always @ (posedge CLK) begin
         allow_{DEC_ID} <= E_I_ALLOW;
         rs1_data_{DEC_ID} <= E_I_RS1_DATA;
         rs2_data_{DEC_ID} <= E_I_RS2_DATA;
-        pc_{DEC_ID}[2] <= pc_{DEC_ID}[1];     pc_{DEC_ID}[1] <= pc_{DEC_ID}[0];   pc_{DEC_ID}[0] <= C_I_PC;
-        rd_{DEC_ID}[2] <= rd_{DEC_ID}[1];     rd_{DEC_ID}[1] <= rd_{DEC_ID}[0];   rd_{DEC_ID}[0] <= C_I_RD;
-        rs1_{DEC_ID}[2] <= rs1_{DEC_ID}[1];   rs1_{DEC_ID}[1] <= rs1_{DEC_ID}[0]; rs1_{DEC_ID}[0] <= C_I_RS1;
-        rs2_{DEC_ID}[2] <= rs2_{DEC_ID}[1];   rs2_{DEC_ID}[1] <= rs2_{DEC_ID}[0]; rs2_{DEC_ID}[0] <= C_I_RS2;
-        imm_{DEC_ID}[2] <= imm_{DEC_ID}[1];   imm_{DEC_ID}[1] <= imm_{DEC_ID}[0]; imm_{DEC_ID}[0] <= C_I_IMM;
-        inst_{DEC_ID}[2] <= inst_{DEC_ID}[1]; inst_{DEC_ID}[1] <= c_accept;       inst_{DEC_ID}[0] <= \{ 15'b0, C_I_OPCODE };
+        pc_{DEC_ID}[2] <= pc_{DEC_ID}[1];     pc_{DEC_ID}[1] <= pc_{DEC_ID}[0];      pc_{DEC_ID}[0] <= C_I_PC;
+        rd_{DEC_ID}[2] <= rd_{DEC_ID}[1];     rd_{DEC_ID}[1] <= rd_{DEC_ID}[0];      rd_{DEC_ID}[0] <= C_I_RD;
+        rs1_{DEC_ID}[2] <= rs1_{DEC_ID}[1];   rs1_{DEC_ID}[1] <= rs1_{DEC_ID}[0];    rs1_{DEC_ID}[0] <= C_I_RS1;
+        rs2_{DEC_ID}[2] <= rs2_{DEC_ID}[1];   rs2_{DEC_ID}[1] <= rs2_{DEC_ID}[0];    rs2_{DEC_ID}[0] <= C_I_RS2;
+        imm_{DEC_ID}[2] <= imm_{DEC_ID}[1];   imm_{DEC_ID}[1] <= imm_{DEC_ID}[0];    imm_{DEC_ID}[0] <= C_I_IMM;
+        inst_{DEC_ID}[2] <= inst_{DEC_ID}[1]; inst_{DEC_ID}[1] <= c_accept_{DEC_ID}; inst_{DEC_ID}[0] <= \{ 15'b0, C_I_OPCODE };
     end
 end
 
