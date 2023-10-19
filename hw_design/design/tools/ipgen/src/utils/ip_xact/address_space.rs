@@ -3,7 +3,7 @@ use serde::{Serialize, Deserialize};
 #[derive(Debug, Default, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct AddressSpaces {
-    address_space: AddressSpace,
+    address_space: Vec<AddressSpace>,
 }
 
 #[derive(Debug, Default, Serialize, Deserialize)]
@@ -15,9 +15,36 @@ struct AddressSpace {
     width: u32,
 }
 
+impl AddressSpaces {
+    pub fn new() -> Self {
+        AddressSpaces { address_space: vec![] }
+    }
+
+    pub fn add_address_space<S: Into<String>>(mut self, name: S, range: S, width: u32) -> Self {
+        let name = name.into();
+        let display_name = name.clone();
+        let range = range.into();
+
+        self.address_space.push(
+            AddressSpace { name, display_name, range, width }
+        );
+
+        self
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::AddressSpaces;
+
+    #[test]
+    fn serialize() {
+        let address_spaces = AddressSpaces::new()
+            .add_address_space("M_AXI", "0x100000000", 32)
+            .add_address_space("M_AXI_2", "0x100000000", 32);
+
+        assert!(quick_xml::se::to_string(&address_spaces).is_ok());
+    }
 
     #[test]
     fn deserialize() {
