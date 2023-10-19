@@ -3,31 +3,31 @@ mod xgui;
 
 use vfs::VfsPath;
 
-use crate::utils::vfs::merge_vfs;
-use crate::utils::ip_xact::gen_ip_xact_xml;
+use crate::utils::merge_vfs;
 use crate::vendor::Vendor;
+use crate::ip::gen_ip_xact_xml;
 use crate::IPInfo;
 
 pub struct Xilinx;
 
 impl Vendor for Xilinx {
-    fn gen(ipinfo: IPInfo, root: &mut VfsPath) -> anyhow::Result<()> {
-        root.join("component.xml")?
+    fn gen(vfs: &mut VfsPath, ipinfo: IPInfo, src: VfsPath) -> anyhow::Result<()> {
+        vfs.join("component.xml")?
             .create_file()?
             .write_all(gen_ip_xact_xml(&ipinfo).as_bytes())?;
 
-        root.join("bd")?.create_dir()?;
-        root.join("bd/bd.tcl")?
+        vfs.join("bd")?.create_dir()?;
+        vfs.join("bd/bd.tcl")?
             .create_file()?
             .write_all(bd::BD_TCL)?;
 
-        root.join("xgui")?.create_dir()?;
-        root.join("xgui/xgui.tcl")?
+        vfs.join("xgui")?.create_dir()?;
+        vfs.join("xgui/xgui.tcl")?
             .create_file()?
             .write_all(xgui::XGUI_TCL)?;
 
-        root.join("src")?.create_dir()?;
-        merge_vfs(root, "src", ipinfo.src_fs)?;
+        vfs.join("src")?.create_dir()?;
+        merge_vfs(vfs, "src", src)?;
 
         Ok(())
     }
@@ -39,19 +39,20 @@ mod test {
     use vfs::{MemoryFS, VfsPath};
 
     use super::Xilinx;
-    use crate::IPInfo;
+    use crate::{IPInfo, gen};
 
     #[test]
     fn check_req_files() {
-        let mut root = MemoryFS::new().into();
-        IPInfo::new("test", "0.1.0", MemoryFS::new().into())
-            .gen::<Xilinx>(&mut root)
-            .unwrap();
+        let ipinfo = IPInfo::default();
+        let vfs = gen::<Xilinx>(
+            MemoryFS::new().into(),
+            ipinfo,
+            MemoryFS::new().into()
+        ).unwrap();
 
-        assert!(open_file(&root, "component.xml").is_ok());
-        assert!(open_file(&root, "xgui/xgui.tcl").is_ok());
-        assert!(open_file(&root, "bd/bd.tcl").is_ok());
-        // assert!(open_file(&root, "src/sasanqua.v").is_ok());
+        assert!(open_file(&vfs, "component.xml").is_ok());
+        assert!(open_file(&vfs, "xgui/xgui.tcl").is_ok());
+        assert!(open_file(&vfs, "bd/bd.tcl").is_ok());
     }
 
     fn open_file(root: &VfsPath, path: &str) -> anyhow::Result<VfsPath> {
