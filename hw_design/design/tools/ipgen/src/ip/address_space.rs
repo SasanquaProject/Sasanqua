@@ -1,4 +1,4 @@
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Default, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -17,7 +17,9 @@ struct AddressSpace {
 
 impl AddressSpaces {
     pub fn new() -> Self {
-        AddressSpaces { address_space: vec![] }
+        AddressSpaces {
+            address_space: vec![],
+        }
     }
 
     pub fn add_address_space<S: Into<String>>(mut self, name: S, range: S, width: u32) -> Self {
@@ -25,9 +27,12 @@ impl AddressSpaces {
         let display_name = name.clone();
         let range = range.into();
 
-        self.address_space.push(
-            AddressSpace { name, display_name, range, width }
-        );
+        self.address_space.push(AddressSpace {
+            name,
+            display_name,
+            range,
+            width,
+        });
 
         self
     }

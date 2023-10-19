@@ -1,8 +1,8 @@
 use vfs::{MemoryFS, PhysicalFS};
 
-use ipgen::vendor::Xilinx;
-use ipgen::ip::IPInfo;
 use ipgen::gen;
+use ipgen::ip::IPInfo;
+use ipgen::vendor::Xilinx;
 
 fn main() -> anyhow::Result<()> {
     let dst_dir = "./example_ip";

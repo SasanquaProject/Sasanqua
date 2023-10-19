@@ -3,9 +3,9 @@ mod xgui;
 
 use vfs::VfsPath;
 
+use crate::ip::gen_ip_xact_xml;
 use crate::utils::merge_vfs;
 use crate::vendor::Vendor;
-use crate::ip::gen_ip_xact_xml;
 use crate::IPInfo;
 
 pub struct Xilinx;
@@ -39,16 +39,12 @@ mod test {
     use vfs::{MemoryFS, VfsPath};
 
     use super::Xilinx;
-    use crate::{IPInfo, gen};
+    use crate::{gen, IPInfo};
 
     #[test]
     fn check_req_files() {
         let ipinfo = IPInfo::default();
-        let vfs = gen::<Xilinx>(
-            MemoryFS::new().into(),
-            ipinfo,
-            MemoryFS::new().into()
-        ).unwrap();
+        let vfs = gen::<Xilinx>(MemoryFS::new().into(), ipinfo, MemoryFS::new().into()).unwrap();
 
         assert!(open_file(&vfs, "component.xml").is_ok());
         assert!(open_file(&vfs, "xgui/xgui.tcl").is_ok());

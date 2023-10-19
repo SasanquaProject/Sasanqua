@@ -4,7 +4,7 @@ mod file_set;
 mod model;
 mod parameter;
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 pub use address_space::AddressSpaces;
 pub use bus_interface::BusInterfaces;

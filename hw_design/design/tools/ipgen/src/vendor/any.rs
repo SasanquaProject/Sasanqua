@@ -25,16 +25,12 @@ mod test {
     use vfs::{MemoryFS, VfsPath};
 
     use super::Any;
-    use crate::{IPInfo, gen};
+    use crate::{gen, IPInfo};
 
     #[test]
     fn check_req_files() {
         let ipinfo = IPInfo::default();
-        let vfs = gen::<Any>(
-            MemoryFS::new().into(),
-            ipinfo,
-            MemoryFS::new().into()
-        ).unwrap();
+        let vfs = gen::<Any>(MemoryFS::new().into(), ipinfo, MemoryFS::new().into()).unwrap();
 
         assert!(open_file(&vfs, "README.txt").is_ok());
     }

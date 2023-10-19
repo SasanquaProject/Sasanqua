@@ -1,4 +1,4 @@
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Default, Serialize, Deserialize)]
 pub struct Parameters {
@@ -8,7 +8,7 @@ pub struct Parameters {
 #[derive(Debug, Default, Serialize, Deserialize)]
 struct Parameter {
     name: String,
-    value: String,  // TODO: attributes
+    value: String, // TODO: attributes
 }
 
 impl Parameters {
@@ -20,9 +20,7 @@ impl Parameters {
         let name = name.into();
         let value = value.into();
 
-        self.parameter.push(
-            Parameter { name, value }
-        );
+        self.parameter.push(Parameter { name, value });
 
         self
     }
