@@ -7,7 +7,7 @@ pub fn gen_ip_xact_xml(ipinfo: &IPInfo) -> String {
 }
 
 #[derive(Serialize)]
-#[serde(rename = "component")]
+#[serde(rename = "component", rename_all = "camelCase")]
 struct IPXact {
     // IP Overview
     #[serde(rename = "vendor")]
@@ -34,12 +34,10 @@ struct IPXact {
     model: IPXActModel,
 
     // FileSets
-    #[serde(rename = "fileSets")]
-    file_sets: Vec<IPXActFileSet>,
+    file_sets: Vec<FileSet>,
 
     // Parameters
-    #[serde(rename = "parameters")]
-    parameters: Vec<IPXActParameter>,
+    parameters: Vec<Parameter>,
 }
 
 impl<'a> From<&IPInfo> for IPXact {
@@ -71,48 +69,103 @@ struct IPXActAddrSpace {}
 #[serde(rename = "model")]
 struct IPXActModel {}
 
-#[derive(Serialize, Default)]
-#[serde(rename = "fileSet")]
-struct IPXActFileSet {}
+#[derive(Debug, Default, Serialize, Deserialize)]
+pub struct FileSet {
+    pub name: String,
+    pub file: Vec<File>,
+}
 
-#[derive(Debug, Serialize, Deserialize, Default)]
-pub struct IPXActParameter {
+#[derive(Debug, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct File {
+    pub name: String,
+    pub file_type: String,
+}
+
+#[derive(Debug, Default, Serialize, Deserialize)]
+pub struct Parameter {
     pub name: String,
     pub value: String,  // TODO: attributes
 }
 
 #[cfg(test)]
 mod tests {
+    use std::fmt::Debug;
+
     use serde::{Serialize, Deserialize};
 
-    use super::{IPXActParameter};
+    use super::{FileSet, Parameter};
+
+    #[test]
+    fn de_file_sets() {
+        let sample = r#"
+            <?xml version="1.0" encoding="UTF-8"?>
+            <spirit:fileSets>
+                <spirit:fileSet>
+                    <spirit:name>xilinx_verilogsynthesis_view_fileset</spirit:name>
+                    <spirit:file>
+                        <spirit:name>../../../../design/src/mem/axi/cache.v</spirit:name>
+                        <spirit:fileType>verilogSource</spirit:fileType>
+                    </spirit:file>
+                    <spirit:file>
+                        <spirit:name>../../../../design/src/core/components/pipeline/check.v</spirit:name>
+                        <spirit:fileType>verilogSource</spirit:fileType>
+                    </spirit:file>
+                    <spirit:file>
+                        <spirit:name>../../../../design/src/peripherals/clint.v</spirit:name>
+                        <spirit:fileType>verilogSource</spirit:fileType>
+                    </spirit:file>
+                </spirit:fileSet>
+                <spirit:fileSet>
+                    <spirit:name>bd_tcl_view_fileset</spirit:name>
+                    <spirit:file>
+                        <spirit:name>bd/bd.tcl</spirit:name>
+                        <spirit:fileType>tclSource</spirit:fileType>
+                    </spirit:file>
+                </spirit:fileSet>
+            </spirit:fileSets>
+        "#;
+
+        #[derive(Debug, Serialize, Deserialize)]
+        #[serde(rename_all = "camelCase")]
+        struct FileSets {
+            file_set: Vec<FileSet>,
+        }
+
+        check::<FileSets>(sample);
+    }
 
     #[test]
     fn de_parameters() {
-        #[derive(Debug, Serialize, Deserialize)]
-        #[serde(rename = "parameters")]
-        struct Test {
-            parameter: Vec<IPXActParameter>,
-        }
-
         let sample = r#"
-<?xml version="1.0" encoding="UTF-8"?>
-<spirit:parameters>
-    <spirit:parameter>
-        <spirit:name>Component_Name</spirit:name>
-        <spirit:value spirit:resolve="user" spirit:id="PARAM_VALUE.Component_Name" spirit:order="1">sasanqua_v1_0</spirit:value>
-    </spirit:parameter>
-    <spirit:parameter>
-        <spirit:name>START_ADDR</spirit:name>
-        <spirit:value spirit:format="bitString" spirit:resolve="user" spirit:id="PARAM_VALUE.START_ADDR" spirit:bitStringLength="32">0x00000000</spirit:value>
-    </spirit:parameter>
-</spirit:parameters>
+            <?xml version="1.0" encoding="UTF-8"?>
+            <spirit:parameters>
+                <spirit:parameter>
+                    <spirit:name>Component_Name</spirit:name>
+                    <spirit:value spirit:resolve="user" spirit:id="PARAM_VALUE.Component_Name" spirit:order="1">sasanqua_v1_0</spirit:value>
+                </spirit:parameter>
+                <spirit:parameter>
+                    <spirit:name>START_ADDR</spirit:name>
+                    <spirit:value spirit:format="bitString" spirit:resolve="user" spirit:id="PARAM_VALUE.START_ADDR" spirit:bitStringLength="32">0x00000000</spirit:value>
+                </spirit:parameter>
+            </spirit:parameters>
         "#;
 
-        check::<Test>(sample);
+        #[derive(Debug, Serialize, Deserialize)]
+        #[serde(rename_all = "camelCase")]
+        struct Parameters {
+            parameter: Vec<Parameter>,
+        }
+
+        check::<Parameters>(sample);
     }
 
-    fn check<'a, T: Deserialize<'a>>(s: &'static str) {
-        assert!(quick_xml::de::from_str::<T>(s).is_ok())
+    fn check<'a, T>(s: &'static str)
+    where
+        T: Deserialize<'a> + Debug,
+    {
+        let res = quick_xml::de::from_str::<T>(s);
+        println!("{:?}", res);
+        assert!(res.is_ok());
     }
 }
