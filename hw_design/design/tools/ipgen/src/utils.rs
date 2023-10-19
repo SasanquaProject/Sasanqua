@@ -1,2 +1,2 @@
 pub mod ip_xact;
-pub mod vfs;
+pub(crate) mod vfs;

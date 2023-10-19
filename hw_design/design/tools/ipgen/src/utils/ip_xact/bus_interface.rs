@@ -1,6 +1,6 @@
 use serde::{Serialize, Deserialize};
 
-use super::parameter::{Parameters, self};
+use super::parameter::Parameters;
 
 #[derive(Debug, Default, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -60,7 +60,7 @@ impl BusInterfaces {
 
 #[derive(Debug, Default, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-struct PortMaps {
+pub struct PortMaps {
     port_map: Vec<PortMap>,
 }
 

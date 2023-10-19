@@ -19,7 +19,7 @@ impl FileSets {
 }
 
 #[derive(Debug, Default, Serialize, Deserialize)]
-struct FileSet {
+pub struct FileSet {
     name: String,
     file: Vec<File>,
 }
