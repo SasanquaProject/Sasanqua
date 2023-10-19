@@ -28,10 +28,10 @@ impl GenCmd {
             _ => { return Err(GenError::BusIFUnvalid(conf.core.bus_if).into()); },
         };
 
-        match conf.core.vendor.as_str() {
+        match conf.ip.vendor.as_str() {
             "Any" => gen_physfs::<Any, &str>(&sasanqua, &self.output)?,
             "Xilinx" => gen_physfs::<Xilinx, &str>(&sasanqua, &self.output)?,
-            _ => return Err(GenError::VendorUnvalid(conf.core.vendor).into()),
+            _ => return Err(GenError::VendorUnvalid(conf.ip.vendor).into()),
         };
 
         Ok(())
@@ -48,12 +48,12 @@ pub(crate) struct IpConf {
 pub(crate) struct IP {
     pub name: String,
     pub version: String,
+    pub vendor: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
 pub(crate) struct Core {
     pub bus_if: String,
-    pub vendor: String,
 }
 
 #[derive(Debug, Error)]
