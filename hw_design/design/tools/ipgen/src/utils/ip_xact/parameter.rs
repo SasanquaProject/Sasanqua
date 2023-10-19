@@ -11,9 +11,35 @@ struct Parameter {
     value: String,  // TODO: attributes
 }
 
+impl Parameters {
+    pub fn new() -> Self {
+        Parameters { parameter: vec![] }
+    }
+
+    pub fn add_parameter<S: Into<String>>(mut self, name: S, value: S) -> Self {
+        let name = name.into();
+        let value = value.into();
+
+        self.parameter.push(
+            Parameter { name, value }
+        );
+
+        self
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::Parameters;
+
+    #[test]
+    fn serialize() {
+        let parameters = Parameters::new()
+            .add_parameter("AAA", "Hello")
+            .add_parameter("BBB", "World");
+
+        assert!(quick_xml::se::to_string(&parameters).is_ok());
+    }
 
     #[test]
     fn deserialize() {

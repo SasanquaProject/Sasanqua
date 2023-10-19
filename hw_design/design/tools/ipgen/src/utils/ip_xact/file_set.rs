@@ -1,9 +1,21 @@
+use vfs::VfsPath;
 use serde::{Serialize, Deserialize};
 
 #[derive(Debug, Default, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct FileSets {
     file_set: Vec<FileSet>,
+}
+
+impl FileSets {
+    pub fn new() -> Self {
+        FileSets { file_set: vec![] }
+    }
+
+    pub fn add_file_set(mut self, file_set: FileSet) -> Self {
+        self.file_set.push(file_set);
+        self
+    }
 }
 
 #[derive(Debug, Default, Serialize, Deserialize)]
@@ -19,9 +31,64 @@ struct File {
     file_type: String,
 }
 
+impl FileSet {
+    pub fn new<S: Into<String>>(name: S) -> Self {
+        FileSet {
+            name: name.into(),
+            file: vec![]
+        }
+    }
+
+    pub fn add_file<S: Into<String>>(mut self, name: S, file_type: S) -> Self {
+        let name = name.into();
+        let file_type = file_type.into();
+
+        self.file.push(
+            File { name, file_type }
+        );
+
+        self
+    }
+
+    pub fn add_files<S: Into<String>>(mut self, fs: &VfsPath, file_type: S) -> anyhow::Result<Self> {
+        let file_type = file_type.into();
+        let files = fs
+            .walk_dir()?
+            .into_iter()
+            .filter_map(|f| f.ok())
+            .map(|f| {
+                File {
+                    name: f.as_str().to_string(),
+                    file_type: file_type.clone(),
+                }
+            });
+
+        self.file.extend(files.into_iter());
+
+        Ok(self)
+    }
+}
+
 #[cfg(test)]
 mod test {
-    use super::FileSets;
+    use super::{FileSet, FileSets};
+
+    #[test]
+    fn serialize() {
+        let file_sets = FileSets::new()
+            .add_file_set(
+                FileSet::new("fileSet1")
+                    .add_file("a.v", "verilogSource")
+                    .add_file("b.v", "verilogSource")
+            )
+            .add_file_set(
+                FileSet::new("fileSet2")
+                    .add_file("a.v", "verilogSource")
+                    .add_file("b.v", "verilogSource")
+            );
+
+        assert!(quick_xml::se::to_string(&file_sets).is_ok());
+    }
 
     #[test]
     fn deserialize() {

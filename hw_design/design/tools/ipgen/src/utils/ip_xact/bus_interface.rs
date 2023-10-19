@@ -1,6 +1,6 @@
 use serde::{Serialize, Deserialize};
 
-use super::parameter::Parameters;
+use super::parameter::{Parameters, self};
 
 #[derive(Debug, Default, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
@@ -18,6 +18,44 @@ struct BusInterface {
     slave: Option<()>,
     port_maps: PortMaps,
     parameters: Option<Parameters>,
+}
+
+impl BusInterfaces {
+    pub fn new() -> Self {
+        BusInterfaces { bus_interface: vec![] }
+    }
+
+    pub fn add_master<S: Into<String>>(mut self, name: S, port_maps: PortMaps, parameters: Option<Parameters>) -> BusInterfaces {
+        self.bus_interface.push(
+            BusInterface {
+                name: name.into(),
+                bus_type: (),
+                abstraction_type: (),
+                master: Some(()),
+                slave: None,
+                port_maps: port_maps,
+                parameters,
+            }
+        );
+
+        self
+    }
+
+    pub fn add_slave<S: Into<String>>(mut self, name: S, port_maps: PortMaps, parameters: Option<Parameters>) -> BusInterfaces {
+        self.bus_interface.push(
+            BusInterface {
+                name: name.into(),
+                bus_type: (),
+                abstraction_type: (),
+                master: None,
+                slave: Some(()),
+                port_maps: port_maps,
+                parameters,
+            }
+        );
+
+        self
+    }
 }
 
 #[derive(Debug, Default, Serialize, Deserialize)]
@@ -45,9 +83,45 @@ struct PhysicalPort {
     name: String,
 }
 
+impl PortMaps {
+    pub fn new() -> Self {
+        PortMaps { port_map: vec![] }
+    }
+
+    pub fn add_port_map<S: Into<String>>(mut self, logical_port: S, physical_port: S) -> Self {
+        let logical_port = LogicalPort { name: logical_port.into() };
+        let physical_port = PhysicalPort { name: physical_port.into() };
+
+        self.port_map.push(
+            PortMap { logical_port, physical_port }
+        );
+
+        self
+    }
+}
+
 #[cfg(test)]
 mod tests {
-    use super::BusInterfaces;
+    use super::{BusInterfaces, PortMaps};
+    use super::super::Parameters;
+
+    #[test]
+    fn serialize() {
+        let port_maps_m = PortMaps::new()
+            .add_port_map("AWLEN", "M_AXI_AWLEN")
+            .add_port_map("AWREADY", "M_AXI_AWREADY");
+        let port_maps_s = PortMaps::new()
+            .add_port_map("CLK", "CLK");
+        let parameters_s = Parameters::new()
+            .add_parameter("ASSOCIATED_RESET", "RST")
+            .add_parameter("ASSOCIATED_BUSIF", "M_AXI");
+
+        let bus_interfaces = BusInterfaces::new()
+            .add_master("M_AXI", port_maps_m, None)
+            .add_slave("CLK", port_maps_s, Some(parameters_s));
+
+        assert!(quick_xml::se::to_string(&bus_interfaces).is_ok());
+    }
 
     #[test]
     fn deserialize() {
