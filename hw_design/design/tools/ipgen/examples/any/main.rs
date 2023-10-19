@@ -1,14 +1,17 @@
 use vfs::{MemoryFS, PhysicalFS};
 
+use ipgen::gen;
+use ipgen::ip::IPInfo;
 use ipgen::vendor::Any;
-use ipgen::IPInfo;
 
 fn main() -> anyhow::Result<()> {
     let dst_dir = "./example_ip";
 
     std::fs::create_dir(dst_dir)?;
-    let mut fs = PhysicalFS::new(dst_dir).into();
+    let fs = PhysicalFS::new(dst_dir).into();
 
-    let ipinfo = IPInfo::new("Example", "0.1.0", MemoryFS::new().into());
-    ipinfo.gen::<Any>(&mut fs)
+    let ipinfo = IPInfo::new_mini("Example", "0.1.0");
+    gen::<Any>(fs, ipinfo, MemoryFS::new().into())?;
+
+    Ok(())
 }

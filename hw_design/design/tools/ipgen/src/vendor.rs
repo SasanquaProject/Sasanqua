@@ -3,10 +3,10 @@ mod xilinx;
 
 use vfs::VfsPath;
 
-use crate::IPInfo;
+use crate::ip::IPInfo;
 pub use any::Any;
 pub use xilinx::Xilinx;
 
 pub trait Vendor {
-    fn gen(info: IPInfo, root: &mut VfsPath) -> anyhow::Result<()>;
+    fn gen(vfs: &mut VfsPath, info: IPInfo, src: VfsPath) -> anyhow::Result<()>;
 }
