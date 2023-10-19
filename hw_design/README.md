@@ -1,21 +1,5 @@
 # HW Design
 
-HW記述
-
-## コマンド
-
-```
-$ make build
-
-// Core
-$ make core.new
-$ make core.gen
-
-// Cop
-$ make cop.new
-$ make cop.gen
-```
-
 ## ディレクトリ構成
 
 ### design/
@@ -29,3 +13,4 @@ $ make cop.gen
 ### test/
 
 実機テスト用プロジェクト
+

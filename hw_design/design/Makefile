@@ -1,5 +1,5 @@
-COREGEN_WORKDIR := cd design/core &&
-COPGEN_WORKDIR := cd design/cop &&
+COREGEN_WORKDIR := cd core &&
+COPGEN_WORKDIR := cd cop &&
 
 COREGEN_BIN := ./bin/coregen_cui
 COPGEN_BIN := ./bin/copgen_cui
