@@ -2,16 +2,30 @@
 
 HW記述
 
+## コマンド
+
+```
+$ make build
+
+// Core
+$ make core.new
+$ make core.gen
+
+// Cop
+$ make cop.new
+$ make cop.gen
+```
+
 ## ディレクトリ構成
 
 ### design/
 
-Sasanqua-CPU 本体
+回路記述
 
-### sim_prj/
+### sim/
 
 シミュレーション用プロジェクト
 
-### test_proj/
+### test/
 
 実機テスト用プロジェクト

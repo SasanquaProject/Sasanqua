@@ -1,0 +1,7 @@
+[package]
+name = "verilog"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+copgen = { package = "copgen", path = "../../copgen" }

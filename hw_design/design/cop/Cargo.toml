@@ -1,0 +1,9 @@
+[workspace]
+members = [
+    "copgen/",
+    "src/cui",
+    # "src/gui",
+    "impl/std",
+    "impl/chisel",
+    "impl/verilog",
+]

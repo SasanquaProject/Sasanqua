@@ -1,0 +1,10 @@
+[package]
+name = "coregen"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = "1.0"
+thiserror = "1.0"
+vfs = "0.9"
+ipgen = { package = "ipgen", path = "../../tools/ipgen" }
