@@ -27,11 +27,11 @@ impl Executable for Generate {
             "Any" => {
                 gen_physfs::<Any, String>(context, dir_name)?;
                 println!("Ok");
-            },
+            }
             "Xilinx" => {
                 gen_physfs::<Xilinx, String>(context, dir_name)?;
                 println!("Ok");
-            },
+            }
             v => {
                 println!("Vendor '{}' is not implemented.", v);
                 println!(
@@ -39,7 +39,7 @@ impl Executable for Generate {
                     Style::new().italic().paint("Any"),
                     Style::new().italic().paint("Xilinx")
                 );
-            },
+            }
         };
 
         Ok(None)

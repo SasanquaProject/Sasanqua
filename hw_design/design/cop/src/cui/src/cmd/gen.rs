@@ -1,14 +1,14 @@
 use std::fs::read_to_string;
 
 use clap::Parser;
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
 use copgen::gen_physfs;
 use copgen::pkg::CopPkg;
+use ipgen::vendor::{Any, Xilinx};
 use std_cops::Rv32iMini;
 use verilog_cops::Void;
-use ipgen::vendor::{Any, Xilinx};
 
 #[derive(Debug, Parser)]
 pub struct GenCmd {
@@ -29,7 +29,7 @@ impl GenCmd {
             cop_pkg = match cop_profile.name.as_str() {
                 "rv32i_mini" => cop_pkg.add_cop(Rv32iMini),
                 "void" => cop_pkg.add_cop(Void),
-                _ => { return Err(GenError::CopImplUnvalid(cop_profile.name).into()) },
+                _ => return Err(GenError::CopImplUnvalid(cop_profile.name).into()),
             };
         }
 

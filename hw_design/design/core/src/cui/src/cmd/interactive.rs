@@ -1,8 +1,8 @@
 mod generate;
-mod new;
-mod status;
-mod not_found;
 mod help;
+mod new;
+mod not_found;
+mod status;
 
 use std::io::Write;
 use std::io::{stdin, stdout};
@@ -32,7 +32,11 @@ pub(super) trait Executable
 where
     Self: 'static,
 {
-    fn exec(&self, context: Option<Sasanqua>, args: Vec<String>) -> anyhow::Result<Option<Sasanqua>>;
+    fn exec(
+        &self,
+        context: Option<Sasanqua>,
+        args: Vec<String>,
+    ) -> anyhow::Result<Option<Sasanqua>>;
 }
 
 fn parse_stdin() -> anyhow::Result<Option<(Box<dyn Executable>, Vec<String>)>> {

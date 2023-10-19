@@ -13,7 +13,7 @@ impl Executable for New {
             println!("Ok");
             Ok(Some(CopPkg::new(
                 args.get(1).unwrap(),
-                args.get(2).unwrap()
+                args.get(2).unwrap(),
             )))
         }
     }

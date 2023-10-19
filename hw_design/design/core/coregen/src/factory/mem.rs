@@ -37,14 +37,18 @@ impl HwMakable for MemFactory {
 
         root.join("mem/utils/ram/ram_dualport.v")?
             .create_file()?
-            .write_all(include_bytes!("../../hw_parts/src/mem/utils/ram/ram_dualport.v"))?;
+            .write_all(include_bytes!(
+                "../../hw_parts/src/mem/utils/ram/ram_dualport.v"
+            ))?;
 
         // mem/utils/rom
         root.join("mem/utils/rom")?.create_dir()?;
 
         root.join("mem/utils/rom/rom_dualport.v")?
             .create_file()?
-            .write_all(include_bytes!("../../hw_parts/src/mem/utils/rom/rom_dualport.v"))?;
+            .write_all(include_bytes!(
+                "../../hw_parts/src/mem/utils/rom/rom_dualport.v"
+            ))?;
 
         Ok(())
     }

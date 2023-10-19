@@ -1,4 +1,4 @@
-use copgen::profile::{CopProfile, CopImpl, CopImplTemplate, OpCode};
+use copgen::profile::{CopImpl, CopImplTemplate, CopProfile, OpCode};
 
 #[derive(Debug)]
 pub struct Rv32iMini;

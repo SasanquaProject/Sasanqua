@@ -3,7 +3,7 @@ pub mod sasanqua;
 
 use std::fs::create_dir;
 
-use vfs::{PhysicalFS, MemoryFS, VfsPath};
+use vfs::{MemoryFS, PhysicalFS, VfsPath};
 
 use ipgen::vendor::Vendor;
 use ipgen::IPInfo;
@@ -48,8 +48,8 @@ mod test {
     use ipgen::vendor::Any;
 
     use crate::gen_memfs;
-    use crate::sasanqua::Sasanqua;
     use crate::sasanqua::bus::AXI4;
+    use crate::sasanqua::Sasanqua;
 
     #[test]
     fn check_req_files() {

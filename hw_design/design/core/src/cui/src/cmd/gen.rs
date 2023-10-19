@@ -1,12 +1,12 @@
 use std::fs::read_to_string;
 
 use clap::Parser;
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 use thiserror::Error;
 
 use coregen::gen_physfs;
-use coregen::sasanqua::Sasanqua;
 use coregen::sasanqua::bus::AXI4;
+use coregen::sasanqua::Sasanqua;
 use ipgen::vendor::{Any, Xilinx};
 
 #[derive(Debug, Parser)]
@@ -25,7 +25,9 @@ impl GenCmd {
 
         let sasanqua = match conf.core.bus_if.as_str() {
             "AXI4" => Sasanqua::new(AXI4),
-            _ => { return Err(GenError::BusIFUnvalid(conf.core.bus_if).into()); },
+            _ => {
+                return Err(GenError::BusIFUnvalid(conf.core.bus_if).into());
+            }
         };
 
         match conf.ip.vendor.as_str() {

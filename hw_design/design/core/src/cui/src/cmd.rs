@@ -1,6 +1,6 @@
 mod gen;
-mod new;
 mod interactive;
+mod new;
 
 use clap::{AppSettings, Parser, Subcommand};
 

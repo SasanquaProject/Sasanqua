@@ -4,7 +4,7 @@ mod utils;
 
 use std::fs::create_dir;
 
-use vfs::{MemoryFS, VfsPath, PhysicalFS};
+use vfs::{MemoryFS, PhysicalFS, VfsPath};
 
 use ipgen::vendor::Vendor;
 use ipgen::IPInfo;

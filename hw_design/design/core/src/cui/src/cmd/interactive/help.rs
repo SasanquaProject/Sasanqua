@@ -7,6 +7,7 @@ use super::Executable;
 pub struct Help;
 
 impl Executable for Help {
+    #[rustfmt::skip]
     fn exec(&self, context: Option<Sasanqua>, _: Vec<String>) -> anyhow::Result<Option<Sasanqua>> {
         println!("{}: Reset a generating context", Color::Green.paint("new"));
         println!("{}: Print generating information", Color::Green.paint("status"));

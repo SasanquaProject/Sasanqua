@@ -1,7 +1,7 @@
 mod core;
 mod mem;
-mod sasanqua;
 mod peripherals;
+mod sasanqua;
 
 use vfs::VfsPath;
 

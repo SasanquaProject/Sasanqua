@@ -24,16 +24,16 @@ impl Executable for Add {
             "rv32i_mini" => {
                 println!("Ok");
                 context.add_cop(Rv32iMini)
-            },
+            }
             "void" => {
                 println!("Ok");
                 context.add_cop(Void)
-            },
+            }
             cop_impl => {
                 println!("Cop-Impl '{}' is not found.", cop_impl);
                 println!("Please check 'list' command.");
                 context
-            },
+            }
         };
 
         Ok(Some(context))

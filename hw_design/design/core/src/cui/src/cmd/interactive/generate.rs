@@ -1,7 +1,7 @@
 use ansi_term::Style;
 
-use coregen::sasanqua::Sasanqua;
 use coregen::gen_physfs;
+use coregen::sasanqua::Sasanqua;
 use ipgen::vendor::{Any, Xilinx};
 
 use super::Executable;
@@ -9,7 +9,11 @@ use super::Executable;
 pub struct Generate;
 
 impl Executable for Generate {
-    fn exec(&self, context: Option<Sasanqua>, args: Vec<String>) -> anyhow::Result<Option<Sasanqua>> {
+    fn exec(
+        &self,
+        context: Option<Sasanqua>,
+        args: Vec<String>,
+    ) -> anyhow::Result<Option<Sasanqua>> {
         if context.is_none() {
             println!("A generating context is not set!");
             println!("Execute 'new' command.");
@@ -26,11 +30,11 @@ impl Executable for Generate {
             "Any" => {
                 gen_physfs::<Any, &str>(&context, "core_ip")?;
                 println!("Ok");
-            },
+            }
             "Xilinx" => {
                 gen_physfs::<Xilinx, &str>(&context, "core_ip")?;
                 println!("Ok");
-            },
+            }
             v => {
                 println!("Vendor '{}' is not implemented.", v);
                 println!(
@@ -38,7 +42,7 @@ impl Executable for Generate {
                     Style::new().italic().paint("Any"),
                     Style::new().italic().paint("Xilinx")
                 );
-            },
+            }
         };
 
         Ok(None)

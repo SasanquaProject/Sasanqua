@@ -7,6 +7,7 @@ use super::Executable;
 pub struct Help;
 
 impl Executable for Help {
+    #[rustfmt::skip]
     fn exec(&self, context: Option<CopPkg>, _: Vec<String>) -> anyhow::Result<Option<CopPkg>> {
         println!("{}: Reset a package context", Color::Green.paint("new"));
         println!("{}: Add a cop-impl to package", Color::Green.paint("add"));

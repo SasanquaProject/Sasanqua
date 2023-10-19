@@ -3,7 +3,7 @@ use std::io::Write;
 
 use clap::Parser;
 
-use super::gen::{IpConf, IP, Cop};
+use super::gen::{Cop, IpConf, IP};
 
 #[derive(Debug, Parser)]
 pub struct NewCmd {
@@ -19,8 +19,12 @@ impl NewCmd {
             vendor: "Any".to_string(),
         };
         let profile = vec![
-            Cop { name: "rv32i_mini".to_string() },
-            Cop { name: "void".to_string() },
+            Cop {
+                name: "rv32i_mini".to_string(),
+            },
+            Cop {
+                name: "void".to_string(),
+            },
         ];
         let ip_conf = IpConf { ip, profile };
         let ip_conf = toml::to_string(&ip_conf)?;

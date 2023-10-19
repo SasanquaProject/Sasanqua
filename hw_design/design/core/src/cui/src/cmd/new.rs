@@ -3,7 +3,7 @@ use std::io::Write;
 
 use clap::Parser;
 
-use super::gen::{IpConf, IP, Core};
+use super::gen::{Core, IpConf, IP};
 
 #[derive(Debug, Parser)]
 pub struct NewCmd {
