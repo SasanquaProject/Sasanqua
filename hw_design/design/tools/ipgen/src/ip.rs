@@ -41,4 +41,25 @@ impl IPInfo {
 
         ipinfo
     }
+
+    pub fn new<S: Into<String>>(
+        name: S,
+        version: S,
+        description: S,
+        bus_interfaces: BusInterfaces,
+        address_spaces: AddressSpaces,
+        model: Model,
+        file_sets: FileSets,
+        parameters: Parameters,
+    ) -> Self {
+        let mut ipinfo = IPInfo::new_mini(name, version);
+        ipinfo.description = description.into();
+        ipinfo.bus_interfaces = bus_interfaces;
+        ipinfo.address_spaces = address_spaces;
+        ipinfo.model = model;
+        ipinfo.file_sets = file_sets;
+        ipinfo.parameters = parameters;
+
+        ipinfo
+    }
 }
