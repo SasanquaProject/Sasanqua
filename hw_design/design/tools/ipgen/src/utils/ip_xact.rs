@@ -26,8 +26,7 @@ struct IPXact {
     bus_interfaces: Vec<IPXActBusInterface>,
 
     // AddressSpace
-    #[serde(rename = "addressSpaces")]
-    addr_spaces: Vec<IPXActAddrSpace>,
+    address_spaces: Vec<AddressSpace>,
 
     // Model
     #[serde(rename = "model")]
@@ -49,7 +48,7 @@ impl<'a> From<&IPInfo> for IPXact {
             version: ipinfo.version.clone(),
             description: "".to_string(),
             bus_interfaces: vec![],
-            addr_spaces: vec![],
+            address_spaces: vec![],
             model: IPXActModel::default(),
             file_sets: vec![],
             parameters: vec![],
@@ -61,9 +60,14 @@ impl<'a> From<&IPInfo> for IPXact {
 #[serde(rename = "busInterface")]
 struct IPXActBusInterface {}
 
-#[derive(Serialize, Default)]
-#[serde(rename = "addressSpace")]
-struct IPXActAddrSpace {}
+#[derive(Debug, Default, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+struct AddressSpace {
+    pub name: String,
+    pub display_name: String,
+    pub range: String,
+    pub width: u32,
+}
 
 #[derive(Serialize, Default)]
 #[serde(rename = "model")]
@@ -94,7 +98,30 @@ mod tests {
 
     use serde::{Serialize, Deserialize};
 
-    use super::{FileSet, Parameter};
+    use super::{AddressSpace, FileSet, Parameter};
+
+    #[test]
+    fn de_address_spaces() {
+        let sample = r#"
+            <?xml version="1.0" encoding="UTF-8"?>
+            <spirit:addressSpaces>
+                <spirit:addressSpace>
+                    <spirit:name>M_AXI</spirit:name>
+                    <spirit:displayName>M_AXI</spirit:displayName>
+                    <spirit:range spirit:format="bitString" spirit:bitStringLength="33" spirit:minimum="4096" spirit:rangeType="long">0x100000000</spirit:range>
+                    <spirit:width spirit:format="long">32</spirit:width>
+                </spirit:addressSpace>
+            </spirit:addressSpaces>
+        "#;
+
+        #[derive(Debug, Serialize, Deserialize)]
+        #[serde(rename_all = "camelCase")]
+        struct AddressSpaces {
+            address_space: Vec<AddressSpace>,
+        }
+
+        check::<AddressSpaces>(sample);
+    }
 
     #[test]
     fn de_file_sets() {
