@@ -31,7 +31,38 @@ module main
 
         /* ----- 割り込み ----- */
         input wire          INT_EN,
-        input wire  [3:0]   INT_CODE
+        input wire  [3:0]   INT_CODE,
+
+        /* ----- コプロセッサパッケージ接続 ----- */
+        // 制御信号
+        output wire         COP_FLUSH,
+        output wire         COP_STALL,
+
+        // Check 接続
+        output wire [31:0]  COP_C_O_PC,
+        output wire [16:0]  COP_C_O_OPCODE,
+        output wire [4:0]   COP_C_O_RD,
+        output wire [4:0]   COP_C_O_RS1,
+        output wire [4:0]   COP_C_O_RS2,
+        output wire [31:0]  COP_C_O_IMM,
+        input wire          COP_C_I_ACCEPT,
+        input wire  [31:0]  COP_C_I_PC,
+        input wire  [4:0]   COP_C_I_RD,
+        input wire  [4:0]   COP_C_I_RS1,
+        input wire  [4:0]   COP_C_I_RS2,
+
+        // Exec 接続
+        output wire         COP_E_O_ALLOW,
+        output wire [31:0]  COP_E_O_RS1_DATA,
+        output wire [31:0]  COP_E_O_RS2_DATA,
+        input wire          COP_E_I_ALLOW,
+        input wire          COP_E_I_VALID,
+        input wire  [31:0]  COP_E_I_PC,
+        input wire          COP_E_I_REG_W_EN,
+        input wire  [4:0]   COP_E_I_REG_W_RD,
+        input wire  [31:0]  COP_E_I_REG_W_DATA,
+        input wire          COP_E_I_EXC_EN,
+        input wire  [3:0]   COP_E_I_EXC_CODE
     );
 
     /* ----- パイプライン制御 ----- */
@@ -160,49 +191,20 @@ module main
         .CHECK_IMM      (check_imm)
     );
 
-    /* ----- 3-2. コプロセッサ ----- */
-    wire        cop_c_accept;
-    wire [31:0] cop_c_pc;
-    wire [4:0]  cop_c_rd, cop_c_rs1, cop_c_rs2;
-    wire        cop_e_allow, cop_e_valid, cop_e_reg_w_en, cop_e_exc_en;
-    wire [31:0] cop_e_pc, cop_e_reg_w_data;
-    wire [4:0]  cop_e_reg_w_rd;
-    wire [3:0]  cop_e_exc_code;
+    /* ----- 3-2. コプロセッサ (Check->Ready->Exec) ----- */
+    assign COP_FLUSH        = flush;
+    assign COP_STALL        = stall;
 
-    sasanqua_cop sasanqua_cop (
-        // 制御
-        .CLK                (CLK),
-        .RST                (RST),
-        .FLUSH              (flush),
-        .STALL              (stall),
-        .MEM_WAIT           (MEM_WAIT),
+    assign COP_C_O_PC       = pool_pc;
+    assign COP_C_O_OPCODE   = pool_opcode;
+    assign COP_C_O_RD       = pool_rd;
+    assign COP_C_O_RS1      = pool_rs1;
+    assign COP_C_O_RS2      = pool_rs2;
+    assign COP_C_O_IMM      = pool_imm;
 
-        // Check 接続
-        .C_I_PC             (pool_pc),
-        .C_I_OPCODE         (pool_opcode),
-        .C_I_RD             (pool_rd),
-        .C_I_RS1            (pool_rs1),
-        .C_I_RS2            (pool_rs2),
-        .C_I_IMM            (pool_imm),
-        .C_O_ACCEPT         (cop_c_accept),
-        .C_O_PC             (cop_c_pc),
-        .C_O_RD             (cop_c_rd),
-        .C_O_RS1            (cop_c_rs1),
-        .C_O_RS2            (cop_c_rs2),
-
-        // Exec 接続
-        .E_I_ALLOW          (schedule_b_allow),
-        .E_I_RS1_DATA       (schedule_b_rs1_data),
-        .E_I_RS2_DATA       (schedule_b_rs2_data),
-        .E_O_ALLOW          (cop_e_allow),
-        .E_O_VALID          (cop_e_valid),
-        .E_O_PC             (cop_e_pc),
-        .E_O_REG_W_EN       (cop_e_reg_w_en),
-        .E_O_REG_W_RD       (cop_e_reg_w_rd),
-        .E_O_REG_W_DATA     (cop_e_reg_w_data),
-        .E_O_EXC_EN         (cop_e_exc_en),
-        .E_O_EXC_CODE       (cop_e_exc_code)
-    );
+    assign COP_E_O_ALLOW    = schedule_b_allow;
+    assign COP_E_O_RS1_DATA = schedule_b_rs1_data;
+    assign COP_E_O_RS2_DATA = schedule_b_rs2_data;
 
     /* ----- 4-1. スケジューリング ----- */
     wire        schedule_a_allow, schedule_b_allow;
@@ -228,11 +230,11 @@ module main
         .A_RS2              (check_rs2),
         .A_CSR              (check_csr),
         .A_IMM              (check_imm),
-        .B_ACCEPT           (cop_c_accept),
-        .B_PC               (cop_c_pc),
-        .B_RD               (cop_c_rd),
-        .B_RS1              (cop_c_rs1),
-        .B_RS2              (cop_c_rs2),
+        .B_ACCEPT           (COP_C_I_ACCEPT),
+        .B_PC               (COP_C_I_PC),
+        .B_RD               (COP_C_I_RD),
+        .B_RS1              (COP_C_I_RS1),
+        .B_RS2              (COP_C_I_RS2),
 
         // 後段との接続
         .SCHEDULE_A_ALLOW   (schedule_a_allow),
@@ -308,10 +310,10 @@ module main
         .B_RADDR            (check_rs2),
         .B_RVALID           (schedule_a_rs2_valid),
         .B_RDATA            (schedule_a_rs2_data),
-        .C_RADDR            (cop_c_rs1),
+        .C_RADDR            (COP_C_I_RS1),
         .C_RVALID           (schedule_b_rs1_valid),
         .C_RDATA            (schedule_b_rs1_data),
-        .D_RADDR            (cop_c_rs2),
+        .D_RADDR            (COP_C_I_RS2),
         .D_RVALID           (schedule_b_rs2_valid),
         .D_RDATA            (schedule_b_rs2_data),
         .WADDR              (memr_reg_w_rd),
@@ -417,14 +419,14 @@ module main
         .A_JMP_PC               (exec_jmp_pc),
         .A_EXC_EN               (exec_exc_en),
         .A_EXC_CODE             (exec_exc_code),
-        .B_ALLOW                (cop_e_allow),
-        .B_VALID                (cop_e_valid),
-        .B_PC                   (cop_e_pc),
-        .B_REG_W_EN             (cop_e_reg_w_en),
-        .B_REG_W_RD             (cop_e_reg_w_rd),
-        .B_REG_W_DATA           (cop_e_reg_w_data),
-        .B_EXC_EN               (cop_e_exc_en),
-        .B_EXC_CODE             (cop_e_exc_code),
+        .B_ALLOW                (COP_E_I_ALLOW),
+        .B_VALID                (COP_E_I_VALID),
+        .B_PC                   (COP_E_I_PC),
+        .B_REG_W_EN             (COP_E_I_REG_W_EN),
+        .B_REG_W_RD             (COP_E_I_REG_W_RD),
+        .B_REG_W_DATA           (COP_E_I_REG_W_DATA),
+        .B_EXC_EN               (COP_E_I_EXC_EN),
+        .B_EXC_CODE             (COP_E_I_EXC_CODE),
 
         // 後段との接続
         .CUSHION_VALID          (cushion_valid),

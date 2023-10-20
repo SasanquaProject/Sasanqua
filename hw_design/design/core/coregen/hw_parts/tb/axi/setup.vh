@@ -1,8 +1,8 @@
 /* ----- Sasanqua ----- */
-wire [31:0]                     GP;
-wire [3:0]                      STAT;
+wire [31:0] GP;
+wire [3:0]  STAT;
 
-/* ----- AXIバス接続用 ----- */
+/* ----- AXI-BFM 接続 ----- */
 // リセット
 assign RSTN = ~RST;
 
@@ -58,63 +58,6 @@ wire                            M_AXI_RUSER;
 wire                            M_AXI_RVALID;
 wire                            M_AXI_RREADY;
 
-/* ----- sasanqua.v 接続 ----- */
-sasanqua # (
-    .START_ADDR     (0)
-) sasanqua (
-    // 制御
-    .CLK            (CLK),
-    .RST            (RST),
-    .GP             (GP),
-    .STAT           (STAT),
-
-    // AXIバス
-    .M_AXI_AWID     (M_AXI_AWID),
-    .M_AXI_AWADDR   (M_AXI_AWADDR),
-    .M_AXI_AWLEN    (M_AXI_AWLEN),
-    .M_AXI_AWSIZE   (M_AXI_AWSIZE),
-    .M_AXI_AWBURST  (M_AXI_AWBURST),
-    .M_AXI_AWLOCK   (M_AXI_AWLOCK),
-    .M_AXI_AWCACHE  (M_AXI_AWCACHE),
-    .M_AXI_AWPROT   (M_AXI_AWPROT),
-    .M_AXI_AWQOS    (M_AXI_AWQOS),
-    .M_AXI_AWUSER   (M_AXI_AWUSER),
-    .M_AXI_AWVALID  (M_AXI_AWVALID),
-    .M_AXI_AWREADY  (M_AXI_AWREADY),
-    .M_AXI_WDATA    (M_AXI_WDATA),
-    .M_AXI_WSTRB    (M_AXI_WSTRB),
-    .M_AXI_WLAST    (M_AXI_WLAST),
-    .M_AXI_WUSER    (M_AXI_WUSER),
-    .M_AXI_WVALID   (M_AXI_WVALID),
-    .M_AXI_WREADY   (M_AXI_WREADY),
-    .M_AXI_BID      (M_AXI_BID),
-    .M_AXI_BRESP    (M_AXI_BRESP),
-    .M_AXI_BUSER    (M_AXI_BUSER),
-    .M_AXI_BVALID   (M_AXI_BVALID),
-    .M_AXI_BREADY   (M_AXI_BREADY),
-    .M_AXI_ARID     (M_AXI_ARID),
-    .M_AXI_ARADDR   (M_AXI_ARADDR),
-    .M_AXI_ARLEN    (M_AXI_ARLEN),
-    .M_AXI_ARSIZE   (M_AXI_ARSIZE),
-    .M_AXI_ARBURST  (M_AXI_ARBURST),
-    .M_AXI_ARLOCK   (M_AXI_ARLOCK),
-    .M_AXI_ARCACHE  (M_AXI_ARCACHE),
-    .M_AXI_ARPROT   (M_AXI_ARPROT),
-    .M_AXI_ARQOS    (M_AXI_ARQOS),
-    .M_AXI_ARUSER   (M_AXI_ARUSER),
-    .M_AXI_ARVALID  (M_AXI_ARVALID),
-    .M_AXI_ARREADY  (M_AXI_ARREADY),
-    .M_AXI_RID      (M_AXI_RID),
-    .M_AXI_RDATA    (M_AXI_RDATA),
-    .M_AXI_RRESP    (M_AXI_RRESP),
-    .M_AXI_RLAST    (M_AXI_RLAST),
-    .M_AXI_RUSER    (M_AXI_RUSER),
-    .M_AXI_RVALID   (M_AXI_RVALID),
-    .M_AXI_RREADY   (M_AXI_RREADY)
-);
-
-
-/* ----- BFM接続 ----- */
 axi_slave_bfm # (
     .C_S_AXI_DATA_WIDTH     (C_AXI_DATA_WIDTH),
     .C_OFFSET_WIDTH         (C_OFFSET_WIDTH),
@@ -179,6 +122,155 @@ axi_slave_bfm # (
     .S_AXI_RUSER    (M_AXI_RUSER),
     .S_AXI_RVALID   (M_AXI_RVALID),
     .S_AXI_RREADY   (M_AXI_RREADY)
+);
+
+/* ----- コプロセッサパッケージ接続用 ----- */
+// 制御
+wire            COP_FLUSH;
+wire            COP_STALL;
+wire            COP_MEM_WAIT;
+
+// Check 接続
+wire [31:0]     COP_C_O_PC;
+wire [16:0]     COP_C_O_OPCODE;
+wire [4:0]      COP_C_O_RD;
+wire [4:0]      COP_C_O_RS1;
+wire [4:0]      COP_C_O_RS2;
+wire [31:0]     COP_C_O_IMM;
+wire            COP_C_I_ACCEPT;
+wire  [31:0]    COP_C_I_PC;
+wire  [4:0]     COP_C_I_RD;
+wire  [4:0]     COP_C_I_RS1;
+wire  [4:0]     COP_C_I_RS2;
+
+// Exec 接続
+wire            COP_E_O_ALLOW;
+wire [31:0]     COP_E_O_RS1_DATA;
+wire [31:0]     COP_E_O_RS2_DATA;
+wire            COP_E_I_ALLOW;
+wire            COP_E_I_VALID;
+wire  [31:0]    COP_E_I_PC;
+wire            COP_E_I_REG_W_EN;
+wire  [4:0]     COP_E_I_REG_W_RD;
+wire  [31:0]    COP_E_I_REG_W_DATA;
+wire            COP_E_I_EXC_EN;
+wire  [3:0]     COP_E_I_EXC_CODE;
+
+sasanqua_cop sasanqua_cop (
+    // 制御
+    .CLK                (CLK),
+    .RST                (RST),
+    .FLUSH              (COP_FLUSH),
+    .STALL              (COP_STALL),
+    .MEM_WAIT           (COP_MEM_WAIT),
+
+    // Check 接続
+    .C_I_PC             (COP_C_O_PC),
+    .C_I_OPCODE         (COP_C_O_OPCODE),
+    .C_I_RD             (COP_C_O_RD),
+    .C_I_RS1            (COP_C_O_RS1),
+    .C_I_RS2            (COP_C_O_RS2),
+    .C_I_IMM            (COP_C_O_IMM),
+    .C_O_ACCEPT         (COP_C_I_ACCEPT),
+    .C_O_PC             (COP_C_I_PC),
+    .C_O_RD             (COP_C_I_RD),
+    .C_O_RS1            (COP_C_I_RS1),
+    .C_O_RS2            (COP_C_I_RS2),
+
+    // Exec 接続
+    .E_I_ALLOW          (COP_E_O_ALLOW),
+    .E_I_RS1_DATA       (COP_E_O_RS1_DATA),
+    .E_I_RS2_DATA       (COP_E_O_RS2_DATA),
+    .E_O_ALLOW          (COP_E_I_ALLOW),
+    .E_O_VALID          (COP_E_I_VALID),
+    .E_O_PC             (COP_E_I_PC),
+    .E_O_REG_W_EN       (COP_E_I_REG_W_EN),
+    .E_O_REG_W_RD       (COP_E_I_REG_W_RD),
+    .E_O_REG_W_DATA     (COP_E_I_REG_W_DATA),
+    .E_O_EXC_EN         (COP_E_I_EXC_EN),
+    .E_O_EXC_CODE       (COP_E_I_EXC_CODE)
+);
+
+/* ----- sasanqua.v 接続 ----- */
+sasanqua # (
+    .START_ADDR         (0)
+) sasanqua (
+    // 制御
+    .CLK                (CLK),
+    .RST                (RST),
+    .GP                 (GP),
+    .STAT               (STAT),
+
+    // AXIバス
+    .M_AXI_AWID         (M_AXI_AWID),
+    .M_AXI_AWADDR       (M_AXI_AWADDR),
+    .M_AXI_AWLEN        (M_AXI_AWLEN),
+    .M_AXI_AWSIZE       (M_AXI_AWSIZE),
+    .M_AXI_AWBURST      (M_AXI_AWBURST),
+    .M_AXI_AWLOCK       (M_AXI_AWLOCK),
+    .M_AXI_AWCACHE      (M_AXI_AWCACHE),
+    .M_AXI_AWPROT       (M_AXI_AWPROT),
+    .M_AXI_AWQOS        (M_AXI_AWQOS),
+    .M_AXI_AWUSER       (M_AXI_AWUSER),
+    .M_AXI_AWVALID      (M_AXI_AWVALID),
+    .M_AXI_AWREADY      (M_AXI_AWREADY),
+    .M_AXI_WDATA        (M_AXI_WDATA),
+    .M_AXI_WSTRB        (M_AXI_WSTRB),
+    .M_AXI_WLAST        (M_AXI_WLAST),
+    .M_AXI_WUSER        (M_AXI_WUSER),
+    .M_AXI_WVALID       (M_AXI_WVALID),
+    .M_AXI_WREADY       (M_AXI_WREADY),
+    .M_AXI_BID          (M_AXI_BID),
+    .M_AXI_BRESP        (M_AXI_BRESP),
+    .M_AXI_BUSER        (M_AXI_BUSER),
+    .M_AXI_BVALID       (M_AXI_BVALID),
+    .M_AXI_BREADY       (M_AXI_BREADY),
+    .M_AXI_ARID         (M_AXI_ARID),
+    .M_AXI_ARADDR       (M_AXI_ARADDR),
+    .M_AXI_ARLEN        (M_AXI_ARLEN),
+    .M_AXI_ARSIZE       (M_AXI_ARSIZE),
+    .M_AXI_ARBURST      (M_AXI_ARBURST),
+    .M_AXI_ARLOCK       (M_AXI_ARLOCK),
+    .M_AXI_ARCACHE      (M_AXI_ARCACHE),
+    .M_AXI_ARPROT       (M_AXI_ARPROT),
+    .M_AXI_ARQOS        (M_AXI_ARQOS),
+    .M_AXI_ARUSER       (M_AXI_ARUSER),
+    .M_AXI_ARVALID      (M_AXI_ARVALID),
+    .M_AXI_ARREADY      (M_AXI_ARREADY),
+    .M_AXI_RID          (M_AXI_RID),
+    .M_AXI_RDATA        (M_AXI_RDATA),
+    .M_AXI_RRESP        (M_AXI_RRESP),
+    .M_AXI_RLAST        (M_AXI_RLAST),
+    .M_AXI_RUSER        (M_AXI_RUSER),
+    .M_AXI_RVALID       (M_AXI_RVALID),
+    .M_AXI_RREADY       (M_AXI_RREADY),
+
+    // コプロセッサパッケージ接続
+    .COP_FLUSH          (COP_FLUSH),
+    .COP_STALL          (COP_STALL),
+    .COP_MEM_WAIT       (COP_MEM_WAIT),
+    .COP_C_O_PC         (COP_C_O_PC),
+    .COP_C_O_OPCODE     (COP_C_O_OPCODE),
+    .COP_C_O_RD         (COP_C_O_RD),
+    .COP_C_O_RS1        (COP_C_O_RS1),
+    .COP_C_O_RS2        (COP_C_O_RS2),
+    .COP_C_O_IMM        (COP_C_O_IMM),
+    .COP_C_I_ACCEPT     (COP_C_I_ACCEPT),
+    .COP_C_I_PC         (COP_C_I_PC),
+    .COP_C_I_RD         (COP_C_I_RD),
+    .COP_C_I_RS1        (COP_C_I_RS1),
+    .COP_C_I_RS2        (COP_C_I_RS2),
+    .COP_E_O_ALLOW      (COP_E_O_ALLOW),
+    .COP_E_O_RS1_DATA   (COP_E_O_RS1_DATA),
+    .COP_E_O_RS2_DATA   (COP_E_O_RS2_DATA),
+    .COP_E_I_ALLOW      (COP_E_I_ALLOW),
+    .COP_E_I_VALID      (COP_E_I_VALID),
+    .COP_E_I_PC         (COP_E_I_PC),
+    .COP_E_I_REG_W_EN   (COP_E_I_REG_W_EN),
+    .COP_E_I_REG_W_RD   (COP_E_I_REG_W_RD),
+    .COP_E_I_REG_W_DATA (COP_E_I_REG_W_DATA),
+    .COP_E_I_EXC_EN     (COP_E_I_EXC_EN),
+    .COP_E_I_EXC_CODE   (COP_E_I_EXC_CODE)
 );
 
 task write_inst;

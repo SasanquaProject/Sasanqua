@@ -4,8 +4,8 @@ verilog xil_defaultlib  --include "../../../../../../design/core/coregen/hw_part
 "../../../../../../design/core/coregen/hw_parts/src/mem/axi/cache.v" \
 "../../../../../../design/core/coregen/hw_parts/src/core/components/pipeline/check.v" \
 "../../../../../../design/core/coregen/hw_parts/src/peripherals/clint.v" \
-"../../../../../../design/cop_ip/src/cop.v" \
-"../../../../../../design/cop_ip/src/cop_impl_0.v" \
+"../../../../../../design/cop/cop_ip/src/cop.v" \
+"../../../../../../design/cop/cop_ip/src/cop_impl_0.v" \
 "../../../../../../design/core/coregen/hw_parts/src/core/core.v" \
 "../../../../../../design/core/coregen/hw_parts/src/core/components/pipeline/cushion.v" \
 "../../../../../../design/core/coregen/hw_parts/src/core/components/pipeline/decode.v" \

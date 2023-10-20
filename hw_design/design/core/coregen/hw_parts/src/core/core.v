@@ -8,10 +8,6 @@ module core
         input wire          CLK,
         input wire          RST,
 
-        /* ----- 割り込み ----- */
-        input wire          INT_EN,
-        input wire  [3:0]   INT_CODE,
-
         /* ----- Mem接続 ----- */
         // 命令
         output wire         INST_RDEN,
@@ -32,7 +28,42 @@ module core
         output wire [31:0]  DATA_WDATA,
 
         // ハザード
-        input wire          MEM_WAIT
+        input wire          MEM_WAIT,
+
+        /* ----- 割り込み ----- */
+        input wire          INT_EN,
+        input wire  [3:0]   INT_CODE,
+
+        /* ----- コプロセッサパッケージ接続 ----- */
+        // 制御
+        output wire         COP_FLUSH,
+        output wire         COP_STALL,
+
+        // Check 接続
+        output wire [31:0]  COP_C_O_PC,
+        output wire [16:0]  COP_C_O_OPCODE,
+        output wire [4:0]   COP_C_O_RD,
+        output wire [4:0]   COP_C_O_RS1,
+        output wire [4:0]   COP_C_O_RS2,
+        output wire [31:0]  COP_C_O_IMM,
+        input wire          COP_C_I_ACCEPT,
+        input wire  [31:0]  COP_C_I_PC,
+        input wire  [4:0]   COP_C_I_RD,
+        input wire  [4:0]   COP_C_I_RS1,
+        input wire  [4:0]   COP_C_I_RS2,
+
+        // Exec 接続
+        output wire         COP_E_O_ALLOW,
+        output wire [31:0]  COP_E_O_RS1_DATA,
+        output wire [31:0]  COP_E_O_RS2_DATA,
+        input wire          COP_E_I_ALLOW,
+        input wire          COP_E_I_VALID,
+        input wire  [31:0]  COP_E_I_PC,
+        input wire          COP_E_I_REG_W_EN,
+        input wire  [4:0]   COP_E_I_REG_W_RD,
+        input wire  [31:0]  COP_E_I_REG_W_DATA,
+        input wire          COP_E_I_EXC_EN,
+        input wire  [3:0]   COP_E_I_EXC_CODE
     );
 
     /* ----- MMU ----- */
@@ -86,32 +117,58 @@ module core
     wire [31:0] data_riaddr, data_roaddr, data_rdata, data_waddr, data_wdata;
 
     main # (
-        .START_ADDR     (START_ADDR)
+        .START_ADDR         (START_ADDR)
     ) main (
         // 制御
-        .CLK            (CLK),
-        .RST            (RST),
+        .CLK                (CLK),
+        .RST                (RST),
 
         // MMU接続
-        .INST_RDEN      (inst_rden),
-        .INST_RIADDR    (inst_riaddr),
-        .INST_ROADDR    (inst_roaddr),
-        .INST_RVALID    (inst_rvalid),
-        .INST_RDATA     (inst_rdata),
-        .DATA_RDEN      (data_rden),
-        .DATA_RIADDR    (data_riaddr),
-        .DATA_ROADDR    (data_roaddr),
-        .DATA_RVALID    (data_rvalid),
-        .DATA_RDATA     (data_rdata),
-        .DATA_WREN      (data_wren),
-        .DATA_WSTRB     (data_wstrb),
-        .DATA_WADDR     (data_waddr),
-        .DATA_WDATA     (data_wdata),
-        .MEM_WAIT       (mmu_wait),
+        .INST_RDEN          (inst_rden),
+        .INST_RIADDR        (inst_riaddr),
+        .INST_ROADDR        (inst_roaddr),
+        .INST_RVALID        (inst_rvalid),
+        .INST_RDATA         (inst_rdata),
+        .DATA_RDEN          (data_rden),
+        .DATA_RIADDR        (data_riaddr),
+        .DATA_ROADDR        (data_roaddr),
+        .DATA_RVALID        (data_rvalid),
+        .DATA_RDATA         (data_rdata),
+        .DATA_WREN          (data_wren),
+        .DATA_WSTRB         (data_wstrb),
+        .DATA_WADDR         (data_waddr),
+        .DATA_WDATA         (data_wdata),
+        .MEM_WAIT           (mmu_wait),
 
         // 割り込み
-        .INT_EN         (INT_EN),
-        .INT_CODE       (INT_CODE)
+        .INT_EN             (INT_EN),
+        .INT_CODE           (INT_CODE),
+
+        // コプロセッサパッケージ接続
+        .COP_FLUSH          (COP_FLUSH),
+        .COP_STALL          (COP_STALL),
+        .COP_C_O_PC         (COP_C_O_PC),
+        .COP_C_O_OPCODE     (COP_C_O_OPCODE),
+        .COP_C_O_RD         (COP_C_O_RD),
+        .COP_C_O_RS1        (COP_C_O_RS1),
+        .COP_C_O_RS2        (COP_C_O_RS2),
+        .COP_C_O_IMM        (COP_C_O_IMM),
+        .COP_C_I_ACCEPT     (COP_C_I_ACCEPT),
+        .COP_C_I_PC         (COP_C_I_PC),
+        .COP_C_I_RD         (COP_C_I_RD),
+        .COP_C_I_RS1        (COP_C_I_RS1),
+        .COP_C_I_RS2        (COP_C_I_RS2),
+        .COP_E_O_ALLOW      (COP_E_O_ALLOW),
+        .COP_E_O_RS1_DATA   (COP_E_O_RS1_DATA),
+        .COP_E_O_RS2_DATA   (COP_E_O_RS2_DATA),
+        .COP_E_I_ALLOW      (COP_E_I_ALLOW),
+        .COP_E_I_VALID      (COP_E_I_VALID),
+        .COP_E_I_PC         (COP_E_I_PC),
+        .COP_E_I_REG_W_EN   (COP_E_I_REG_W_EN),
+        .COP_E_I_REG_W_RD   (COP_E_I_REG_W_RD),
+        .COP_E_I_REG_W_DATA (COP_E_I_REG_W_DATA),
+        .COP_E_I_EXC_EN     (COP_E_I_EXC_EN),
+        .COP_E_I_EXC_CODE   (COP_E_I_EXC_CODE)
     );
 
 endmodule
