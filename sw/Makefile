@@ -1,12 +1,12 @@
-all: bootrom.mem
+APP := helloworld
 
-bootrom.mem:
-	make -C bootrom
-	cp bootrom/bootrom.mem .
+app:
+	cargo objdump --bin $(APP) -- -dSC > $(APP).dump
+	cargo objcopy --bin $(APP) -- -O binary $(APP).bin
+	od -An -tx4 -w4 -v $(APP).bin > $(APP).mem
+	rm -f $(APP).bin
 
 clean:
-	make -C bootrom clean
-	rm bootrom.mem
+	rm -rf *.dump *.mem
 
-.PHONY: all bootrom.mem clean
-
+.PHONY: kernel.mem clean

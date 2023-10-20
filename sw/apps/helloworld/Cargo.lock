@@ -24,17 +24,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "dc827186963e592360843fb5ba4b973e145841266c1357f7180c43526f2e5b61"
 
 [[package]]
-name = "bootrom"
-version = "0.1.0"
-dependencies = [
- "embedded-hal 1.0.0-alpha.11",
- "embedded-hal-nb",
- "heapless",
- "nb 1.1.0",
- "riscv",
-]
-
-[[package]]
 name = "byteorder"
 version = "1.4.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -92,6 +81,17 @@ dependencies = [
  "rustc_version",
  "spin",
  "stable_deref_trait",
+]
+
+[[package]]
+name = "kernel"
+version = "0.1.0"
+dependencies = [
+ "embedded-hal 1.0.0-alpha.11",
+ "embedded-hal-nb",
+ "heapless",
+ "nb 1.1.0",
+ "riscv",
 ]
 
 [[package]]

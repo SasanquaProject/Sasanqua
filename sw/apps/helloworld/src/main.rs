@@ -23,17 +23,9 @@ fn panic(_info: &PanicInfo) -> ! {
 #[no_mangle]
 pub unsafe extern "C" fn start_rust() {
     extern "Rust" {
-        fn setup();
         fn run() -> !;
     }
-
-    setup();
     run()
-}
-
-#[no_mangle]
-pub extern "C" fn setup() {
-
 }
 
 #[no_mangle]

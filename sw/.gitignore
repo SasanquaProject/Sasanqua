@@ -1,2 +1,5 @@
-bootrom.mem
+target/
 
+*.dump
+*.mem
+*.bin
