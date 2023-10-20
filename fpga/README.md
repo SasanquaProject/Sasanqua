@@ -1,4 +1,4 @@
-# HW Design
+# FPGA
 
 ## ディレクトリ構成
 
