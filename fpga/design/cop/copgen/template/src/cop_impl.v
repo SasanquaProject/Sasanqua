@@ -1,6 +1,7 @@
 module cop_{ID} #
     (
-        parameter COP_NUMS = 32'd1
+        parameter COP_NUMS = 32'd1,
+        parameter PNUMS    = COP_NUMS
     )
     (
         /* ----- クロック・リセット ----- */
@@ -8,8 +9,8 @@ module cop_{ID} #
         input wire                      RST,
 
         /* ----- Check 接続 ----- */
-        input wire  [(17*COP_NUMS-1):0] C_OPCODE,
-        output wire [(32*COP_NUMS-1):0] C_ACCEPT,
+        input wire  [(17*PNUMS-1):0]    C_OPCODE,
+        output wire [(32*PNUMS-1):0]    C_ACCEPT,
 
         /* ----- Ready 接続 ----- */
         input wire  [31:0]              R_INST,
@@ -32,7 +33,7 @@ module cop_{ID} #
     );
 
     /* ----- Check ----- */
-    assign C_ACCEPT = check_inst(C_OPCODE);
+    assign C_ACCEPT = \{ 1'b0, check_inst(C_OPCODE[16:0]) };
 
     {INST_PARAMETERS}
 

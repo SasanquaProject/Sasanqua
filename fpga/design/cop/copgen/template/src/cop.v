@@ -1,6 +1,7 @@
 module sasanqua_cop #
     (
-        parameter COP_NUMS = 32'd1
+        parameter COP_NUMS = 32'd1,
+        parameter PNUMS    = COP_NUMS+1
     )
     (
         /* ----- 制御 ----- */
@@ -12,12 +13,12 @@ module sasanqua_cop #
 
         /* ----- Check 接続 ----- */
         // Core -> Cop
-        input wire  [(32*COP_NUMS-1):0] C_I_PC,
-        input wire  [(16*COP_NUMS-1):0] C_I_OPCODE,
-        input wire  [(32*COP_NUMS-1):0] C_I_IMM,
+        input wire  [(32*PNUMS-1):0]    C_I_PC,
+        input wire  [(16*PNUMS-1):0]    C_I_OPCODE,
+        input wire  [(32*PNUMS-1):0]    C_I_IMM,
 
         // Cop -> Core
-        output wire [( 1*COP_NUMS-1):0] C_O_ACCEPT,
+        output wire [( 1*PNUMS-1):0]    C_O_ACCEPT,
 
         /* -----  Exec 接続 ----- */
         // Core -> Cop

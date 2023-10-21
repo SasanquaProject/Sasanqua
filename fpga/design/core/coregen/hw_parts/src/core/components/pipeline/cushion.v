@@ -1,6 +1,7 @@
 module cushion #
     (
-        parameter COP_NUMS = 32'd1
+        parameter COP_NUMS = 32'd1,
+        parameter PNUMS    = COP_NUMS+1
     )
     (
         /* ----- 制御 ----- */
@@ -37,7 +38,7 @@ module cushion #
         input wire                      MAIN_EXC_EN,
         input wire  [3:0]               MAIN_EXC_CODE,
 
-        // B (cop)
+        // Cop
         input wire  [( 1*COP_NUMS-1):0] COP_ALLOW,
         input wire  [( 1*COP_NUMS-1):0] COP_VALID,
         input wire  [(32*COP_NUMS-1):0] COP_PC,

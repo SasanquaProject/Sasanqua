@@ -1,6 +1,7 @@
 module schedule #
     (
-        parameter COP_NUMS = 32'd1
+        parameter COP_NUMS = 32'd1,
+        parameter PNUMS    = COP_NUMS+1
     )
     (
         /* ----- 制御 ----- */
@@ -22,11 +23,11 @@ module schedule #
         input wire  [31:0]              MAIN_IMM,
 
         // Cop
-        input wire  [( 1*COP_NUMS-1):0] COP_ACCEPT,
-        input wire  [(32*COP_NUMS-1):0] COP_PC,
-        input wire  [( 5*COP_NUMS-1):0] COP_RD,
-        input wire  [( 5*COP_NUMS-1):0] COP_RS1,
-        input wire  [( 5*COP_NUMS-1):0] COP_RS2,
+        input wire  [( 1*PNUMS-1):0]    COP_ACCEPT,
+        input wire  [(32*PNUMS-1):0]    COP_PC,
+        input wire  [( 5*PNUMS-1):0]    COP_RD,
+        input wire  [( 5*PNUMS-1):0]    COP_RS1,
+        input wire  [( 5*PNUMS-1):0]    COP_RS2,
 
         /* ----- 後段との接続 ----- */
         // A (main stream)
@@ -45,15 +46,15 @@ module schedule #
     );
 
     /* ----- 入力取り込み ----- */
-    reg                     main_accept;
-    reg [31:0]              main_pc, main_imm;
-    reg [11:0]              main_csr;
-    reg [16:0]              main_opcode;
-    reg [4:0]               main_rd, main_rs1, main_rs2;
+    reg                  main_accept;
+    reg [31:0]           main_pc, main_imm;
+    reg [11:0]           main_csr;
+    reg [16:0]           main_opcode;
+    reg [4:0]            main_rd, main_rs1, main_rs2;
 
-    reg [( 1*COP_NUMS-1):0] cop_accept;
-    reg [(32*COP_NUMS-1):0] cop_pc;
-    reg [( 5*COP_NUMS-1):0] cop_rd, cop_rs1, cop_rs2;
+    reg [( 1*PNUMS-1):0] cop_accept;
+    reg [(32*PNUMS-1):0] cop_pc;
+    reg [( 5*PNUMS-1):0] cop_rd, cop_rs1, cop_rs2;
 
     always @ (posedge CLK) begin
         if (RST || FLUSH) begin
@@ -93,7 +94,7 @@ module schedule #
 
     /* ----- 出力(仮) ----- */
     // Main
-    assign SCHEDULE_MAIN_ALLOW  = !cop_accept && main_accept;
+    assign SCHEDULE_MAIN_ALLOW  = !cop_accept[0] && main_accept;
     assign SCHEDULE_MAIN_PC     = main_pc;
     assign SCHEDULE_MAIN_OPCODE = main_opcode;
     assign SCHEDULE_MAIN_RD     = main_rd;
@@ -103,7 +104,7 @@ module schedule #
     assign SCHEDULE_MAIN_IMM    = main_imm;
 
     // Cop
-    assign SCHEDULE_COP_ALLOW   = cop_accept;
-    assign SCHEDULE_COP_RD      = cop_rd;
+    assign SCHEDULE_COP_ALLOW   = cop_accept[0];
+    assign SCHEDULE_COP_RD      = cop_rd[4:0];
 
 endmodule

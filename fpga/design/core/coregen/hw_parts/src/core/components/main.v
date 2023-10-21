@@ -1,7 +1,8 @@
 module main
     # (
         parameter START_ADDR = 32'h0,
-        parameter COP_NUMS   = 32'd1
+        parameter COP_NUMS   = 32'd1,
+        parameter PNUMS      = COP_NUMS+1
     )
     (
         /* ----- 制御 ----- */
@@ -40,10 +41,10 @@ module main
         output wire                     COP_STALL,
 
         // Check 接続
-        output wire [(32*COP_NUMS-1):0] COP_C_O_PC,
-        output wire [(16*COP_NUMS-1):0] COP_C_O_OPCODE,
-        output wire [(32*COP_NUMS-1):0] COP_C_O_IMM,
-        input wire  [( 1*COP_NUMS-1):0] COP_C_I_ACCEPT,
+        output wire [(32*PNUMS-1):0]    COP_C_O_PC,
+        output wire [(16*PNUMS-1):0]    COP_C_O_OPCODE,
+        output wire [(32*PNUMS-1):0]    COP_C_O_IMM,
+        input wire  [( 1*PNUMS-1):0]    COP_C_I_ACCEPT,
 
         // Exec 接続
         output wire [( 1*COP_NUMS-1):0] COP_E_O_ALLOW,
@@ -189,12 +190,12 @@ module main
     );
 
     /* ----- 3-2. コプロセッサ (Check) ----- */
-    wire [(32*COP_NUMS-1):0] cop_stub_pc;
-    wire [( 5*COP_NUMS-1):0] cop_stub_rd, cop_stub_rs1, cop_stub_rs2;
+    wire [(32*PNUMS-1):0] cop_stub_pc;
+    wire [( 5*PNUMS-1):0] cop_stub_rd, cop_stub_rs1, cop_stub_rs2;
 
-    assign COP_C_O_PC       = pool_pc;
-    assign COP_C_O_OPCODE   = pool_opcode;
-    assign COP_C_O_IMM      = pool_imm;
+    assign COP_C_O_PC       = { 32'b0, pool_pc };
+    assign COP_C_O_OPCODE   = { 17'b0, pool_opcode };
+    assign COP_C_O_IMM      = { 32'b0, pool_imm };
 
     cop_stub # (
         .COP_NUMS       (COP_NUMS)
@@ -220,13 +221,13 @@ module main
     );
 
     /* ----- 4-1. スケジューリング ----- */
-    wire                     schedule_main_allow;
-    wire [31:0]              schedule_main_pc, schedule_main_imm;
-    wire [11:0]              schedule_main_csr;
-    wire [16:0]              schedule_main_opcode;
-    wire [4:0]               schedule_main_rd, schedule_main_rs1, schedule_main_rs2;
-    wire [( 1*COP_NUMS-1):0] schedule_cop_allow;
-    wire [( 5*COP_NUMS-1):0] schedule_cop_rd;
+    wire                  schedule_main_allow;
+    wire [31:0]           schedule_main_pc, schedule_main_imm;
+    wire [11:0]           schedule_main_csr;
+    wire [16:0]           schedule_main_opcode;
+    wire [4:0]            schedule_main_rd, schedule_main_rs1, schedule_main_rs2;
+    wire [( 1*PNUMS-1):0] schedule_cop_allow;
+    wire [( 5*PNUMS-1):0] schedule_cop_rd;
 
     schedule # (
         .COP_NUMS               (COP_NUMS)
@@ -328,10 +329,10 @@ module main
         .B_RADDR            (check_rs2),
         .B_RVALID           (schedule_main_rs2_valid),
         .B_RDATA            (schedule_main_rs2_data),
-        .C_RADDR            (cop_stub_rs1),
+        .C_RADDR            (cop_stub_rs1[4:0]),
         .C_RVALID           (schedule_cop_rs1_valid),
         .C_RDATA            (schedule_cop_rs1_data),
-        .D_RADDR            (cop_stub_rs2),
+        .D_RADDR            (cop_stub_rs2[4:0]),
         .D_RVALID           (schedule_cop_rs2_valid),
         .D_RDATA            (schedule_cop_rs2_data),
         .WADDR              (memr_reg_w_rd),

@@ -34,9 +34,9 @@ end
 // 接続
 wire [31:0] c_accept_{DEC_ID};
 
-assign C_O_ACCEPT = c_accept_{DEC_ID} != 32'b0;
-assign E_O_ALLOW  = allow_{DEC_ID};
-assign E_O_PC     = pc_{DEC_ID}[2];
+assign C_O_ACCEPT = { 1'b0, c_accept_{DEC_ID} != 32'b0 };
+assign E_O_ALLOW  = { 1'b0, allow_{DEC_ID} };
+assign E_O_PC     = { 32'b0, pc_{DEC_ID}[2] };
 
 cop_{DEC_ID} # (
     .COP_NUMS       (COP_NUMS)

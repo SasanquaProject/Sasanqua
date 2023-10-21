@@ -2,7 +2,8 @@ module core
     # (
         parameter HART_ID    = 32'h0,
         parameter START_ADDR = 32'h0,
-        parameter COP_NUMS   = 32'd1
+        parameter COP_NUMS   = 32'd1,
+        parameter PNUMS      = COP_NUMS+1
     )
     (
         /* ----- 制御 ----- */
@@ -41,10 +42,10 @@ module core
         output wire                     COP_STALL,
 
         // Check 接続
-        output wire [(32*COP_NUMS-1):0] COP_C_O_PC,
-        output wire [(16*COP_NUMS-1):0] COP_C_O_OPCODE,
-        output wire [(32*COP_NUMS-1):0] COP_C_O_IMM,
-        input wire  [( 1*COP_NUMS-1):0] COP_C_I_ACCEPT,
+        output wire [(32*PNUMS-1):0]    COP_C_O_PC,
+        output wire [(16*PNUMS-1):0]    COP_C_O_OPCODE,
+        output wire [(32*PNUMS-1):0]    COP_C_O_IMM,
+        input wire  [( 1*PNUMS-1):0]    COP_C_I_ACCEPT,
 
         // Exec 接続
         output wire [( 1*COP_NUMS-1):0] COP_E_O_ALLOW,
