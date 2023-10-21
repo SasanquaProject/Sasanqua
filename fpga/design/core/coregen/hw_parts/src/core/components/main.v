@@ -41,18 +41,12 @@ module main
         // Check 接続
         output wire [31:0]  COP_C_O_PC,
         output wire [16:0]  COP_C_O_OPCODE,
-        output wire [4:0]   COP_C_O_RD,
-        output wire [4:0]   COP_C_O_RS1,
-        output wire [4:0]   COP_C_O_RS2,
         output wire [31:0]  COP_C_O_IMM,
         input wire          COP_C_I_ACCEPT,
-        input wire  [31:0]  COP_C_I_PC,
-        input wire  [4:0]   COP_C_I_RD,
-        input wire  [4:0]   COP_C_I_RS1,
-        input wire  [4:0]   COP_C_I_RS2,
 
         // Exec 接続
         output wire         COP_E_O_ALLOW,
+        output wire [4:0]   COP_E_O_RD,
         output wire [31:0]  COP_E_O_RS1_DATA,
         output wire [31:0]  COP_E_O_RS2_DATA,
         input wire          COP_E_I_ALLOW,
@@ -221,12 +215,10 @@ module main
 
     assign COP_C_O_PC       = pool_pc;
     assign COP_C_O_OPCODE   = pool_opcode;
-    assign COP_C_O_RD       = pool_rd;
-    assign COP_C_O_RS1      = pool_rs1;
-    assign COP_C_O_RS2      = pool_rs2;
     assign COP_C_O_IMM      = pool_imm;
 
     assign COP_E_O_ALLOW    = schedule_b_allow;
+    assign COP_E_O_RD       = schedule_b_rd;
     assign COP_E_O_RS1_DATA = schedule_b_rs1_data;
     assign COP_E_O_RS2_DATA = schedule_b_rs2_data;
 
@@ -235,7 +227,7 @@ module main
     wire [31:0] schedule_a_pc, schedule_a_imm;
     wire [11:0] schedule_a_csr;
     wire [16:0] schedule_a_opcode;
-    wire [4:0]  schedule_a_rd, schedule_a_rs1, schedule_a_rs2;
+    wire [4:0]  schedule_a_rd, schedule_a_rs1, schedule_a_rs2, schedule_b_rd;
 
     schedule schedule (
         // 制御
@@ -269,7 +261,8 @@ module main
         .SCHEDULE_A_RS2     (schedule_a_rs2),
         .SCHEDULE_A_CSR     (schedule_a_csr),
         .SCHEDULE_A_IMM     (schedule_a_imm),
-        .SCHEDULE_B_ALLOW   (schedule_b_allow)
+        .SCHEDULE_B_ALLOW   (schedule_b_allow),
+        .SCHEDULE_B_RD      (schedule_b_rd)
     );
 
     /* ----- 4-2. レジスタアクセス ----- */

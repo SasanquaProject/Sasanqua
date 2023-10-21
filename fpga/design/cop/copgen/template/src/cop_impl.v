@@ -10,9 +10,6 @@ module cop_{ID}
 
         /* ----- Ready 接続 ----- */
         input wire  [31:0]  R_INST,
-        input wire  [4:0]   R_RD,
-        input wire  [4:0]   R_RS1,
-        input wire  [4:0]   R_RS2,
         input wire  [31:0]  R_IMM,
 
         /* ----- Exec 接続 ----- */
@@ -20,9 +17,7 @@ module cop_{ID}
         input wire  [31:0]  E_PC,
         input wire  [31:0]  E_INST,
         input wire  [4:0]   E_RD,
-        input wire  [4:0]   E_RS1,
         input wire  [31:0]  E_RS1_DATA,
-        input wire  [4:0]   E_RS2,
         input wire  [31:0]  E_RS2_DATA,
         input wire  [31:0]  E_IMM,
         output wire         E_VALID,

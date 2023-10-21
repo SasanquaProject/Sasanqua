@@ -37,7 +37,8 @@ module schedule
         output wire [31:0]  SCHEDULE_A_IMM,
 
         // B (cop)
-        output wire         SCHEDULE_B_ALLOW
+        output wire         SCHEDULE_B_ALLOW,
+        output wire [4:0]   SCHEDULE_B_RD
     );
 
     /* ----- 入力取り込み ----- */
@@ -100,5 +101,6 @@ module schedule
 
     // B (cop)
     assign SCHEDULE_B_ALLOW     = b_accept;
+    assign SCHEDULE_B_RD        = b_rd;
 
 endmodule

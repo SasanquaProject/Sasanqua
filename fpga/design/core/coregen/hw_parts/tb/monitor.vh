@@ -81,10 +81,10 @@ wire [31:0] SCHEDULE_A_IMM          = sasanqua.core.main.schedule_a_imm;
 wire [31:0] SCHEDULE_B_PC           = sasanqua_cop.pc_0[1];
 wire [4:0]  SCHEDULE_B_RD_ADDR      = sasanqua_cop.rd_0[1];
 wire        SCHEDULE_B_RS1_VALID    = sasanqua.core.main.schedule_b_rs1_valid;
-wire [4:0]  SCHEDULE_B_RS1_ADDR     = sasanqua.core.main.COP_C_I_RS1;
+wire [4:0]  SCHEDULE_B_RS1_ADDR     = sasanqua.core.main.cop_stub_rs1;
 wire [31:0] SCHEDULE_B_RS1_DATA     = sasanqua.core.main.schedule_b_rs1_data;
 wire        SCHEDULE_B_RS2_VALID    = sasanqua.core.main.schedule_b_rs2_valid;
-wire [4:0]  SCHEDULE_B_RS2_ADDR     = sasanqua.core.main.COP_C_I_RS2;
+wire [4:0]  SCHEDULE_B_RS2_ADDR     = sasanqua.core.main.cop_stub_rs2;
 wire [31:0] SCHEDULE_B_RS2_DATA     = sasanqua.core.main.schedule_b_rs2_data;
 wire [31:0] SCHEDULE_B_IMM          = sasanqua_cop.imm_0[1];
 
