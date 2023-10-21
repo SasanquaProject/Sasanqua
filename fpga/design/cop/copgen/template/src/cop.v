@@ -15,7 +15,7 @@ module sasanqua_cop #
         // Core -> Cop
         input wire  [(32*PNUMS-1):0]    C_I_PC,
         input wire  [(16*PNUMS-1):0]    C_I_OPCODE,
-        input wire  [(32*PNUMS-1):0]    C_I_IMM,
+        input wire  [(32*PNUMS-1):0]    C_I_RINST,
 
         // Cop -> Core
         output wire [( 1*PNUMS-1):0]    C_O_ACCEPT,

@@ -17,7 +17,7 @@ module check #
         input wire  [( 5*PNUMS-1):0] RD,
         input wire  [( 5*PNUMS-1):0] RS1,
         input wire  [( 5*PNUMS-1):0] RS2,
-        input wire  [(32*PNUMS-1):0] IMM,
+        input wire  [(32*PNUMS-1):0] RINST,
 
         /* ----- スケジューラ1との接続 ----- */
         output wire [( 1*PNUMS-1):0] CHECK_ACCEPT,
@@ -31,7 +31,7 @@ module check #
     );
 
     /* ----- 入力取り込み ----- */
-    reg [(32*PNUMS-1):0] pc, imm;
+    reg [(32*PNUMS-1):0] pc, rinst;
     reg [(17*PNUMS-1):0] opcode;
     reg [( 5*PNUMS-1):0] rd, rs1, rs2;
 
@@ -42,7 +42,7 @@ module check #
             rd <= 'b0;
             rs1 <= 'b0;
             rs2 <= 'b0;
-            imm <= 'b0;
+            rinst <= { 32'b0, 32'h0000_0013 };
         end
         else if (STALL || MEM_WAIT) begin
             // do nothing
@@ -53,18 +53,49 @@ module check #
             rd <= RD;
             rs1 <= RS1;
             rs2 <= RS2;
-            imm <= IMM;
+            rinst <= RINST;
         end
     end
 
     /* ----- デコード ----- */
-    assign CHECK_ACCEPT = { 1'b0, imm[0] != 32'hffff_ffff };
+    assign CHECK_ACCEPT = { 1'b0, CHECK_IMM[31:0] != 32'hffff_ffff };
     assign CHECK_PC     = pc;
     assign CHECK_OPCODE = opcode;
     assign CHECK_RD     = rd;
     assign CHECK_RS1    = rs1;
     assign CHECK_RS2    = rs2;
-    assign CHECK_CSR    = imm[11:0];
-    assign CHECK_IMM    = imm;
+    assign CHECK_CSR    = { 12'b0, CHECK_IMM[11:0] };
+    assign CHECK_IMM    = { 32'b0, decode_imm(rinst[31:0]) };
+
+    function [31:0] decode_imm;
+        input [31:0] INST;
+
+        case (INST[6:0])
+            // R形式
+            7'b0110011: decode_imm = 32'b0;
+
+            // I形式
+            7'b1100111: decode_imm = { 20'b0, INST[31:20] };
+            7'b0000011: decode_imm = { 20'b0, INST[31:20] };
+            7'b0010011: decode_imm = { 20'b0, INST[31:20] };
+            7'b0001111: decode_imm = { 20'b0, INST[31:20] };
+            7'b1110011: decode_imm = { 20'b0, INST[31:20] };
+
+            // S形式
+            7'b0100011: decode_imm = { 20'b0, INST[31:25], INST[11:7] };
+
+            // B形式
+            7'b1100011: decode_imm = { 19'b0, INST[31], INST[7], INST[30:25], INST[11:8], 1'b0 };
+
+            // U形式
+            7'b0110111: decode_imm = { INST[31:12], 12'b0 };
+            7'b0010111: decode_imm = { INST[31:12], 12'b0 };
+
+            // J形式
+            7'b1101111: decode_imm = { 11'b0, INST[31], INST[19:12], INST[20], INST[30:21], 1'b0 };
+
+            default:    decode_imm = 32'hffff_ffff;
+        endcase
+    endfunction
 
 endmodule

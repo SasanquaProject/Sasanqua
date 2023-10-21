@@ -133,7 +133,7 @@ wire            COP_MEM_WAIT;
 // Check 接続
 wire [31:0]     COP_C_O_PC;
 wire [16:0]     COP_C_O_OPCODE;
-wire [31:0]     COP_C_O_IMM;
+wire [31:0]     COP_C_O_RINST;
 wire            COP_C_I_ACCEPT;
 
 // Exec 接続
@@ -161,7 +161,7 @@ sasanqua_cop sasanqua_cop (
     // Check 接続
     .C_I_PC             (COP_C_O_PC),
     .C_I_OPCODE         (COP_C_O_OPCODE),
-    .C_I_IMM            (COP_C_O_IMM),
+    .C_I_RINST          (COP_C_O_RINST),
     .C_O_ACCEPT         (COP_C_I_ACCEPT),
 
     // Exec 接続
@@ -240,7 +240,7 @@ sasanqua # (
     .COP_MEM_WAIT       (COP_MEM_WAIT),
     .COP_C_O_PC         (COP_C_O_PC),
     .COP_C_O_OPCODE     (COP_C_O_OPCODE),
-    .COP_C_O_IMM        (COP_C_O_IMM),
+    .COP_C_O_RINST      (COP_C_O_RINST),
     .COP_C_I_ACCEPT     (COP_C_I_ACCEPT),
     .COP_E_O_ALLOW      (COP_E_O_ALLOW),
     .COP_E_O_RD         (COP_E_O_RD),

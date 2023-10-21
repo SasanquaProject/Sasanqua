@@ -39,7 +39,7 @@ wire [6:0]  DECODE_OPCODE           = sasanqua.core.main.decode_opcode;
 wire [4:0]  DECODE_RD               = sasanqua.core.main.decode_rd;
 wire [4:0]  DECODE_RS1              = sasanqua.core.main.decode_rs1;
 wire [4:0]  DECODE_RS2              = sasanqua.core.main.decode_rs2;
-wire [31:0] DECODE_IMM              = sasanqua.core.main.decode_imm;
+wire [31:0] DECODE_RINST            = sasanqua.core.main.decode_rinst;
 
 // Core: Pool
 wire [31:0] POOL_PC                 = sasanqua.core.main.pool_pc;
@@ -47,8 +47,7 @@ wire [6:0]  POOL_OPCODE             = sasanqua.core.main.pool_opcode;
 wire [4:0]  POOL_RD                 = sasanqua.core.main.pool_rd;
 wire [4:0]  POOL_RS1                = sasanqua.core.main.pool_rs1;
 wire [4:0]  POOL_RS2                = sasanqua.core.main.pool_rs2;
-wire [11:0] POOL_CSR                = sasanqua.core.main.pool_csr;
-wire [31:0] POOL_IMM                = sasanqua.core.main.pool_imm;
+wire [31:0] POOL_RINST              = sasanqua.core.main.pool_rinst;
 
 // Core: Check
 wire [31:0] CHECK_PC                = sasanqua.core.main.check_pc;

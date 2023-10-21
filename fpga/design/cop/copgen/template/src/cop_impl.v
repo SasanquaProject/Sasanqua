@@ -14,7 +14,8 @@ module cop_{ID} #
 
         /* ----- Ready 接続 ----- */
         input wire  [31:0]              R_INST,
-        input wire  [31:0]              R_IMM,
+        input wire  [31:0]              R_RINST,
+        output wire [31:0]              R_IMM,
 
         /* ----- Exec 接続 ----- */
         input wire                      E_ALLOW,

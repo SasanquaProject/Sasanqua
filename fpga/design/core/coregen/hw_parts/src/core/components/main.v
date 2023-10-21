@@ -43,7 +43,7 @@ module main
         // Check 接続
         output wire [(32*PNUMS-1):0]    COP_C_O_PC,
         output wire [(16*PNUMS-1):0]    COP_C_O_OPCODE,
-        output wire [(32*PNUMS-1):0]    COP_C_O_IMM,
+        output wire [(32*PNUMS-1):0]    COP_C_O_RINST,
         input wire  [( 1*PNUMS-1):0]    COP_C_I_ACCEPT,
 
         // Exec 接続
@@ -98,7 +98,7 @@ module main
     );
 
     /* ----- 2. 命令デコード ----- */
-    wire [31:0] decode_pc, decode_imm;
+    wire [31:0] decode_pc, decode_rinst;
     wire [16:0] decode_opcode;
     wire [4:0]  decode_rd, decode_rs1, decode_rs2;
 
@@ -120,12 +120,11 @@ module main
         .DECODE_RD      (decode_rd),
         .DECODE_RS1     (decode_rs1),
         .DECODE_RS2     (decode_rs2),
-        .DECODE_IMM     (decode_imm)
+        .DECODE_RINST   (decode_rinst)
     );
 
     /* ----- 3. 命令プール ----- */
-    wire [(32*PNUMS-1):0] pool_pc, pool_imm;
-    wire [(12*PNUMS-1):0] pool_csr;
+    wire [(32*PNUMS-1):0] pool_pc, pool_rinst;
     wire [(17*PNUMS-1):0] pool_opcode;
     wire [( 5*PNUMS-1):0] pool_rd, pool_rs1, pool_rs2;
 
@@ -145,7 +144,7 @@ module main
         .RD             (decode_rd),
         .RS1            (decode_rs1),
         .RS2            (decode_rs2),
-        .IMM            (decode_imm),
+        .RINST          (decode_rinst),
 
         // 後段との接続
         .POOL_PC        (pool_pc),
@@ -153,8 +152,7 @@ module main
         .POOL_RD        (pool_rd),
         .POOL_RS1       (pool_rs1),
         .POOL_RS2       (pool_rs2),
-        .POOL_CSR       (pool_csr),
-        .POOL_IMM       (pool_imm)
+        .POOL_RINST     (pool_rinst)
     );
 
     /* ----- 3-1. 命令検査 ----- */
@@ -180,7 +178,7 @@ module main
         .RD             (pool_rd),
         .RS1            (pool_rs1),
         .RS2            (pool_rs2),
-        .IMM            (pool_imm),
+        .RINST          (pool_rinst),
 
         // 後段との接続
         .CHECK_ACCEPT   (check_accept),
@@ -199,7 +197,7 @@ module main
 
     assign COP_C_O_PC     = pool_pc;
     assign COP_C_O_OPCODE = pool_opcode;
-    assign COP_C_O_IMM    = pool_imm;
+    assign COP_C_O_RINST  = pool_rinst;
 
     cop_stub # (
         .COP_NUMS       (COP_NUMS)

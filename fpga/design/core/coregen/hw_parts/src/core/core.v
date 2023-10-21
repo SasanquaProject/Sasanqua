@@ -44,7 +44,7 @@ module core
         // Check 接続
         output wire [(32*PNUMS-1):0]    COP_C_O_PC,
         output wire [(16*PNUMS-1):0]    COP_C_O_OPCODE,
-        output wire [(32*PNUMS-1):0]    COP_C_O_IMM,
+        output wire [(32*PNUMS-1):0]    COP_C_O_RINST,
         input wire  [( 1*PNUMS-1):0]    COP_C_I_ACCEPT,
 
         // Exec 接続
@@ -146,7 +146,7 @@ module core
         .COP_STALL          (COP_STALL),
         .COP_C_O_PC         (COP_C_O_PC),
         .COP_C_O_OPCODE     (COP_C_O_OPCODE),
-        .COP_C_O_IMM        (COP_C_O_IMM),
+        .COP_C_O_RINST      (COP_C_O_RINST),
         .COP_C_I_ACCEPT     (COP_C_I_ACCEPT),
         .COP_E_O_ALLOW      (COP_E_O_ALLOW),
         .COP_E_O_RD         (COP_E_O_RD),
