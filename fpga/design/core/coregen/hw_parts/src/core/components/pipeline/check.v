@@ -58,14 +58,20 @@ module check #
     end
 
     /* ----- デコード ----- */
-    assign CHECK_ACCEPT = { 1'b0, CHECK_IMM[31:0] != 32'hffff_ffff };
     assign CHECK_PC     = pc;
     assign CHECK_OPCODE = opcode;
     assign CHECK_RD     = rd;
     assign CHECK_RS1    = rs1;
     assign CHECK_RS2    = rs2;
-    assign CHECK_CSR    = { 12'b0, CHECK_IMM[11:0] };
-    assign CHECK_IMM    = { 32'b0, decode_imm(rinst[31:0]) };
+
+    genvar i;
+    generate
+        for (i = 0; i < PNUMS; i = i+1) begin
+            assign CHECK_ACCEPT[i]                = CHECK_IMM[(32*(i+1)-1):(32*i)] != 32'hffff_ffff;
+            assign CHECK_CSR[(12*(i+1)-1):(12*i)] = CHECK_IMM[(32*i+11):(32*i)];
+            assign CHECK_IMM[(32*(i+1)-1):(32*i)] = decode_imm(rinst[(32*(i+1)-1):(32*i)]);
+        end
+    endgenerate
 
     function [31:0] decode_imm;
         input [31:0] INST;
