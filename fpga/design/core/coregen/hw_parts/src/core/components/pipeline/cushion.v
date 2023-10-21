@@ -1,87 +1,92 @@
-module cushion
+module cushion #
+    (
+        parameter COP_NUMS = 32'd1
+    )
     (
         /* ----- 制御 ----- */
         // クロック・リセット
-        input wire          CLK,
-        input wire          RST,
+        input wire                      CLK,
+        input wire                      RST,
 
         // パイプライン
-        input wire          FLUSH,
-        input wire          MEM_WAIT,
+        input wire                      FLUSH,
+        input wire                      MEM_WAIT,
 
         /* ----- 前段との接続 ----- */
         // Main
-        input wire          MAIN_ALLOW,
-        input wire          MAIN_VALID,
-        input wire  [31:0]  MAIN_PC,
-        input wire          MAIN_REG_W_EN,
-        input wire  [4:0]   MAIN_REG_W_RD,
-        input wire  [31:0]  MAIN_REG_W_DATA,
-        input wire          MAIN_CSR_W_EN,
-        input wire  [11:0]  MAIN_CSR_W_ADDR,
-        input wire  [31:0]  MAIN_CSR_W_DATA,
-        input wire          MAIN_MEM_R_EN,
-        input wire  [4:0]   MAIN_MEM_R_RD,
-        input wire  [31:0]  MAIN_MEM_R_ADDR,
-        input wire  [3:0]   MAIN_MEM_R_STRB,
-        input wire          MAIN_MEM_R_SIGNED,
-        input wire          MAIN_MEM_W_EN,
-        input wire  [31:0]  MAIN_MEM_W_ADDR,
-        input wire  [3:0]   MAIN_MEM_W_STRB,
-        input wire  [31:0]  MAIN_MEM_W_DATA,
-        input wire          MAIN_JMP_DO,
-        input wire  [31:0]  MAIN_JMP_PC,
-        input wire          MAIN_EXC_EN,
-        input wire  [3:0]   MAIN_EXC_CODE,
+        input wire                      MAIN_ALLOW,
+        input wire                      MAIN_VALID,
+        input wire  [31:0]              MAIN_PC,
+        input wire                      MAIN_REG_W_EN,
+        input wire  [4:0]               MAIN_REG_W_RD,
+        input wire  [31:0]              MAIN_REG_W_DATA,
+        input wire                      MAIN_CSR_W_EN,
+        input wire  [11:0]              MAIN_CSR_W_ADDR,
+        input wire  [31:0]              MAIN_CSR_W_DATA,
+        input wire                      MAIN_MEM_R_EN,
+        input wire  [4:0]               MAIN_MEM_R_RD,
+        input wire  [31:0]              MAIN_MEM_R_ADDR,
+        input wire  [3:0]               MAIN_MEM_R_STRB,
+        input wire                      MAIN_MEM_R_SIGNED,
+        input wire                      MAIN_MEM_W_EN,
+        input wire  [31:0]              MAIN_MEM_W_ADDR,
+        input wire  [3:0]               MAIN_MEM_W_STRB,
+        input wire  [31:0]              MAIN_MEM_W_DATA,
+        input wire                      MAIN_JMP_DO,
+        input wire  [31:0]              MAIN_JMP_PC,
+        input wire                      MAIN_EXC_EN,
+        input wire  [3:0]               MAIN_EXC_CODE,
 
         // B (cop)
-        input wire          COP_ALLOW,
-        input wire          COP_VALID,
-        input wire  [31:0]  COP_PC,
-        input wire          COP_REG_W_EN,
-        input wire  [4:0]   COP_REG_W_RD,
-        input wire  [31:0]  COP_REG_W_DATA,
-        input wire          COP_EXC_EN,
-        input wire  [3:0]   COP_EXC_CODE,
+        input wire  [( 1*COP_NUMS-1):0] COP_ALLOW,
+        input wire  [( 1*COP_NUMS-1):0] COP_VALID,
+        input wire  [(32*COP_NUMS-1):0] COP_PC,
+        input wire  [( 1*COP_NUMS-1):0] COP_REG_W_EN,
+        input wire  [( 5*COP_NUMS-1):0] COP_REG_W_RD,
+        input wire  [(32*COP_NUMS-1):0] COP_REG_W_DATA,
+        input wire  [( 1*COP_NUMS-1):0] COP_EXC_EN,
+        input wire  [( 4*COP_NUMS-1):0] COP_EXC_CODE,
 
         /* ----- 後段との接続 ----- */
-        output wire         CUSHION_VALID,
-        output wire [31:0]  CUSHION_PC,
-        output wire         CUSHION_REG_W_EN,
-        output wire [4:0]   CUSHION_REG_W_RD,
-        output wire [31:0]  CUSHION_REG_W_DATA,
-        output wire         CUSHION_CSR_W_EN,
-        output wire [11:0]  CUSHION_CSR_W_ADDR,
-        output wire [31:0]  CUSHION_CSR_W_DATA,
-        output wire         CUSHION_MEM_R_EN,
-        output wire [4:0]   CUSHION_MEM_R_RD,
-        output wire [31:0]  CUSHION_MEM_R_ADDR,
-        output wire [3:0]   CUSHION_MEM_R_STRB,
-        output wire         CUSHION_MEM_R_SIGNED,
-        output wire         CUSHION_MEM_W_EN,
-        output wire [31:0]  CUSHION_MEM_W_ADDR,
-        output wire [3:0]   CUSHION_MEM_W_STRB,
-        output wire [31:0]  CUSHION_MEM_W_DATA,
-        output wire         CUSHION_JMP_DO,
-        output wire [31:0]  CUSHION_JMP_PC,
-        output wire         CUSHION_EXC_EN,
-        output wire [3:0]   CUSHION_EXC_CODE,
-        output wire [31:0]  CUSHION_EXC_PC
+        output wire                     CUSHION_VALID,
+        output wire [31:0]              CUSHION_PC,
+        output wire                     CUSHION_REG_W_EN,
+        output wire [4:0]               CUSHION_REG_W_RD,
+        output wire [31:0]              CUSHION_REG_W_DATA,
+        output wire                     CUSHION_CSR_W_EN,
+        output wire [11:0]              CUSHION_CSR_W_ADDR,
+        output wire [31:0]              CUSHION_CSR_W_DATA,
+        output wire                     CUSHION_MEM_R_EN,
+        output wire [4:0]               CUSHION_MEM_R_RD,
+        output wire [31:0]              CUSHION_MEM_R_ADDR,
+        output wire [3:0]               CUSHION_MEM_R_STRB,
+        output wire                     CUSHION_MEM_R_SIGNED,
+        output wire                     CUSHION_MEM_W_EN,
+        output wire [31:0]              CUSHION_MEM_W_ADDR,
+        output wire [3:0]               CUSHION_MEM_W_STRB,
+        output wire [31:0]              CUSHION_MEM_W_DATA,
+        output wire                     CUSHION_JMP_DO,
+        output wire [31:0]              CUSHION_JMP_PC,
+        output wire                     CUSHION_EXC_EN,
+        output wire [3:0]               CUSHION_EXC_CODE,
+        output wire [31:0]              CUSHION_EXC_PC
     );
 
     /* ----- 入力取り込み ----- */
     // A (main stream)
-    reg         main_allow, main_valid, main_reg_w_en, main_csr_w_en, main_mem_r_en, main_mem_r_signed, main_mem_w_en, main_jmp_do, main_exc_en;
-    reg [31:0]  main_pc, main_reg_w_data, main_csr_w_data, main_mem_r_addr, main_mem_w_addr, main_mem_w_data, main_jmp_pc;
-    reg [11:0]  main_csr_w_addr;
-    reg [4:0]   main_reg_w_rd, main_mem_r_rd;
-    reg [3:0]   main_mem_r_strb, main_mem_w_strb, main_exc_code;
+    reg                     main_allow, main_valid;
+    reg                     main_reg_w_en, main_csr_w_en, main_mem_r_en, main_mem_r_signed, main_mem_w_en;
+    reg                     main_jmp_do, main_exc_en;
+    reg [31:0]              main_pc, main_reg_w_data, main_csr_w_data, main_mem_r_addr, main_mem_w_addr, main_mem_w_data, main_jmp_pc;
+    reg [11:0]              main_csr_w_addr;
+    reg [4:0]               main_reg_w_rd, main_mem_r_rd;
+    reg [3:0]               main_mem_r_strb, main_mem_w_strb, main_exc_code;
 
     // B (cop)
-    reg         cop_allow, cop_valid, cop_reg_w_en, cop_exc_en;
-    reg [31:0]  cop_pc, cop_reg_w_data;
-    reg [4:0]   cop_reg_w_rd;
-    reg [3:0]   cop_exc_code;
+    reg [( 1*COP_NUMS-1):0] cop_allow, cop_valid, cop_reg_w_en, cop_exc_en;
+    reg [(32*COP_NUMS-1):0] cop_pc, cop_reg_w_data;
+    reg [( 5*COP_NUMS-1):0] cop_reg_w_rd;
+    reg [( 4*COP_NUMS-1):0] cop_exc_code;
 
     always @ (posedge CLK) begin
         if (RST || FLUSH) begin
@@ -107,14 +112,14 @@ module cushion
             main_jmp_pc <= 32'b0;
             main_exc_en <= 1'b0;
             main_exc_code <= 4'b0;
-            cop_allow <= 1'b0;
-            cop_valid <= 1'b0;
-            cop_pc <= 32'b0;
-            cop_reg_w_en <= 1'b0;
-            cop_reg_w_rd <= 5'b0;
-            cop_reg_w_data <= 32'b0;
-            cop_exc_en <= 1'b0;
-            cop_exc_code <= 4'b0;
+            cop_allow <= 'b0;
+            cop_valid <= 'b0;
+            cop_pc <= 'b0;
+            cop_reg_w_en <= 'b0;
+            cop_reg_w_rd <= 'b0;
+            cop_reg_w_data <= 'b0;
+            cop_exc_en <= 'b0;
+            cop_exc_code <= 'b0;
         end
         else if (MEM_WAIT) begin
             // do nothing

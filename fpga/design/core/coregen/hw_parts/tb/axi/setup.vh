@@ -181,7 +181,8 @@ sasanqua_cop sasanqua_cop (
 
 /* ----- sasanqua.v 接続 ----- */
 sasanqua # (
-    .START_ADDR         (0)
+    .START_ADDR         (0),
+    .COP_NUMS           (1)
 ) sasanqua (
     // 制御
     .CLK                (CLK),

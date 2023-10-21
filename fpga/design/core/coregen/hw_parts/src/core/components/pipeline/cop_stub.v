@@ -1,23 +1,26 @@
-module cop_stub
+module cop_stub #
+    (
+        parameter COP_NUMS = 32'd1
+    )
     (
         /* ----- 制御 ----- */
-        input wire          CLK,
-        input wire          RST,
-        input wire          FLUSH,
-        input wire          STALL,
-        input wire          MEM_WAIT,
+        input wire                      CLK,
+        input wire                      RST,
+        input wire                      FLUSH,
+        input wire                      STALL,
+        input wire                      MEM_WAIT,
 
         /* ----- 前段との接続 ----- */
-        input wire  [31:0]  PC,
-        input wire  [4:0]   RD,
-        input wire  [4:0]   RS1,
-        input wire  [4:0]   RS2,
+        input wire  [(32*COP_NUMS-1):0] PC,
+        input wire  [( 5*COP_NUMS-1):0] RD,
+        input wire  [( 5*COP_NUMS-1):0] RS1,
+        input wire  [( 5*COP_NUMS-1):0] RS2,
 
         /* ----- 後段との接続 ----- */
-        output reg  [31:0]  COP_STUB_PC,
-        output reg  [4:0]   COP_STUB_RD,
-        output reg  [4:0]   COP_STUB_RS1,
-        output reg  [4:0]   COP_STUB_RS2
+        output reg  [(32*COP_NUMS-1):0] COP_STUB_PC,
+        output reg  [( 5*COP_NUMS-1):0] COP_STUB_RD,
+        output reg  [( 5*COP_NUMS-1):0] COP_STUB_RS1,
+        output reg  [( 5*COP_NUMS-1):0] COP_STUB_RS2
     );
 
     always @ (posedge CLK) begin

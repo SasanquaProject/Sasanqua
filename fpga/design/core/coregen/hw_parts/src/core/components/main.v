@@ -1,62 +1,63 @@
 module main
     # (
-        parameter START_ADDR = 32'h0
+        parameter START_ADDR = 32'h0,
+        parameter COP_NUMS   = 32'd1
     )
     (
         /* ----- 制御 ----- */
-        input wire          CLK,
-        input wire          RST,
+        input wire                      CLK,
+        input wire                      RST,
 
         /* ----- MMU接続 ----- */
         // 命令
-        output wire         INST_RDEN,
-        output wire [31:0]  INST_RIADDR,
-        input wire  [31:0]  INST_ROADDR,
-        input wire          INST_RVALID,
-        input wire  [31:0]  INST_RDATA,
+        output wire                     INST_RDEN,
+        output wire [31:0]              INST_RIADDR,
+        input wire  [31:0]              INST_ROADDR,
+        input wire                      INST_RVALID,
+        input wire  [31:0]              INST_RDATA,
 
         // データ
-        output wire         DATA_RDEN,
-        output wire [31:0]  DATA_RIADDR,
-        input wire  [31:0]  DATA_ROADDR,
-        input wire          DATA_RVALID,
-        input wire  [31:0]  DATA_RDATA,
-        output wire         DATA_WREN,
-        output wire [3:0]   DATA_WSTRB,
-        output wire [31:0]  DATA_WADDR,
-        output wire [31:0]  DATA_WDATA,
+        output wire                     DATA_RDEN,
+        output wire [31:0]              DATA_RIADDR,
+        input wire  [31:0]              DATA_ROADDR,
+        input wire                      DATA_RVALID,
+        input wire  [31:0]              DATA_RDATA,
+        output wire                     DATA_WREN,
+        output wire [3:0]               DATA_WSTRB,
+        output wire [31:0]              DATA_WADDR,
+        output wire [31:0]              DATA_WDATA,
 
         // ハザード
-        input wire          MEM_WAIT,
+        input wire                      MEM_WAIT,
 
         /* ----- 割り込み ----- */
-        input wire          INT_EN,
-        input wire  [3:0]   INT_CODE,
+        input wire                      INT_EN,
+        input wire  [3:0]               INT_CODE,
 
         /* ----- コプロセッサパッケージ接続 ----- */
         // 制御信号
-        output wire         COP_FLUSH,
-        output wire         COP_STALL,
+        output wire                     COP_FLUSH,
+        output wire                     COP_STALL,
 
         // Check 接続
-        output wire [31:0]  COP_C_O_PC,
-        output wire [16:0]  COP_C_O_OPCODE,
-        output wire [31:0]  COP_C_O_IMM,
-        input wire          COP_C_I_ACCEPT,
+        output wire [(32*COP_NUMS-1):0] COP_C_O_PC,
+        output wire [(16*COP_NUMS-1):0] COP_C_O_OPCODE,
+        output wire [(32*COP_NUMS-1):0] COP_C_O_IMM,
+        input wire  [( 1*COP_NUMS-1):0] COP_C_I_ACCEPT,
 
         // Exec 接続
-        output wire         COP_E_O_ALLOW,
-        output wire [4:0]   COP_E_O_RD,
-        output wire [31:0]  COP_E_O_RS1_DATA,
-        output wire [31:0]  COP_E_O_RS2_DATA,
-        input wire          COP_E_I_ALLOW,
-        input wire          COP_E_I_VALID,
-        input wire  [31:0]  COP_E_I_PC,
-        input wire          COP_E_I_REG_W_EN,
-        input wire  [4:0]   COP_E_I_REG_W_RD,
-        input wire  [31:0]  COP_E_I_REG_W_DATA,
-        input wire          COP_E_I_EXC_EN,
-        input wire  [3:0]   COP_E_I_EXC_CODE
+        output wire [( 1*COP_NUMS-1):0] COP_E_O_ALLOW,
+        output wire [( 5*COP_NUMS-1):0] COP_E_O_RD,
+        output wire [(32*COP_NUMS-1):0] COP_E_O_RS1_DATA,
+        output wire [(32*COP_NUMS-1):0] COP_E_O_RS2_DATA,
+        input wire  [( 1*COP_NUMS-1):0] COP_E_I_ALLOW,
+        input wire  [( 1*COP_NUMS-1):0] COP_E_I_VALID,
+        input wire  [(32*COP_NUMS-1):0] COP_E_I_PC,
+        input wire  [( 1*COP_NUMS-1):0] COP_E_I_REG_W_EN,
+        input wire  [( 5*COP_NUMS-1):0] COP_E_I_REG_W_RD,
+        input wire  [(32*COP_NUMS-1):0] COP_E_I_REG_W_DATA,
+        input wire  [( 1*COP_NUMS-1):0] COP_E_I_EXC_EN,
+        input wire  [( 4*COP_NUMS-1):0] COP_E_I_EXC_CODE
     );
 
     /* ----- パイプライン制御 ----- */
@@ -188,14 +189,16 @@ module main
     );
 
     /* ----- 3-2. コプロセッサ (Check) ----- */
-    wire [31:0] cop_stub_pc;
-    wire [4:0]  cop_stub_rd, cop_stub_rs1, cop_stub_rs2;
+    wire [(32*COP_NUMS-1):0] cop_stub_pc;
+    wire [( 5*COP_NUMS-1):0] cop_stub_rd, cop_stub_rs1, cop_stub_rs2;
 
     assign COP_C_O_PC       = pool_pc;
     assign COP_C_O_OPCODE   = pool_opcode;
     assign COP_C_O_IMM      = pool_imm;
 
-    cop_stub cop_stub (
+    cop_stub # (
+        .COP_NUMS       (COP_NUMS)
+    ) cop_stub (
         // 制御
         .CLK            (CLK),
         .RST            (RST),
@@ -217,13 +220,17 @@ module main
     );
 
     /* ----- 4-1. スケジューリング ----- */
-    wire        schedule_main_allow, schedule_cop_allow;
-    wire [31:0] schedule_main_pc, schedule_main_imm;
-    wire [11:0] schedule_main_csr;
-    wire [16:0] schedule_main_opcode;
-    wire [4:0]  schedule_main_rd, schedule_main_rs1, schedule_main_rs2, schedule_cop_rd;
+    wire                     schedule_main_allow;
+    wire [31:0]              schedule_main_pc, schedule_main_imm;
+    wire [11:0]              schedule_main_csr;
+    wire [16:0]              schedule_main_opcode;
+    wire [4:0]               schedule_main_rd, schedule_main_rs1, schedule_main_rs2;
+    wire [( 1*COP_NUMS-1):0] schedule_cop_allow;
+    wire [( 5*COP_NUMS-1):0] schedule_cop_rd;
 
-    schedule schedule (
+    schedule # (
+        .COP_NUMS               (COP_NUMS)
+    ) schedule (
         // 制御
         .CLK                    (CLK),
         .RST                    (RST),
@@ -406,7 +413,9 @@ module main
     wire [4:0]  cushion_reg_w_rd, cushion_mem_r_rd;
     wire [3:0]  cushion_mem_r_strb, cushion_mem_w_strb, cushion_exc_code;
 
-    cushion cushion (
+    cushion # (
+        .COP_NUMS               (COP_NUMS)
+    ) cushion (
         // 制御
         .CLK                    (CLK),
         .RST                    (RST),

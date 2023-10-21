@@ -1,94 +1,95 @@
 module sasanqua
     # (
-        parameter START_ADDR = 32'h0
+        parameter START_ADDR = 32'h0,
+        parameter COP_NUMS   = 32'd1
     )
     (
         /* ----- 制御 ------ */
-        input wire          CLK,
-        input wire          RST,
+        input wire                      CLK,
+        input wire                      RST,
 
         /* ----- 状態 ----- */
-        output wire [31:0]  GP,
-        output wire [3:0]   STAT,
+        output wire [31:0]              GP,
+        output wire [3:0]               STAT,
 
         /* ----- AXIバス ----- */
         // AWチャネル
-        output wire         M_AXI_AWID,
-        output wire [31:0]  M_AXI_AWADDR,
-        output wire [7:0]   M_AXI_AWLEN,
-        output wire [2:0]   M_AXI_AWSIZE,
-        output wire [1:0]   M_AXI_AWBURST,
-        output wire [1:0]   M_AXI_AWLOCK,
-        output wire [3:0]   M_AXI_AWCACHE,
-        output wire [2:0]   M_AXI_AWPROT,
-        output wire [3:0]   M_AXI_AWQOS,
-        output wire         M_AXI_AWUSER,
-        output wire         M_AXI_AWVALID,
-        input  wire         M_AXI_AWREADY,
+        output wire                     M_AXI_AWID,
+        output wire [31:0]              M_AXI_AWADDR,
+        output wire [7:0]               M_AXI_AWLEN,
+        output wire [2:0]               M_AXI_AWSIZE,
+        output wire [1:0]               M_AXI_AWBURST,
+        output wire [1:0]               M_AXI_AWLOCK,
+        output wire [3:0]               M_AXI_AWCACHE,
+        output wire [2:0]               M_AXI_AWPROT,
+        output wire [3:0]               M_AXI_AWQOS,
+        output wire                     M_AXI_AWUSER,
+        output wire                     M_AXI_AWVALID,
+        input  wire                     M_AXI_AWREADY,
 
         // Wチャネル
-        output wire [31:0]  M_AXI_WDATA,
-        output wire [3:0]   M_AXI_WSTRB,
-        output wire         M_AXI_WLAST,
-        output wire         M_AXI_WUSER,
-        output wire         M_AXI_WVALID,
-        input  wire         M_AXI_WREADY,
+        output wire [31:0]              M_AXI_WDATA,
+        output wire [3:0]               M_AXI_WSTRB,
+        output wire                     M_AXI_WLAST,
+        output wire                     M_AXI_WUSER,
+        output wire                     M_AXI_WVALID,
+        input  wire                     M_AXI_WREADY,
 
         // Bチャネル
-        input  wire         M_AXI_BID,
-        input  wire [1:0]   M_AXI_BRESP,
-        input  wire         M_AXI_BUSER,
-        input  wire         M_AXI_BVALID,
-        output wire         M_AXI_BREADY,
+        input  wire                     M_AXI_BID,
+        input  wire [1:0]               M_AXI_BRESP,
+        input  wire                     M_AXI_BUSER,
+        input  wire                     M_AXI_BVALID,
+        output wire                     M_AXI_BREADY,
 
         // ARチャネル
-        output wire         M_AXI_ARID,
-        output wire [31:0]  M_AXI_ARADDR,
-        output wire [7:0]   M_AXI_ARLEN,
-        output wire [2:0]   M_AXI_ARSIZE,
-        output wire [1:0]   M_AXI_ARBURST,
-        output wire [1:0]   M_AXI_ARLOCK,
-        output wire [3:0]   M_AXI_ARCACHE,
-        output wire [2:0]   M_AXI_ARPROT,
-        output wire [3:0]   M_AXI_ARQOS,
-        output wire         M_AXI_ARUSER,
-        output wire         M_AXI_ARVALID,
-        input  wire         M_AXI_ARREADY,
+        output wire                     M_AXI_ARID,
+        output wire [31:0]              M_AXI_ARADDR,
+        output wire [7:0]               M_AXI_ARLEN,
+        output wire [2:0]               M_AXI_ARSIZE,
+        output wire [1:0]               M_AXI_ARBURST,
+        output wire [1:0]               M_AXI_ARLOCK,
+        output wire [3:0]               M_AXI_ARCACHE,
+        output wire [2:0]               M_AXI_ARPROT,
+        output wire [3:0]               M_AXI_ARQOS,
+        output wire                     M_AXI_ARUSER,
+        output wire                     M_AXI_ARVALID,
+        input  wire                     M_AXI_ARREADY,
 
         // Rチャネル
-        input  wire         M_AXI_RID,
-        input  wire [31:0]  M_AXI_RDATA,
-        input  wire [1:0]   M_AXI_RRESP,
-        input  wire         M_AXI_RLAST,
-        input  wire         M_AXI_RUSER,
-        input  wire         M_AXI_RVALID,
-        output wire         M_AXI_RREADY,
+        input  wire                     M_AXI_RID,
+        input  wire [31:0]              M_AXI_RDATA,
+        input  wire [1:0]               M_AXI_RRESP,
+        input  wire                     M_AXI_RLAST,
+        input  wire                     M_AXI_RUSER,
+        input  wire                     M_AXI_RVALID,
+        output wire                     M_AXI_RREADY,
 
         /* ----- コプロセッサパッケージ接続 ----- */
         // 制御
-        output wire         COP_FLUSH,
-        output wire         COP_STALL,
-        output wire         COP_MEM_WAIT,
+        output wire                     COP_FLUSH,
+        output wire                     COP_STALL,
+        output wire                     COP_MEM_WAIT,
 
         // Check 接続
-        output wire [31:0]  COP_C_O_PC,
-        output wire [16:0]  COP_C_O_OPCODE,
-        output wire [31:0]  COP_C_O_IMM,
-        input wire          COP_C_I_ACCEPT,
+        output wire [(32*COP_NUMS-1):0] COP_C_O_PC,
+        output wire [(16*COP_NUMS-1):0] COP_C_O_OPCODE,
+        output wire [(32*COP_NUMS-1):0] COP_C_O_IMM,
+        input wire  [( 1*COP_NUMS-1):0] COP_C_I_ACCEPT,
 
         // Exec 接続
-        output wire         COP_E_O_ALLOW,
-        output wire [4:0]   COP_E_O_RD,
-        output wire [31:0]  COP_E_O_RS1_DATA,
-        output wire [31:0]  COP_E_O_RS2_DATA,
-        input wire          COP_E_I_ALLOW,
-        input wire          COP_E_I_VALID,
-        input wire  [31:0]  COP_E_I_PC,
-        input wire          COP_E_I_REG_W_EN,
-        input wire  [4:0]   COP_E_I_REG_W_RD,
-        input wire  [31:0]  COP_E_I_REG_W_DATA,
-        input wire          COP_E_I_EXC_EN,
-        input wire  [3:0]   COP_E_I_EXC_CODE
+        output wire [( 1*COP_NUMS-1):0] COP_E_O_ALLOW,
+        output wire [( 5*COP_NUMS-1):0] COP_E_O_RD,
+        output wire [(32*COP_NUMS-1):0] COP_E_O_RS1_DATA,
+        output wire [(32*COP_NUMS-1):0] COP_E_O_RS2_DATA,
+        input wire  [( 1*COP_NUMS-1):0] COP_E_I_ALLOW,
+        input wire  [( 1*COP_NUMS-1):0] COP_E_I_VALID,
+        input wire  [(32*COP_NUMS-1):0] COP_E_I_PC,
+        input wire  [( 1*COP_NUMS-1):0] COP_E_I_REG_W_EN,
+        input wire  [( 5*COP_NUMS-1):0] COP_E_I_REG_W_RD,
+        input wire  [(32*COP_NUMS-1):0] COP_E_I_REG_W_DATA,
+        input wire  [( 1*COP_NUMS-1):0] COP_E_I_EXC_EN,
+        input wire  [( 4*COP_NUMS-1):0] COP_E_I_EXC_CODE
     );
 
     /* ----- 状態 ----- */
@@ -215,7 +216,8 @@ module sasanqua
 
     core # (
         .HART_ID            (0),
-        .START_ADDR         (START_ADDR)
+        .START_ADDR         (START_ADDR),
+        .COP_NUMS           (COP_NUMS)
     ) core (
         // 制御
         .CLK                (CLK),

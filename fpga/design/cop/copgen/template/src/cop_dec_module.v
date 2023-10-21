@@ -21,13 +21,13 @@ always @ (posedge CLK) begin
         // do nothing
     end
     else begin
-        allow_{DEC_ID} <= E_I_ALLOW;
-        rd_{DEC_ID} <= E_I_RD;
-        rs1_data_{DEC_ID} <= E_I_RS1_DATA;
-        rs2_data_{DEC_ID} <= E_I_RS2_DATA;
-        pc_{DEC_ID}[2] <= pc_{DEC_ID}[1];     pc_{DEC_ID}[1] <= pc_{DEC_ID}[0];      pc_{DEC_ID}[0] <= C_I_PC;
-        imm_{DEC_ID}[2] <= imm_{DEC_ID}[1];   imm_{DEC_ID}[1] <= imm_{DEC_ID}[0];    imm_{DEC_ID}[0] <= C_I_IMM;
-        inst_{DEC_ID}[2] <= inst_{DEC_ID}[1]; inst_{DEC_ID}[1] <= c_accept_{DEC_ID}; inst_{DEC_ID}[0] <= \{ 15'b0, C_I_OPCODE };
+        allow_{DEC_ID} <= E_I_ALLOW[(1*({DEC_ID}+1)-1):(1*{DEC_ID})];
+        rd_{DEC_ID} <= E_I_RD[(5*({DEC_ID}+1)-1):(5*{DEC_ID})];
+        rs1_data_{DEC_ID} <= E_I_RS1_DATA[(32*({DEC_ID}+1)-1):(32*{DEC_ID})];
+        rs2_data_{DEC_ID} <= E_I_RS2_DATA[(32*({DEC_ID}+1)-1):(32*{DEC_ID})];
+        pc_{DEC_ID}[2] <= pc_{DEC_ID}[1];     pc_{DEC_ID}[1] <= pc_{DEC_ID}[0];      pc_{DEC_ID}[0] <= C_I_PC[(32*({DEC_ID}+1)-1):(32*{DEC_ID})];
+        imm_{DEC_ID}[2] <= imm_{DEC_ID}[1];   imm_{DEC_ID}[1] <= imm_{DEC_ID}[0];    imm_{DEC_ID}[0] <= C_I_IMM[(32*({DEC_ID}+1)-1):(32*{DEC_ID})];
+        inst_{DEC_ID}[2] <= inst_{DEC_ID}[1]; inst_{DEC_ID}[1] <= c_accept_{DEC_ID}; inst_{DEC_ID}[0] <= \{ 15'b0, C_I_OPCODE[(17*({DEC_ID}+1)-1):(17*{DEC_ID})] };
     end
 end
 
@@ -38,7 +38,9 @@ assign C_O_ACCEPT = c_accept_{DEC_ID} != 32'b0;
 assign E_O_ALLOW  = allow_{DEC_ID};
 assign E_O_PC     = pc_{DEC_ID}[2];
 
-cop_{DEC_ID} cop_{DEC_ID} (
+cop_{DEC_ID} # (
+    .COP_NUMS       (COP_NUMS)
+) cop_{DEC_ID} (
     // 制御
     .CLK            (CLK),
     .RST            (RST),
