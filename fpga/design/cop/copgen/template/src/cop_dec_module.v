@@ -28,18 +28,22 @@ always @ (posedge CLK) begin
         rs1_data_{DEC_ID} <= E_I_RS1_DATA[(32*({DEC_ID}+1)-1):(32*{DEC_ID})];
         rs2_data_{DEC_ID} <= E_I_RS2_DATA[(32*({DEC_ID}+1)-1):(32*{DEC_ID})];
         imm_{DEC_ID} <= r_imm_{DEC_ID};
-        pc_{DEC_ID}[2] <= pc_{DEC_ID}[1];        pc_{DEC_ID}[1] <= pc_{DEC_ID}[0];        pc_{DEC_ID}[0] <= C_I_PC[(32*({DEC_ID}+1)-1):(32*{DEC_ID})];
-        inst_{DEC_ID}[2] <= inst_{DEC_ID}[1];    inst_{DEC_ID}[1] <= c_accept_{DEC_ID};   inst_{DEC_ID}[0] <= \{ 15'b0, C_I_OPCODE[(17*({DEC_ID}+1)-1):(17*{DEC_ID})] };
+        pc_{DEC_ID}[2] <= pc_{DEC_ID}[1];       pc_{DEC_ID}[1] <= pc_{DEC_ID}[0];       pc_{DEC_ID}[0] <= C_I_PC[(32*({DEC_ID}+1)-1):(32*{DEC_ID})];
+        inst_{DEC_ID}[2] <= inst_{DEC_ID}[1];   inst_{DEC_ID}[1] <= c_accept_{DEC_ID};  inst_{DEC_ID}[0] <= \{ 15'b0, C_I_OPCODE[(17*({DEC_ID}+1)-1):(17*{DEC_ID})] };
         rinst_{DEC_ID}[2] <= rinst_{DEC_ID}[1]; rinst_{DEC_ID}[1] <= rinst_{DEC_ID}[0]; rinst_{DEC_ID}[0] <= C_I_RINST[(32*({DEC_ID}+1)-1):(32*{DEC_ID})];
     end
 end
 
 // 接続
+wire        e_o_allow_{DEC_ID}, e_o_valid_{DEC_ID}, e_o_reg_w_en_{DEC_ID}, e_o_exc_en_{DEC_ID};
+wire [3:0]  e_o_exc_code_{DEC_ID};
+wire [4:0]  e_o_reg_w_rd_{DEC_ID};
+wire [31:0] e_o_pc_{DEC_ID}, e_o_reg_w_data{DEC_ID};
 wire [31:0] c_accept_{DEC_ID}, r_imm_{DEC_ID};
 
-assign C_O_ACCEPT = \{ 1'b0, c_accept_{DEC_ID} != 32'b0 };
-assign E_O_ALLOW  = \{ 1'b0, allow_{DEC_ID} };
-assign E_O_PC     = \{ 32'b0, pc_{DEC_ID}[2] };
+assign c_o_accept_{DEC_ID} = c_accept_{DEC_ID} != 32'b0;
+assign e_o_allow_{DEC_ID}  = allow_{DEC_ID};
+assign e_o_pc_{DEC_ID}     = pc_{DEC_ID}[2];
 
 cop_{DEC_ID} # (
     .COP_NUMS       (COP_NUMS)
@@ -65,10 +69,10 @@ cop_{DEC_ID} # (
     .E_RS1_DATA     (rs1_data_{DEC_ID}),
     .E_RS2_DATA     (rs2_data_{DEC_ID}),
     .E_IMM          (imm_{DEC_ID}),
-    .E_VALID        (E_O_VALID),
-    .E_REG_W_EN     (E_O_REG_W_EN),
-    .E_REG_W_RD     (E_O_REG_W_RD),
-    .E_REG_W_DATA   (E_O_REG_W_DATA),
-    .E_EXC_EN       (E_O_EXC_EN),
-    .E_EXC_CODE     (E_O_EXC_CODE)
+    .E_VALID        (e_o_valid_{DEC_ID}),
+    .E_REG_W_EN     (e_o_reg_w_en_{DEC_ID}),
+    .E_REG_W_RD     (e_o_reg_w_rd_{DEC_ID}),
+    .E_REG_W_DATA   (e_o_reg_w_data_{DEC_ID}),
+    .E_EXC_EN       (e_o_exc_en_{DEC_ID}),
+    .E_EXC_CODE     (e_o_exc_code_{DEC_ID})
 );

@@ -38,6 +38,8 @@ module sasanqua_cop #
         output wire [( 4*COP_NUMS-1):0] E_O_EXC_CODE
     );
 
+    {COMBINE_RESULTS}
+
     {MODULE_DECLARES}
 
 endmodule

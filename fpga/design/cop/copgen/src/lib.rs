@@ -6,9 +6,9 @@ use std::fs::create_dir;
 
 use vfs::{MemoryFS, PhysicalFS, VfsPath};
 
-use ipgen::vendor::Vendor;
-use ipgen::ip::IPInfo;
 use ipgen::gen;
+use ipgen::ip::IPInfo;
+use ipgen::vendor::Vendor;
 
 use pkg::CopPkg;
 
