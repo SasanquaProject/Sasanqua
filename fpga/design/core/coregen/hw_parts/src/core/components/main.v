@@ -124,12 +124,14 @@ module main
     );
 
     /* ----- 3. 命令プール ----- */
-    wire [31:0] pool_pc, pool_imm;
-    wire [11:0] pool_csr;
-    wire [16:0] pool_opcode;
-    wire [4:0]  pool_rd, pool_rs1, pool_rs2;
+    wire [(32*PNUMS-1):0] pool_pc, pool_imm;
+    wire [(12*PNUMS-1):0] pool_csr;
+    wire [(17*PNUMS-1):0] pool_opcode;
+    wire [( 5*PNUMS-1):0] pool_rd, pool_rs1, pool_rs2;
 
-    pool pool (
+    pool # (
+        .COP_NUMS       (COP_NUMS)
+    ) pool (
         // 制御
         .CLK            (CLK),
         .RST            (RST),
@@ -156,13 +158,15 @@ module main
     );
 
     /* ----- 3-1. 命令検査 ----- */
-    wire        check_accept;
-    wire [31:0] check_pc, check_imm;
-    wire [11:0] check_csr;
-    wire [16:0] check_opcode;
-    wire [4:0]  check_rd, check_rs1, check_rs2;
+    wire [( 1*PNUMS-1):0] check_accept;
+    wire [(32*PNUMS-1):0] check_pc, check_imm;
+    wire [(12*PNUMS-1):0] check_csr;
+    wire [(17*PNUMS-1):0] check_opcode;
+    wire [( 5*PNUMS-1):0] check_rd, check_rs1, check_rs2;
 
-    check check (
+    check # (
+        .COP_NUMS       (COP_NUMS)
+    ) check (
         // 制御
         .CLK            (CLK),
         .RST            (RST),
@@ -193,9 +197,9 @@ module main
     wire [(32*PNUMS-1):0] cop_stub_pc;
     wire [( 5*PNUMS-1):0] cop_stub_rd, cop_stub_rs1, cop_stub_rs2;
 
-    assign COP_C_O_PC       = { 32'b0, pool_pc };
-    assign COP_C_O_OPCODE   = { 17'b0, pool_opcode };
-    assign COP_C_O_IMM      = { 32'b0, pool_imm };
+    assign COP_C_O_PC     = pool_pc;
+    assign COP_C_O_OPCODE = pool_opcode;
+    assign COP_C_O_IMM    = pool_imm;
 
     cop_stub # (
         .COP_NUMS       (COP_NUMS)
