@@ -7,7 +7,8 @@ use std::fs::create_dir;
 use vfs::{MemoryFS, PhysicalFS, VfsPath};
 
 use ipgen::vendor::Vendor;
-use ipgen::IPInfo;
+use ipgen::ip::IPInfo;
+use ipgen::gen;
 
 use pkg::CopPkg;
 
@@ -31,7 +32,7 @@ where
     gen0::<V>(fs, cop_pkg)
 }
 
-fn gen0<V: Vendor>(mut vfs: VfsPath, cop_pkg: CopPkg) -> anyhow::Result<VfsPath> {
+fn gen0<V: Vendor>(vfs: VfsPath, cop_pkg: CopPkg) -> anyhow::Result<VfsPath> {
     let cop_impls_v = profile::gen_impl_vs(&cop_pkg.profiles)?;
     let cop_impls_v = cop_impls_v
         .into_iter()
@@ -56,7 +57,8 @@ fn gen0<V: Vendor>(mut vfs: VfsPath, cop_pkg: CopPkg) -> anyhow::Result<VfsPath>
                 .unwrap();
         });
 
-    IPInfo::new(cop_pkg.name, cop_pkg.version, src_fs).gen::<V>(&mut vfs)?;
+    let ipinfo = IPInfo::new_mini(cop_pkg.name, cop_pkg.version);
+    let vfs = gen::<V>(vfs, ipinfo, src_fs)?;
 
     Ok(vfs)
 }
