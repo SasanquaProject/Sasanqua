@@ -192,6 +192,30 @@ module main
     );
 
     /* ----- 3-2. コプロセッサ (Check->Ready->Exec) ----- */
+    wire [31:0] cop_stub_pc;
+    wire [4:0]  cop_stub_rd, cop_stub_rs1, cop_stub_rs2;
+
+    cop_stub cop_stub (
+        // 制御
+        .CLK            (CLK),
+        .RST            (RST),
+        .FLUSH          (flush),
+        .STALL          (stall),
+        .MEM_WAIT       (MEM_WAIT),
+
+        // 前段との接続
+        .PC             (pool_pc),
+        .RD             (pool_rd),
+        .RS1            (pool_rs1),
+        .RS2            (pool_rs2),
+
+        // 後段との接続
+        .COP_STUB_PC    (cop_stub_pc),
+        .COP_STUB_RD    (cop_stub_rd),
+        .COP_STUB_RS1   (cop_stub_rs1),
+        .COP_STUB_RS2   (cop_stub_rs2)
+    );
+
     assign COP_FLUSH        = flush;
     assign COP_STALL        = stall;
 
@@ -231,10 +255,10 @@ module main
         .A_CSR              (check_csr),
         .A_IMM              (check_imm),
         .B_ACCEPT           (COP_C_I_ACCEPT),
-        .B_PC               (COP_C_I_PC),
-        .B_RD               (COP_C_I_RD),
-        .B_RS1              (COP_C_I_RS1),
-        .B_RS2              (COP_C_I_RS2),
+        .B_PC               (cop_stub_pc),
+        .B_RD               (cop_stub_rd),
+        .B_RS1              (cop_stub_rs1),
+        .B_RS2              (cop_stub_rs2),
 
         // 後段との接続
         .SCHEDULE_A_ALLOW   (schedule_a_allow),
@@ -310,10 +334,10 @@ module main
         .B_RADDR            (check_rs2),
         .B_RVALID           (schedule_a_rs2_valid),
         .B_RDATA            (schedule_a_rs2_data),
-        .C_RADDR            (COP_C_I_RS1),
+        .C_RADDR            (cop_stub_rs1),
         .C_RVALID           (schedule_b_rs1_valid),
         .C_RDATA            (schedule_b_rs1_data),
-        .D_RADDR            (COP_C_I_RS2),
+        .D_RADDR            (cop_stub_rs2),
         .D_RVALID           (schedule_b_rs2_valid),
         .D_RDATA            (schedule_b_rs2_data),
         .WADDR              (memr_reg_w_rd),
