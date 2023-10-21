@@ -1,46 +1,46 @@
 module ram_dualport
     # (
-        parameter WIDTH = 10,
-        parameter SIZE  = 1024
+        parameter ADDR_WIDTH = 10,
+        parameter SIZE = 1 << ADDR_WIDTH
     )
     (
         /* ----- 制御 ------ */
-        input wire          CLK,
-        input wire          RST,
+        input wire                       CLK,
+        input wire                       RST,
 
         /* ----- アクセスポート ----- */
         // ポートA
-        input wire                  A_RDEN,
-        input wire  [(WIDTH-1+2):0] A_RADDR,
-        output wire [31:0]          A_RDATA,
-        input wire                  A_WREN,
-        input wire  [3:0]           A_WSTRB,
-        input wire  [(WIDTH-1+2):0] A_WADDR,
-        input wire  [31:0]          A_WDATA,
+        input wire                       A_RDEN,
+        input wire  [(ADDR_WIDTH-1+2):0] A_RADDR,
+        output wire [31:0]               A_RDATA,
+        input wire                       A_WREN,
+        input wire  [3:0]                A_WSTRB,
+        input wire  [(ADDR_WIDTH-1+2):0] A_WADDR,
+        input wire  [31:0]               A_WDATA,
 
         // ポートB
-        input wire                  B_RDEN,
-        input wire  [(WIDTH-1+2):0] B_RADDR,
-        output wire [31:0]          B_RDATA,
-        input wire                  B_WREN,
-        input wire  [3:0]           B_WSTRB,
-        input wire  [(WIDTH-1+2):0] B_WADDR,
-        input wire  [31:0]          B_WDATA
+        input wire                       B_RDEN,
+        input wire  [(ADDR_WIDTH-1+2):0] B_RADDR,
+        output wire [31:0]               B_RDATA,
+        input wire                       B_WREN,
+        input wire  [3:0]                B_WSTRB,
+        input wire  [(ADDR_WIDTH-1+2):0] B_WADDR,
+        input wire  [31:0]               B_WDATA
     );
 
     (* ram_style = "block" *)
     reg [31:0] ram [0:(SIZE-1)];
 
-    wire                    wren;
-    wire [3:0]              wstrb;
-    wire [(WIDTH-1+2):0]    raddr, waddr;
-    wire [31:0]             wdata;
-    reg  [31:0]             rdata, rdata_for_w;
+    wire                      wren;
+    wire [3:0]                wstrb;
+    wire [(ADDR_WIDTH-1+2):0] raddr, waddr;
+    wire [31:0]               wdata;
+    reg  [31:0]               rdata, rdata_for_w;
 
-    reg  [1:0]              cache_wren;
-    reg  [3:0]              cache_wstrb;
-    reg  [(WIDTH-1+2):0]    cache_waddr [0:1];
-    reg  [31:0]             cache_wdata [0:1];
+    reg  [1:0]                cache_wren;
+    reg  [3:0]                cache_wstrb;
+    reg  [(ADDR_WIDTH-1+2):0] cache_waddr [0:1];
+    reg  [31:0]               cache_wdata [0:1];
 
     assign raddr   = B_RDEN ? B_RADDR : A_RADDR;
     assign wren    = B_WREN || A_WREN;
@@ -60,18 +60,18 @@ module ram_dualport
         cache_wdata[1] <= gen_wrdata(cache_waddr[0], cache_wstrb, rdata_for_w, cache_wdata[0]);
         cache_wdata[0] <= wdata;
 
-        rdata <= ram[raddr[(WIDTH-1+2):2]];
-        rdata_for_w <= ram[waddr[(WIDTH-1+2):2]];
+        rdata <= ram[raddr[(ADDR_WIDTH-1+2):2]];
+        rdata_for_w <= ram[waddr[(ADDR_WIDTH-1+2):2]];
 
         if (cache_wren[0])
-            ram[cache_waddr[0][(WIDTH-1+2):2]] <= gen_wrdata(cache_waddr[0], cache_wstrb, rdata_for_w, cache_wdata[0]);
+            ram[cache_waddr[0][(ADDR_WIDTH-1+2):2]] <= gen_wrdata(cache_waddr[0], cache_wstrb, rdata_for_w, cache_wdata[0]);
     end
 
     function [31:0] gen_wrdata;
-        input [(WIDTH-1+2):0] ADDR;
-        input [3:0]           STRB;
-        input [31:0]          DST;
-        input [31:0]          SRC;
+        input [(ADDR_WIDTH-1+2):0] ADDR;
+        input [3:0]                STRB;
+        input [31:0]               DST;
+        input [31:0]               SRC;
 
         case ((STRB << ADDR[1:0]))
             4'b0001: gen_wrdata = (DST & 32'hffff_ff00) | { 24'b0, SRC[7:0] };
