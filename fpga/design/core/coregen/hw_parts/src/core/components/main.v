@@ -66,6 +66,8 @@ module main
                            !schedule_b_rs1_valid || !schedule_b_rs2_valid ||
                            !schedule_a_csr_valid ||
                            !cushion_valid;
+    assign COP_FLUSH     = flush;
+    assign COP_STALL     = stall;
 
     /* ----- 1. 命令フェッチ ----- */
     wire [31:0] fetch_pc, fetch_inst;
@@ -185,9 +187,13 @@ module main
         .CHECK_IMM      (check_imm)
     );
 
-    /* ----- 3-2. コプロセッサ (Check->Ready->Exec) ----- */
+    /* ----- 3-2. コプロセッサ (Check) ----- */
     wire [31:0] cop_stub_pc;
     wire [4:0]  cop_stub_rd, cop_stub_rs1, cop_stub_rs2;
+
+    assign COP_C_O_PC       = pool_pc;
+    assign COP_C_O_OPCODE   = pool_opcode;
+    assign COP_C_O_IMM      = pool_imm;
 
     cop_stub cop_stub (
         // 制御
@@ -209,18 +215,6 @@ module main
         .COP_STUB_RS1   (cop_stub_rs1),
         .COP_STUB_RS2   (cop_stub_rs2)
     );
-
-    assign COP_FLUSH        = flush;
-    assign COP_STALL        = stall;
-
-    assign COP_C_O_PC       = pool_pc;
-    assign COP_C_O_OPCODE   = pool_opcode;
-    assign COP_C_O_IMM      = pool_imm;
-
-    assign COP_E_O_ALLOW    = schedule_b_allow;
-    assign COP_E_O_RD       = schedule_b_rd;
-    assign COP_E_O_RS1_DATA = schedule_b_rs1_data;
-    assign COP_E_O_RS2_DATA = schedule_b_rs2_data;
 
     /* ----- 4-1. スケジューリング ----- */
     wire        schedule_a_allow, schedule_b_allow;
@@ -346,7 +340,7 @@ module main
         .FWD_CUSHION_DATA   (cushion_reg_w_data)
     );
 
-    /* ----- 5. 実行(rv32i:core) ----- */
+    /* ----- 5-1. 実行(rv32i:core) ----- */
     wire        exec_allow, exec_valid, exec_reg_w_en, exec_mem_r_en, exec_mem_r_signed, exec_csr_w_en, exec_mem_w_en, exec_jmp_do, exec_exc_en;
     wire [31:0] exec_pc, exec_reg_w_data, exec_csr_w_data, exec_mem_r_addr, exec_mem_w_addr, exec_mem_w_data, exec_jmp_pc;
     wire [11:0] exec_csr_w_addr;
@@ -398,6 +392,12 @@ module main
         .EXEC_EXC_EN        (exec_exc_en),
         .EXEC_EXC_CODE      (exec_exc_code)
     );
+
+    /* ----- 5-2. コプロセッサ(Exec) ----- */
+    assign COP_E_O_ALLOW    = schedule_b_allow;
+    assign COP_E_O_RD       = schedule_b_rd;
+    assign COP_E_O_RS1_DATA = schedule_b_rs1_data;
+    assign COP_E_O_RS2_DATA = schedule_b_rs2_data;
 
     /* ----- 6. 実行部待機 ------ */
     wire        cushion_valid, cushion_reg_w_en, cushion_mem_r_en, cushion_mem_r_signed, cushion_csr_w_en, cushion_mem_w_en, cushion_jmp_do, cushion_exc_en;
