@@ -223,13 +223,13 @@ module main
     );
 
     /* ----- 4-1. スケジューリング ----- */
-    wire                  schedule_main_allow;
-    wire [31:0]           schedule_main_pc, schedule_main_imm;
-    wire [11:0]           schedule_main_csr;
-    wire [16:0]           schedule_main_opcode;
-    wire [4:0]            schedule_main_rd, schedule_main_rs1, schedule_main_rs2;
-    wire [( 1*PNUMS-1):0] schedule_cop_allow;
-    wire [( 5*PNUMS-1):0] schedule_cop_rd;
+    wire                     schedule_main_allow;
+    wire [31:0]              schedule_main_pc, schedule_main_imm;
+    wire [11:0]              schedule_main_csr;
+    wire [16:0]              schedule_main_opcode;
+    wire [4:0]               schedule_main_rd, schedule_main_rs1, schedule_main_rs2;
+    wire [( 1*COP_NUMS-1):0] schedule_cop_allow;
+    wire [( 5*COP_NUMS-1):0] schedule_cop_rd;
 
     schedule # (
         .COP_NUMS               (COP_NUMS)
@@ -293,7 +293,7 @@ module main
         .INT_ALLOW          (int_allow),
 
         // レジスタアクセス
-        .RADDR              (check_csr),
+        .RADDR              (check_csr[11:0]),
         .RVALID             (schedule_main_csr_valid),
         .RDATA              (schedule_main_csr_data),
         .WREN               (memr_csr_w_en),
@@ -325,10 +325,10 @@ module main
         .MEM_WAIT           (MEM_WAIT),
 
         // レジスタアクセス
-        .A_RADDR            (check_rs1),
+        .A_RADDR            (check_rs1[4:0]),
         .A_RVALID           (schedule_main_rs1_valid),
         .A_RDATA            (schedule_main_rs1_data),
-        .B_RADDR            (check_rs2),
+        .B_RADDR            (check_rs2[4:0]),
         .B_RVALID           (schedule_main_rs2_valid),
         .B_RDATA            (schedule_main_rs2_data),
         .C_RADDR            (cop_stub_rs1[4:0]),
@@ -561,8 +561,8 @@ module main
         // 前段との接続
         .FETCH_PC           (fetch_pc),
         .DECODE_PC          (decode_pc),
-        .CHECK_PC           (check_pc),
-        .SCHEDULE_PC        (schedule_a_pc),
+        .CHECK_PC           (check_pc[31:0]),
+        .SCHEDULE_PC        (schedule_main_pc),
         .EXEC_PC            (exec_pc),
         .CUSHION_PC         (cushion_pc),
         .CUSHION_EXC_EN     (cushion_exc_en),
