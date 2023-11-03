@@ -1,7 +1,7 @@
 [workspace]
 members = [
-    "src/cui",
-    "src/gui",
+    "front/cui",
+    "front/gui",
 ]
 exclude = []
 
