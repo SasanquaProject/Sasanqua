@@ -5,7 +5,17 @@ version = 3
 [[package]]
 name = "cui"
 version = "0.1.0"
+dependencies = [
+ "server_rlib",
+]
 
 [[package]]
 name = "gui"
+version = "0.1.0"
+dependencies = [
+ "server_rlib",
+]
+
+[[package]]
+name = "server_rlib"
 version = "0.1.0"

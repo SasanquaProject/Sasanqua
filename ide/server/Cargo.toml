@@ -1,0 +1,5 @@
+[workspace]
+members = [
+    "src/http",
+    "src/rlib",
+]
