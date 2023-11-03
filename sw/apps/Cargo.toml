@@ -1,5 +1,5 @@
 [workspace]
 members = [
     "kernel",
-    "apps/helloworld",
+    "src/helloworld",
 ]

@@ -6,11 +6,11 @@ AS_OPTS := -march=rv32i_zicsr -mabi=ilp32
 GCC_OPTS := -O1 -march=rv32i_zicsr -mabi=ilp32
 LD_OPTS := -T link.ld -b elf32-littleriscv
 
-devenv:
-	docker run --rm -it -v $(shell pwd):/src -w /src $(IMAGE) /bin/bash -c "make bootrom.mem"
+bootrom.mem:
+	docker run --rm -it -v $(shell pwd):/src -w /src $(IMAGE) /bin/bash -c "make bootrom.mem.in"
 	sudo chown -R 1000:1000 *
 
-bootrom.mem: boot.S src/*.c src/peripherals/*.c
+bootrom.mem.in: boot.S src/*.c src/peripherals/*.c
 	riscv64-unknown-elf-as $(AS_OPTS) -o boot.o boot.S
 	riscv64-unknown-elf-gcc $(GCC_OPTS) -c -o main.o src/main.c
 	riscv64-unknown-elf-gcc $(GCC_OPTS) -c -o clint.o src/peripherals/clint.c
@@ -26,4 +26,4 @@ bootrom.mem: boot.S src/*.c src/peripherals/*.c
 clean:
 	rm -f bootrom bootrom.dump bootrom.mem bootrom.bin *.o
 
-.PHONY: clean
+.PHONY: bootrom.mem bootrom.mem.in clean
