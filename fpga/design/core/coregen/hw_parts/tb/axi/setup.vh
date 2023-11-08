@@ -133,18 +133,12 @@ wire            COP_MEM_WAIT;
 // Check 接続
 wire [31:0]     COP_C_O_PC;
 wire [16:0]     COP_C_O_OPCODE;
-wire [4:0]      COP_C_O_RD;
-wire [4:0]      COP_C_O_RS1;
-wire [4:0]      COP_C_O_RS2;
-wire [31:0]     COP_C_O_IMM;
+wire [31:0]     COP_C_O_RINST;
 wire            COP_C_I_ACCEPT;
-wire  [31:0]    COP_C_I_PC;
-wire  [4:0]     COP_C_I_RD;
-wire  [4:0]     COP_C_I_RS1;
-wire  [4:0]     COP_C_I_RS2;
 
 // Exec 接続
 wire            COP_E_O_ALLOW;
+wire [4:0]      COP_E_O_RD;
 wire [31:0]     COP_E_O_RS1_DATA;
 wire [31:0]     COP_E_O_RS2_DATA;
 wire            COP_E_I_ALLOW;
@@ -167,18 +161,12 @@ sasanqua_cop sasanqua_cop (
     // Check 接続
     .C_I_PC             (COP_C_O_PC),
     .C_I_OPCODE         (COP_C_O_OPCODE),
-    .C_I_RD             (COP_C_O_RD),
-    .C_I_RS1            (COP_C_O_RS1),
-    .C_I_RS2            (COP_C_O_RS2),
-    .C_I_IMM            (COP_C_O_IMM),
+    .C_I_RINST          (COP_C_O_RINST),
     .C_O_ACCEPT         (COP_C_I_ACCEPT),
-    .C_O_PC             (COP_C_I_PC),
-    .C_O_RD             (COP_C_I_RD),
-    .C_O_RS1            (COP_C_I_RS1),
-    .C_O_RS2            (COP_C_I_RS2),
 
     // Exec 接続
     .E_I_ALLOW          (COP_E_O_ALLOW),
+    .E_I_RD             (COP_E_O_RD),
     .E_I_RS1_DATA       (COP_E_O_RS1_DATA),
     .E_I_RS2_DATA       (COP_E_O_RS2_DATA),
     .E_O_ALLOW          (COP_E_I_ALLOW),
@@ -193,7 +181,8 @@ sasanqua_cop sasanqua_cop (
 
 /* ----- sasanqua.v 接続 ----- */
 sasanqua # (
-    .START_ADDR         (0)
+    .START_ADDR         (0),
+    .COP_NUMS           (1)
 ) sasanqua (
     // 制御
     .CLK                (CLK),
@@ -251,16 +240,10 @@ sasanqua # (
     .COP_MEM_WAIT       (COP_MEM_WAIT),
     .COP_C_O_PC         (COP_C_O_PC),
     .COP_C_O_OPCODE     (COP_C_O_OPCODE),
-    .COP_C_O_RD         (COP_C_O_RD),
-    .COP_C_O_RS1        (COP_C_O_RS1),
-    .COP_C_O_RS2        (COP_C_O_RS2),
-    .COP_C_O_IMM        (COP_C_O_IMM),
+    .COP_C_O_RINST      (COP_C_O_RINST),
     .COP_C_I_ACCEPT     (COP_C_I_ACCEPT),
-    .COP_C_I_PC         (COP_C_I_PC),
-    .COP_C_I_RD         (COP_C_I_RD),
-    .COP_C_I_RS1        (COP_C_I_RS1),
-    .COP_C_I_RS2        (COP_C_I_RS2),
     .COP_E_O_ALLOW      (COP_E_O_ALLOW),
+    .COP_E_O_RD         (COP_E_O_RD),
     .COP_E_O_RS1_DATA   (COP_E_O_RS1_DATA),
     .COP_E_O_RS2_DATA   (COP_E_O_RS2_DATA),
     .COP_E_I_ALLOW      (COP_E_I_ALLOW),

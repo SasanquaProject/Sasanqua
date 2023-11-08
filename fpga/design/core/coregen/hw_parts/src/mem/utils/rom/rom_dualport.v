@@ -1,29 +1,29 @@
 module rom_dualport
     # (
-        parameter WIDTH = 10,
-        parameter SIZE  = 1024
+        parameter ADDR_WIDTH = 10,
+        parameter SIZE = 1 << ADDR_WIDTH
     )
     (
         /* ----- 制御 ------ */
-        input wire                  CLK,
-        input wire                  RST,
+        input wire                       CLK,
+        input wire                       RST,
 
         /* ----- アクセスポート ----- */
         // ポートA
-        input wire                  A_SELECT,
-        input wire                  A_RDEN,
-        input wire  [(WIDTH-1):0]   A_RIADDR,
-        output reg  [(WIDTH-1):0]   A_ROADDR,
-        output reg                  A_RVALID,
-        output reg  [31:0]          A_RDATA,
+        input wire                       A_SELECT,
+        input wire                       A_RDEN,
+        input wire  [(ADDR_WIDTH-1):0]   A_RIADDR,
+        output reg  [(ADDR_WIDTH-1):0]   A_ROADDR,
+        output reg                       A_RVALID,
+        output reg  [31:0]               A_RDATA,
 
         // ポートB
-        input wire                  B_SELECT,
-        input wire                  B_RDEN,
-        input wire  [(WIDTH-1):0]   B_RIADDR,
-        output reg  [(WIDTH-1):0]   B_ROADDR,
-        output reg                  B_RVALID,
-        output reg  [31:0]          B_RDATA
+        input wire                       B_SELECT,
+        input wire                       B_RDEN,
+        input wire  [(ADDR_WIDTH-1):0]   B_RIADDR,
+        output reg  [(ADDR_WIDTH-1):0]   B_ROADDR,
+        output reg                       B_RVALID,
+        output reg  [31:0]               B_RDATA
     );
 
     (* rom_style = "block" *)

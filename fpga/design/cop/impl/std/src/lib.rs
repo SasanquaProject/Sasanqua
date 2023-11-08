@@ -32,7 +32,7 @@ impl CopProfile for Rv32iMini {
 
     fn body(&self) -> CopImpl {
         CopImplTemplate::from(&Rv32iMini)
-            .set_ready("")
+            .set_ready(include_str!("../hw/src/rv32i_mini/ready.v"))
             .set_exec(include_str!("../hw/src/rv32i_mini/exec.v"))
     }
 }
