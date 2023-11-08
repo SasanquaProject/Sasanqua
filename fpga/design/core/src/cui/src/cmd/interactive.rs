@@ -16,6 +16,15 @@ pub struct InteractiveCmd;
 
 impl InteractiveCmd {
     pub fn run(&self) -> anyhow::Result<()> {
+        println!(r#"
+  _________  ________  ____ ____  ____
+ / ___/ __ \/ ___/ _ \/ __ `/ _ \/ __ \
+/ /__/ /_/ / /  /  __/ /_/ /  __/ / / /
+\___/\____/_/   \___/\__, /\___/_/ /_/
+                    /____/
+
+Type "help" for more information.
+        "#);
         let mut context: Option<Sasanqua> = None;
         loop {
             if let Some((cmd, args)) = parse_stdin()? {
@@ -40,7 +49,7 @@ where
 }
 
 fn parse_stdin() -> anyhow::Result<Option<(Box<dyn Executable>, Vec<String>)>> {
-    print!("> ");
+    print!(">> ");
     stdout().flush()?;
 
     let mut input = String::new();
