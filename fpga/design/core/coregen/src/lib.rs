@@ -6,7 +6,7 @@ use std::fs::create_dir;
 use vfs::{MemoryFS, PhysicalFS, VfsPath};
 
 use ipgen::vendor::Vendor;
-use ipgen::IPInfo;
+use ipgen::ip::IPInfo;
 
 use factory::{Factory, HwMakable};
 use sasanqua::Sasanqua;
@@ -17,8 +17,8 @@ where
     S: Into<String>,
 {
     let dir = dir.into();
-
     create_dir(&dir)?;
+
     let fs = PhysicalFS::new(dir).into();
     gen0::<V>(fs, sasanqua)
 }
@@ -31,13 +31,12 @@ where
     gen0::<V>(fs, sasanqua)
 }
 
-fn gen0<V: Vendor>(mut vfs: VfsPath, sasanqua: &Sasanqua) -> anyhow::Result<VfsPath> {
+fn gen0<V: Vendor>(vfs: VfsPath, sasanqua: &Sasanqua) -> anyhow::Result<VfsPath> {
     let mut src_fs = MemoryFS::new().into();
     Factory::make(sasanqua, &mut src_fs)?;
 
-    IPInfo::new("sasanqua_core", "0.1.0", src_fs).gen::<V>(&mut vfs)?;
-
-    Ok(vfs)
+    let ip = IPInfo::new_mini("sasanqua_core", "0.1.0");
+    ipgen::gen::<V>(vfs, ip, src_fs)
 }
 
 #[cfg(test)]
