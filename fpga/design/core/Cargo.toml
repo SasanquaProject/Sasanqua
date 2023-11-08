@@ -1,6 +1,6 @@
 [workspace]
 members = [
     "src/cui",
-    # "src/gui",
+    "src/gui",
     "coregen",
 ]
