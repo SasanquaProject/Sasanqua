@@ -260,13 +260,13 @@ module mem_axi
         // アクセスポート
         .A_SELECT           (inst_rselect[0]),
         .A_RDEN             (INST_RDEN),
-        .A_RIADDR           (INST_RIADDR[11:2]),
+        .A_RIADDR           (INST_RIADDR),
         .A_ROADDR           (rom_inst_roaddr_10),
         .A_RVALID           (rom_inst_rvalid),
         .A_RDATA            (rom_inst_rdata),
         .B_SELECT           (data_rselect[0]),
         .B_RDEN             (DATA_RDEN),
-        .B_RIADDR           (DATA_RIADDR[11:2]),
+        .B_RIADDR           (DATA_RIADDR),
         .B_ROADDR           (rom_data_roaddr_10),
         .B_RVALID           (rom_data_rvalid),
         .B_RDATA            (rom_data_rdata)

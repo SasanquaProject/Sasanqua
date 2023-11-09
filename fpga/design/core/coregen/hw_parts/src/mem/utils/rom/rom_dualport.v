@@ -17,16 +17,16 @@ module rom_dualport
         // ポートA
         input wire                       A_SELECT,
         input wire                       A_RDEN,
-        input wire  [(ADDR_WIDTH-1):0]   A_RIADDR,
-        output reg  [(ADDR_WIDTH-1):0]   A_ROADDR,
+        input wire  [(ADDR_WIDTH-1+2):0] A_RIADDR,
+        output reg  [(ADDR_WIDTH-1+2):0] A_ROADDR,
         output reg                       A_RVALID,
         output reg  [(DATA_WIDTH-1):0]   A_RDATA,
 
         // ポートB
         input wire                       B_SELECT,
         input wire                       B_RDEN,
-        input wire  [(ADDR_WIDTH-1):0]   B_RIADDR,
-        output reg  [(ADDR_WIDTH-1):0]   B_ROADDR,
+        input wire  [(ADDR_WIDTH-1+2):0] B_RIADDR,
+        output reg  [(ADDR_WIDTH-1+2):0] B_ROADDR,
         output reg                       B_RVALID,
         output reg  [(DATA_WIDTH-1):0]   B_RDATA
     );
@@ -41,11 +41,11 @@ module rom_dualport
     always @ (posedge CLK) begin
         A_RVALID <= A_SELECT && A_RDEN;
         A_ROADDR <= A_RIADDR;
-        A_RDATA <= rom[A_RIADDR];
+        A_RDATA <= rom[A_RIADDR[(ADDR_WIDTH-1+2):2]];
 
         B_RVALID <= B_SELECT && B_RDEN;
         B_ROADDR <= B_RIADDR;
-        B_RDATA <= rom[B_RIADDR];
+        B_RDATA <= rom[B_RIADDR[(ADDR_WIDTH-1+2):2]];
     end
 
 endmodule
