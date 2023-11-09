@@ -1,7 +1,12 @@
 module rom_dualport
     # (
+        // サイズ
         parameter ADDR_WIDTH = 10,
-        parameter SIZE = 1 << ADDR_WIDTH
+        parameter SIZE = 1 << ADDR_WIDTH,
+
+        // データ幅
+        parameter DATA_WIDTH_2POW = 0,
+        parameter DATA_WIDTH = 32 * (1 << DATA_WIDTH_2POW)
     )
     (
         /* ----- 制御 ------ */
@@ -15,7 +20,7 @@ module rom_dualport
         input wire  [(ADDR_WIDTH-1):0]   A_RIADDR,
         output reg  [(ADDR_WIDTH-1):0]   A_ROADDR,
         output reg                       A_RVALID,
-        output reg  [31:0]               A_RDATA,
+        output reg  [(DATA_WIDTH-1):0]   A_RDATA,
 
         // ポートB
         input wire                       B_SELECT,
@@ -23,11 +28,11 @@ module rom_dualport
         input wire  [(ADDR_WIDTH-1):0]   B_RIADDR,
         output reg  [(ADDR_WIDTH-1):0]   B_ROADDR,
         output reg                       B_RVALID,
-        output reg  [31:0]               B_RDATA
+        output reg  [(DATA_WIDTH-1):0]   B_RDATA
     );
 
     (* rom_style = "block" *)
-    reg [31:0] rom [0:(SIZE-1)];
+    reg [(DATA_WIDTH-1):0] rom [0:(SIZE-1)];
 
     initial begin
         $readmemh("bootrom.mem", rom);

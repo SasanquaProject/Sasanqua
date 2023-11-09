@@ -250,7 +250,8 @@ module mem_axi
     assign rom_data_roaddr = { 20'b0, rom_data_roaddr_10, 2'b0 };
 
     rom_dualport # (
-        .ADDR_WIDTH         (10)
+        .ADDR_WIDTH         (10),   // => SIZE: 1024
+        .DATA_WIDTH_2POW    (0)     // => WIDTH: 32bit
     ) rom_dualport (
         // 制御
         .CLK                (CLK),
