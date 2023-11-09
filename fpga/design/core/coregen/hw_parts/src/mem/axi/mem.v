@@ -293,7 +293,9 @@ module mem_axi
     assign dummy_waddr   = 32'b0;
     assign dummy_wdata   = 32'b0;
 
-    cache_axi inst_cache (
+    cache_axi # (
+        .DATA_WIDTH_2POW    (0)     // => WIDTH: 32bit
+    ) inst_cache (
         // 制御
         .CLK                (CLK),
         .RST                (RST),
@@ -354,7 +356,9 @@ module mem_axi
     wire [31:0] data_roaddr, data_rdata;
     wire        exists_data_cache, data_rvalid;
 
-    cache_axi data_cache (
+    cache_axi # (
+        .DATA_WIDTH_2POW    (0)     // => WIDTH: 32bit
+    ) data_cache (
         // 制御
         .CLK                (CLK),
         .RST                (RST),
