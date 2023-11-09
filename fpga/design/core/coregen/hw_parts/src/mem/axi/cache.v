@@ -1,5 +1,8 @@
 module cache_axi
     # (
+        // キャッシュサイズ
+        parameter PAGES = 1,
+
         // データ幅
         parameter DATA_WIDTH_2POW = 0,
         parameter DATA_WIDTH = 32 * (1 << DATA_WIDTH_2POW)

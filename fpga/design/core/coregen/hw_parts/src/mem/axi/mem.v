@@ -294,6 +294,7 @@ module mem_axi
     assign dummy_wdata   = 32'b0;
 
     cache_axi # (
+        .PAGES              (1),    // => SIZE: 4kb x 1
         .DATA_WIDTH_2POW    (0)     // => WIDTH: 32bit
     ) inst_cache (
         // 制御
@@ -357,6 +358,7 @@ module mem_axi
     wire        exists_data_cache, data_rvalid;
 
     cache_axi # (
+        .PAGES              (1),    // => SIZE: 4kb x 1
         .DATA_WIDTH_2POW    (0)     // => WIDTH: 32bit
     ) data_cache (
         // 制御
