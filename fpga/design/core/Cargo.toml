@@ -1,6 +1,7 @@
 [workspace]
+resolver = "2"
 members = [
     "src/cui",
-    # "src/gui",
+    "src/gui",
     "coregen",
 ]
