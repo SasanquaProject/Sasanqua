@@ -1,4 +1,12 @@
 module cache_axi
+    # (
+        // キャッシュサイズ
+        parameter PAGES = 1,
+
+        // データ幅
+        parameter DATA_WIDTH_2POW = 0,
+        parameter DATA_WIDTH = 32 * (1 << DATA_WIDTH_2POW)
+    )
     (
         /* ----- 制御 ----- */
         // クロック, リセット
@@ -78,7 +86,8 @@ module cache_axi
     wire [31:0] ram_a_rdata, ram_a_wdata, ram_b_rdata, ram_b_wdata;
 
     ram_dualport # (
-        .ADDR_WIDTH (12-2)
+        .ADDR_WIDTH         (10),   // => SIZE: 1024
+        .DATA_WIDTH_2POW    (0)     // => WIDTH: 32bit
     ) ram_dualport (
         // 制御
         .CLK        (CLK),
