@@ -17,15 +17,21 @@ struct Core {
     do_overwrite: bool,
 }
 
-impl From<Weak<MainWindow>> for Core {
-    fn from(window: Weak<MainWindow>) -> Self {
-        Core {
+impl Core {
+    fn from(window: Weak<MainWindow>) -> anyhow::Result<Self> {
+        let core = Core {
             name: window.unwrap().get_name().into(),
             version: window.unwrap().get_version().into(),
             bus: BusInterface::from(window.unwrap().get_bus()),
             path: window.unwrap().get_path().into(),
             do_create_subdir: window.unwrap().get_do_create_subdir(),
             do_overwrite: window.unwrap().get_do_overwrite(),
+        };
+
+        if core.name.len() * core.version.len() * core.path.len() > 0 {
+            Ok(core)
+        } else {
+            Err(anyhow::format_err!("All values be must filled!"))
         }
     }
 }
@@ -47,7 +53,7 @@ impl From<SharedString> for BusInterface {
 }
 
 pub fn generate(window: Weak<MainWindow>) -> anyhow::Result<()> {
-    let core: Core = window.into();
+    let core = Core::from(window.clone())?;
     println!("{:?}", core);
 
     Ok(())

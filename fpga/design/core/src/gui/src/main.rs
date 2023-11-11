@@ -7,7 +7,16 @@ slint::include_modules!();
 macro_rules! callback {
     ($window:ident . $event:ident, $func:path) => {
         let window_weak = $window.as_weak();
-        $window.$event(move || { $func(window_weak.clone()).unwrap() } );
+        $window.$event(move || {
+            window_weak.unwrap().set_err_message("".into());
+            match $func(window_weak.clone()){
+                Ok(_) => {},
+                Err(err) => {
+                    let err = format!("Error: {}", err).into();
+                    window_weak.unwrap().set_err_message(err);
+                }
+            }
+        });
     };
 }
 

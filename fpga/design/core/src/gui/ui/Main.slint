@@ -145,7 +145,7 @@ export component MainWindow inherits Window {
                             vertical-alignment: center;
                         }
                         path_w := LineEdit {
-                            placeholder-text: "/save/to/path";
+                            placeholder-text: "";
                         }
                         Button {
                             text: @tr("...");
@@ -202,9 +202,9 @@ export component MainWindow inherits Window {
                     enabled: !generating;
                 }
                 Text {
-                    text: err-message;
+                    text: err_message;
                     color: red;
-                    visible: err-message != "";
+                    visible: err_message != "";
                 }
             }
         }
@@ -216,6 +216,7 @@ export component MainWindow inherits Window {
         y: (root.height * 0.5) - 30px;
         width: 60px;
         height: 60px;
+        visible: generating;
         indeterminate: generating;
     }
 }
