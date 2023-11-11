@@ -1,9 +1,184 @@
-export component MainWindow inherits Window {
-    width: 256px;
-    height: 256px;
+import {
+    GroupBox,
+    VerticalBox,
+    HorizontalBox,
+    Button,
+    LineEdit,
+    ProgressIndicator,
+    CheckBox,
+    ComboBox
+} from "std-widgets.slint";
 
-    Text {
-        text: "hello world";
-        color: green;
+export component MainWindow inherits Window {
+    width: 600px;
+    height: 600px;
+
+    VerticalBox {
+        // Item0: Title
+        GroupBox {
+            height: 60px;
+
+            HorizontalBox {
+                height: 0%;
+                padding: 0px;
+                alignment: start;
+
+                Text {
+                    text: @tr("coregen");
+                    font-size: 24px;
+                }
+                Text {
+                    text: @tr("v0.1.0");
+                    font-size: 18px;
+                    vertical-alignment: bottom;
+                }
+            }
+        }
+
+        // Item1: General Settings
+        GroupBox {
+            title: @tr("General Settings");
+            vertical-stretch: 1;
+
+            VerticalBox {
+                height: 0%;
+                padding: 0px;
+                spacing: -14px;
+
+                // Name
+                VerticalBox {
+                    padding: 0;
+
+                    HorizontalBox {
+                        Text {
+                            text: @tr("Name");
+                            width: 60px;
+                            font-size: 14px;
+                            vertical-alignment: center;
+                        }
+                        LineEdit {
+                            placeholder-text: "core";
+                        }
+                    }
+                }
+
+                // Version
+                VerticalBox {
+                    padding: 0;
+
+                    HorizontalBox {
+                        Text {
+                            text: @tr("Version");
+                            width: 60px;
+                            font-size: 14px;
+                            vertical-alignment: center;
+                        }
+                        LineEdit {
+                            placeholder-text: "1.0.0";
+                        }
+                    }
+                }
+            }
+        }
+
+        // Item2: Core Settings
+        GroupBox {
+            title: @tr("Core Settings");
+            vertical-stretch: 1;
+
+            // Bus
+            VerticalBox {
+                padding: 0;
+
+                HorizontalBox {
+                    Text {
+                        text: @tr("Bus");
+                        width: 60px;
+                        font-size: 14px;
+                        vertical-alignment: center;
+                    }
+                    ComboBox {
+                        model: ["Xilinx", "Any"];
+                    }
+                }
+            }
+        }
+
+        // Item3 : Output Settings
+        GroupBox {
+            title: @tr("Output Settings");
+            vertical-stretch: 1;
+
+            VerticalBox {
+                height: 0%;
+                padding: 0px;
+                spacing: -14px;
+
+                // Path
+                VerticalBox {
+                    padding: 0;
+
+                    HorizontalBox {
+                        Text {
+                            text: @tr("Path");
+                            font-size: 14px;
+                            vertical-alignment: center;
+                        }
+                        LineEdit {
+                            placeholder-text: "/save/to/path";
+                        }
+                        Button {
+                            text: @tr("<ICON>");
+                        }
+                    }
+                }
+
+                // Check create subdirectory
+                VerticalBox {
+                    padding: 0;
+
+                    HorizontalBox {
+                        CheckBox { }
+                        Text {
+                            text: @tr("Create subdirectory");
+                            font-size: 14px;
+                            vertical-alignment: center;
+                        }
+                    }
+                }
+
+                // Check overwrite
+                VerticalBox {
+                    padding: 0;
+
+                    HorizontalBox {
+                        CheckBox { }
+                        Text {
+                            text: @tr("Overwrite if exists already");
+                            font-size: 14px;
+                            vertical-alignment: center;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Item4: Generate Button
+        GroupBox {
+            title: @tr("Generate");
+            vertical-stretch: 1;
+
+            VerticalBox {
+                height: 0%;
+
+                Button {
+                    text: @tr("Generate");
+                }
+                ProgressIndicator {
+                    progress: 75%;
+                    indeterminate: true;
+                }
+            }
+        }
     }
 }
