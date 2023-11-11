@@ -7,7 +7,9 @@ import {
     ProgressIndicator,
     CheckBox,
     ComboBox,
-    Spinner
+    Spinner,
+    GridBox,
+    SpinBox
 } from "std-widgets.slint";
 
 export component MainWindow inherits Window {
@@ -17,7 +19,8 @@ export component MainWindow inherits Window {
     out property <string> name <=> name_w.text;
     out property <string> version <=> version_w.text;
 
-    out property <string> bus <=> bus_w.current_value;
+    out property <int> rv32i_mini_cnt <=> rv32i_mini_w.value;
+    out property <int> void_cnt <=> void_w.value;
 
     out property <string> vendor <=> vendor_w.current_value;
     in-out property <string> path <=> path_w.text;
@@ -104,22 +107,57 @@ export component MainWindow inherits Window {
 
         // Item2: Cop Settings
         GroupBox {
-            title: @tr("Cop Settings");
+            title: @tr("Cop Implements");
             vertical-stretch: 1;
 
-            // Bus
-            VerticalBox {
-                padding: 0;
+            GridBox {
+                // RISC-V Standards
+                VerticalBox {
+                    row: 0;
+                    col: 0;
+                    padding: 0;
+                    spacing: -10px;
 
-                HorizontalBox {
                     Text {
-                        text: @tr("Bus");
-                        width: 60px;
-                        font-size: 14px;
-                        vertical-alignment: center;
+                        text: "RISCV-V Standards";
                     }
-                    bus_w := ComboBox {
-                        model: ["AXI4"];
+                    HorizontalBox {
+                        Text {
+                            text: @tr("RV32I-mini");
+                            font-size: 14px;
+                            vertical-alignment: center;
+                        }
+                        rv32i_mini_w := SpinBox {
+                            width: 150px;
+                            value: 1;
+                            enabled: true;
+                        }
+                    }
+                }
+
+                // Others
+                VerticalBox {
+                    row: 0;
+                    col: 1;
+                    padding: 0;
+                    spacing: -10px;
+
+                    Text {
+                        text: "Others";
+                    }
+                    HorizontalBox {
+                        spacing: 10px;
+
+                        Text {
+                            text: @tr("Void");
+                            font-size: 14px;
+                            vertical-alignment: center;
+                        }
+                        void_w := SpinBox {
+                            width: 150px;
+                            value: 0;
+                            enabled: true;
+                        }
                     }
                 }
             }

@@ -11,9 +11,6 @@ struct Cop {
     name: String,
     version: String,
 
-    // Cop
-    bus: BusInterface,
-
     // Output
     vendor: Vendor,
     path: String,
@@ -26,7 +23,6 @@ impl Cop {
         let cop = Cop {
             name: window.unwrap().get_name().into(),
             version: window.unwrap().get_version().into(),
-            bus: BusInterface::from(window.clone().unwrap().get_bus())?,
             vendor: Vendor::from(window.unwrap().get_vendor())?,
             path: window.unwrap().get_path().into(),
             do_create_subdir: window.unwrap().get_do_create_subdir(),
@@ -37,20 +33,6 @@ impl Cop {
             Ok(cop)
         } else {
             Err(anyhow::format_err!("All values must be filled!"))
-        }
-    }
-}
-
-#[derive(Debug)]
-enum BusInterface {
-    AXI4,
-}
-
-impl BusInterface {
-    fn from(s: SharedString) -> anyhow::Result<Self> {
-        match s.as_str() {
-            "AXI4" => Ok(BusInterface::AXI4),
-            _ => Err(anyhow::format_err!("not implemented")),
         }
     }
 }
