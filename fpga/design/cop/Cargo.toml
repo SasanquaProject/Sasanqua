@@ -2,7 +2,7 @@
 members = [
     "copgen/",
     "src/cui",
-    # "src/gui",
+    "src/gui",
     "impl/std",
     "impl/chisel",
     "impl/verilog",
