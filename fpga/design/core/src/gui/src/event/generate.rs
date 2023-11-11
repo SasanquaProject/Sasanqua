@@ -1,4 +1,12 @@
+use std::fs;
+use std::path::Path;
+
 use slint::{Weak, SharedString};
+
+use coregen::sasanqua::bus::AXI4;
+use coregen::sasanqua::Sasanqua;
+use coregen::gen_physfs;
+use ipgen::vendor::{Any, Xilinx};
 
 use crate::MainWindow;
 
@@ -70,7 +78,28 @@ impl Vendor {
 
 pub fn generate(window: Weak<MainWindow>) -> anyhow::Result<()> {
     let core = Core::from(window.clone())?;
-    println!("{:?}", core);
+
+    let sasanqua = match core.bus {
+        BusInterface::AXI4 => Sasanqua::new(AXI4),
+    };
+
+    let dir_path = if core.do_create_subdir {
+        format!("{}/{}", core.path, core.name)
+    } else {
+        format!("{}", core.path)
+    };
+    if Path::new(&dir_path).exists() {
+        if core.do_overwrite {
+            fs::remove_dir_all(&dir_path)?;
+        } else {
+            return Err(anyhow::format_err!("Path \"{}\" is already exists.", dir_path));
+        }
+    }
+
+    match core.vendor {
+        Vendor::Any => { gen_physfs::<Any, String>(&sasanqua, dir_path)?; },
+        Vendor::Xilinx => { gen_physfs::<Xilinx, String>(&sasanqua, dir_path)?; },
+    }
 
     Ok(())
 }

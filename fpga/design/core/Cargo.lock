@@ -1013,6 +1013,8 @@ name = "coregen_gui"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "coregen",
+ "ipgen",
  "rfd",
  "slint",
  "slint-build",
