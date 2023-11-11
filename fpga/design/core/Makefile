@@ -1,16 +1,14 @@
-COREGEN_BIN := ./target/release/coregen_cui
+COREGEN_CBIN := ./target/release/coregen_cui
+COREGEN_GBIN := ./target/release/coregen_gui
 
 build:
 	cargo build --release
 
 new:
-	$(COREGEN_BIN) new -o core.toml
+	$(COREGEN_CBIN) new -o core.toml
 
 gen:
-	$(COREGEN_BIN) gen core.toml -o core_ip
-
-shell:
-	$(COREGEN_BIN) interactive
+	$(COREGEN_CBIN) gen core.toml -o core_ip
 
 clean:
 	rm -rf core.toml core_ip
