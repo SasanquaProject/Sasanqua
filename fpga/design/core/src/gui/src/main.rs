@@ -1,6 +1,6 @@
 mod event;
 
-use event::generate;
+use event::{generate, pick_folder};
 
 slint::include_modules!();
 
@@ -14,7 +14,8 @@ macro_rules! callback {
 fn main() -> anyhow::Result<()> {
     let window = MainWindow::new()?;
 
-    callback!(window.on_generate, generate::generate);
+    callback!(window.on_pick_folder, pick_folder);
+    callback!(window.on_generate, generate);
 
     window.run()?;
     Ok(())
