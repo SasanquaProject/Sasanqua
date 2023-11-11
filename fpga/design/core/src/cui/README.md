@@ -1,6 +1,6 @@
 # CoreGen - CUI
 
-## Example
+## 実行例
 
 ```
 $ cargo run

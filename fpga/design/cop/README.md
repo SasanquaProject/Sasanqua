@@ -9,6 +9,12 @@ $ make build
 // Generate a Core-IP
 $ make new
 $ make gen
+
+// CUI
+$ cargo run --bin copgen_cui
+
+// GUI
+$ cargo run --bin copgen_gui
 ```
 
 ## クレート
@@ -16,7 +22,7 @@ $ make gen
 ### bin
 
 - [src/cui](./src/cui/README.md)
-- src/gui
+- [src/gui](./src/gui/README.md)
 
 ### lib
 
