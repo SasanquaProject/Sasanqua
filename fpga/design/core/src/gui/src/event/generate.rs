@@ -41,7 +41,7 @@ impl Core {
         if core.name.len() * core.version.len() * core.path.len() > 0 {
             Ok(core)
         } else {
-            Err(anyhow::format_err!("All values be must filled!"))
+            Err(anyhow::format_err!("All values must be filled!"))
         }
     }
 }
