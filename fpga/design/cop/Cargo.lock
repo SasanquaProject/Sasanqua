@@ -943,10 +943,15 @@ name = "copgen_gui"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "chisel",
+ "copgen",
+ "ipgen",
  "rfd",
  "slint",
  "slint-build",
+ "std",
  "thiserror",
+ "verilog",
 ]
 
 [[package]]
