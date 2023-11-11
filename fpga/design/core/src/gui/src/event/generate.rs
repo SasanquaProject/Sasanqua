@@ -3,7 +3,7 @@ use slint::{Weak, SharedString};
 use crate::MainWindow;
 
 #[derive(Debug)]
-pub struct Core {
+struct Core {
     // General
     name: String,
     version: String,
@@ -46,7 +46,8 @@ impl From<SharedString> for BusInterface {
     }
 }
 
-pub fn generate(core: Core) -> anyhow::Result<()> {
+pub fn generate(window: Weak<MainWindow>) -> anyhow::Result<()> {
+    let core: Core = window.into();
     println!("{:?}", core);
 
     Ok(())

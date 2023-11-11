@@ -4,17 +4,17 @@ use event::generate;
 
 slint::include_modules!();
 
+macro_rules! callback {
+    ($window:ident . $event:ident, $func:path) => {
+        let window_weak = $window.as_weak();
+        $window.$event(move || { $func(window_weak.clone()).unwrap() } );
+    };
+}
+
 fn main() -> anyhow::Result<()> {
     let window = MainWindow::new()?;
 
-    let window_weak = window.as_weak();
-    window.on_generate(move || {
-        let core = window_weak.clone().into();
-        match generate::generate(core) {
-            Ok(_) => {},
-            Err(_) => {},
-        }
-    });
+    callback!(window.on_generate, generate::generate);
 
     window.run()?;
     Ok(())
