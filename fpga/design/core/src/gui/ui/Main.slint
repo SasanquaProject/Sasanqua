@@ -6,7 +6,8 @@ import {
     LineEdit,
     ProgressIndicator,
     CheckBox,
-    ComboBox
+    ComboBox,
+    Spinner
 } from "std-widgets.slint";
 
 export component MainWindow inherits Window {
@@ -22,10 +23,14 @@ export component MainWindow inherits Window {
     out property <bool> do_create_subdir <=> do_create_subdir_w.checked;
     out property <bool> do_overwrite <=> do_overwrite_w.checked;
 
+    in property <bool> generating;
+    in property <string> err_message;
+
     title: "coregen";
     width: 600px;
     height: 600px;
 
+    // Main
     VerticalBox {
         // Item0: Title
         GroupBox {
@@ -194,12 +199,23 @@ export component MainWindow inherits Window {
                 Button {
                     text: @tr("Generate");
                     clicked => { generate() }
+                    enabled: !generating;
                 }
-                ProgressIndicator {
-                    progress: 75%;
-                    indeterminate: true;
+                Text {
+                    text: err-message;
+                    color: red;
+                    visible: err-message != "";
                 }
             }
         }
+    }
+
+    // Generationg Animation
+    Spinner {
+        x: (root.width * 0.5) - 30px;
+        y: (root.height * 0.5) - 30px;
+        width: 60px;
+        height: 60px;
+        indeterminate: generating;
     }
 }
