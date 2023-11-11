@@ -19,6 +19,7 @@ export component MainWindow inherits Window {
 
     out property <string> bus <=> bus_w.current_value;
 
+    out property <string> vendor <=> vendor_w.current_value;
     in-out property <string> path <=> path_w.text;
     out property <bool> do_create_subdir <=> do_create_subdir_w.checked;
     out property <bool> do_overwrite <=> do_overwrite_w.checked;
@@ -28,7 +29,7 @@ export component MainWindow inherits Window {
 
     title: "coregen";
     width: 600px;
-    height: 600px;
+    height: 650px;
 
     // Main
     VerticalBox {
@@ -118,7 +119,7 @@ export component MainWindow inherits Window {
                         vertical-alignment: center;
                     }
                     bus_w := ComboBox {
-                        model: ["Xilinx", "Any"];
+                        model: ["AXI4"];
                     }
                 }
             }
@@ -134,6 +135,23 @@ export component MainWindow inherits Window {
                 padding: 0px;
                 spacing: -14px;
 
+                // Vendor
+                VerticalBox {
+                    padding: 0;
+
+                    HorizontalBox {
+                        Text {
+                            text: @tr("Vendor");
+                            width: 60px;
+                            font-size: 14px;
+                            vertical-alignment: center;
+                        }
+                        vendor_w := ComboBox {
+                            model: ["Any", "Xilinx"];
+                        }
+                    }
+                }
+
                 // Path
                 VerticalBox {
                     padding: 0;
@@ -141,6 +159,7 @@ export component MainWindow inherits Window {
                     HorizontalBox {
                         Text {
                             text: @tr("Path");
+                            width: 60px;
                             font-size: 14px;
                             vertical-alignment: center;
                         }
