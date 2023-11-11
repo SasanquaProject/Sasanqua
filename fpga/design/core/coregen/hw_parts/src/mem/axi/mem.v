@@ -250,7 +250,8 @@ module mem_axi
     assign rom_data_roaddr = { 20'b0, rom_data_roaddr_10, 2'b0 };
 
     rom_dualport # (
-        .ADDR_WIDTH         (10)
+        .ADDR_WIDTH         (10),   // => SIZE: 1024
+        .DATA_WIDTH_2POW    (0)     // => WIDTH: 32bit
     ) rom_dualport (
         // 制御
         .CLK                (CLK),
@@ -259,13 +260,13 @@ module mem_axi
         // アクセスポート
         .A_SELECT           (inst_rselect[0]),
         .A_RDEN             (INST_RDEN),
-        .A_RIADDR           (INST_RIADDR[11:2]),
+        .A_RIADDR           (INST_RIADDR),
         .A_ROADDR           (rom_inst_roaddr_10),
         .A_RVALID           (rom_inst_rvalid),
         .A_RDATA            (rom_inst_rdata),
         .B_SELECT           (data_rselect[0]),
         .B_RDEN             (DATA_RDEN),
-        .B_RIADDR           (DATA_RIADDR[11:2]),
+        .B_RIADDR           (DATA_RIADDR),
         .B_ROADDR           (rom_data_roaddr_10),
         .B_RVALID           (rom_data_rvalid),
         .B_RDATA            (rom_data_rdata)
@@ -292,7 +293,10 @@ module mem_axi
     assign dummy_waddr   = 32'b0;
     assign dummy_wdata   = 32'b0;
 
-    cache_axi inst_cache (
+    cache_axi # (
+        .PAGES              (1),    // => SIZE: 4kb x 1
+        .DATA_WIDTH_2POW    (0)     // => WIDTH: 32bit
+    ) inst_cache (
         // 制御
         .CLK                (CLK),
         .RST                (RST),
@@ -353,7 +357,10 @@ module mem_axi
     wire [31:0] data_roaddr, data_rdata;
     wire        exists_data_cache, data_rvalid;
 
-    cache_axi data_cache (
+    cache_axi # (
+        .PAGES              (1),    // => SIZE: 4kb x 1
+        .DATA_WIDTH_2POW    (0)     // => WIDTH: 32bit
+    ) data_cache (
         // 制御
         .CLK                (CLK),
         .RST                (RST),
