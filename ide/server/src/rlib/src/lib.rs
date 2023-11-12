@@ -3,13 +3,15 @@ use std::fmt::Debug;
 use std::sync::{Arc, Mutex};
 use std::thread;
 
+use serde::Deserialize;
+
 pub trait Job<Id>
 where
     Self: Debug + Send,
     Id: Debug + Send + Clone,
 {
     fn id(&self) -> Id;
-    fn process(&self) -> Box<dyn FnMut() -> anyhow::Result<()>>;
+    fn process(&self) -> Box<dyn FnMut() -> anyhow::Result<Vec<u8>>>;
 }
 
 #[derive(Debug)]
@@ -18,7 +20,29 @@ where
     Id: Debug + Send + Clone,
 {
     Start(Id),
-    Finish(Id, anyhow::Result<()>),
+    Finish(Id, anyhow::Result<Vec<u8>>),
+}
+
+impl<JId> JobMessage<JId>
+where
+    JId: Debug + Send + Clone,
+{
+    pub fn into<T>(self) -> Option<(JId, anyhow::Result<T>)>
+    where
+        T: for<'a> Deserialize<'a>
+    {
+        if let JobMessage::Finish(id, result) = self {
+            match result {
+                Ok(result) => {
+                    let result = rmp_serde::from_slice(&result).unwrap();
+                    Some((id, Ok(result)))
+                }
+                Err(err) => Some((id, Err(err)))
+            }
+        } else {
+            None
+        }
+    }
 }
 
 #[derive(Debug)]
@@ -97,7 +121,7 @@ where
         }
     }
 
-    fn finish(server: Arc<Mutex<JobServer<JId>>>, result: anyhow::Result<()>) {
+    fn finish(server: Arc<Mutex<JobServer<JId>>>, result: anyhow::Result<Vec<u8>>) {
         {
             let mut server_ref = server.lock().unwrap();
             let id = server_ref.executing.clone().unwrap();
@@ -115,7 +139,7 @@ mod test {
     use std::time::Duration;
     use std::sync::Arc;
 
-    use crate::{JobServer, Job};
+    use crate::{Job, JobServer, JobMessage};
 
     #[derive(Debug)]
     struct TestJob(i32);
@@ -125,10 +149,15 @@ mod test {
             self.0
         }
 
-        fn process(&self) -> Box<dyn FnMut() -> anyhow::Result<()>> {
+        fn process(&self) -> Box<dyn FnMut() -> anyhow::Result<Vec<u8>>> {
+            let id = self.id();
             Box::new(move || {
                 thread::sleep(Duration::from_millis(500));
-                Ok(())
+
+                let result = format!("Success: Job {}", id);
+                let result = rmp_serde::to_vec(&result).unwrap();
+
+                Ok(result)
             })
         }
     }
@@ -141,7 +170,10 @@ mod test {
         JobServer::job(&server, Box::new(TestJob(1)));
 
         for _ in 0..4 {
-            JobServer::recv_block(&server);
+            if let msg@JobMessage::Finish(..) = JobServer::recv_block(&server) {
+                let (id, result) = msg.into::<String>().unwrap();
+                assert_eq!(format!("Success: Job {}", id), result.unwrap());
+            }
         }
     }
 
@@ -157,7 +189,10 @@ mod test {
         }
 
         for _ in 0..10 {
-            JobServer::recv_block(&server);
+            if let msg@JobMessage::Finish(..) = JobServer::recv_block(&server) {
+                let (id, result) = msg.into::<String>().unwrap();
+                assert_eq!(format!("Success: Job {}", id), result.unwrap());
+            }
         }
     }
 }
