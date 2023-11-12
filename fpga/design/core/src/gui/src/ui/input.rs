@@ -2,7 +2,7 @@ use slint::{SharedString, Weak};
 
 use crate::MainWindow;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct UI {
     // General
     pub name: String,
@@ -32,7 +32,7 @@ impl From<Weak<MainWindow>> for UI {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum BusInterface {
     AXI4,
 }
@@ -46,7 +46,7 @@ impl From<SharedString> for BusInterface {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Vendor {
     Any,
     Xilinx,
