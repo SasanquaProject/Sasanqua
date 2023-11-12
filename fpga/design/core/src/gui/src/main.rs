@@ -1,11 +1,12 @@
 mod event;
+mod ui;
 
-use std::time::Duration;
 use std::thread;
 
 use slint::Weak;
 
 use event::{generate, pick_folder};
+use ui::input;
 
 slint::include_modules!();
 
@@ -13,6 +14,7 @@ macro_rules! callback {
     ($window:ident . $event:ident, $func:path) => {
         let window_weak = $window.as_weak();
         $window.$event(move || {
+            let ui = input::UI::from(window_weak.clone());
             let window = window_weak.clone();
             thread::spawn(move || {
                 invoke_from_event_loop!(window => (|window: Weak<MainWindow>| {
@@ -20,20 +22,12 @@ macro_rules! callback {
                     window.unwrap().set_err_message("".into())
                 }));
 
-                thread::sleep(Duration::from_millis(500));
-
-                invoke_from_event_loop!(window => (|window: Weak<MainWindow>| {
-                    match $func(window.clone()){
-                        Ok(_) => {},
-                        Err(err) => {
-                            let err = format!("Error: {}", err).into();
-                            window.unwrap().set_err_message(err);
-                        }
-                    }
-                }));
+                let ui = $func(ui);
 
                 invoke_from_event_loop!(window => (|window: Weak<MainWindow>| {
                     window.unwrap().set_generating(false);
+                    window.unwrap().set_path(ui.path.into());
+                    window.unwrap().set_err_message(ui.err_msg.into());
                 }));
             });
         });
