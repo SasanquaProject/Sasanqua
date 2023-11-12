@@ -54,7 +54,7 @@ where
             server_ref.jqueue.push(job);
         }
 
-        JobServer::start(&server);
+        JobServer::start(Arc::clone(server));
     }
 
     pub fn recv(server: &Arc<Mutex<JobServer<JId>>>) -> Option<JobMessage<JId>> {
@@ -65,9 +65,8 @@ where
     pub fn recv_block(server: &Arc<Mutex<JobServer<JId>>>) -> JobMessage<JId> {
         loop {
             let mut server_ref = server.lock().unwrap();
-            match server_ref.mqueue.pop_front() {
-                Some(msg) => return msg,
-                None => {}
+            if let Some(msg) =  server_ref.mqueue.pop_front() {
+                return msg;
             }
         }
     }
@@ -78,7 +77,7 @@ impl<JId> JobServer<JId>
 where
     JId: Debug + Send + Clone + 'static,
 {
-    fn start(server: &Arc<Mutex<JobServer<JId>>>) {
+    fn start(server: Arc<Mutex<JobServer<JId>>>) {
         let mut server_ref = server.lock().unwrap();
 
         if server_ref.executing.is_some() {
@@ -106,7 +105,7 @@ where
             server_ref.executing = None;
         }
 
-        JobServer::start(&server);
+        JobServer::start(server);
     }
 }
 
