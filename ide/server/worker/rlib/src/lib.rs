@@ -141,7 +141,9 @@ mod test {
     use std::time::Duration;
     use std::sync::Arc;
 
-    use crate::{Job, JobServer, JobMessage};
+    use job::Job;
+
+    use crate::{JobServer, JobMessage};
 
     #[derive(Debug)]
     struct TestJob(i32);
