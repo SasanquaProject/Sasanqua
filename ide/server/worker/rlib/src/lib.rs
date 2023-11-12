@@ -22,7 +22,7 @@ where
 {
     pub fn into<T>(self) -> Option<(JId, anyhow::Result<T>)>
     where
-        T: for<'a> Deserialize<'a>
+        T: for<'a> Deserialize<'a>,
     {
         if let JobMessage::Finish(id, result) = self {
             match result {
@@ -30,7 +30,7 @@ where
                     let result = rmp_serde::from_slice(&result).unwrap();
                     Some((id, Ok(result)))
                 }
-                Err(err) => Some((id, Err(err)))
+                Err(err) => Some((id, Err(err))),
             }
         } else {
             None
@@ -59,7 +59,7 @@ where
 impl<Ctx, JId> JobServer<Ctx, JId>
 where
     Ctx: Debug + Send + Clone + 'static,
-    JId: Debug + Send + Clone + 'static ,
+    JId: Debug + Send + Clone + 'static,
 {
     pub fn new(ctx: Ctx) -> Arc<Mutex<JobServer<Ctx, JId>>> {
         let server = JobServer {
@@ -88,7 +88,7 @@ where
     pub fn recv_block(server: &Arc<Mutex<JobServer<Ctx, JId>>>) -> JobMessage<JId> {
         loop {
             let mut server_ref = server.lock().unwrap();
-            if let Some(msg) =  server_ref.mqueue.pop_front() {
+            if let Some(msg) = server_ref.mqueue.pop_front() {
                 return msg;
             }
         }
@@ -137,13 +137,13 @@ where
 
 #[cfg(test)]
 mod test {
+    use std::sync::Arc;
     use std::thread;
     use std::time::Duration;
-    use std::sync::Arc;
 
     use job::Job;
 
-    use crate::{JobServer, JobMessage};
+    use crate::{JobMessage, JobServer};
 
     #[derive(Debug)]
     struct TestJob(i32);
@@ -174,7 +174,7 @@ mod test {
         JobServer::job(&server, Box::new(TestJob(1)));
 
         for _ in 0..4 {
-            if let msg@JobMessage::Finish(..) = JobServer::recv_block(&server) {
+            if let msg @ JobMessage::Finish(..) = JobServer::recv_block(&server) {
                 let (id, result) = msg.into::<String>().unwrap();
                 assert_eq!(format!("Success: Job Test {}", id), result.unwrap());
             }
@@ -193,7 +193,7 @@ mod test {
         }
 
         for _ in 0..10 {
-            if let msg@JobMessage::Finish(..) = JobServer::recv_block(&server) {
+            if let msg @ JobMessage::Finish(..) = JobServer::recv_block(&server) {
                 let (id, result) = msg.into::<String>().unwrap();
                 assert_eq!(format!("Success: Job Test {}", id), result.unwrap());
             }
