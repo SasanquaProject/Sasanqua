@@ -1,5 +1,6 @@
 [workspace]
 members = [
-    "src/http",
-    "src/rlib",
+    "job/job",
+    "worker/http",
+    "worker/rlib",
 ]

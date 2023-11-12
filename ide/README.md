@@ -16,8 +16,8 @@ $ cargo run --bin gui
 
 - front/cui
 - front/gui
-- server/src/http
+- server/worker/http
 
 ### lib
 
-- server/src/rlib
+- server/worker/rlib
