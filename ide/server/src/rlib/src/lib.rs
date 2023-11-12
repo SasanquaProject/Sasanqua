@@ -2,30 +2,30 @@ use std::fmt::Debug;
 use std::sync::{Arc, Mutex};
 use std::thread;
 
-pub trait Job<T>
+pub trait Job<Id>
 where
     Self: Debug + Send,
-    T: Debug + Send + Clone,
+    Id: Debug + Send + Clone,
 {
-    fn id(&self) -> T;
+    fn id(&self) -> Id;
     fn process(&self) -> Box<dyn FnMut() -> anyhow::Result<()>>;
 }
 
 #[derive(Debug)]
-pub struct JobServer<T>
+pub struct JobServer<JId>
 where
-    T: Debug + Send + Clone,
+    JId: Debug + Send + Clone,
 {
-    executing: Option<T>,
-    queue: Vec<Box<dyn Job<T>>>,
+    executing: Option<JId>,
+    queue: Vec<Box<dyn Job<JId>>>,
 }
 
 // for User impls
-impl<T> JobServer<T>
+impl<JId> JobServer<JId>
 where
-    T: Debug + Send + Clone + 'static ,
+    JId: Debug + Send + Clone + 'static ,
 {
-    pub fn new() -> Arc<Mutex<JobServer<T>>> {
+    pub fn new() -> Arc<Mutex<JobServer<JId>>> {
         let server = JobServer {
             executing: None,
             queue: vec![],
@@ -33,7 +33,7 @@ where
         Arc::new(Mutex::new(server))
     }
 
-    pub fn job(server: &Arc<Mutex<JobServer<T>>>, job: Box<dyn Job<T>>) {
+    pub fn job(server: &Arc<Mutex<JobServer<JId>>>, job: Box<dyn Job<JId>>) {
         {
             let mut server_ref = server.lock().unwrap();
             server_ref.queue.push(job);
@@ -42,7 +42,7 @@ where
         JobServer::start(&server);
     }
 
-    pub fn wait(server: &Arc<Mutex<JobServer<T>>>) {
+    pub fn wait(server: &Arc<Mutex<JobServer<JId>>>) {
         loop {
             let server_ref = server.lock().unwrap();
             if server_ref.executing.is_none() {
@@ -53,11 +53,11 @@ where
 }
 
 // for Internal-process impls
-impl<T> JobServer<T>
+impl<JId> JobServer<JId>
 where
-    T: Debug + Send + Clone + 'static,
+    JId: Debug + Send + Clone + 'static,
 {
-    fn start(server: &Arc<Mutex<JobServer<T>>>) {
+    fn start(server: &Arc<Mutex<JobServer<JId>>>) {
         let mut server_ref = server.lock().unwrap();
 
         if server_ref.executing.is_some() {
@@ -75,7 +75,7 @@ where
         }
     }
 
-    fn finish(server: Arc<Mutex<JobServer<T>>>, _: anyhow::Result<()>) {
+    fn finish(server: Arc<Mutex<JobServer<JId>>>, _: anyhow::Result<()>) {
         {
             let mut server_ref = server.lock().unwrap();
             server_ref.executing = None;
