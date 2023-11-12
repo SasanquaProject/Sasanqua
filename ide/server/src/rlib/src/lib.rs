@@ -2,30 +2,38 @@ use std::fmt::Debug;
 use std::sync::{Arc, Mutex};
 use std::thread;
 
-pub trait Job
+pub trait Job<T>
 where
     Self: Debug + Send,
+    T: Debug + Send + Clone,
 {
+    fn id(&self) -> T;
     fn process(&self) -> Box<dyn FnMut() -> anyhow::Result<()>>;
 }
 
 #[derive(Debug)]
-pub struct JobServer {
-    executing: bool,
-    queue: Vec<Box<dyn Job>>,
+pub struct JobServer<T>
+where
+    T: Debug + Send + Clone,
+{
+    executing: Option<T>,
+    queue: Vec<Box<dyn Job<T>>>,
 }
 
 // for User impls
-impl JobServer {
-    pub fn new() -> Arc<Mutex<JobServer>> {
+impl<T> JobServer<T>
+where
+    T: Debug + Send + Clone + 'static ,
+{
+    pub fn new() -> Arc<Mutex<JobServer<T>>> {
         let server = JobServer {
-            executing: false,
+            executing: None,
             queue: vec![],
         };
         Arc::new(Mutex::new(server))
     }
 
-    pub fn job(server: &Arc<Mutex<JobServer>>, job: Box<dyn Job>) {
+    pub fn job(server: &Arc<Mutex<JobServer<T>>>, job: Box<dyn Job<T>>) {
         {
             let mut server_ref = server.lock().unwrap();
             server_ref.queue.push(job);
@@ -34,10 +42,10 @@ impl JobServer {
         JobServer::start(&server);
     }
 
-    pub fn wait(server: &Arc<Mutex<JobServer>>) {
+    pub fn wait(server: &Arc<Mutex<JobServer<T>>>) {
         loop {
             let server_ref = server.lock().unwrap();
-            if !server_ref.executing {
+            if server_ref.executing.is_none() {
                 break;
             }
         }
@@ -45,16 +53,19 @@ impl JobServer {
 }
 
 // for Internal-process impls
-impl JobServer {
-    fn start(server: &Arc<Mutex<JobServer>>) {
+impl<T> JobServer<T>
+where
+    T: Debug + Send + Clone + 'static,
+{
+    fn start(server: &Arc<Mutex<JobServer<T>>>) {
         let mut server_ref = server.lock().unwrap();
 
-        if server_ref.executing {
+        if server_ref.executing.is_some() {
             return;
         }
 
         if let Some(func) = server_ref.queue.pop() {
-            server_ref.executing = true;
+            server_ref.executing = Some(func.id().clone());
 
             let server = Arc::clone(&server);
             thread::spawn(move || {
@@ -64,10 +75,10 @@ impl JobServer {
         }
     }
 
-    fn finish(server: Arc<Mutex<JobServer>>, _: anyhow::Result<()>) {
+    fn finish(server: Arc<Mutex<JobServer<T>>>, _: anyhow::Result<()>) {
         {
             let mut server_ref = server.lock().unwrap();
-            server_ref.executing = false;
+            server_ref.executing = None;
         }
 
         JobServer::start(&server);
@@ -76,7 +87,6 @@ impl JobServer {
 
 #[cfg(test)]
 mod test {
-    use std::io::{stdout, Write};
     use std::thread;
     use std::time::Duration;
     use std::sync::Arc;
@@ -86,15 +96,14 @@ mod test {
     #[derive(Debug)]
     struct TestJob(i32);
 
-    impl Job for TestJob {
-        fn process(&self) -> Box<dyn FnMut() -> anyhow::Result<()>> {
-            let id = self.0;
-            Box::new(move || {
-                print!("Hi! I'm ... ");
-                stdout().flush().unwrap();
-                thread::sleep(Duration::from_secs(1));
-                println!("TestJob {} !!!", id);
+    impl Job<i32> for TestJob {
+        fn id(&self) -> i32 {
+            self.0
+        }
 
+        fn process(&self) -> Box<dyn FnMut() -> anyhow::Result<()>> {
+            Box::new(move || {
+                thread::sleep(Duration::from_secs(1));
                 Ok(())
             })
         }
