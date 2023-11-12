@@ -39,25 +39,31 @@ where
 }
 
 #[derive(Debug)]
-pub struct JobServer<JId>
+pub struct JobServer<Ctx, JId>
 where
+    Ctx: Debug + Send + Clone,
     JId: Debug + Send + Clone,
 {
+    // Context
+    ctx: Ctx,
+
     // Job status
     executing: Option<JId>,
-    jqueue: Vec<Box<dyn Job<JId>>>,
+    jqueue: Vec<Box<dyn Job<Ctx, JId>>>,
 
     // Message Box
     mqueue: VecDeque<JobMessage<JId>>,
 }
 
 // for User impls
-impl<JId> JobServer<JId>
+impl<Ctx, JId> JobServer<Ctx, JId>
 where
+    Ctx: Debug + Send + Clone + 'static,
     JId: Debug + Send + Clone + 'static ,
 {
-    pub fn new() -> Arc<Mutex<JobServer<JId>>> {
+    pub fn new(ctx: Ctx) -> Arc<Mutex<JobServer<Ctx, JId>>> {
         let server = JobServer {
+            ctx,
             executing: None,
             jqueue: vec![],
             mqueue: VecDeque::new(),
@@ -65,7 +71,7 @@ where
         Arc::new(Mutex::new(server))
     }
 
-    pub fn job(server: &Arc<Mutex<JobServer<JId>>>, job: Box<dyn Job<JId>>) {
+    pub fn job(server: &Arc<Mutex<JobServer<Ctx, JId>>>, job: Box<dyn Job<Ctx, JId>>) {
         {
             let mut server_ref = server.lock().unwrap();
             server_ref.jqueue.push(job);
@@ -74,12 +80,12 @@ where
         JobServer::start(Arc::clone(server));
     }
 
-    pub fn recv(server: &Arc<Mutex<JobServer<JId>>>) -> Option<JobMessage<JId>> {
+    pub fn recv(server: &Arc<Mutex<JobServer<Ctx, JId>>>) -> Option<JobMessage<JId>> {
         let mut server_ref = server.lock().unwrap();
         server_ref.mqueue.pop_front()
     }
 
-    pub fn recv_block(server: &Arc<Mutex<JobServer<JId>>>) -> JobMessage<JId> {
+    pub fn recv_block(server: &Arc<Mutex<JobServer<Ctx, JId>>>) -> JobMessage<JId> {
         loop {
             let mut server_ref = server.lock().unwrap();
             if let Some(msg) =  server_ref.mqueue.pop_front() {
@@ -90,11 +96,12 @@ where
 }
 
 // for Internal-process impls
-impl<JId> JobServer<JId>
+impl<Ctx, JId> JobServer<Ctx, JId>
 where
+    Ctx: Debug + Send + Clone + 'static,
     JId: Debug + Send + Clone + 'static,
 {
-    fn start(server: Arc<Mutex<JobServer<JId>>>) {
+    fn start(server: Arc<Mutex<JobServer<Ctx, JId>>>) {
         let mut server_ref = server.lock().unwrap();
 
         if server_ref.executing.is_some() {
@@ -106,15 +113,17 @@ where
             server_ref.mqueue.push_back(JobMessage::Start(id.clone()));
             server_ref.executing = Some(id);
 
+            let ctx = server_ref.ctx.clone();
+
             let server = Arc::clone(&server);
             thread::spawn(move || {
-                let result = func.process()();
+                let result = func.process()(ctx);
                 JobServer::finish(server, result);
             });
         }
     }
 
-    fn finish(server: Arc<Mutex<JobServer<JId>>>, result: anyhow::Result<Vec<u8>>) {
+    fn finish(server: Arc<Mutex<JobServer<Ctx, JId>>>, result: anyhow::Result<Vec<u8>>) {
         {
             let mut server_ref = server.lock().unwrap();
             let id = server_ref.executing.clone().unwrap();
@@ -137,17 +146,17 @@ mod test {
     #[derive(Debug)]
     struct TestJob(i32);
 
-    impl Job<i32> for TestJob {
+    impl Job<&'static str, i32> for TestJob {
         fn id(&self) -> i32 {
             self.0
         }
 
-        fn process(&self) -> Box<dyn FnMut() -> anyhow::Result<Vec<u8>>> {
+        fn process(&self) -> Box<dyn FnMut(&'static str) -> anyhow::Result<Vec<u8>>> {
             let id = self.id();
-            Box::new(move || {
+            Box::new(move |name| {
                 thread::sleep(Duration::from_millis(500));
 
-                let result = format!("Success: Job {}", id);
+                let result = format!("Success: Job {} {}", name, id);
                 let result = rmp_serde::to_vec(&result).unwrap();
 
                 Ok(result)
@@ -157,7 +166,7 @@ mod test {
 
     #[test]
     fn singlethread() {
-        let server = JobServer::new();
+        let server = JobServer::<&'static str, _>::new("Test");
 
         JobServer::job(&server, Box::new(TestJob(0)));
         JobServer::job(&server, Box::new(TestJob(1)));
@@ -165,14 +174,14 @@ mod test {
         for _ in 0..4 {
             if let msg@JobMessage::Finish(..) = JobServer::recv_block(&server) {
                 let (id, result) = msg.into::<String>().unwrap();
-                assert_eq!(format!("Success: Job {}", id), result.unwrap());
+                assert_eq!(format!("Success: Job Test {}", id), result.unwrap());
             }
         }
     }
 
     #[test]
     fn multithread() {
-        let server = JobServer::new();
+        let server = JobServer::<&'static str, _>::new("Test");
 
         for id in 0..5 {
             let server_arc = Arc::clone(&server);
@@ -184,7 +193,7 @@ mod test {
         for _ in 0..10 {
             if let msg@JobMessage::Finish(..) = JobServer::recv_block(&server) {
                 let (id, result) = msg.into::<String>().unwrap();
-                assert_eq!(format!("Success: Job {}", id), result.unwrap());
+                assert_eq!(format!("Success: Job Test {}", id), result.unwrap());
             }
         }
     }
