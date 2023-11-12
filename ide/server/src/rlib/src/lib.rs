@@ -1,3 +1,4 @@
+use std::collections::VecDeque;
 use std::fmt::Debug;
 use std::sync::{Arc, Mutex};
 use std::thread;
@@ -12,12 +13,25 @@ where
 }
 
 #[derive(Debug)]
+pub enum JobMessage<Id>
+where
+    Id: Debug + Send + Clone,
+{
+    Start(Id),
+    Finish(Id, anyhow::Result<()>),
+}
+
+#[derive(Debug)]
 pub struct JobServer<JId>
 where
     JId: Debug + Send + Clone,
 {
+    // Job status
     executing: Option<JId>,
-    queue: Vec<Box<dyn Job<JId>>>,
+    jqueue: Vec<Box<dyn Job<JId>>>,
+
+    // Message Box
+    mqueue: VecDeque<JobMessage<JId>>,
 }
 
 // for User impls
@@ -28,7 +42,8 @@ where
     pub fn new() -> Arc<Mutex<JobServer<JId>>> {
         let server = JobServer {
             executing: None,
-            queue: vec![],
+            jqueue: vec![],
+            mqueue: VecDeque::new(),
         };
         Arc::new(Mutex::new(server))
     }
@@ -36,17 +51,23 @@ where
     pub fn job(server: &Arc<Mutex<JobServer<JId>>>, job: Box<dyn Job<JId>>) {
         {
             let mut server_ref = server.lock().unwrap();
-            server_ref.queue.push(job);
+            server_ref.jqueue.push(job);
         }
 
         JobServer::start(&server);
     }
 
-    pub fn wait(server: &Arc<Mutex<JobServer<JId>>>) {
+    pub fn recv(server: &Arc<Mutex<JobServer<JId>>>) -> Option<JobMessage<JId>> {
+        let mut server_ref = server.lock().unwrap();
+        server_ref.mqueue.pop_front()
+    }
+
+    pub fn recv_block(server: &Arc<Mutex<JobServer<JId>>>) -> JobMessage<JId> {
         loop {
-            let server_ref = server.lock().unwrap();
-            if server_ref.executing.is_none() {
-                break;
+            let mut server_ref = server.lock().unwrap();
+            match server_ref.mqueue.pop_front() {
+                Some(msg) => return msg,
+                None => {}
             }
         }
     }
@@ -64,8 +85,10 @@ where
             return;
         }
 
-        if let Some(func) = server_ref.queue.pop() {
-            server_ref.executing = Some(func.id().clone());
+        if let Some(func) = server_ref.jqueue.pop() {
+            let id = func.id();
+            server_ref.mqueue.push_back(JobMessage::Start(id.clone()));
+            server_ref.executing = Some(id);
 
             let server = Arc::clone(&server);
             thread::spawn(move || {
@@ -75,9 +98,11 @@ where
         }
     }
 
-    fn finish(server: Arc<Mutex<JobServer<JId>>>, _: anyhow::Result<()>) {
+    fn finish(server: Arc<Mutex<JobServer<JId>>>, result: anyhow::Result<()>) {
         {
             let mut server_ref = server.lock().unwrap();
+            let id = server_ref.executing.clone().unwrap();
+            server_ref.mqueue.push_back(JobMessage::Finish(id, result));
             server_ref.executing = None;
         }
 
@@ -103,44 +128,37 @@ mod test {
 
         fn process(&self) -> Box<dyn FnMut() -> anyhow::Result<()>> {
             Box::new(move || {
-                thread::sleep(Duration::from_secs(1));
+                thread::sleep(Duration::from_millis(500));
                 Ok(())
             })
         }
     }
 
     #[test]
-    fn test() {
-        println!("### Simple ###");
-        simple();
-        println!("##############\n");
-
-        println!("### Multithread ###");
-        new_job_by_multithread();
-        println!("###################\n");
-    }
-
-    fn simple() {
+    fn singlethread() {
         let server = JobServer::new();
+
         JobServer::job(&server, Box::new(TestJob(0)));
         JobServer::job(&server, Box::new(TestJob(1)));
-        JobServer::wait(&server);
+
+        for _ in 0..4 {
+            JobServer::recv_block(&server);
+        }
     }
 
-    fn new_job_by_multithread() {
+    #[test]
+    fn multithread() {
         let server = JobServer::new();
 
-        let server_arc = Arc::clone(&server);
-        thread::spawn(move || {
-            JobServer::job(&server_arc, Box::new(TestJob(0)));
-        });
+        for id in 0..5 {
+            let server_arc = Arc::clone(&server);
+            thread::spawn(move || {
+                JobServer::job(&server_arc, Box::new(TestJob(id)));
+            });
+        }
 
-        let server_arc = Arc::clone(&server);
-        thread::spawn(move || {
-            JobServer::job(&server_arc, Box::new(TestJob(1)));
-        });
-
-        thread::sleep(Duration::from_millis(500));
-        JobServer::wait(&server);
+        for _ in 0..10 {
+            JobServer::recv_block(&server);
+        }
     }
 }
