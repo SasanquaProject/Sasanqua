@@ -6,7 +6,27 @@ pub use crate::ui::input;
 
 #[macro_export]
 macro_rules! callback {
-    ($window:ident . $event:ident, $func:path) => {
+    ($window:ident . $event:ident => $func:path) => {
+        let window_weak = $window.as_weak();
+        $window.$event(move || {
+            let ui = input::UI::from(window_weak.clone());
+            let window = window_weak.clone();
+            thread::spawn(move || {
+                invoke_from_event_loop!(window => (|window: Weak<MainWindow>| {
+                    window.unwrap().set_err_message("".into())
+                }));
+
+                let ui = $func(ui);
+
+                invoke_from_event_loop!(window => (|window: Weak<MainWindow>| {
+                    window.unwrap().set_path(ui.path.into());
+                    window.unwrap().set_err_message(ui.err_msg.into());
+                }));
+            });
+        });
+    };
+
+    ($window:ident . $event:ident => $func:path, with animation) => {
         let window_weak = $window.as_weak();
         $window.$event(move || {
             let ui = input::UI::from(window_weak.clone());
@@ -26,7 +46,7 @@ macro_rules! callback {
                 }));
             });
         });
-    };
+    }
 }
 
 #[macro_export]
