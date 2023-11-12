@@ -23,15 +23,36 @@ pub fn generate(input: input::UI) -> anyhow::Result<output::UI> {
         };
     }
 
+    let (dir_path, ) = check(&input)?;
+
     let mut cop_pkg = CopPkg::new(&input.name, &input.version);
     impl_n! {
         cop_pkg += Rv32iMini * input.impl_set.rv32i_mini;
         cop_pkg += Void * input.impl_set.void
     }
-    if cop_pkg.profiles.len() == 0 {
-        return Err(anyhow::format_err!("Coppkg must contain at least one cop-impl."))
+
+    match input.vendor {
+        Vendor::Any => { gen_physfs::<Any, String>(cop_pkg, dir_path)?; }
+        Vendor::Xilinx => { gen_physfs::<Xilinx, String>(cop_pkg, dir_path)?; }
     }
 
+    thread::sleep(Duration::from_secs(1));
+
+    Ok(output::UI::from(input))
+}
+
+fn check(input: &input::UI) -> anyhow::Result<(String, )> {
+    // Check form status
+    if input.name.len() * input.version.len() * input.path.len() == 0 {
+        return Err(anyhow::format_err!("All values must be filled."));
+    }
+
+    // Check cop profiles
+    if input.impl_set.rv32i_mini + input.impl_set.void == 0 {
+        return Err(anyhow::format_err!("Coppkg must contain at least one cop-impl."));
+    }
+
+    // Check directory
     let dir_path = if input.do_create_subdir {
         format!("{}/{}", input.path, input.name)
     } else {
@@ -45,12 +66,5 @@ pub fn generate(input: input::UI) -> anyhow::Result<output::UI> {
         }
     }
 
-    match input.vendor {
-        Vendor::Any => { gen_physfs::<Any, String>(cop_pkg, dir_path)?; }
-        Vendor::Xilinx => { gen_physfs::<Xilinx, String>(cop_pkg, dir_path)?; }
-    }
-
-    thread::sleep(Duration::from_secs(1));
-
-    Ok(output::UI::from(input))
+    Ok((dir_path, ))
 }
