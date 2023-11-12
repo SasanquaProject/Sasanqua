@@ -24,14 +24,14 @@ checksum = "1fd0f2584146f6f2ef48085050886acf353beff7305ebd1ae69500e27c67f64b"
 name = "cui"
 version = "0.1.0"
 dependencies = [
- "server_rlib",
+ "worker_rlib",
 ]
 
 [[package]]
 name = "gui"
 version = "0.1.0"
 dependencies = [
- "server_rlib",
+ "worker_rlib",
 ]
 
 [[package]]
@@ -110,16 +110,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "server_rlib"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "rmp-serde",
- "serde",
- "thiserror",
-]
-
-[[package]]
 name = "syn"
 version = "2.0.39"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -155,3 +145,13 @@ name = "unicode-ident"
 version = "1.0.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3354b9ac3fae1ff6755cb6db53683adb661634f67557942dea4facebec0fee4b"
+
+[[package]]
+name = "worker_rlib"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "rmp-serde",
+ "serde",
+ "thiserror",
+]
