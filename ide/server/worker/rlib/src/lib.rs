@@ -5,14 +5,7 @@ use std::thread;
 
 use serde::Deserialize;
 
-pub trait Job<Id>
-where
-    Self: Debug + Send,
-    Id: Debug + Send + Clone,
-{
-    fn id(&self) -> Id;
-    fn process(&self) -> Box<dyn FnMut() -> anyhow::Result<Vec<u8>>>;
-}
+use job::Job;
 
 #[derive(Debug)]
 pub enum JobMessage<Id>
