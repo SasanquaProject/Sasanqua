@@ -12,10 +12,17 @@ import {
 } from "./my-widgets/lib.slint";
 
 import {
-    ProjectPage
+    ProjectPage,
+    CorePage,
+    CopPkgPage,
+    ValidatePage,
+    SynthesisPage,
+    FPGAPage
 } from "./pages/lib.slint";
 
 export component MainWindow inherits Window {
+    property <int> stat;
+
     preferred-width: 1280px;
     preferred-height: 800px;
     background: skyblue;
@@ -27,7 +34,7 @@ export component MainWindow inherits Window {
         height: 30px;
         background: root.background;
 
-        stat: 0;
+        stat: stat;
     }
 
     // Main View
@@ -43,7 +50,12 @@ export component MainWindow inherits Window {
             padding: 8px;
             padding-top: 30px;
 
-            ProjectPage {}
+            if (stat == 0): ProjectPage {}
+            if (stat == 1): CorePage {}
+            if (stat == 2): CopPkgPage {}
+            if (stat == 3): ValidatePage {}
+            if (stat == 4): SynthesisPage {}
+            if (stat == 5): FPGAPage {}
         }
 
         DoubleSeparatorV {
@@ -81,6 +93,8 @@ export component MainWindow inherits Window {
         enabled: true;
         size: 30px;
         text: "＜";
+
+        clicked => { stat = max(0, stat - 1); }
     }
 
     FloatingButton {
@@ -91,5 +105,7 @@ export component MainWindow inherits Window {
         enabled: true;
         size: 30px;
         text: "＞";
+
+        clicked => { stat = min(5, stat + 1); }
     }
 }
