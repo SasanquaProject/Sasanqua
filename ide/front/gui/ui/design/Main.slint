@@ -11,6 +11,10 @@ import {
     FloatingButton
 } from "./my-widgets/lib.slint";
 
+import {
+    ProjectPage
+} from "./pages/lib.slint";
+
 export component MainWindow inherits Window {
     preferred-width: 1280px;
     preferred-height: 800px;
@@ -32,18 +36,14 @@ export component MainWindow inherits Window {
         spacing: 0px;
         padding: 0px;
 
-        // User
+        // Page
         VerticalBox {
             height: 85%;
             spacing: 0px;
             padding: 8px;
             padding-top: 30px;
 
-            Rectangle {
-                border-radius: 20px;
-                border-width: 1px;
-                background: white;
-            }
+            ProjectPage {}
         }
 
         DoubleSeparatorV {
