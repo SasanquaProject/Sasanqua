@@ -1,0 +1,18 @@
+export component Log inherits Rectangle {
+    in property <string> text;
+
+    background: white;
+
+    Text {
+        x: 0;
+        y: 0;
+        padding: 100px;
+
+        color: black;
+        font-size: 14.0 * 1px;
+        font-family: "monospace";
+        font-weight: 100;
+
+        text: text;
+    }
+}

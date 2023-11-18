@@ -1,0 +1,24 @@
+import { Button } from "std-widgets.slint";
+export component FloatingButton inherits TouchArea {
+    in property <length> size;
+    in property <string> text;
+
+    width: size;
+    height: size * 4;
+    visible: self.enabled;
+
+    Rectangle {
+        background: parent.has-hover ? #737eff: #a7b1ff;
+        border-radius: size / 2;
+
+        animate background {
+            duration: 50ms;
+        }
+
+        Text {
+            color: white;
+            text: text;
+            font-weight: 700;
+        }
+    }
+}

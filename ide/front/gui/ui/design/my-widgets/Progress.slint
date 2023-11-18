@@ -1,0 +1,47 @@
+import { HorizontalBox , VerticalBox} from "std-widgets.slint";
+
+component Label inherits Text {
+    in property <bool> selected;
+
+    vertical-alignment: center;
+    horizontal-alignment: center;
+
+    color: black;
+    font-family: "system-ui";
+    font-weight: selected ? 700 : 400;
+
+    animate font-weight {
+        duration: 250ms;
+    }
+}
+
+export component Progress inherits Rectangle {
+    in-out property <int> stat;
+
+    HorizontalBox {
+        Label {
+            selected: stat == 0;
+            text: "プロジェクト作成";
+        }
+        Label {
+            selected: stat == 1;
+            text: "プロセッサコア";
+        }
+        Label {
+            selected: stat == 2;
+            text: "コプロセッサパッケージ";
+        }
+        Label {
+            selected: stat == 3;
+            text: "検証";
+        }
+        Label {
+            selected: stat == 4;
+            text: "合成";
+        }
+        Label {
+            selected: stat == 5;
+            text: "FPGA 書き込み";
+        }
+    }
+}
