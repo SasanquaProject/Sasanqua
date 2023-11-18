@@ -1,0 +1,12 @@
+[package]
+name = "launcher"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+slint = { workspace = true }
+ui = { path = "../ui" }
+event = { path = "../event/event" }
+macros = { path = "../macros/macros" }
