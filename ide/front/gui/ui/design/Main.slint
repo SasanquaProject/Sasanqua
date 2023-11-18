@@ -6,6 +6,8 @@ import {
 import {
     Log,
     Progress,
+    SingleSeparatorH,
+    DoubleSeparatorV,
     FloatingButton
 } from "./my-widgets/lib.slint";
 
@@ -44,12 +46,8 @@ export component MainWindow inherits Window {
             }
         }
 
-        // Splitter
-        Rectangle {
-            height: 3px;
-            background: white;
-            border-width: 1px;
-            border-color: black;
+        DoubleSeparatorV {
+            separator-color: black;
         }
 
         // Status View
@@ -63,10 +61,8 @@ export component MainWindow inherits Window {
                 text: "[INFO] 00:00:00 (user) > hello";
             }
 
-            // Splitter
-            Rectangle {
-                width: 1px;
-                background: gray;
+            SingleSeparatorH {
+                separator-color: gray;
             }
 
             // Log Viewer
