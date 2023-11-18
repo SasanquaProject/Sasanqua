@@ -5,7 +5,13 @@ export component FloatingButton inherits TouchArea {
 
     width: size;
     height: size * 4;
+
     visible: self.enabled;
+    opacity: self.enabled ? 1.0 : 0.0;
+
+    animate opacity {
+        duration: 100ms;
+    }
 
     Rectangle {
         background: parent.has-hover ? #737eff: #a7b1ff;
