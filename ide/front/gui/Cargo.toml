@@ -3,5 +3,23 @@ name = "gui"
 version = "0.1.0"
 edition = "2021"
 
+[workspace]
+members = [
+    "ui",
+    "event/event",
+    "macros/macros",
+]
+
+[workspace.dependencies]
+anyhow = "1.0.75"
+thiserror = "1.0.50"
+slint = "1.3"
+slint-build = "1.3"
+
 [dependencies]
-server = { package = "worker_rlib", path = "../../server/worker/rlib" }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+slint = { workspace = true }
+ui = { path = "ui" }
+event = { path = "event/event" }
+macros = { path = "macros/macros" }

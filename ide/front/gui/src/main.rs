@@ -1,3 +1,6 @@
-fn main() {
-    println!("Hello World (from GUI)");
+use ui::*;
+
+fn main() -> anyhow::Result<()> {
+    MainWindow::new()?.run()?;
+    Ok(())
 }
