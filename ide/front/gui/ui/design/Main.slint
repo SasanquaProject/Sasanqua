@@ -12,6 +12,7 @@ import {
 } from "./my-widgets/lib.slint";
 
 import {
+    EmptyPage,
     ProjectPage,
     CorePage,
     CopPkgPage,
@@ -50,12 +51,15 @@ export component MainWindow inherits Window {
             padding: 8px;
             padding-top: 30px;
 
-            if (stat == 0): ProjectPage {}
-            if (stat == 1): CorePage {}
-            if (stat == 2): CopPkgPage {}
-            if (stat == 3): ValidatePage {}
-            if (stat == 4): SynthesisPage {}
-            if (stat == 5): FPGAPage {}
+            Rectangle {
+                EmptyPage     { enabled: true; }
+                ProjectPage   { enabled: stat == 0; }
+                CorePage      { enabled: stat == 1; }
+                CopPkgPage    { enabled: stat == 2; }
+                ValidatePage  { enabled: stat == 3; }
+                SynthesisPage { enabled: stat == 4; }
+                FPGAPage      { enabled: stat == 5; }
+            }
         }
 
         DoubleSeparatorV {
@@ -90,7 +94,7 @@ export component MainWindow inherits Window {
         y: ((root.height * 85%) - self.height) / 2;
         z: 2;
 
-        enabled: true;
+        enabled: stat != 0;
         size: 30px;
         text: "＜";
 
@@ -102,7 +106,7 @@ export component MainWindow inherits Window {
         y: ((root.height * 85%) - self.height) / 2;
         z: 2;
 
-        enabled: true;
+        enabled: stat != 5;
         size: 30px;
         text: "＞";
 

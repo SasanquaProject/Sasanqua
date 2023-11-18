@@ -2,10 +2,17 @@ import { VerticalBox } from "std-widgets.slint";
 
 export component Page inherits Rectangle {
     in property <string> title;
+    in property <bool> enabled;
 
     border-radius: 20px;
     border-width: 1px;
     background: white;
+    visible: self.opacity != 0.0;
+    opacity: enabled ? 1.0 : 0.0;
+
+    animate opacity {
+        duration: 250ms;
+    }
 
     VerticalLayout {
         spacing: 8px;
