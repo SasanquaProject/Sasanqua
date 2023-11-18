@@ -2211,10 +2211,20 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "event",
- "macros",
+ "launcher_macros",
  "slint",
  "thiserror",
  "ui",
+]
+
+[[package]]
+name = "launcher_macros"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "macros_declarative",
+ "macros_procedural",
+ "thiserror",
 ]
 
 [[package]]
@@ -2401,16 +2411,6 @@ checksum = "ca507745ba7ccbc76e5c44e7b63b1a29d2b0d6126f375806a5bbaf657c7d6c45"
 dependencies = [
  "lyon_geom",
  "num-traits",
-]
-
-[[package]]
-name = "macros"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "macros_declarative",
- "macros_procedural",
- "thiserror",
 ]
 
 [[package]]
