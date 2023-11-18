@@ -28,13 +28,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "gui"
-version = "0.1.0"
-dependencies = [
- "worker_rlib",
-]
-
-[[package]]
 name = "job"
 version = "0.1.0"
 dependencies = [

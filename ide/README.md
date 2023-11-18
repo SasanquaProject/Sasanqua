@@ -3,11 +3,8 @@
 ## コマンド
 
 ```
-// CUI
-$ cargo run --bin cui
-
-// GUI
-$ cargo run --bin gui
+$ make cui
+$ make gui
 ```
 
 ## クレート
@@ -21,3 +18,4 @@ $ cargo run --bin gui
 ### lib
 
 - server/worker/rlib
+

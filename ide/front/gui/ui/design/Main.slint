@@ -1,0 +1,241 @@
+import {
+    GroupBox,
+    VerticalBox,
+    HorizontalBox,
+    Button,
+    LineEdit,
+    ProgressIndicator,
+    CheckBox,
+    ComboBox,
+    Spinner
+} from "std-widgets.slint";
+
+export component MainWindow inherits Window {
+    callback pick_folder();
+    callback generate();
+
+    out property <string> name <=> name_w.text;
+    out property <string> version <=> version_w.text;
+
+    out property <string> bus <=> bus_w.current_value;
+
+    out property <string> vendor <=> vendor_w.current_value;
+    in-out property <string> path <=> path_w.text;
+    out property <bool> do_create_subdir <=> do_create_subdir_w.checked;
+    out property <bool> do_overwrite <=> do_overwrite_w.checked;
+
+    in property <bool> generating;
+    in property <string> err_message;
+
+    title: "coregen";
+    width: 600px;
+    height: 650px;
+
+    // Main
+    VerticalBox {
+        // Item0: Title
+        GroupBox {
+            height: 60px;
+
+            HorizontalBox {
+                height: 0%;
+                padding: 0px;
+                alignment: start;
+
+                Text {
+                    text: @tr("coregen");
+                    font-size: 24px;
+                }
+                Text {
+                    text: @tr("v0.1.0");
+                    font-size: 18px;
+                    vertical-alignment: bottom;
+                }
+            }
+        }
+
+        // Item1: General Settings
+        GroupBox {
+            title: @tr("General Settings");
+            vertical-stretch: 1;
+
+            VerticalBox {
+                height: 0%;
+                padding: 0px;
+                spacing: -14px;
+
+                // Name
+                VerticalBox {
+                    padding: 0;
+
+                    HorizontalBox {
+                        Text {
+                            text: @tr("Name");
+                            width: 60px;
+                            font-size: 14px;
+                            vertical-alignment: center;
+                        }
+                        name_w := LineEdit {
+                            text: "core";
+                            placeholder-text: "core";
+                        }
+                    }
+                }
+
+                // Version
+                VerticalBox {
+                    padding: 0;
+
+                    HorizontalBox {
+                        Text {
+                            text: @tr("Version");
+                            width: 60px;
+                            font-size: 14px;
+                            vertical-alignment: center;
+                        }
+                        version_w := LineEdit {
+                            text: "1.0.0";
+                            placeholder-text: "1.0.0";
+                        }
+                    }
+                }
+            }
+        }
+
+        // Item2: Core Settings
+        GroupBox {
+            title: @tr("Core Settings");
+            vertical-stretch: 1;
+
+            // Bus
+            VerticalBox {
+                padding: 0;
+
+                HorizontalBox {
+                    Text {
+                        text: @tr("Bus");
+                        width: 60px;
+                        font-size: 14px;
+                        vertical-alignment: center;
+                    }
+                    bus_w := ComboBox {
+                        model: ["AXI4"];
+                    }
+                }
+            }
+        }
+
+        // Item3 : Output Settings
+        GroupBox {
+            title: @tr("Output Settings");
+            vertical-stretch: 1;
+
+            VerticalBox {
+                height: 0%;
+                padding: 0px;
+                spacing: -14px;
+
+                // Vendor
+                VerticalBox {
+                    padding: 0;
+
+                    HorizontalBox {
+                        Text {
+                            text: @tr("Vendor");
+                            width: 60px;
+                            font-size: 14px;
+                            vertical-alignment: center;
+                        }
+                        vendor_w := ComboBox {
+                            model: ["Any", "Xilinx"];
+                        }
+                    }
+                }
+
+                // Path
+                VerticalBox {
+                    padding: 0;
+
+                    HorizontalBox {
+                        Text {
+                            text: @tr("Path");
+                            width: 60px;
+                            font-size: 14px;
+                            vertical-alignment: center;
+                        }
+                        path_w := LineEdit {
+                            placeholder-text: "";
+                        }
+                        Button {
+                            text: @tr("...");
+                            clicked => { pick_folder() }
+                        }
+                    }
+                }
+
+                // Check create subdirectory
+                VerticalBox {
+                    padding: 0;
+
+                    HorizontalBox {
+                        do_create_subdir_w := CheckBox {
+                            checked: true;
+                        }
+                        Text {
+                            text: @tr("Create subdirectory");
+                            font-size: 14px;
+                            vertical-alignment: center;
+                        }
+                    }
+                }
+
+                // Check overwrite
+                VerticalBox {
+                    padding: 0;
+
+                    HorizontalBox {
+                        do_overwrite_w := CheckBox {
+                            checked: false;
+                        }
+                        Text {
+                            text: @tr("Overwrite if exists already");
+                            font-size: 14px;
+                            vertical-alignment: center;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Item4: Generate Button
+        GroupBox {
+            title: @tr("Generate");
+            vertical-stretch: 1;
+
+            VerticalBox {
+                height: 0%;
+
+                Button {
+                    text: @tr("Generate");
+                    clicked => { generate() }
+                    enabled: !generating;
+                }
+                Text {
+                    text: err_message;
+                    color: red;
+                    visible: err_message != "";
+                }
+            }
+        }
+    }
+
+    // Generationg Animation
+    Spinner {
+        x: (root.width * 0.5) - 30px;
+        y: (root.height * 0.5) - 30px;
+        width: 60px;
+        height: 60px;
+        visible: generating;
+        indeterminate: generating;
+    }
+}
