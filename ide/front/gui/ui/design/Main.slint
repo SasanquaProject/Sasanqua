@@ -102,7 +102,11 @@ export component MainWindow inherits Window {
         size: 30px;
         text: "＜";
 
-        clicked => { stat = max(0, stat - 1); }
+        clicked => {
+            if (stat == 0) { stat  = 0; return; }
+            if (stat == 5) { stat  = 2; return; }
+            else           { stat -= 1; return; }
+        }
     }
 
     FloatingButton {
@@ -114,6 +118,10 @@ export component MainWindow inherits Window {
         size: 30px;
         text: "＞";
 
-        clicked => { stat = min(6, stat + 1); }
+        clicked => {
+            if (stat == 2) { stat  = 5; return; }
+            if (stat == 6) { stat  = 6; return; }
+            else           { stat += 1; return; }
+        }
     }
 }

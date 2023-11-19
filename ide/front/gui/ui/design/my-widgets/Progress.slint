@@ -2,6 +2,7 @@ import { HorizontalBox , VerticalBox} from "std-widgets.slint";
 
 component Label inherits Text {
     in property <bool> selected;
+    in property <bool> enabled;
 
     vertical-alignment: bottom;
     horizontal-alignment: center;
@@ -10,8 +11,20 @@ component Label inherits Text {
     font-weight: selected ? 700 : 400;
     font-size: selected ? 16px : 13px;
 
+    color: enabled ? black : gray;
+
     animate font-weight, font-size {
         duration: 100ms;
+    }
+
+    Rectangle {
+        width: 70%;
+        height: 1px;
+
+        border-color: gray;
+        border-width: 1px;
+
+        visible: !enabled;
     }
 }
 
@@ -58,36 +71,43 @@ export component Progress inherits Rectangle {
 
         label_0 := Label {
             selected: stat == 0;
+            enabled: true;
             text: "① プロジェクト";
         }
 
         label_1 := Label {
             selected: stat == 1;
+            enabled: true;
             text: "② プロセッサコア";
         }
 
         label_2 := Label {
             selected: stat == 2;
+            enabled: true;
             text: "③ コプロセッサ";
         }
 
         label_3 := Label {
             selected: stat == 3;
+            enabled: false;
             text: "④ 検証";
         }
 
         label_4 := Label {
             selected: stat == 4;
+            enabled: false;
             text: "⑤ 部分再構成";
         }
 
         label_5 := Label {
             selected: stat == 5;
+            enabled: true;
             text: "⑥ 合成";
         }
 
         label_6 := Label {
             selected: stat == 6;
+            enabled: true;
             text: "⑦ FPGA 書き込み";
         }
     }
