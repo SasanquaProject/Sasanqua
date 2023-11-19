@@ -6,6 +6,7 @@ import {
 import {
     Log,
     Progress,
+    Status,
     SingleSeparatorH,
     DoubleSeparatorV,
     FloatingButton
@@ -82,9 +83,9 @@ export component MainWindow inherits Window {
                 separator-color: gray;
             }
 
-            // Log Viewer
-            Log {
-                logs: [];
+            // Status Viewer
+            Status {
+                elems: [];
             }
         }
     }
