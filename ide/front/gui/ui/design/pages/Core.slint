@@ -1,10 +1,131 @@
+import {
+    VerticalBox,
+    GroupBox,
+    HorizontalBox,
+    ScrollView
+, CheckBox} from "std-widgets.slint";
+
 import { Page } from "./Page.slint";
+
+import {
+    TitledLineEdit,
+    TitledSpinBox,
+    Space,
+    SingleSeparatorH
+} from "../my-widgets/lib.slint";
 
 export component CorePage inherits Page {
     title: "プロセッサコア";
 
-    Text {
-        x: 0;
-        text: "Body";
+    GroupBox {
+        title: "基本情報";
+
+        VerticalBox {
+            padding: 0px;
+            spacing: -14px;
+
+            TitledLineEdit {
+                title: "名前";
+                placeholder: "core";
+            }
+
+            TitledLineEdit {
+                title: "バージョン";
+                placeholder: "1.0.0";
+            }
+        }
+    }
+
+    VerticalBox {
+        GroupBox {
+            title: "生成オプション";
+
+            HorizontalBox {
+                alignment: start;
+                spacing: 20px;
+
+                HorizontalBox {
+                    CheckBox { checked: true; }
+
+                    Text {
+                        vertical-alignment: center;
+                        horizontal-alignment: left;
+
+                        font-size: 14px;
+
+                        text: "Sv32 仮想メモリ";
+                    }
+                }
+            }
+        }
+
+        GroupBox {
+            title: "ペリフェラル";
+
+            HorizontalBox {
+                alignment: start;
+                spacing: 20px;
+
+                HorizontalBox {
+                    CheckBox { checked: true; }
+
+                    Text {
+                        vertical-alignment: center;
+                        horizontal-alignment: left;
+
+                        font-size: 14px;
+
+                        text: "CLNT（内部割込み・タイマ）";
+                    }
+                }
+
+                HorizontalBox {
+                    CheckBox { checked: false; }
+
+                    Text {
+                        vertical-alignment: center;
+                        horizontal-alignment: left;
+
+                        font-size: 14px;
+
+                        text: "PLIC（外部割込み）";
+                    }
+                }
+
+                HorizontalBox {
+                    CheckBox { checked: false; }
+
+                    Text {
+                        vertical-alignment: center;
+                        horizontal-alignment: left;
+
+                        font-size: 14px;
+
+                        text: "UART";
+                    }
+                }
+
+                HorizontalBox {
+                    CheckBox { checked: false; }
+
+                    Text {
+                        vertical-alignment: center;
+                        horizontal-alignment: left;
+
+                        font-size: 14px;
+
+                        text: "プロセッサ状態モニタ";
+                    }
+                }
+            }
+        }
+
+        GroupBox {
+            title: "アドレスマッピング";
+
+            Text {
+                text: "aaa";
+            }
+        }
     }
 }
