@@ -9,4 +9,4 @@ thiserror = { workspace = true }
 slint = { workspace = true }
 ui = { path = "../ui" }
 event = { path = "../event/event" }
-macros = { path = "../macros/macros" }
+macros = { package = "launcher_macros", path = "../launcher_macros/macros" }

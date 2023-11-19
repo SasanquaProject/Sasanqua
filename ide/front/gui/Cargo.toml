@@ -1,10 +1,15 @@
 [workspace]
 resolver = "2"
 members = [
+    # Launcher
     "launcher",
+    "launcher_macros/macros",
+
+    # UI
     "ui",
+
+    # Event
     "event/event",
-    "macros/macros",
 ]
 
 [workspace.dependencies]

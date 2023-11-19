@@ -1,0 +1,122 @@
+import { HorizontalBox , VerticalBox} from "std-widgets.slint";
+
+component Label inherits Text {
+    in property <bool> selected;
+    in property <bool> enabled;
+
+    vertical-alignment: bottom;
+    horizontal-alignment: center;
+
+    font-family: "system-ui";
+    font-weight: selected ? 700 : 400;
+    font-size: selected ? 16px : 13px;
+
+    color: enabled ? black : gray;
+
+    animate font-weight, font-size {
+        duration: 100ms;
+    }
+
+    Rectangle {
+        width: 70%;
+        height: 1px;
+
+        border-color: gray;
+        border-width: 1px;
+
+        visible: !enabled;
+    }
+}
+
+export component Progress inherits Rectangle {
+    in-out property <int> stat;
+
+    function calc_x(id: int) -> length {
+        if (id == 0) { return label_0.x + (label_0.width - selector.width) / 2; }
+        if (id == 1) { return label_1.x + (label_1.width - selector.width) / 2; }
+        if (id == 2) { return label_2.x + (label_2.width - selector.width) / 2; }
+        if (id == 3) { return label_3.x + (label_3.width - selector.width) / 2; }
+        if (id == 4) { return label_4.x + (label_4.width - selector.width) / 2; }
+        if (id == 5) { return label_5.x + (label_5.width - selector.width) / 2; }
+        if (id == 6) { return label_6.x + (label_6.width - selector.width) / 2; }
+        if (id == 7) { return label_7.x + (label_7.width - selector.width) / 2; }
+        return 0;
+    }
+
+    function calc_width(id: int) -> length {
+        if (id == 0) { return label_0.width; }
+        if (id == 1) { return label_1.width; }
+        if (id == 2) { return label_2.width; }
+        if (id == 3) { return label_3.width; }
+        if (id == 4) { return label_4.width; }
+        if (id == 5) { return label_5.width; }
+        if (id == 6) { return label_6.width; }
+        if (id == 7) { return label_7.width; }
+        return 0;
+    }
+
+    selector := Image {
+        x: calc_x(stat);
+        y: 4px;
+        width: parent.width / 6 * 0.7;
+        height: parent.height - 4px;
+
+        animate x, width {
+            duration: 100ms;
+        }
+
+        source: @image-url("../img/tab_select_background.png");
+    }
+
+    HorizontalBox {
+        y: 2px;
+
+        label_0 := Label {
+            selected: stat == 0;
+            enabled: true;
+            text: "① プロジェクト";
+        }
+
+        label_1 := Label {
+            selected: stat == 1;
+            enabled: true;
+            text: "② プロセッサコア";
+        }
+
+        label_2 := Label {
+            selected: stat == 2;
+            enabled: true;
+            text: "③ コプロセッサ";
+        }
+
+        label_3 := Label {
+            selected: stat == 3;
+            enabled: false;
+            text: "④ 検証";
+        }
+
+        label_4 := Label {
+            selected: stat == 4;
+            enabled: false;
+            text: "⑤ 部分再構成";
+        }
+
+        label_5 := Label {
+            selected: stat == 5;
+            enabled: true;
+            text: "⑥ 合成";
+        }
+
+        label_6 := Label {
+            selected: stat == 6;
+            enabled: true;
+            text: "⑦ アプリケーション";
+        }
+
+        label_7 := Label {
+            selected: stat == 7;
+            enabled: true;
+            text: "⑧ FPGA 書き込み";
+        }
+    }
+}

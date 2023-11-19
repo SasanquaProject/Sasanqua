@@ -1,0 +1,29 @@
+import { VerticalBox , ScrollView , LineEdit} from "std-widgets.slint";
+
+export component Log inherits Rectangle {
+    in property <[string]> logs;
+
+    background: white;
+    padding: 0px;
+
+    ScrollView {
+        x: 0;
+        y: -2px;
+        height: parent.height + 14px;
+        padding: 0px;
+
+        VerticalBox {
+            spacing: 0px;
+            padding: 0px;
+            alignment: start;
+
+            for log[i] in logs: Text {
+                font-size: 12.0 * 1px;
+                font-family: "monospace";
+                font-weight: 100;
+
+                text: log;
+            }
+        }
+    }
+}

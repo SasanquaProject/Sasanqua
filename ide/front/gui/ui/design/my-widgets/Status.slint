@@ -1,0 +1,40 @@
+import { VerticalBox , ScrollView , LineEdit} from "std-widgets.slint";
+
+component StatusElem inherits Rectangle {
+    in property <string> text;
+
+    Text {
+        font-size: 12.0 * 1px;
+        font-family: "monospace";
+        font-weight: 100;
+    }
+}
+
+export component Status inherits Rectangle {
+    in property <[string]> elems;
+
+    background: white;
+    padding: 0px;
+
+    Text {
+        visible: elems.length == 0;
+        text: "プロジェクトの状態は正常です";
+    }
+
+    ScrollView {
+        x: 0;
+        y: -2px;
+        height: parent.height + 14px;
+        padding: 0px;
+
+        VerticalBox {
+            spacing: 0px;
+            padding: 0px;
+            alignment: start;
+
+            for elem[i] in elems: StatusElem {
+                text: elem;
+            }
+        }
+    }
+}
