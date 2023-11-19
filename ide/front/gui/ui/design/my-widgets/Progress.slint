@@ -39,6 +39,7 @@ export component Progress inherits Rectangle {
         if (id == 4) { return label_4.x + (label_4.width - selector.width) / 2; }
         if (id == 5) { return label_5.x + (label_5.width - selector.width) / 2; }
         if (id == 6) { return label_6.x + (label_6.width - selector.width) / 2; }
+        if (id == 7) { return label_7.x + (label_7.width - selector.width) / 2; }
         return 0;
     }
 
@@ -50,6 +51,7 @@ export component Progress inherits Rectangle {
         if (id == 4) { return label_4.width; }
         if (id == 5) { return label_5.width; }
         if (id == 6) { return label_6.width; }
+        if (id == 7) { return label_7.width; }
         return 0;
     }
 
@@ -108,7 +110,13 @@ export component Progress inherits Rectangle {
         label_6 := Label {
             selected: stat == 6;
             enabled: true;
-            text: "⑦ FPGA 書き込み";
+            text: "⑦ アプリケーション";
+        }
+
+        label_7 := Label {
+            selected: stat == 7;
+            enabled: true;
+            text: "⑧ FPGA 書き込み";
         }
     }
 }

@@ -20,6 +20,7 @@ import {
     ValidatePage,
     PartialReconfPage,
     SynthesisPage,
+    ApplicationPage,
     FPGAPage
 } from "./pages/lib.slint";
 
@@ -65,7 +66,8 @@ export component MainWindow inherits Window {
                 ValidatePage      { enabled: stat == 3; }
                 PartialReconfPage { enabled: stat == 4; }
                 SynthesisPage     { enabled: stat == 5; }
-                FPGAPage          { enabled: stat == 6; }
+                ApplicationPage   { enabled: stat == 6; }
+                FPGAPage          { enabled: stat == 7; }
             }
         }
 
@@ -117,13 +119,13 @@ export component MainWindow inherits Window {
         y: ((root.height * 85%) - self.height) / 2;
         z: 2;
 
-        enabled: stat != 6;
+        enabled: stat != 7;
         size: 30px;
         text: "＞";
 
         clicked => {
             if (stat == 2) { stat  = 5; return; }
-            if (stat == 6) { stat  = 6; return; }
+            if (stat == 7) { stat  = 7; return; }
             else           { stat += 1; return; }
         }
     }
