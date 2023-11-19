@@ -1,7 +1,7 @@
 STYLE := "fluent-light"
 
 ENV := SLINT_STYLE=$(STYLE)
-RUN_OPTS := --release
+RUN_OPTS :=
 BUILD_OPTS := --release
 
 run:
