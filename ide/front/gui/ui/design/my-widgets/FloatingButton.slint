@@ -1,7 +1,9 @@
 import { Button } from "std-widgets.slint";
+
 export component FloatingButton inherits TouchArea {
     in property <length> size;
     in property <string> text;
+    in property <bool> usable;
 
     width: size;
     height: size * 4;
@@ -14,7 +16,7 @@ export component FloatingButton inherits TouchArea {
     }
 
     Rectangle {
-        background: parent.has-hover ? #737eff: #a7b1ff;
+        background: usable ? (parent.has-hover ? #737eff: #a7b1ff) : gray;
         border-radius: size / 2;
 
         animate background {

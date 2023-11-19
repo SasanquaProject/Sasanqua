@@ -103,14 +103,14 @@ export component MainWindow inherits Window {
         y: ((root.height * 85%) - self.height) / 2;
         z: 2;
 
-        enabled: stat != 0;
         size: 30px;
         text: "＜";
+        usable: stat > 1;
 
         clicked => {
-            if (stat == 0) { stat  = 0; return; }
-            if (stat == 5) { stat  = 2; return; }
-            else           { stat -= 1; return; }
+            if (!self.usable) {            return; }
+            if (stat == 5)    { stat  = 2; return; }
+            else              { stat -= 1; return; }
         }
     }
 
@@ -119,14 +119,14 @@ export component MainWindow inherits Window {
         y: ((root.height * 85%) - self.height) / 2;
         z: 2;
 
-        enabled: stat != 7;
         size: 30px;
         text: "＞";
+        usable: stat < 7;
 
         clicked => {
-            if (stat == 2) { stat  = 5; return; }
-            if (stat == 7) { stat  = 7; return; }
-            else           { stat += 1; return; }
+            if (!self.usable) {            return; }
+            if (stat == 2)    { stat  = 5; return; }
+            else              { stat += 1; return; }
         }
     }
 }
