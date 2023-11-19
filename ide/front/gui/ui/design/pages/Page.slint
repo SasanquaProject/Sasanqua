@@ -6,9 +6,15 @@ export component Page inherits Rectangle {
 
     border-radius: 20px;
     border-width: 1px;
+
     background: white;
     visible: self.opacity != 0.0;
     opacity: enabled ? 1.0 : 0.0;
+
+    drop-shadow-offset-x: 3px;
+    drop-shadow-offset-y: 3px;
+    drop-shadow-blur: 5px;
+    drop-shadow-color: #568294;
 
     animate opacity {
         duration: 100ms;
