@@ -1,7 +1,10 @@
+STYLE := "fluent-light"
+
+ENV := SLINT_STYLE=$(STYLE)
 BUILD_OPTS := --release
 
 run:
-	cargo run
+	$(ENV) cargo run
 
 build:
-	cargo build $(BUILD_OPTS)
+	$(ENV) cargo build $(BUILD_OPTS)
