@@ -1,10 +1,104 @@
+import {
+    GroupBox,
+    GridBox,
+    VerticalBox,
+    HorizontalBox,
+    LineEdit,
+    SpinBox,
+    ScrollView
+} from "std-widgets.slint";
+
 import { Page } from "./Page.slint";
+
+import {
+    SingleSeparatorH,
+    SingleSeparatorV,
+    Space,
+    TitledLineEdit,
+    TitledSpinBox
+} from "../my-widgets/lib.slint";
 
 export component CopPkgPage inherits Page {
     title: "コプロセッサパッケージ";
 
-    Text {
-        x: 0;
-        text: "Body";
+    VerticalBox {
+        padding: 0px;
+
+        GroupBox {
+            title: "パッケージ情報";
+
+            VerticalBox {
+                padding: 0px;
+                spacing: -14px;
+
+                TitledLineEdit {
+                    title: "パッケージ名";
+                    placeholder: "coppkg";
+                }
+
+                TitledLineEdit {
+                    title: "バージョン";
+                    placeholder: "1.0.0";
+                }
+            }
+        }
+
+        HorizontalBox {
+            padding: 0px;
+            height: 100%;
+
+            GroupBox {
+                title: "プロファイル選択";
+
+                width: 50%;
+
+                VerticalBox {
+                    HorizontalBox {
+                        // RISC-V Standards
+                        VerticalBox {
+                            padding: 0;
+                            spacing: 10px;
+
+                            Text {
+                                text: "RISCV-V Standards";
+                            }
+
+                            ScrollView {
+                                TitledSpinBox { title: "RV32I-mini"; }
+                            }
+                        }
+
+                        // Others
+                        VerticalBox {
+                            padding: 0;
+                            spacing: 10px;
+
+                            Text {
+                                text: "Others";
+                            }
+
+                            ScrollView {
+                                TitledSpinBox { title: "Void"; }
+                            }
+                        }
+                    }
+
+                    Space {}
+                }
+            }
+
+            SingleSeparatorH {
+                separator-color: gray;
+            }
+
+            GroupBox {
+                title: "プロファイル情報";
+
+                Text {
+                    text: "Hello World";
+                    horizontal-alignment: left;
+                }
+            }
+        }
     }
 }
