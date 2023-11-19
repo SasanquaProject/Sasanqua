@@ -25,6 +25,7 @@ export component Progress inherits Rectangle {
         if (id == 3) { return label_3.x + (label_3.width - selector.width) / 2; }
         if (id == 4) { return label_4.x + (label_4.width - selector.width) / 2; }
         if (id == 5) { return label_5.x + (label_5.width - selector.width) / 2; }
+        if (id == 6) { return label_6.x + (label_6.width - selector.width) / 2; }
         return 0;
     }
 
@@ -35,13 +36,14 @@ export component Progress inherits Rectangle {
         if (id == 3) { return label_3.width; }
         if (id == 4) { return label_4.width; }
         if (id == 5) { return label_5.width; }
+        if (id == 6) { return label_6.width; }
         return 0;
     }
 
     selector := Image {
         x: calc_x(stat);
         y: 4px;
-        width: parent.width / 6 * 0.9;
+        width: parent.width / 6 * 0.7;
         height: parent.height - 4px;
 
         animate x, width {
@@ -76,12 +78,17 @@ export component Progress inherits Rectangle {
 
         label_4 := Label {
             selected: stat == 4;
-            text: "⑤ 合成";
+            text: "⑤ 部分再構成";
         }
 
         label_5 := Label {
             selected: stat == 5;
-            text: "⑥ FPGA 書き込み";
+            text: "⑥ 合成";
+        }
+
+        label_6 := Label {
+            selected: stat == 6;
+            text: "⑦ FPGA 書き込み";
         }
     }
 }
