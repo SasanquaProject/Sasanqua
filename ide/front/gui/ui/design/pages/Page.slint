@@ -1,4 +1,4 @@
-import { VerticalBox } from "std-widgets.slint";
+import { VerticalBox , ScrollView} from "std-widgets.slint";
 
 export component Page inherits Rectangle {
     in property <string> title;
@@ -21,6 +21,8 @@ export component Page inherits Rectangle {
     }
 
     VerticalLayout {
+        width: 100%;
+        height: parent.height;
         spacing: 8px;
         padding: 0px;
         alignment: start;
@@ -37,13 +39,20 @@ export component Page inherits Rectangle {
             }
         }
 
-        VerticalLayout {
-            x: 0;
-            padding: 53px;
-            padding-top: 8px;
-            padding-bottom: 8px;
+        ScrollView {
+            height: parent.height - 52px;
 
-            @children
+            VerticalLayout {
+                x: 0;
+                padding: 53px;
+                padding-top: 0px;
+                padding-bottom: 0px;
+
+                height: 100%;
+                alignment: start;
+
+                @children
+            }
         }
     }
 }

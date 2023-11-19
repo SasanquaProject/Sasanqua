@@ -44,17 +44,20 @@ export component MainWindow inherits Window {
     // Main View
     VerticalBox {
         z: 1;
+        height: parent.height;
         spacing: 0px;
         padding: 0px;
 
         // Page
         VerticalBox {
-            height: 85%;
+            height: parent.height * 80%;
             spacing: 0px;
             padding: 8px;
             padding-top: 30px;
 
             Rectangle {
+                height: parent.height - 38px;
+
                 EmptyPage         { enabled: true; }
                 ProjectPage       { enabled: stat == 0; }
                 CorePage          { enabled: stat == 1; }

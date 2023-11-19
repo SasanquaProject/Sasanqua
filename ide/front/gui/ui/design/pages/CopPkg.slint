@@ -21,83 +21,79 @@ import {
 export component CopPkgPage inherits Page {
     title: "コプロセッサパッケージ";
 
-    VerticalBox {
-        padding: 0px;
+    GroupBox {
+        title: "パッケージ情報";
 
-        GroupBox {
-            title: "パッケージ情報";
+        VerticalBox {
+            padding: 0px;
+            spacing: -14px;
 
-            VerticalBox {
-                padding: 0px;
-                spacing: -14px;
+            TitledLineEdit {
+                title: "パッケージ名";
+                placeholder: "coppkg";
+            }
 
-                TitledLineEdit {
-                    title: "パッケージ名";
-                    placeholder: "coppkg";
-                }
-
-                TitledLineEdit {
-                    title: "バージョン";
-                    placeholder: "1.0.0";
-                }
+            TitledLineEdit {
+                title: "バージョン";
+                placeholder: "1.0.0";
             }
         }
+    }
 
-        HorizontalBox {
-            padding: 0px;
-            height: 100%;
+    HorizontalBox {
+        padding: 0px;
+        height: 100%;
 
-            GroupBox {
-                title: "プロファイル選択";
+        GroupBox {
+            title: "プロファイル選択";
 
-                width: 50%;
+            width: 50%;
 
-                VerticalBox {
-                    HorizontalBox {
-                        // RISC-V Standards
-                        VerticalBox {
-                            padding: 0;
-                            spacing: 10px;
+            VerticalBox {
+                HorizontalBox {
+                    // RISC-V Standards
+                    VerticalBox {
+                        padding: 0;
+                        spacing: 10px;
 
-                            Text {
-                                text: "RISCV-V Standards";
-                            }
-
-                            ScrollView {
-                                TitledSpinBox { title: "RV32I-mini"; }
-                            }
+                        Text {
+                            text: "RISCV-V Standards";
                         }
 
-                        // Others
-                        VerticalBox {
-                            padding: 0;
-                            spacing: 10px;
-
-                            Text {
-                                text: "Others";
-                            }
-
-                            ScrollView {
-                                TitledSpinBox { title: "Void"; }
-                            }
+                        ScrollView {
+                            TitledSpinBox { title: "RV32I-mini"; }
                         }
                     }
 
-                    Space {}
+                    // Others
+                    VerticalBox {
+                        padding: 0;
+                        spacing: 10px;
+
+                        Text {
+                            text: "Others";
+                        }
+
+                        ScrollView {
+                            TitledSpinBox { title: "Void"; }
+                        }
+                    }
                 }
+
+                Space {}
             }
+        }
 
-            SingleSeparatorH {
-                separator-color: gray;
-            }
+        SingleSeparatorH {
+            separator-color: gray;
+        }
 
-            GroupBox {
-                title: "プロファイル情報";
+        GroupBox {
+            title: "プロファイル情報";
 
-                Text {
-                    text: "Hello World";
-                    horizontal-alignment: left;
-                }
+            Text {
+                text: "Hello World";
+                horizontal-alignment: left;
             }
         }
     }
