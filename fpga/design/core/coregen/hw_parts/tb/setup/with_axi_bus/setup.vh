@@ -7,60 +7,60 @@ wire [3:0]  STAT;
 assign RSTN = ~RST;
 
 // AWチャネル
-wire                            M_AXI_AWID;
-wire [31:0]                     M_AXI_AWADDR;
-wire [7:0]                      M_AXI_AWLEN;
-wire [2:0]                      M_AXI_AWSIZE;
-wire [1:0]                      M_AXI_AWBURST;
-wire [1:0]                      M_AXI_AWLOCK;
-wire [3:0]                      M_AXI_AWCACHE;
-wire [2:0]                      M_AXI_AWPROT;
-wire [3:0]                      M_AXI_AWQOS;
-wire                            M_AXI_AWUSER;
-wire                            M_AXI_AWVALID;
-wire                            M_AXI_AWREADY;
+wire        M_AXI_AWID;
+wire [31:0] M_AXI_AWADDR;
+wire [7:0]  M_AXI_AWLEN;
+wire [2:0]  M_AXI_AWSIZE;
+wire [1:0]  M_AXI_AWBURST;
+wire [1:0]  M_AXI_AWLOCK;
+wire [3:0]  M_AXI_AWCACHE;
+wire [2:0]  M_AXI_AWPROT;
+wire [3:0]  M_AXI_AWQOS;
+wire        M_AXI_AWUSER;
+wire        M_AXI_AWVALID;
+wire        M_AXI_AWREADY;
 
 // Wチャネル
-wire [C_AXI_DATA_WIDTH-1:0]     M_AXI_WDATA;
-wire [C_AXI_DATA_WIDTH/8-1:0]   M_AXI_WSTRB;
-wire                            M_AXI_WLAST;
-wire                            M_AXI_WUSER;
-wire                            M_AXI_WVALID;
-wire                            M_AXI_WREADY;
+wire [31:0] M_AXI_WDATA;
+wire [3:0]  M_AXI_WSTRB;
+wire        M_AXI_WLAST;
+wire        M_AXI_WUSER;
+wire        M_AXI_WVALID;
+wire        M_AXI_WREADY;
 
 // Bチャネル
-wire                            M_AXI_BID;
-wire [1:0]                      M_AXI_BRESP;
-wire                            M_AXI_BUSER;
-wire                            M_AXI_BVALID;
-wire                            M_AXI_BREADY;
+wire        M_AXI_BID;
+wire [1:0]  M_AXI_BRESP;
+wire        M_AXI_BUSER;
+wire        M_AXI_BVALID;
+wire        M_AXI_BREADY;
 
 // ARチャネル
-wire                            M_AXI_ARID;
-wire [31:0]                     M_AXI_ARADDR;
-wire [7:0]                      M_AXI_ARLEN;
-wire [2:0]                      M_AXI_ARSIZE;
-wire [1:0]                      M_AXI_ARBURST;
-wire [1:0]                      M_AXI_ARLOCK;
-wire [3:0]                      M_AXI_ARCACHE;
-wire [2:0]                      M_AXI_ARPROT;
-wire [3:0]                      M_AXI_ARQOS;
-wire                            M_AXI_ARUSER;
-wire                            M_AXI_ARVALID;
-wire                            M_AXI_ARREADY;
+wire        M_AXI_ARID;
+wire [31:0] M_AXI_ARADDR;
+wire [7:0]  M_AXI_ARLEN;
+wire [2:0]  M_AXI_ARSIZE;
+wire [1:0]  M_AXI_ARBURST;
+wire [1:0]  M_AXI_ARLOCK;
+wire [3:0]  M_AXI_ARCACHE;
+wire [2:0]  M_AXI_ARPROT;
+wire [3:0]  M_AXI_ARQOS;
+wire        M_AXI_ARUSER;
+wire        M_AXI_ARVALID;
+wire        M_AXI_ARREADY;
 
 // Rチャネル
-wire                            M_AXI_RID;
-wire [C_AXI_DATA_WIDTH-1:0]     M_AXI_RDATA;
-wire [1:0]                      M_AXI_RRESP;
-wire                            M_AXI_RLAST;
-wire                            M_AXI_RUSER;
-wire                            M_AXI_RVALID;
-wire                            M_AXI_RREADY;
+wire        M_AXI_RID;
+wire [31:0] M_AXI_RDATA;
+wire [1:0]  M_AXI_RRESP;
+wire        M_AXI_RLAST;
+wire        M_AXI_RUSER;
+wire        M_AXI_RVALID;
+wire        M_AXI_RREADY;
 
 axi_slave_bfm # (
-    .C_S_AXI_DATA_WIDTH     (C_AXI_DATA_WIDTH),
-    .C_OFFSET_WIDTH         (C_OFFSET_WIDTH),
+    .C_S_AXI_DATA_WIDTH     (32),
+    .C_OFFSET_WIDTH         (16),
     .WRITE_RANDOM_WAIT      (1),
     .READ_RANDOM_WAIT       (1),
     .READ_DATA_IS_INCREMENT (0),
@@ -126,29 +126,29 @@ axi_slave_bfm # (
 
 /* ----- コプロセッサパッケージ接続用 ----- */
 // 制御
-wire            COP_FLUSH;
-wire            COP_STALL;
-wire            COP_MEM_WAIT;
+wire        COP_FLUSH;
+wire        COP_STALL;
+wire        COP_MEM_WAIT;
 
 // Check 接続
-wire [31:0]     COP_C_O_PC;
-wire [16:0]     COP_C_O_OPCODE;
-wire [31:0]     COP_C_O_RINST;
-wire            COP_C_I_ACCEPT;
+wire [31:0] COP_C_O_PC;
+wire [16:0] COP_C_O_OPCODE;
+wire [31:0] COP_C_O_RINST;
+wire        COP_C_I_ACCEPT;
 
 // Exec 接続
-wire            COP_E_O_ALLOW;
-wire [4:0]      COP_E_O_RD;
-wire [31:0]     COP_E_O_RS1_DATA;
-wire [31:0]     COP_E_O_RS2_DATA;
-wire            COP_E_I_ALLOW;
-wire            COP_E_I_VALID;
-wire  [31:0]    COP_E_I_PC;
-wire            COP_E_I_REG_W_EN;
-wire  [4:0]     COP_E_I_REG_W_RD;
-wire  [31:0]    COP_E_I_REG_W_DATA;
-wire            COP_E_I_EXC_EN;
-wire  [3:0]     COP_E_I_EXC_CODE;
+wire        COP_E_O_ALLOW;
+wire [4:0]  COP_E_O_RD;
+wire [31:0] COP_E_O_RS1_DATA;
+wire [31:0] COP_E_O_RS2_DATA;
+wire        COP_E_I_ALLOW;
+wire        COP_E_I_VALID;
+wire [31:0] COP_E_I_PC;
+wire        COP_E_I_REG_W_EN;
+wire [4:0]  COP_E_I_REG_W_RD;
+wire [31:0] COP_E_I_REG_W_DATA;
+wire        COP_E_I_EXC_EN;
+wire [3:0]  COP_E_I_EXC_CODE;
 
 sasanqua_cop sasanqua_cop (
     // 制御

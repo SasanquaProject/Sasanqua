@@ -1,6 +1,6 @@
 # compile verilog/system verilog design source files
-verilog xil_defaultlib  --include "../../../../../../design/core/coregen/hw_parts/tb/axi" --include "../../../../../../design/core/coregen/hw_parts/tb" \
-"../../../../../../design/core/coregen/hw_parts/tb/axi/axi_slave_BFM.v" \
+verilog xil_defaultlib  --include "../../../../../../design/core/coregen/hw_parts/tb/setup/with_axi_bus" --include "../../../../../../design/core/coregen/hw_parts/tb/monitor/full" --include "../../../../../../design/core/coregen/hw_parts/tb/task/riscv_tests" \
+"../../../../../../design/core/coregen/hw_parts/tb/setup/with_axi_bus/axi_slave_BFM.v" \
 "../../../../../../design/core/coregen/hw_parts/src/mem/axi/cache.v" \
 "../../../../../../design/core/coregen/hw_parts/src/core/components/pipeline/check.v" \
 "../../../../../../design/core/coregen/hw_parts/src/peripherals/clint.v" \
@@ -25,7 +25,7 @@ verilog xil_defaultlib  --include "../../../../../../design/core/coregen/hw_part
 "../../../../../../design/core/coregen/hw_parts/src/core/components/pipeline/schedule.v" \
 "../../../../../../design/core/coregen/hw_parts/src/core/components/pipeline/register/std_csr.v" \
 "../../../../../../design/core/coregen/hw_parts/src/core/components/pipeline/register/std_rv32i.v" \
-"../../../../../../design/core/coregen/hw_parts/tb/axi/sync_fifo.v" \
+"../../../../../../design/core/coregen/hw_parts/tb/setup/with_axi_bus/sync_fifo.v" \
 "../../../../../../design/core/coregen/hw_parts/src/mem/axi/translate.v" \
 "../../../../../../design/core/coregen/hw_parts/src/core/components/pipeline/trap.v" \
 "../../../../../../design/core/coregen/hw_parts/tb/tb.v" \
