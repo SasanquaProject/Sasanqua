@@ -17,11 +17,11 @@ always begin
 end
 
 /* ----- BFM との接続 ----- */
-`include "./axi/setup.vh"
+`include "setup.vh"
 
 /* ----- 監視対象信号 ----- */
-`include "./monitor.vh"
-// `include "./monitor_simple.vh"
+`include "monitor.vh"
+// `include "monitor_simple.vh"
 
 /* ----- riscv-tests用タスク ----- */
 task riscv_tests;
