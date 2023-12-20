@@ -3,6 +3,6 @@
 ## コマンド
 
 ```
-$ make bootrom.mem"
-  => bootrom.mem
+$ make bootrom.mem
 ```
+
