@@ -6,7 +6,7 @@ TARGET_DIR := ./target
 OUT_DIR := ./out
 ELF_FILES := $(shell find ${TARGET_DIR}/share/riscv-tests/isa/rv32*i*)
 
-bin:
+bin: elf
 	mkdir -p $(OUT_DIR)/bin
 	mkdir -p $(OUT_DIR)/cheader
 	for f in $(ELF_FILES); do\

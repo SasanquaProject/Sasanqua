@@ -13,8 +13,3 @@ bootrom.mem: boot.S main.c
 	riscv64-unknown-elf-objdump -d bootrom > bootrom.dump
 	riscv64-unknown-elf-objcopy -O binary bootrom bootrom.bin
 	od -An -tx4 -w4 -v bootrom.bin > bootrom.mem
-
-clean:
-	rm bootrom bootrom.dump bootrom.mem bootrom.o bootrom.bin
-
-.PHONY: clean
