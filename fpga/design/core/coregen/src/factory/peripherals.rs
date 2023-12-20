@@ -12,11 +12,11 @@ impl HwMakable for PeripheralsFactory {
 
         root.join("peripherals/clint.v")?
             .create_file()?
-            .write_all(include_bytes!("../../hw_parts/src/peripherals/clint.v"))?;
+            .write_all(include_bytes!("../../hw_parts/peripherals/clint.v"))?;
 
         root.join("peripherals/plic.v")?
             .create_file()?
-            .write_all(include_bytes!("../../hw_parts/src/peripherals/plic.v"))?;
+            .write_all(include_bytes!("../../hw_parts/peripherals/plic.v"))?;
 
         Ok(())
     }

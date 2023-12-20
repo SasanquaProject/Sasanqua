@@ -1,34 +1,34 @@
 # compile verilog/system verilog design source files
-verilog xil_defaultlib  --include "../../../../../../design/core/coregen/hw_parts/tb/setup/with_axi_bus" --include "../../../../../../design/core/coregen/hw_parts/tb/monitor/full" --include "../../../../../../design/core/coregen/hw_parts/tb/task/riscv_tests" \
-"../../../../../../design/core/coregen/hw_parts/tb/setup/with_axi_bus/axi_slave_BFM.v" \
-"../../../../../../design/core/coregen/hw_parts/src/mem/axi/cache.v" \
-"../../../../../../design/core/coregen/hw_parts/src/core/components/pipeline/check.v" \
-"../../../../../../design/core/coregen/hw_parts/src/peripherals/clint.v" \
+verilog xil_defaultlib  --include "../../../../../tb/setup/with_axi_bus" --include "../../../../../tb/monitor/full" --include "../../../../../tb/task/riscv_tests" \
+"../../../../../tb/setup/with_axi_bus/axi_slave_BFM.v" \
+"../../../../../../design/core/coregen/hw_parts/mem/axi/cache.v" \
+"../../../../../../design/core/coregen/hw_parts/core/components/pipeline/check.v" \
+"../../../../../../design/core/coregen/hw_parts/peripherals/clint.v" \
 "../../../../../../design/cop/cop_ip/src/cop.v" \
 "../../../../../../design/cop/cop_ip/src/cop_impl_0.v" \
-"../../../../../../design/core/coregen/hw_parts/src/core/components/pipeline/cop_stub.v" \
-"../../../../../../design/core/coregen/hw_parts/src/core/core.v" \
-"../../../../../../design/core/coregen/hw_parts/src/core/components/pipeline/cushion.v" \
-"../../../../../../design/core/coregen/hw_parts/src/core/components/pipeline/decode.v" \
-"../../../../../../design/core/coregen/hw_parts/src/core/components/pipeline/exec.v" \
-"../../../../../../design/core/coregen/hw_parts/src/core/components/pipeline/fetch.v" \
-"../../../../../../design/core/coregen/hw_parts/src/mem/axi/interconnect.v" \
-"../../../../../../design/core/coregen/hw_parts/src/core/components/main.v" \
-"../../../../../../design/core/coregen/hw_parts/src/mem/axi/mem.v" \
-"../../../../../../design/core/coregen/hw_parts/src/core/components/mmu.v" \
-"../../../../../../design/core/coregen/hw_parts/src/core/components/pipeline/mread.v" \
-"../../../../../../design/core/coregen/hw_parts/src/peripherals/plic.v" \
-"../../../../../../design/core/coregen/hw_parts/src/core/components/pipeline/pool.v" \
-"../../../../../../design/core/coregen/hw_parts/src/mem/utils/ram/ram_dualport.v" \
-"../../../../../../design/core/coregen/hw_parts/src/mem/utils/rom/rom_dualport.v" \
-"../../../../../../design/core/coregen/hw_parts/src/sasanqua.v" \
-"../../../../../../design/core/coregen/hw_parts/src/core/components/pipeline/schedule.v" \
-"../../../../../../design/core/coregen/hw_parts/src/core/components/pipeline/register/std_csr.v" \
-"../../../../../../design/core/coregen/hw_parts/src/core/components/pipeline/register/std_rv32i.v" \
-"../../../../../../design/core/coregen/hw_parts/tb/setup/with_axi_bus/sync_fifo.v" \
-"../../../../../../design/core/coregen/hw_parts/src/mem/axi/translate.v" \
-"../../../../../../design/core/coregen/hw_parts/src/core/components/pipeline/trap.v" \
-"../../../../../../design/core/coregen/hw_parts/tb/tb.v" \
+"../../../../../../design/core/coregen/hw_parts/core/components/pipeline/cop_stub.v" \
+"../../../../../../design/core/coregen/hw_parts/core/core.v" \
+"../../../../../../design/core/coregen/hw_parts/core/components/pipeline/cushion.v" \
+"../../../../../../design/core/coregen/hw_parts/core/components/pipeline/decode.v" \
+"../../../../../../design/core/coregen/hw_parts/core/components/pipeline/exec.v" \
+"../../../../../../design/core/coregen/hw_parts/core/components/pipeline/fetch.v" \
+"../../../../../../design/core/coregen/hw_parts/mem/axi/interconnect.v" \
+"../../../../../../design/core/coregen/hw_parts/core/components/main.v" \
+"../../../../../../design/core/coregen/hw_parts/mem/axi/mem.v" \
+"../../../../../../design/core/coregen/hw_parts/core/components/mmu.v" \
+"../../../../../../design/core/coregen/hw_parts/core/components/pipeline/mread.v" \
+"../../../../../../design/core/coregen/hw_parts/peripherals/plic.v" \
+"../../../../../../design/core/coregen/hw_parts/core/components/pipeline/pool.v" \
+"../../../../../../design/core/coregen/hw_parts/mem/utils/ram/ram_dualport.v" \
+"../../../../../../design/core/coregen/hw_parts/mem/utils/rom/rom_dualport.v" \
+"../../../../../../design/core/coregen/hw_parts/sasanqua.v" \
+"../../../../../../design/core/coregen/hw_parts/core/components/pipeline/schedule.v" \
+"../../../../../../design/core/coregen/hw_parts/core/components/pipeline/register/std_csr.v" \
+"../../../../../../design/core/coregen/hw_parts/core/components/pipeline/register/std_rv32i.v" \
+"../../../../../tb/setup/with_axi_bus/sync_fifo.v" \
+"../../../../../../design/core/coregen/hw_parts/mem/axi/translate.v" \
+"../../../../../../design/core/coregen/hw_parts/core/components/pipeline/trap.v" \
+"../../../../../tb/tb.v" \
 
 # compile glbl module
 verilog xil_defaultlib "glbl.v"
