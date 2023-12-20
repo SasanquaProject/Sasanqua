@@ -3,5 +3,6 @@
 ## コマンド
 
 ```
-$ make app.mem
+// Example
+$ make -C examples/simple
 ```

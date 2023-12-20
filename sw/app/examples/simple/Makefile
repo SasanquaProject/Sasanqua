@@ -8,4 +8,3 @@ clean:
 	rm -rf *.dump *.mem
 
 .PHONY: app clean
-
