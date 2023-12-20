@@ -62,6 +62,32 @@ dependencies = [
 ]
 
 [[package]]
+name = "engine"
+version = "0.1.0"
+dependencies = [
+ "embedded-hal 1.0.0-alpha.11",
+ "embedded-hal-nb",
+ "engine_macros",
+ "heapless",
+ "nb 1.1.0",
+ "riscv",
+]
+
+[[package]]
+name = "engine_macros"
+version = "0.1.0"
+dependencies = [
+ "engine_macros_declarative",
+]
+
+[[package]]
+name = "engine_macros_declarative"
+version = "0.1.0"
+dependencies = [
+ "riscv",
+]
+
+[[package]]
 name = "hash32"
 version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -144,11 +170,7 @@ checksum = "836fa6a3e1e547f9a2c4040802ec865b5d85f4014efe00555d7090a3dcaa1090"
 name = "simple_app"
 version = "0.1.0"
 dependencies = [
- "embedded-hal 1.0.0-alpha.11",
- "embedded-hal-nb",
- "heapless",
- "nb 1.1.0",
- "riscv",
+ "engine",
 ]
 
 [[package]]

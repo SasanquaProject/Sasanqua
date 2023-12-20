@@ -80,6 +80,13 @@ dependencies = [
 [[package]]
 name = "engine_macros"
 version = "0.1.0"
+dependencies = [
+ "engine_macros_declarative",
+]
+
+[[package]]
+name = "engine_macros_declarative"
+version = "0.1.0"
 
 [[package]]
 name = "hash32"

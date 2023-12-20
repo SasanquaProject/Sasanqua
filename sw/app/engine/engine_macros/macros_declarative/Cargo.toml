@@ -1,0 +1,7 @@
+[package]
+name = "engine_macros_declarative"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+riscv = { version = "0.10.1", features = ["critical-section-single-hart"]}
