@@ -1,5 +1,11 @@
 # IDE - Worker
 
+## フラグ
+
+- all
+- http
+- rlib
+
 ## クレート
 
 ### bin

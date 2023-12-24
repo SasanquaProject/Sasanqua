@@ -12,10 +12,10 @@ $ cargo run --bin gui_new
 
 ### bin
 
-- front/cui
-- (front/gui)[./front/gui/README.md]
-- (front/gui_new)[./front/gui_new/README.md]
+- src/cui
+- (src/gui)[./src/gui/README.md]
+- (src/gui_new)[./src/gui_new/README.md]
 
 ### lib
 
-- server
+- worker
