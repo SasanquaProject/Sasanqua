@@ -66,3 +66,53 @@ where
             .pop_front()
     }
 }
+
+pub struct Sender<M>(Arc<Child<M>>)
+where
+    Self: Send + Sync,
+    M: Debug + Send + Sync + Clone;
+
+impl<M> From<&Arc<Child<M>>> for Sender<M>
+where
+    M: Debug + Send + Sync + Clone,
+{
+    fn from(base: &Arc<Child<M>>) -> Self {
+        Sender(Arc::clone(base))
+    }
+}
+
+impl<M> Sender<M>
+where
+    M: Debug + Send + Sync + Clone,
+{
+    pub fn send(self: &Arc<Self>, msg: M) -> anyhow::Result<()> {
+        self.0.send(msg)
+    }
+}
+
+pub struct Receiver<M>(Arc<Child<M>>)
+where
+    Self: Send + Sync,
+    M: Debug + Send + Sync + Clone;
+
+impl<M> From<&Arc<Child<M>>> for Receiver<M>
+where
+    M: Debug + Send + Sync + Clone,
+{
+    fn from(base: &Arc<Child<M>>) -> Self {
+        Receiver(Arc::clone(base))
+    }
+}
+
+impl<M> Receiver<M>
+where
+    M: Debug + Send + Sync + Clone,
+{
+    pub fn pop(self: &Arc<Self>) -> M {
+        self.0.pop()
+    }
+
+    pub fn try_pop(self: &Arc<Self>) -> Option<M> {
+        self.0.try_pop()
+    }
+}

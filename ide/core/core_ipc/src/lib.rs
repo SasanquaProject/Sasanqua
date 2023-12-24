@@ -2,7 +2,7 @@ mod parent;
 mod child;
 
 pub use parent::Parent;
-pub use child::Child;
+pub use child::{Child, Sender, Receiver};
 
 #[cfg(test)]
 mod test {
