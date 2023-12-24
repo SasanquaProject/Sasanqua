@@ -642,6 +642,7 @@ name = "core_command"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "core_ipc",
  "thiserror",
 ]
 

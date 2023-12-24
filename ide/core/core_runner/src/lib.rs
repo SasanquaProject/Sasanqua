@@ -48,7 +48,10 @@ impl Core {
         loop {
             // Receive a message
             if let Some(command) = self.ipc_parent.try_pop() {
-                println!("Received: {:?}", command);
+                let ipc_parent = Arc::clone(&self.ipc_parent);
+                thread::spawn(move || {
+                    command.exec(ipc_parent);
+                });
             }
 
             // Check subprocess
