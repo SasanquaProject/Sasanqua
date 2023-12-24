@@ -1,0 +1,11 @@
+[package]
+name = "gui"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+slint = "1.3"
+slint-build = "1.3"
+ui = { package = "gui_ui", path = "./ui" }

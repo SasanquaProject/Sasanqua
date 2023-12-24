@@ -15,19 +15,19 @@ impl HwMakable for MemFactory {
 
         root.join("mem/axi/cache.v")?
             .create_file()?
-            .write_all(include_bytes!("../../hw_parts/src/mem/axi/cache.v"))?;
+            .write_all(include_bytes!("../../hw_parts/mem/axi/cache.v"))?;
 
         root.join("mem/axi/interconnect.v")?
             .create_file()?
-            .write_all(include_bytes!("../../hw_parts/src/mem/axi/interconnect.v"))?;
+            .write_all(include_bytes!("../../hw_parts/mem/axi/interconnect.v"))?;
 
         root.join("mem/axi/mem.v")?
             .create_file()?
-            .write_all(include_bytes!("../../hw_parts/src/mem/axi/mem.v"))?;
+            .write_all(include_bytes!("../../hw_parts/mem/axi/mem.v"))?;
 
         root.join("mem/axi/translate.v")?
             .create_file()?
-            .write_all(include_bytes!("../../hw_parts/src/mem/axi/translate.v"))?;
+            .write_all(include_bytes!("../../hw_parts/mem/axi/translate.v"))?;
 
         // mem/utils
         root.join("mem/utils")?.create_dir()?;
@@ -38,7 +38,7 @@ impl HwMakable for MemFactory {
         root.join("mem/utils/ram/ram_dualport.v")?
             .create_file()?
             .write_all(include_bytes!(
-                "../../hw_parts/src/mem/utils/ram/ram_dualport.v"
+                "../../hw_parts/mem/utils/ram/ram_dualport.v"
             ))?;
 
         // mem/utils/rom
@@ -47,7 +47,7 @@ impl HwMakable for MemFactory {
         root.join("mem/utils/rom/rom_dualport.v")?
             .create_file()?
             .write_all(include_bytes!(
-                "../../hw_parts/src/mem/utils/rom/rom_dualport.v"
+                "../../hw_parts/mem/utils/rom/rom_dualport.v"
             ))?;
 
         Ok(())

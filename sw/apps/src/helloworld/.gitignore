@@ -1,7 +1,0 @@
-.vscode/
-
-target/
-
-*.bin
-*.dump
-*.mem

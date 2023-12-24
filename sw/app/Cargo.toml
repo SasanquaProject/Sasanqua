@@ -1,0 +1,16 @@
+[package]
+name = "app"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+
+
+[workspace]
+resolver = "2"
+members = [
+    "engine/engine",
+]
+exclude = [
+    "examples/simple",
+]

@@ -12,18 +12,18 @@ impl HwMakable for CoreFactory {
 
         root.join("core/core.v")?
             .create_file()?
-            .write_all(include_bytes!("../../hw_parts/src/core/core.v"))?;
+            .write_all(include_bytes!("../../hw_parts/core/core.v"))?;
 
         // core/components
         root.join("core/components")?.create_dir()?;
 
         root.join("core/components/main.v")?
             .create_file()?
-            .write_all(include_bytes!("../../hw_parts/src/core/components/main.v"))?;
+            .write_all(include_bytes!("../../hw_parts/core/components/main.v"))?;
 
         root.join("core/components/mmu.v")?
             .create_file()?
-            .write_all(include_bytes!("../../hw_parts/src/core/components/mmu.v"))?;
+            .write_all(include_bytes!("../../hw_parts/core/components/mmu.v"))?;
 
         // core/components/pipeline
         root.join("core/components/pipeline")?.create_dir()?;
@@ -31,55 +31,55 @@ impl HwMakable for CoreFactory {
         root.join("core/components/pipeline/check.v")?
             .create_file()?
             .write_all(include_bytes!(
-                "../../hw_parts/src/core/components/pipeline/check.v"
+                "../../hw_parts/core/components/pipeline/check.v"
             ))?;
 
         root.join("core/components/pipeline/cushion.v")?
             .create_file()?
             .write_all(include_bytes!(
-                "../../hw_parts/src/core/components/pipeline/cushion.v"
+                "../../hw_parts/core/components/pipeline/cushion.v"
             ))?;
 
         root.join("core/components/pipeline/decode.v")?
             .create_file()?
             .write_all(include_bytes!(
-                "../../hw_parts/src/core/components/pipeline/decode.v"
+                "../../hw_parts/core/components/pipeline/decode.v"
             ))?;
 
         root.join("core/components/pipeline/exec.v")?
             .create_file()?
             .write_all(include_bytes!(
-                "../../hw_parts/src/core/components/pipeline/exec.v"
+                "../../hw_parts/core/components/pipeline/exec.v"
             ))?;
 
         root.join("core/components/pipeline/fectch.v")?
             .create_file()?
             .write_all(include_bytes!(
-                "../../hw_parts/src/core/components/pipeline/fetch.v"
+                "../../hw_parts/core/components/pipeline/fetch.v"
             ))?;
 
         root.join("core/components/pipeline/mread.v")?
             .create_file()?
             .write_all(include_bytes!(
-                "../../hw_parts/src/core/components/pipeline/mread.v"
+                "../../hw_parts/core/components/pipeline/mread.v"
             ))?;
 
         root.join("core/components/pipeline/pool.v")?
             .create_file()?
             .write_all(include_bytes!(
-                "../../hw_parts/src/core/components/pipeline/pool.v"
+                "../../hw_parts/core/components/pipeline/pool.v"
             ))?;
 
         root.join("core/components/pipeline/schedule.v")?
             .create_file()?
             .write_all(include_bytes!(
-                "../../hw_parts/src/core/components/pipeline/schedule.v"
+                "../../hw_parts/core/components/pipeline/schedule.v"
             ))?;
 
         root.join("core/components/pipeline/trap.v")?
             .create_file()?
             .write_all(include_bytes!(
-                "../../hw_parts/src/core/components/pipeline/trap.v"
+                "../../hw_parts/core/components/pipeline/trap.v"
             ))?;
 
         // core/components/pipeline/register
@@ -89,13 +89,13 @@ impl HwMakable for CoreFactory {
         root.join("core/components/pipeline/register/std_csr.v")?
             .create_file()?
             .write_all(include_bytes!(
-                "../../hw_parts/src/core/components/pipeline/register/std_csr.v"
+                "../../hw_parts/core/components/pipeline/register/std_csr.v"
             ))?;
 
         root.join("core/components/pipeline/register/std_rv32i.v")?
             .create_file()?
             .write_all(include_bytes!(
-                "../../hw_parts/src/core/components/pipeline/register/std_rv32i.v"
+                "../../hw_parts/core/components/pipeline/register/std_rv32i.v"
             ))?;
 
         Ok(())

@@ -1,0 +1,19 @@
+[workspace]
+resolver = "2"
+members = [
+    # Front
+    "src/cui",
+    "src/gui",
+    "src/gui_new",
+
+    # Worker
+    "worker/worker",
+
+    # Job
+    "job/job",
+]
+
+[workspace.dependencies]
+anyhow = "1.0.75"
+thiserror = "1.0.50"
+serde = "1.0.193"

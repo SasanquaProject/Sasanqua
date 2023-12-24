@@ -1,6 +1,0 @@
-[workspace]
-members = [
-    "job/job",
-    "worker/http",
-    "worker/rlib",
-]
