@@ -10,7 +10,11 @@ thiserror = { workspace = true }
 [workspace]
 resolver = "2"
 members = [
+    # FPGA Synth Server
     "fpga_synth/fpga_synth",
+
+    # UI
+    "cui",
     "gui/src-rs",
 ]
 

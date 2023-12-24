@@ -733,6 +733,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "cui"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "thiserror",
+]
+
+[[package]]
 name = "darling"
 version = "0.20.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
