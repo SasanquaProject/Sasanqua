@@ -5,6 +5,7 @@
 
 pub fn exec() -> anyhow::Result<()> {
     tauri::Builder::default()
+        .any_thread()
         .run(tauri::generate_context!())?;
     Ok(())
 }
