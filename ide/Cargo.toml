@@ -2,9 +2,9 @@
 resolver = "2"
 members = [
     # Front
-    "front/cui",
-    "front/gui",
-    "front/gui_new",
+    "src/cui",
+    "src/gui",
+    "src/gui_new",
 
     # Worker
     "worker/worker",
