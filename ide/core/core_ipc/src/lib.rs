@@ -1,8 +1,8 @@
-mod parent;
-mod child;
+pub mod parent;
+pub mod child;
 
+pub use child::Child;
 pub use parent::Parent;
-pub use child::{Child, Sender, Receiver};
 
 #[cfg(test)]
 mod test {

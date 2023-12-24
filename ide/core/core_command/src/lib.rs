@@ -1,6 +1,4 @@
-use std::sync::Arc;
-
-use ipc::Parent;
+use ipc::parent::Sender;
 
 #[derive(Debug, Clone)]
 pub enum Command {
@@ -8,7 +6,7 @@ pub enum Command {
 }
 
 impl Command {
-    pub fn exec(self, _: Arc<Parent<Command>>) {
+    pub fn exec(self, _: Sender<Command>) {
         // ...
     }
 }

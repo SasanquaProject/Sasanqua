@@ -2,10 +2,10 @@ use std::sync::Arc;
 use std::thread;
 
 use command::Command;
-use ipc::{Parent, Sender, Receiver};
+use ipc::{Parent, parent, child};
 
 pub trait Runnable: Send {
-    fn run(&self, sender: Sender<Command>, receiver: Receiver<Command>);
+    fn run(&self, sender: child::Sender<Command>, receiver: child::Receiver<Command>);
 }
 
 pub struct Core {
@@ -35,9 +35,9 @@ impl Core {
             .subprocesses
             .into_iter()
             .map(|subprocess| {
-                let child = self.ipc_parent.spawn_child();
-                let sender = Sender::from(&child);
-                let receiver = Receiver::from(&child);
+                let ipc_child = self.ipc_parent.spawn_child();
+                let sender = child::Sender::from(&ipc_child);
+                let receiver = child::Receiver::from(&ipc_child);
                 thread::spawn(move || {
                     subprocess.run(sender, receiver);
                 })
@@ -49,8 +49,9 @@ impl Core {
             // Receive a message
             if let Some(command) = self.ipc_parent.try_pop() {
                 let ipc_parent = Arc::clone(&self.ipc_parent);
+                let sender = parent::Sender::from(&ipc_parent);
                 thread::spawn(move || {
-                    command.exec(ipc_parent);
+                    command.exec(sender);
                 });
             }
 

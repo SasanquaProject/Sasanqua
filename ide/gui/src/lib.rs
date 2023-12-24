@@ -1,4 +1,4 @@
-use core::ipc::{Sender, Receiver};
+use core::ipc::child::{Sender, Receiver};
 use core::command::Command;
 use core::Runnable;
 
