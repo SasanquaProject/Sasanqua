@@ -85,7 +85,7 @@ impl<M> Sender<M>
 where
     M: Debug + Send + Sync + Clone,
 {
-    pub fn send(self: &Arc<Self>, msg: M) -> anyhow::Result<()> {
+    pub fn send(&self, msg: M) -> anyhow::Result<()> {
         self.0.send(msg)
     }
 }
@@ -108,11 +108,11 @@ impl<M> Receiver<M>
 where
     M: Debug + Send + Sync + Clone,
 {
-    pub fn pop(self: &Arc<Self>) -> M {
+    pub fn pop(&self) -> M {
         self.0.pop()
     }
 
-    pub fn try_pop(self: &Arc<Self>) -> Option<M> {
+    pub fn try_pop(&self) -> Option<M> {
         self.0.try_pop()
     }
 }
