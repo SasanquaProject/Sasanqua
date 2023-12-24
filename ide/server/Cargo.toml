@@ -1,6 +1,16 @@
-[workspace]
-members = [
-    "job/job",
-    "worker/http",
-    "worker/rlib",
-]
+[package]
+name = "server"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+worker_http = { path = "./worker/http", optional = true }
+worker_rlib = { path = "./worker/rlib", optional = true }
+
+[features]
+default = []
+all = ["http", "rlib"]
+http = ["worker_http"]
+rlib = ["worker_rlib"]

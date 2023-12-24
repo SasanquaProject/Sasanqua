@@ -1,8 +1,9 @@
 [package]
-name = "event"
+name = "gui_new"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
 anyhow = { workspace = true }
 thiserror = { workspace = true }
+ui = { package = "gui_new_ui", path = "./ui/src-rs" }

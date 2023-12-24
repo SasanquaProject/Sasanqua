@@ -7,3 +7,6 @@ rustflags = [
 rustflags = [
     "-C", "link-arg=-Wl,--stack,8000000"
 ]
+
+[env]
+SLINT_STYLE = "fluent-light"
