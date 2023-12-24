@@ -59,6 +59,8 @@ name = "core_runner"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "core_command",
+ "core_ipc",
  "thiserror",
 ]
 
@@ -154,6 +156,7 @@ name = "ide"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "core",
  "thiserror",
 ]
 
