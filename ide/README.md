@@ -3,8 +3,9 @@
 ## コマンド
 
 ```
-$ make cui
-$ make gui
+$ cargo run --bin cui
+$ cargo run --bin gui
+$ cargo run --bin gui_new
 ```
 
 ## クレート
@@ -12,10 +13,9 @@ $ make gui
 ### bin
 
 - front/cui
-- front/gui
-- server/worker/http
+- (front/gui)[./front/gui/README.md]
+- (front/gui_new)[./front/gui_new/README.md]
 
 ### lib
 
-- server/worker/rlib
-
+- server
