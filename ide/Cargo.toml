@@ -1,16 +1,17 @@
+[package]
+name = "ide"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+
 [workspace]
 resolver = "2"
 members = [
-    # Front
-    "src/cui",
-    "src/gui",
-    "src/gui_new",
-
-    # Worker
-    "worker/worker",
-
-    # Job
-    "job/job",
+    "fpga_synth/fpga_synth",
+    "gui/src-rs",
 ]
 
 [workspace.dependencies]

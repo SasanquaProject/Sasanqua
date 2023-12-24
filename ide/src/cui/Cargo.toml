@@ -1,7 +1,0 @@
-[package]
-name = "cui"
-version = "0.1.0"
-edition = "2021"
-
-[dependencies]
-worker = { path = "../../worker/worker" }
