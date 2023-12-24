@@ -10,6 +10,9 @@ thiserror = { workspace = true }
 [workspace]
 resolver = "2"
 members = [
+    # Core
+    "core/core",
+
     # FPGA Synth Server
     "fpga_synth/fpga_synth",
 
