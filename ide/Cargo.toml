@@ -6,8 +6,8 @@ members = [
     "front/gui",
     "front/gui_new",
 
-    # Server
-    "server",
+    # Worker
+    "worker/worker",
 ]
 
 [workspace.dependencies]

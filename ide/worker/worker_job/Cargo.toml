@@ -1,11 +1,8 @@
 [package]
-name = "worker_rlib"
+name = "worker_job"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
 anyhow = { workspace = true }
 thiserror = { workspace = true }
-serde = { workspace = true }
-rmp-serde = "1.1"
-job = { package = "job", path = "../../job/job" }

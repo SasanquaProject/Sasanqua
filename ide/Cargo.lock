@@ -1287,7 +1287,7 @@ dependencies = [
 name = "cui"
 version = "0.1.0"
 dependencies = [
- "worker_rlib",
+ "worker",
 ]
 
 [[package]]
@@ -3141,14 +3141,6 @@ name = "jni-sys"
 version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8eaf4bc02d17cbdd7ff4c7438cafcdf7fb9a4613313ad11b4f8fefe7d3fa0130"
-
-[[package]]
-name = "job"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "thiserror",
-]
 
 [[package]]
 name = "jobserver"
@@ -5180,16 +5172,6 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 1.0.109",
-]
-
-[[package]]
-name = "server"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "thiserror",
- "worker_http",
- "worker_rlib",
 ]
 
 [[package]]
@@ -7515,18 +7497,36 @@ dependencies = [
 ]
 
 [[package]]
+name = "worker"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "thiserror",
+ "worker_http",
+ "worker_rlib",
+]
+
+[[package]]
 name = "worker_http"
 version = "0.1.0"
+
+[[package]]
+name = "worker_job"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "thiserror",
+]
 
 [[package]]
 name = "worker_rlib"
 version = "0.1.0"
 dependencies = [
  "anyhow",
- "job",
  "rmp-serde",
  "serde",
  "thiserror",
+ "worker_job",
 ]
 
 [[package]]

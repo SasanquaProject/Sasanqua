@@ -1,13 +1,13 @@
 [package]
-name = "server"
+name = "worker"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
 anyhow = { workspace = true }
 thiserror = { workspace = true }
-worker_http = { path = "./worker/http", optional = true }
-worker_rlib = { path = "./worker/rlib", optional = true }
+worker_http = { path = "../worker_http", optional = true }
+worker_rlib = { path = "../worker_rlib", optional = true }
 
 [features]
 default = []
