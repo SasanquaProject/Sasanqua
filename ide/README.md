@@ -3,19 +3,25 @@
 ## コマンド
 
 ```
-$ cargo run --bin cui
-$ cargo run --bin gui
-$ cargo run --bin gui_new
+// only CUI
+$ cargo run -F cui
+
+// only GUI
+$ cargo run -F gui
+
+// CUI & GUI
+$ cargo run -F cui,gui
 ```
 
 ## クレート
 
 ### bin
 
-- src/cui
-- (src/gui)[./src/gui/README.md]
-- (src/gui_new)[./src/gui_new/README.md]
+- ide
 
 ### lib
 
-- worker
+- core
+- fpga_synth
+- cui
+- gui
