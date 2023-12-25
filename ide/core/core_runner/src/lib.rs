@@ -13,23 +13,19 @@ pub struct Core {
     subprocesses: Vec<Box<dyn Runnable>>,
 }
 
-impl Core {
-    pub fn new() -> Self {
+impl<const N: usize> From<[Box<dyn Runnable>; N]> for Core {
+    fn from(subprocesses: [Box<dyn Runnable>; N]) -> Self {
         Core {
             ipc_parent: Parent::new(),
-            subprocesses: vec![],
+            subprocesses: subprocesses.into(),
         }
     }
+}
 
-    pub fn add_subprocess<T>(mut self, body: T) -> Self
-    where
-        T: Runnable + 'static,
-    {
-        self.subprocesses.push(Box::new(body));
-        self
-    }
-
+impl Core {
     pub fn run(self) -> anyhow::Result<()> {
+        assert!(self.subprocesses.len() > 0);
+
         // Launch subprocess
         let threads = self
             .subprocesses

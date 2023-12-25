@@ -7,6 +7,12 @@ use core::Runnable;
 
 pub struct CUI;
 
+impl CUI {
+    pub fn new() -> Box<dyn Runnable> {
+        Box::new(CUI)
+    }
+}
+
 impl Runnable for CUI {
     fn run(&self, sender: Sender<Command>, _: Receiver<Command>) {
         loop {

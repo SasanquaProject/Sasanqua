@@ -7,8 +7,13 @@ edition = "2021"
 anyhow = { workspace = true }
 thiserror = { workspace = true }
 core = { path = "./core/core" }
-cui = { path = "./cui" }
-gui = { path = "./gui" }
+cui = { path = "./cui", optional = true }
+gui = { path = "./gui", optional = true }
+
+[features]
+default = []
+cui = ["dep:cui"]
+gui = ["dep:gui"]
 
 [workspace]
 resolver = "2"
