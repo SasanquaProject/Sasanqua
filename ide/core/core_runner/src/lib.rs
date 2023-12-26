@@ -5,7 +5,7 @@ use command::Command;
 use ipc::{Parent, parent, child};
 
 pub trait Runnable: Send {
-    fn run(&self, sender: child::Sender<Command>, receiver: child::Receiver<Command>);
+    fn run(&self, tx: child::Sender<Command>, rx: child::Receiver<Command>);
 }
 
 pub struct Core {
@@ -32,10 +32,10 @@ impl Core {
             .into_iter()
             .map(|subprocess| {
                 let ipc_child = self.ipc_parent.spawn_child();
-                let sender = child::Sender::from(&ipc_child);
-                let receiver = child::Receiver::from(&ipc_child);
+                let tx = child::Sender::from(&ipc_child);
+                let rx = child::Receiver::from(&ipc_child);
                 thread::spawn(move || {
-                    subprocess.run(sender, receiver);
+                    subprocess.run(tx, rx);
                 })
             })
             .collect::<Vec<_>>();
@@ -45,9 +45,9 @@ impl Core {
             // Receive a message
             if let Some(command) = self.ipc_parent.try_pop() {
                 let ipc_parent = Arc::clone(&self.ipc_parent);
-                let sender = parent::Sender::from(&ipc_parent);
+                let tx = parent::Sender::from(&ipc_parent);
                 thread::spawn(move || {
-                    command.exec(sender);
+                    command.exec(tx);
                 });
             }
 
