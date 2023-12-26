@@ -7,9 +7,9 @@ edition = "2021"
 anyhow = { workspace = true }
 thiserror = { workspace = true }
 core = { path = "./core/core" }
-cui = { path = "./cui", optional = true }
-tui = { path = "./tui", optional = true }
-gui = { path = "./gui", optional = true }
+cui = { path = "./ui/cui", optional = true }
+tui = { path = "./ui/tui", optional = true }
+gui = { path = "./ui/gui", optional = true }
 
 [features]
 default = []
@@ -27,9 +27,9 @@ members = [
     "fpga_synth/fpga_synth",
 
     # UI
-    "cui",
-    "tui",
-    "gui",
+    "ui/cui",
+    "ui/tui",
+    "ui/gui",
 ]
 
 [workspace.dependencies]
