@@ -6,6 +6,9 @@
 // only CUI
 $ cargo run -F cui
 
+// only TUI
+$ cargo run -F gui
+
 // only GUI
 $ cargo run -F gui
 
@@ -23,5 +26,6 @@ $ cargo run -F cui,gui
 
 - core
 - fpga_synth
-- cui
-- gui
+- ui/cui
+- ui/tui
+- ui/gui
