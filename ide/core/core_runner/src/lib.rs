@@ -1,8 +1,9 @@
-use std::{sync::Arc, time::Duration};
+use std::sync::Arc;
+use std::time::Duration;
 use std::thread;
 
 use command::Command;
-use ipc::{Parent, parent, child};
+use ipc::{Parent, child};
 
 pub trait Runnable: Send {
     fn run(&self, tx: child::Sender<Command>, rx: child::Receiver<Command>);
@@ -31,24 +32,18 @@ impl Core {
             .subprocesses
             .into_iter()
             .map(|subprocess| {
-                let ipc_child = self.ipc_parent.spawn_child();
-                let tx = child::Sender::from(&ipc_child);
-                let rx = child::Receiver::from(&ipc_child);
-                thread::spawn(move || {
-                    subprocess.run(tx, rx);
-                })
+                let (tx, rx) = self.ipc_parent.spawn_child().channel();
+                thread::spawn(move || subprocess.run(tx, rx) )
             })
             .collect::<Vec<_>>();
 
         // Event loop
+        let (tx, rx) = self.ipc_parent.channel();
         loop {
             // Receive a message
-            if let Some(command) = self.ipc_parent.try_pop() {
-                let ipc_parent = Arc::clone(&self.ipc_parent);
-                let tx = parent::Sender::from(&ipc_parent);
-                thread::spawn(move || {
-                    command.exec(tx);
-                });
+            if let Some(command) = rx.try_pop() {
+                let tx = tx.clone();
+                thread::spawn(move || command.exec(tx) );
             }
 
             // Check subprocess
