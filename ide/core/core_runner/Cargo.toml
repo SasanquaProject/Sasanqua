@@ -1,0 +1,10 @@
+[package]
+name = "core_runner"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+command = { package = "core_command", path = "../core_command" }
+ipc = { package = "core_ipc", path = "../core_ipc" }

@@ -1,16 +1,35 @@
+[package]
+name = "ide"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+core = { path = "./core/core" }
+cui = { path = "./ui/cui", optional = true }
+tui = { path = "./ui/tui", optional = true }
+gui = { path = "./ui/gui", optional = true }
+
+[features]
+default = []
+cui = ["dep:cui"]
+tui = ["dep:tui"]
+gui = ["dep:gui"]
+
 [workspace]
 resolver = "2"
 members = [
-    # Front
-    "src/cui",
-    "src/gui",
-    "src/gui_new",
+    # Core
+    "core/core",
 
-    # Worker
-    "worker/worker",
+    # FPGA Synth Server
+    "fpga_synth/fpga_synth",
 
-    # Job
-    "job/job",
+    # UI
+    "ui/cui",
+    "ui/tui",
+    "ui/gui",
 ]
 
 [workspace.dependencies]

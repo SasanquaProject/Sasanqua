@@ -1,0 +1,12 @@
+body {
+    margin: 0px;
+}
+
+.gutter {
+    background: #eee;
+}
+
+.split-flex {
+    display: flex;
+    flex-direction: row;
+}
