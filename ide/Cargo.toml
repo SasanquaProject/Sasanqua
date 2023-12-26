@@ -8,11 +8,13 @@ anyhow = { workspace = true }
 thiserror = { workspace = true }
 core = { path = "./core/core" }
 cui = { path = "./cui", optional = true }
+tui = { path = "./tui", optional = true }
 gui = { path = "./gui", optional = true }
 
 [features]
 default = []
 cui = ["dep:cui"]
+tui = ["dep:tui"]
 gui = ["dep:gui"]
 
 [workspace]
@@ -26,6 +28,7 @@ members = [
 
     # UI
     "cui",
+    "tui",
     "gui",
 ]
 
