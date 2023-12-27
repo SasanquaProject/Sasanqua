@@ -1,9 +1,8 @@
 [package]
-name = "ide_cui"
+name = "server_job_xilinx"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
 anyhow = { workspace = true }
 thiserror = { workspace = true }
-core = { package = "ide_core", path = "../../core/core" }

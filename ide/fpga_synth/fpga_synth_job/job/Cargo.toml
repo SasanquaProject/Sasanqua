@@ -1,9 +1,0 @@
-[package]
-name = "fpga_synth_job"
-version = "0.1.0"
-edition = "2021"
-
-[dependencies]
-anyhow = { workspace = true }
-thiserror = { workspace = true }
-job_xilinx = { package = "fpga_synth_job_xilinx", path = "../job_xilinx" }

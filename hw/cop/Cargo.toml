@@ -1,0 +1,15 @@
+[package]
+name = "cop"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+cui = { package = "copgen_cui", path = "./ui/cui", optional = true }
+gui = { package = "copgen_gui", path = "./ui/gui", optional = true }
+
+[features]
+default = []
+cui = ["dep:cui"]
+gui = ["dep:gui"]

@@ -6,33 +6,13 @@ edition = "2021"
 [dependencies]
 anyhow = { workspace = true }
 thiserror = { workspace = true }
-core = { path = "./core/core" }
-cui = { path = "./ui/cui", optional = true }
-tui = { path = "./ui/tui", optional = true }
-gui = { path = "./ui/gui", optional = true }
+core = { package = "ide_core", path = "./core/core" }
+cui = { package = "ide_cui", path = "./ui/cui", optional = true }
+tui = { package = "ide_tui", path = "./ui/tui", optional = true }
+gui = { package = "ide_gui", path = "./ui/gui", optional = true }
 
 [features]
 default = []
 cui = ["dep:cui"]
 tui = ["dep:tui"]
 gui = ["dep:gui"]
-
-[workspace]
-resolver = "2"
-members = [
-    # Core
-    "core/core",
-
-    # FPGA Synth Server
-    "fpga_synth/fpga_synth",
-
-    # UI
-    "ui/cui",
-    "ui/tui",
-    "ui/gui",
-]
-
-[workspace.dependencies]
-anyhow = "1.0.75"
-thiserror = "1.0.50"
-serde = "1.0.193"

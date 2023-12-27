@@ -1,6 +1,0 @@
-bootrom
-bootrom.bin
-bootrom.dump
-bootrom.mem
-
-*.o

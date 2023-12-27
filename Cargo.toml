@@ -1,0 +1,22 @@
+[workspace]
+resolver = "2"
+members = [
+    # HW
+    "hw/cop",
+    "hw/core",
+    "hw/tools/ipgen",
+
+    # App
+    "app",
+
+    # FPGA
+    "fpga/server/server",
+
+    # IDE
+    "ide",
+]
+
+[workspace.dependencies]
+anyhow = "1.0.75"
+thiserror = "1.0.50"
+serde = "1.0.192"

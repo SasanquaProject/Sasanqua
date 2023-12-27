@@ -1,9 +1,10 @@
 [package]
-name = "ide_cui"
+name = "fpga_server"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
 anyhow = { workspace = true }
 thiserror = { workspace = true }
-core = { package = "ide_core", path = "../../core/core" }
+server_job = { path = "../server_job/job" }
+server_worker = { path= "../server_worker/worker" }
