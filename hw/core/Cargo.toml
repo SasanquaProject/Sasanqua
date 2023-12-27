@@ -1,0 +1,15 @@
+[package]
+name = "core"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+cui = { package = "coregen_cui", path = "./ui/cui", optional = true }
+gui = { package = "coregen_gui", path = "./ui/gui", optional = true }
+
+[features]
+default = []
+cui = ["dep:cui"]
+gui = ["dep:gui"]

@@ -1,0 +1,18 @@
+[package]
+name = "copgen_gui"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+slint = "1.3"
+rfd = "0.10"
+ipgen = { package = "ipgen", path = "../../../tools/ipgen" }
+copgen = { package = "copgen", path = "../../copgen" }
+std_cops = { package = "std", path = "../../impl/std" }
+verilog_cops = { package = "verilog", path = "../../impl/verilog" }
+chisel_cops = { package = "chisel", path = "../../impl/chisel" }
+
+[build-dependencies]
+slint-build = "1.3"

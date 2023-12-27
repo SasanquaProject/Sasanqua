@@ -1,9 +1,9 @@
 [package]
-name = "tui"
+name = "ide_tui"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
 anyhow = { workspace = true }
 thiserror = { workspace = true }
-core = { path = "../../core/core" }
+core = { package = "ide_core", path = "../../core/core" }

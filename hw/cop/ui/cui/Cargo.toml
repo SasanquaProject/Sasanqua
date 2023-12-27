@@ -1,0 +1,18 @@
+[package]
+name = "copgen_cui"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+serde = { workspace = true, features = ["derive"] }
+vfs = "0.9"
+toml = "0.8"
+clap = { version = "3.1", features = ["derive"] }
+ansi_term = "0.12"
+ipgen = { package = "ipgen", path = "../../../tools/ipgen" }
+copgen = { package = "copgen", path = "../../copgen" }
+std_cops = { package = "std", path = "../../impl/std" }
+verilog_cops = { package = "verilog", path = "../../impl/verilog" }
+chisel_cops = { package = "chisel", path = "../../impl/chisel" }
