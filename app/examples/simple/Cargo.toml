@@ -5,3 +5,5 @@ edition = "2021"
 
 [dependencies]
 engine = { path = "../../engine/engine" }
+
+[workspace]
