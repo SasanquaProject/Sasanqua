@@ -1,5 +1,5 @@
 [package]
-name = "fpga_synth_job_xilinx"
+name = "server_worker_job"
 version = "0.1.0"
 edition = "2021"
 

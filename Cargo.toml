@@ -6,6 +6,9 @@ members = [
     "hw/core",
     "hw/tools/ipgen",
 
+    # FPGA
+    "fpga/server/server",
+
     # IDE
     "ide",
 ]

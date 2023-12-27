@@ -1,5 +1,5 @@
 [package]
-name = "fpga_synth_worker_http"
+name = "server_worker_http"
 version = "0.1.0"
 edition = "2021"
 

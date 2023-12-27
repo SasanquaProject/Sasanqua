@@ -1,8 +1,9 @@
 [package]
-name = "fpga_synth_worker_job"
+name = "server_job"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
 anyhow = { workspace = true }
 thiserror = { workspace = true }
+job_xilinx = { package = "server_job_xilinx", path = "../job_xilinx" }

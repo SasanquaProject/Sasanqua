@@ -2022,6 +2022,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "fpga_server"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "server_job",
+ "server_worker",
+ "thiserror",
+]
+
+[[package]]
 name = "futf"
 version = "0.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2757,7 +2767,7 @@ dependencies = [
  "httpdate",
  "itoa 1.0.10",
  "pin-project-lite",
- "socket2 0.4.10",
+ "socket2 0.5.5",
  "tokio",
  "tower-service",
  "tracing",
@@ -5016,6 +5026,28 @@ dependencies = [
 ]
 
 [[package]]
+name = "rmp"
+version = "0.8.12"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7f9860a6cc38ed1da53456442089b4dfa35e7cedaa326df63017af88385e6b20"
+dependencies = [
+ "byteorder",
+ "num-traits",
+ "paste",
+]
+
+[[package]]
+name = "rmp-serde"
+version = "1.1.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bffea85eea980d8a74453e5d02a8d93028f3c34725de143085a844ebe953258a"
+dependencies = [
+ "byteorder",
+ "rmp",
+ "serde",
+]
+
+[[package]]
 name = "rowan"
 version = "0.15.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5386,6 +5418,56 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn 1.0.109",
+]
+
+[[package]]
+name = "server_job"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "server_job_xilinx",
+ "thiserror",
+]
+
+[[package]]
+name = "server_job_xilinx"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "thiserror",
+]
+
+[[package]]
+name = "server_worker"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "server_worker_http",
+ "server_worker_rlib",
+ "thiserror",
+]
+
+[[package]]
+name = "server_worker_http"
+version = "0.1.0"
+
+[[package]]
+name = "server_worker_job"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "thiserror",
+]
+
+[[package]]
+name = "server_worker_rlib"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "rmp-serde",
+ "serde",
+ "server_worker_job",
+ "thiserror",
 ]
 
 [[package]]
