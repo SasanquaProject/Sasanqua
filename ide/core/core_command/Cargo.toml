@@ -1,9 +1,0 @@
-[package]
-name = "core_command"
-version = "0.1.0"
-edition = "2021"
-
-[dependencies]
-anyhow = { workspace = true }
-thiserror = { workspace = true }
-ipc = { package = "core_ipc", path = "../core_ipc" }

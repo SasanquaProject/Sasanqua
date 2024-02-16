@@ -11,9 +11,6 @@ members = [
 
     # FPGA
     "fpga/server/server",
-
-    # IDE
-    "ide",
 ]
 
 [workspace.dependencies]
