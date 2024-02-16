@@ -8,12 +8,6 @@ members = [
 
     # App
     "app",
-
-    # FPGA
-    "fpga/server/server",
-
-    # IDE
-    "ide",
 ]
 
 [workspace.dependencies]
